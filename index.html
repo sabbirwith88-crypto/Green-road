@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Green Road - Bangladeshi Car Racing</title>
+    <!-- Adsgram SDK -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
@@ -703,11 +705,11 @@
         }
         
         .sound-toggle.muted:before {
-            content: "ðŸ”‡";
+            content: "”9ã7";
         }
         
         .sound-toggle:not(.muted):before {
-            content: "ðŸ”Š";
+            content: "”9ä0";
         }
         
         /* Vibration indicator */
@@ -852,33 +854,33 @@
         
         <div class="instructions" id="instructions" style="display: none;">
             <div class="instruction-item">
-                <div class="instruction-icon">â†</div>
+                <div class="instruction-icon">¡û</div>
                 <div>Move Left (A / Left Arrow)</div>
             </div>
             <div class="instruction-item">
-                <div class="instruction-icon">â†’</div>
+                <div class="instruction-icon">¡ú</div>
                 <div>Move Right (D / Right Arrow)</div>
             </div>
             <div class="instruction-item">
-                <div class="instruction-icon">â†‘</div>
+                <div class="instruction-icon">¡ü</div>
                 <div>JUMP (W / Up Arrow / Space) - Unlimited!</div>
             </div>
             <div class="instruction-item">
-                <div class="instruction-icon">ðŸª™</div>
+                <div class="instruction-icon">•0ô3</div>
                 <div>Complete levels by collecting coins</div>
             </div>
             <div class="instruction-item">
-                <div class="instruction-icon">ðŸ”Š</div>
-                <div>Sound effects on - Click sound button to toggle</div>
+                <div class="instruction-icon">7Å8„1‚5</div>
+                <div>Each level has 1 life - Play carefully!</div>
             </div>
             <button class="btn" onclick="document.getElementById('instructions').style.display='none'" style="margin-top: 15px; padding: 10px 20px; font-size: 16px;">Close</button>
         </div>
     </div>
 
     <div id="levelSelectScreen" class="screen" style="display:none;">
-        <div class="back-btn" id="backFromLevelSelectBtn">â†</div>
+        <div class="back-btn" id="backFromLevelSelectBtn">¡û</div>
         <h1 class="title">Select Level</h1>
-        <p class="subtitle">Choose a level to play. Progress through levels to unlock more!</p>
+        <p class="subtitle">Choose a level to play. Each level has 1 life only!</p>
         
         <div class="level-info">
             Current Level: <span id="currentLevelDisplay">1</span>
@@ -887,7 +889,7 @@
         
         <div class="level-requirement">
             <div class="requirement-text">Coins Required to Complete:</div>
-            <div class="requirement-value" id="coinsRequiredDisplay">10</div>
+            <div class="requirement-value" id="coinsRequiredDisplay">2</div>
         </div>
         
         <div class="level-progress">
@@ -927,7 +929,7 @@
 
     <!-- Network Error Screen -->
     <div id="networkErrorScreen" class="network-error">
-        <h1>âš ï¸ Network Error</h1>
+        <h1>7²2„1‚5 Network Error</h1>
         <p>Internet connection lost. Please check your network and try again.</p>
         <button class="btn red" id="retryConnectionBtn">Retry Connection</button>
         <button class="btn blue" id="backToMenuNetworkBtn">Back to Menu</button>
@@ -935,13 +937,13 @@
 
     <!-- Reward Code Screen for Level 100 -->
     <div id="rewardScreen" class="reward-screen">
-        <h1>ðŸŽ‰ CONGRATULATIONS! ðŸŽ‰</h1>
+        <h1>”9½5 CONGRATULATIONS! ”9½5</h1>
         <p class="congrats-text">You have completed ALL 100 LEVELS!</p>
         <p>You are the ultimate champion!</p>
         <p>Here's your special reward code:</p>
         <div class="reward-code" id="rewardCodeDisplay" onclick="copyRewardCode()">GR100-7DIGIT</div>
         <p class="copy-instruction">Click on the code to copy it</p>
-        <p class="warning-text">âš ï¸ After copying, the game will reset to Level 1!</p>
+        <p class="warning-text">7²2„1‚5 After copying, the game will reset to Level 1!</p>
         <button class="btn gold" id="resetAfterRewardBtn">Copy & Reset Game</button>
     </div>
 
@@ -955,7 +957,7 @@
             </div>
             <div class="stat-row">
                 <span>Lives:</span>
-                <span class="stat-value" id="pauseLives">3</span>
+                <span class="stat-value" id="pauseLives">1</span>
             </div>
             <div class="stat-row">
                 <span>Level:</span>
@@ -990,7 +992,7 @@
         </div>
         <div class="hud-section">
             <div class="hud-label">Lives</div>
-            <div class="hud-value lives" id="lives">3</div>
+            <div class="hud-value lives" id="lives">1</div>
         </div>
         <div class="hud-section">
             <div class="hud-label">Level</div>
@@ -1002,19 +1004,19 @@
         </div>
     </div>
     
-    <div class="jump-indicator" id="jumpIndicator">JUMPING! ðŸš€</div>
+    <div class="jump-indicator" id="jumpIndicator">JUMPING! •0‹4</div>
     <div class="mode-indicator" id="modeIndicator" style="display:none;">Game Mode: <span id="modeText">Level</span></div>
     
-    <div id="jumpBtn">â†‘</div>
+    <div id="jumpBtn">¡ü</div>
     
     <div id="controls">
-        <div class="control-btn" id="leftBtn">â†</div>
-        <div class="control-btn" id="rightBtn">â†’</div>
+        <div class="control-btn" id="leftBtn">¡û</div>
+        <div class="control-btn" id="rightBtn">¡ú</div>
     </div>
     
-    <div class="back-btn" id="backBtn" style="display:none;">â†</div>
+    <div class="back-btn" id="backBtn" style="display:none;">¡û</div>
     
-    <div class="controls-info">Use buttons or keyboard: A/D or â†/â†’ for movement, W/â†‘/Space for jump</div>
+    <div class="controls-info">Use buttons or keyboard: A/D or ¡û/¡ú for movement, W/¡ü/Space for jump</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
@@ -1028,7 +1030,7 @@
         let gameRunning = false, gamePaused = false;
 
         // Game Stats
-        let score = 0, lives = 3;
+        let score = 0, lives = 1; // Default 1 life
         let highScore = localStorage.getItem('banglaCarHighScore') || 0;
         let currentLevel = parseInt(localStorage.getItem('currentLevel')) || 1;
         let unlockedLevels = parseInt(localStorage.getItem('unlockedLevels')) || 1;
@@ -1049,38 +1051,38 @@
         let isOnline = navigator.onLine;
         let networkCheckInterval;
         
+        // Adsgram Integration
+        let AdController = null;
+        let adInitialized = false;
+        let gameStartAdShown = false; // Track if start ad has been shown
+        let gameOverAdShown = false; // Track if game over ad has been shown for current session
+        
         const MAX_COINS = 25, MAX_OBSTACLES = 15;
         const controls = { left: false, right: false, jump: false };
         
         // Game Modes
         let gameMode = 'level';
         
-        // Level configurations - 100 levels with +2 coin increase per level
+        // Level configurations - 100 levels with 1 life each
         const LEVEL_CONFIG = {};
         for (let i = 1; i <= 100; i++) {
             let coinsRequired = 2 + (i - 1) * 2; // Level 1: 2 coins, Level 2: 4 coins, etc.
             let difficulty;
-            let lives;
             
             if (i <= 20) {
                 difficulty = 'easy';
-                lives = 3;
             } else if (i <= 40) {
                 difficulty = 'medium';
-                lives = 3;
             } else if (i <= 60) {
                 difficulty = 'hard';
-                lives = 2;
             } else if (i <= 80) {
                 difficulty = 'extreme';
-                lives = 2;
             } else {
                 difficulty = 'extreme';
-                lives = 1;
             }
             
             LEVEL_CONFIG[i] = {
-                lives: lives,
+                lives: 1, // All levels have 1 life
                 coinsToComplete: coinsRequired,
                 difficulty: difficulty
             };
@@ -1112,6 +1114,62 @@
 
         // Reward code for level 100
         const REWARD_CODE = "GR100-7DIGIT";
+
+        // Initialize Adsgram
+        function initAdsgram() {
+            try {
+                if (typeof window.Adsgram !== 'undefined') {
+                    AdController = window.Adsgram.init({ 
+                        blockId: "int-24179" 
+                    });
+                    adInitialized = true;
+                    console.log("Adsgram initialized successfully");
+                } else {
+                    console.warn("Adsgram SDK not loaded yet");
+                }
+            } catch (e) {
+                console.error("Failed to initialize Adsgram:", e);
+            }
+        }
+
+        // Show interstitial ad
+        function showInterstitialAd(adLocation) {
+            if (!adInitialized || !AdController) {
+                console.log("Ads not initialized, cannot show ad at:", adLocation);
+                return Promise.reject("Ads not initialized");
+            }
+            
+            console.log("Attempting to show ad at:", adLocation);
+            
+            return AdController.show()
+                .then(() => {
+                    console.log("Ad shown successfully at:", adLocation);
+                })
+                .catch((error) => {
+                    console.warn("Ad failed to show at", adLocation, ":", error);
+                });
+        }
+
+        // Show start ad when game first opens
+        function showStartAd() {
+            if (!gameStartAdShown && adInitialized) {
+                gameStartAdShown = true;
+                showInterstitialAd('game_start');
+            }
+        }
+
+        // Show game over ad
+        function showGameOverAd() {
+            if (!gameOverAdShown && adInitialized) {
+                gameOverAdShown = true;
+                showInterstitialAd('game_over').finally(() => {
+                    // Reset game over ad flag after ad is shown (for next game over)
+                    setTimeout(() => {
+                        gameOverAdShown = false;
+                    }, 5000);
+                });
+            }
+        }
 
         function updateLoadingProgress(stepName, percentIncrease) {
             currentStep++;
@@ -1445,6 +1503,9 @@
             console.log('Initializing scene...');
             
             try {
+                updateLoadingProgress('Initializing Adsgram', 5);
+                initAdsgram();
+                
                 updateLoadingProgress('Initializing Audio System', 5);
                 await new Promise(resolve => setTimeout(resolve, 50));
                 initAudio();
@@ -1565,6 +1626,11 @@
                         document.getElementById('loading').style.display = 'none';
                         document.getElementById('startScreen').style.display = 'flex';
                         updateHomeScreenStats();
+                        
+                        // Show start ad after loading completes and start screen is visible
+                        setTimeout(() => {
+                            showStartAd();
+                        }, 1000);
                     }
                 }, 500);
 
@@ -1579,6 +1645,11 @@
                 setTimeout(() => {
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('startScreen').style.display = 'flex';
+                    
+                    // Show start ad even if there's an error
+                    setTimeout(() => {
+                        showStartAd();
+                    }, 1000);
                 }, 500);
             }
         }
@@ -1620,7 +1691,7 @@
                     };
                 } else {
                     btn.classList.add('locked');
-                    btn.innerHTML = `${i}<br><small style="font-size:10px;">ðŸ”’</small>`;
+                    btn.innerHTML = `${i}<br><small style="font-size:10px;">”9ä8</small>`;
                 }
                 
                 container.appendChild(btn);
@@ -2829,7 +2900,7 @@
             document.getElementById('pauseMenu').style.display = 'flex';
             document.getElementById('pauseScore').textContent = score;
             document.getElementById('pauseLives').textContent = lives;
-            document.getElementById('pauseLevel').textContent = gameMode === 'level' ? selectedLevel : 'âˆž';
+            document.getElementById('pauseLevel').textContent = gameMode === 'level' ? selectedLevel : '¡Þ';
             document.getElementById('pauseGameMode').textContent = gameMode === 'level' ? 'Level Mode' : 'Nonstop Mode';
             document.getElementById('pauseSoundStatus').textContent = soundEnabled ? 'ON' : 'OFF';
             playButtonClickSound();
@@ -2854,7 +2925,7 @@
             const levelConfig = LEVEL_CONFIG[selectedLevel];
             
             score = 0;
-            lives = levelConfig.lives;
+            lives = levelConfig.lives; // Always 1
             baseSpeed = 1.0;
             speedMultiplier = 1.0;
             gameSpeed = baseSpeed * speedMultiplier;
@@ -2885,7 +2956,7 @@
             
             spawnInitialObjects();
             
-            console.log(`Starting Level ${selectedLevel} with ${levelConfig.coinsToComplete} coins required`);
+            console.log(`Starting Level ${selectedLevel} with ${levelConfig.coinsToComplete} coins required, Lives: ${lives}`);
             
             playPowerUpSound();
         }
@@ -2901,7 +2972,7 @@
             gameMode = 'nonstop';
             
             score = 0;
-            lives = 5;
+            lives = 5; // Nonstop mode has 5 lives
             baseSpeed = 1.0;
             speedMultiplier = 1.0;
             gameSpeed = baseSpeed * speedMultiplier;
@@ -2973,6 +3044,9 @@
             
             gameRunning = false;
             
+            // Show game over ad
+            showGameOverAd();
+            
             if (window.AndroidBridge) {
                 window.AndroidBridge.showRewardAd();
             }
@@ -3001,7 +3075,7 @@
             
             document.getElementById('finalScoreText').textContent = `Coins: ${Math.floor(score)}`;
             document.getElementById('highScoreText').textContent = `High Score: ${Math.floor(highScore)}`;
-            document.getElementById('finalLevelText').textContent = gameMode === 'level' ? selectedLevel : 'âˆž';
+            document.getElementById('finalLevelText').textContent = gameMode === 'level' ? selectedLevel : '¡Þ';
             
             document.getElementById('hud').style.display = 'none';
             document.getElementById('controls').style.display = 'none';
@@ -3072,7 +3146,7 @@
         function updateUI() {
             document.getElementById('score').textContent = Math.floor(score);
             document.getElementById('lives').textContent = lives;
-            document.getElementById('level').textContent = gameMode === 'level' ? selectedLevel : 'âˆž';
+            document.getElementById('level').textContent = gameMode === 'level' ? selectedLevel : '¡Þ';
             document.getElementById('speedDisplay').textContent = gameSpeed.toFixed(1) + 'x';
         }
 
@@ -3095,6 +3169,11 @@
                             document.getElementById('loading').style.display = 'none';
                             document.getElementById('startScreen').style.display = 'flex';
                             updateHomeScreenStats();
+                            
+                            // Show start ad even if loading times out
+                            setTimeout(() => {
+                                showStartAd();
+                            }, 1000);
                         }, 500);
                     }
                 }, 3000);
