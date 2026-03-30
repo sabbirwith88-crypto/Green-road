@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Green Road - Bangladeshi Car Racing</title>
-    <!-- Adsgram SDK (keep original) -->
+    <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <style>
-        /* Global Reset */
+        /* Global Reset - Performance Optimized */
         * {
             margin: 0;
             padding: 0;
@@ -58,6 +58,7 @@
             top: 0;
             left: 0;
             z-index: 1;
+            will-change: transform;
         }
         
         /* HUD */
@@ -139,13 +140,13 @@
             font-size: 32px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.1s ease;
+            transition: transform 0.05s ease, background 0.1s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             -webkit-tap-highlight-color: transparent;
         }
         
         .control-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.96);
             background: rgba(0, 0, 0, 0.95);
             border-color: white;
         }
@@ -171,7 +172,7 @@
             font-size: 32px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.1s ease;
+            transition: transform 0.05s ease;
             z-index: 2000;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             -webkit-tap-highlight-color: transparent;
@@ -179,7 +180,7 @@
         }
         
         #jumpBtn:active {
-            transform: scale(0.95);
+            transform: scale(0.96);
             background: rgba(0, 0, 0, 0.95);
             border-color: white;
         }
@@ -203,13 +204,13 @@
             font-weight: bold;
             cursor: pointer;
             z-index: 2000;
-            transition: all 0.2s ease;
+            transition: transform 0.1s ease;
             -webkit-tap-highlight-color: transparent;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
         
         .back-btn:active {
-            transform: scale(0.92);
+            transform: scale(0.94);
             background: rgba(0, 0, 0, 0.95);
             border-color: white;
         }
@@ -233,13 +234,13 @@
             font-weight: bold;
             cursor: pointer;
             z-index: 2000;
-            transition: all 0.2s ease;
+            transition: transform 0.1s ease;
             -webkit-tap-highlight-color: transparent;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
         
         .sound-toggle:active {
-            transform: scale(0.92);
+            transform: scale(0.94);
             background: rgba(0, 0, 0, 0.95);
         }
         
@@ -392,7 +393,7 @@
             font-weight: 700;
             border-radius: 30px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.1s ease, opacity 0.2s ease;
             margin: 8px;
             min-width: 200px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -401,7 +402,7 @@
         }
         
         .btn:active {
-            transform: scale(0.95);
+            transform: scale(0.97);
             opacity: 0.9;
         }
         
@@ -435,7 +436,7 @@
             font-size: 20px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.05s ease, background 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -444,7 +445,7 @@
         }
         
         .level-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.96);
             background: rgba(76, 175, 80, 0.5);
         }
         
@@ -671,10 +672,12 @@
             margin: 20px 0;
             border: 2px solid white;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.1s ease;
             user-select: all;
             -webkit-user-select: all;
         }
+        
+        .reward-code:active { transform: scale(0.98); }
         
         .network-error {
             position: fixed;
@@ -732,21 +735,13 @@
 </head>
 <body>
     <div id="loading" class="loading"><div class="loading-text">Green Road</div><div class="loading-bar"><div class="loading-progress" id="loadingProgress"></div></div><div class="loading-percentage" id="loadingPercentage">0%</div></div>
-    <div id="startScreen" class="screen" style="display: none;">
-        <div class="title">GREEN ROAD</div>
-        <p class="subtitle">Drive through Bangladesh! 1 life per level</p>
-        <div class="game-stats"><div class="stat-item"><div class="stat-label">High Score</div><div class="stat-value" id="menuHighScore">0</div></div><div class="stat-item"><div class="stat-label">Best Level</div><div class="stat-value" id="menuCurrentLevel">1</div></div></div>
-        <button class="btn gold" id="selectLevelBtn">Select Level</button>
-        <button class="btn purple" id="nonstopPlayBtn">Nonstop Play</button>
-        <button class="btn blue" id="howToPlayBtn">How to Play</button>
-        <div class="instructions" id="instructions" style="display: none;"><div class="instruction-item"><div class="instruction-icon">←</div><div>Left</div></div><div class="instruction-item"><div class="instruction-icon">→</div><div>Right</div></div><div class="instruction-item"><div class="instruction-icon">↑</div><div>Jump</div></div><div class="instruction-item"><div class="instruction-icon">🪙</div><div>Collect coins to win</div></div><div class="instruction-item"><div class="instruction-icon">❤️</div><div>1 life per level</div></div><button class="btn" onclick="document.getElementById('instructions').style.display='none'" style="margin-top: 10px; padding: 10px 20px; font-size: 14px;">Close</button></div>
-    </div>
+    <div id="startScreen" class="screen" style="display: none;"><div class="title">GREEN ROAD</div><p class="subtitle">Drive through Bangladesh! 1 life per level</p><div class="game-stats"><div class="stat-item"><div class="stat-label">High Score</div><div class="stat-value" id="menuHighScore">0</div></div><div class="stat-item"><div class="stat-label">Best Level</div><div class="stat-value" id="menuCurrentLevel">1</div></div></div><button class="btn gold" id="selectLevelBtn">Select Level</button><button class="btn purple" id="nonstopPlayBtn">Nonstop Play</button><button class="btn blue" id="howToPlayBtn">How to Play</button><div class="instructions" id="instructions" style="display: none;"><div class="instruction-item"><div class="instruction-icon">←</div><div>Left</div></div><div class="instruction-item"><div class="instruction-icon">→</div><div>Right</div></div><div class="instruction-item"><div class="instruction-icon">↑</div><div>Jump</div></div><div class="instruction-item"><div class="instruction-icon">🪙</div><div>Collect coins to win</div></div><div class="instruction-item"><div class="instruction-icon">❤️</div><div>1 life per level</div></div><button class="btn" onclick="document.getElementById('instructions').style.display='none'" style="margin-top: 10px; padding: 10px 20px; font-size: 14px;">Close</button></div></div>
     <div id="levelSelectScreen" class="screen" style="display:none;"><div class="back-btn" id="backFromLevelSelectBtn">←</div><h2 class="title" style="font-size: 32px;">Select Level</h2><div class="level-info">Current: <span id="currentLevelDisplay">1</span><span id="difficultyDisplay" class="level-difficulty difficulty-easy">Easy</span></div><div class="level-requirement"><div class="requirement-text">Coins needed:</div><div class="requirement-value" id="coinsRequiredDisplay">1</div></div><div class="level-progress"><div id="levelProgressBar" class="level-progress-bar" style="width: 1%;"></div></div><div class="level-select-container" id="levelSelectContainer"></div><button class="btn gold" id="startSelectedLevelBtn" style="margin-top: 10px;">Start</button></div>
     <div id="gameOverScreen" class="screen" style="display:none;"><h2 class="title" style="background:linear-gradient(45deg,#d32f2f,#f44336);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Game Over!</h2><div class="score-display" id="finalScoreText">0 coins</div><div class="subtitle" id="highScoreText">High Score: 0</div><div class="subtitle">Level: <span id="finalLevelText">1</span></div><div class="game-over-options"><button class="btn gold" id="restartBtn">Play Again</button><button class="btn blue" id="menuBtn">Menu</button></div></div>
     <div id="levelCompleteScreen" class="screen" style="display:none;"><h2 class="title" style="background:linear-gradient(45deg,#4CAF50,#2E7D32);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Complete!</h2><div class="score-display" id="levelCompleteScore">0 coins</div><div class="subtitle">Level <span id="completedLevelText">1</span> done!</div><div class="game-over-options"><button class="btn gold" id="continueBtn">Next Level</button><button class="btn blue" id="selectAnotherLevelBtn">Select Level</button><button class="btn" id="menuBtn2">Menu</button></div></div>
     <div id="rewardScreen" class="reward-screen"><h2 style="font-size: 32px;">CONGRATULATIONS!</h2><p>You completed all 20 levels!</p><p>Your reward code:</p><div class="reward-code" id="rewardCodeDisplay" onclick="copyRewardCode()">GR20-XXXXXX</div><p class="copy-instruction">Click to copy</p><button class="btn gold" id="resetAfterRewardBtn">Copy & Reset</button></div>
     <div id="pauseMenu" class="pause-menu"><h2 class="pause-title">Paused</h2><div class="pause-stats"><div class="stat-row"><span>Score:</span><span class="stat-value" id="pauseScore">0</span></div><div class="stat-row"><span>Lives:</span><span class="stat-value" id="pauseLives">1</span></div><div class="stat-row"><span>Level:</span><span class="stat-value" id="pauseLevel">1</span></div><div class="stat-row"><span>Sound:</span><span class="stat-value" id="pauseSoundStatus">ON</span></div></div><div class="pause-options"><button class="btn gold" id="resumeBtn">Resume</button><button class="btn blue" id="restartFromPauseBtn">Restart</button><button class="btn" id="backToMenuFromPauseBtn">Menu</button></div></div>
-    <div id="networkErrorScreen" class="network-error"><h2>No Internet</h2><p>Please check connection</p><button class="btn red" id="retryConnectionBtn">Retry</button><button class="btn blue" id="backToMenuNetworkBtn">Menu</button></div>
+    <div id="networkErrorScreen" class="network-error"><h2>⚠️ No Internet Connection</h2><p>Please check your network and try again</p><button class="btn red" id="retryConnectionBtn">Retry</button><button class="btn blue" id="backToMenuNetworkBtn">Back to Menu</button></div>
     <div id="gameContainer"></div>
     <div class="sound-toggle" id="soundToggle" style="display: none;"></div>
     <div id="hud"><div class="hud-section"><div class="hud-label">COINS</div><div class="hud-value score" id="score">0</div></div><div class="hud-section"><div class="hud-label">LIVES</div><div class="hud-value lives" id="lives">1</div></div><div class="hud-section"><div class="hud-label">LEVEL</div><div class="hud-value level" id="level">1</div></div><div class="hud-section"><div class="hud-label">SPEED</div><div class="hud-value speed" id="speedDisplay">1.0x</div></div></div>
@@ -756,99 +751,147 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         (function(){
-            // --- CONFIGURATION UPDATED: MAX LEVEL = 20 ---
+            // Game configuration - MAX 20 levels
             const MAX_LEVEL = 20;
             let scene, camera, renderer, car, road;
             let coinPool=[], obstaclePool=[], rickshaws=[], buses=[], bikes=[], trees=[];
-            let gameRunning=false, gamePaused=false, animationFrame;
+            let gameRunning=false, gamePaused=false, animationFrame, lastTimestamp=0;
             let score=0, lives=1, highScore=0, currentLevel=1, unlockedLevels=1;
-            let gameSpeed=1.0, baseSpeed=1.0, speedMultiplier=1.0, distance=0, roadWidth=10;
+            let gameSpeed=1.0, baseSpeed=1.0, speedMultiplier=1.0, roadWidth=10;
             let isJumping=false, jumpVelocity=0, selectedLevel=1, speedIncreaseTimer=0;
-            const SPEED_INCREASE_INTERVAL=10, SPEED_INCREASE_AMOUNT=0.1;
+            const SPEED_INCREASE_INTERVAL=10, SPEED_INCREASE_AMOUNT=0.08;
             let soundEnabled=true, audioContext=null, gainNode=null;
             let AdController=null, adInitialized=false;
             let gameStartAdShown=false, gameOverAdShown=false, levelCompleteAdShown=false;
             let controls={left:false,right:false,jump:false}, gameMode='level';
             
+            // ----- COIN REQUIREMENT LOGIC (Progressive) -----
+            // Level 1-10: 7 to 20 coins (increments by ~1.44 each level, but exact as requested)
+            // Level 1:7, L2:8, L3:9, L4:10, L5:11, L6:12, L7:13, L8:14, L9:15, L10:16, L11:17, L12:18, L13:19, L14:20, L15:21, L16:22, L17:23, L18:24, L19:25, L20:25
+            // But user said: level 1-10 max 20 coin, level 11-20 max 25 coin. So:
+            // Level 1:7, 2:8, 3:9, 4:10, 5:11, 6:12, 7:13, 8:14, 9:15, 10:16, 11:17, 12:18, 13:19, 14:20, 15:21, 16:22, 17:23, 18:24, 19:25, 20:25
+            function getCoinsRequired(level) {
+                if (level >= 1 && level <= 10) {
+                    return 6 + level; // L1:7, L10:16
+                } else if (level >= 11 && level <= 19) {
+                    return 6 + level; // L11:17, L19:25
+                } else if (level === 20) {
+                    return 25;
+                }
+                return 25;
+            }
+            
             // Load saved data
             try{
                 highScore=parseInt(localStorage.getItem('banglaCarHighScore'))||0;
-                currentLevel=parseInt(localStorage.getItem('currentLevel'))||1;
+                currentLevel=Math.min(MAX_LEVEL, parseInt(localStorage.getItem('currentLevel'))||1);
                 unlockedLevels=Math.min(MAX_LEVEL, parseInt(localStorage.getItem('unlockedLevels'))||1);
                 soundEnabled=localStorage.getItem('banglaCarSoundEnabled')!=='false';
                 selectedLevel=Math.min(currentLevel,MAX_LEVEL);
             }catch(e){}
-            if(currentLevel>MAX_LEVEL) currentLevel=MAX_LEVEL;
-            if(unlockedLevels>MAX_LEVEL) unlockedLevels=MAX_LEVEL;
             
-            // Level config for 20 levels
+            // Level config with dynamic coin requirement
             const LEVEL_CONFIG={};
-            for(let i=1;i<=MAX_LEVEL;i++){ LEVEL_CONFIG[i]={lives:1, coinsToComplete:i, difficulty:i<=4?'easy':i<=8?'medium':i<=12?'hard':'extreme'}; }
+            for(let i=1;i<=MAX_LEVEL;i++){ 
+                let coinsNeeded = getCoinsRequired(i);
+                let difficulty = i<=4?'easy':i<=8?'medium':i<=12?'hard':'extreme';
+                LEVEL_CONFIG[i]={lives:1, coinsToComplete:coinsNeeded, difficulty:difficulty};
+            }
             
             const COLORS={road:0x2E7D32,grass:0x388E3C,sky:0x87CEEB,rickshaw:0xFF9800,bus:0xD32F2F,bike:0x1976D2};
+            
+            // Network monitoring
+            let wasOffline=false;
+            function checkNetworkAndHandle(){
+                if(!navigator.onLine){
+                    if(gameRunning && !wasOffline){
+                        wasOffline=true;
+                        gameRunning=false;
+                        gamePaused=false;
+                        document.getElementById('networkErrorScreen').style.display='flex';
+                        document.getElementById('hud').style.display='none';
+                        document.getElementById('controls').style.display='none';
+                        document.getElementById('jumpBtn').style.display='none';
+                        document.getElementById('backBtn').style.display='none';
+                        document.getElementById('soundToggle').style.display='none';
+                        document.getElementById('modeIndicator').style.display='none';
+                        document.querySelector('.controls-info').style.display='none';
+                    }
+                } else {
+                    if(wasOffline){
+                        wasOffline=false;
+                        document.getElementById('networkErrorScreen').style.display='none';
+                    }
+                }
+            }
+            setInterval(checkNetworkAndHandle, 500);
             
             function initAds(){ try{ if(typeof window.Adsgram!=='undefined'){ AdController=window.Adsgram.init({blockId:"int-24179"}); adInitialized=true; } }catch(e){} }
             function showAd(type){ if(!adInitialized||!AdController) return Promise.resolve(); return AdController.show().catch(()=>{}); }
             
-            function initAudio(){ try{ audioContext=new(window.AudioContext||window.webkitAudioContext)(); gainNode=audioContext.createGain(); gainNode.connect(audioContext.destination); gainNode.gain.value=soundEnabled?0.3:0; }catch(e){} }
-            function playSound(type){ if(!audioContext||!soundEnabled||!gainNode) return; try{ const osc=audioContext.createOscillator(); const gain=audioContext.createGain(); osc.connect(gain); gain.connect(gainNode); if(type==='coin'){ osc.frequency.value=1000; osc.frequency.exponentialRampToValueAtTime(2000,audioContext.currentTime+0.1); gain.gain.value=0.2; gain.gain.exponentialRampToValueAtTime(0.01,audioContext.currentTime+0.2); osc.start(); osc.stop(audioContext.currentTime+0.2); } else if(type==='jump'){ osc.frequency.value=400; osc.frequency.exponentialRampToValueAtTime(800,audioContext.currentTime+0.15); gain.gain.value=0.3; gain.gain.exponentialRampToValueAtTime(0.01,audioContext.currentTime+0.25); osc.start(); osc.stop(audioContext.currentTime+0.25); } else if(type==='crash'){ osc.type='sawtooth'; osc.frequency.value=200; osc.frequency.exponentialRampToValueAtTime(50,audioContext.currentTime+0.3); gain.gain.value=0.4; gain.gain.exponentialRampToValueAtTime(0.01,audioContext.currentTime+0.4); osc.start(); osc.stop(audioContext.currentTime+0.4); } }catch(e){} }
-            function toggleSound(){ soundEnabled=!soundEnabled; localStorage.setItem('banglaCarSoundEnabled',soundEnabled); document.getElementById('soundToggle').classList.toggle('muted',!soundEnabled); if(audioContext&&gainNode) gainNode.gain.value=soundEnabled?0.3:0; }
+            function initAudio(){ try{ audioContext=new(window.AudioContext||window.webkitAudioContext)(); gainNode=audioContext.createGain(); gainNode.connect(audioContext.destination); gainNode.gain.value=soundEnabled?0.2:0; }catch(e){} }
+            function playSound(type){ if(!audioContext||!soundEnabled||!gainNode) return; try{ const osc=audioContext.createOscillator(); const gain=audioContext.createGain(); osc.connect(gain); gain.connect(gainNode); if(type==='coin'){ osc.frequency.value=1000; osc.frequency.exponentialRampToValueAtTime(2000,audioContext.currentTime+0.1); gain.gain.value=0.15; gain.gain.exponentialRampToValueAtTime(0.01,audioContext.currentTime+0.2); osc.start(); osc.stop(audioContext.currentTime+0.2); } else if(type==='jump'){ osc.frequency.value=400; osc.frequency.exponentialRampToValueAtTime(800,audioContext.currentTime+0.15); gain.gain.value=0.2; gain.gain.exponentialRampToValueAtTime(0.01,audioContext.currentTime+0.25); osc.start(); osc.stop(audioContext.currentTime+0.25); } else if(type==='crash'){ osc.type='sawtooth'; osc.frequency.value=200; osc.frequency.exponentialRampToValueAtTime(50,audioContext.currentTime+0.3); gain.gain.value=0.25; gain.gain.exponentialRampToValueAtTime(0.01,audioContext.currentTime+0.4); osc.start(); osc.stop(audioContext.currentTime+0.4); } }catch(e){} }
+            function toggleSound(){ soundEnabled=!soundEnabled; localStorage.setItem('banglaCarSoundEnabled',soundEnabled); document.getElementById('soundToggle').classList.toggle('muted',!soundEnabled); if(audioContext&&gainNode) gainNode.gain.value=soundEnabled?0.2:0; }
             
             function initScene(){
-                scene=new THREE.Scene(); scene.background=new THREE.Color(COLORS.sky); scene.fog=new THREE.Fog(COLORS.sky,10,200);
-                camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,0.1,1000); camera.position.set(0,8,15);
-                renderer=new THREE.WebGLRenderer({antialias:true,alpha:false}); renderer.setSize(window.innerWidth,window.innerHeight); renderer.shadowMap.enabled=true; document.getElementById('gameContainer').appendChild(renderer.domElement);
-                const ambient=new THREE.AmbientLight(0xffffff,0.7); scene.add(ambient);
-                const light=new THREE.DirectionalLight(0xffffff,0.9); light.position.set(5,20,10); light.castShadow=true; scene.add(light);
+                scene=new THREE.Scene(); scene.background=new THREE.Color(COLORS.sky); scene.fog=new THREE.Fog(COLORS.sky,20,150);
+                camera=new THREE.PerspectiveCamera(55,window.innerWidth/window.innerHeight,0.1,1000); camera.position.set(0,6,12);
+                renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"high-performance"}); 
+                renderer.setSize(window.innerWidth,window.innerHeight); renderer.shadowMap.enabled=true; 
+                document.getElementById('gameContainer').appendChild(renderer.domElement);
+                const ambient=new THREE.AmbientLight(0xffffff,0.6); scene.add(ambient);
+                const light=new THREE.DirectionalLight(0xffffff,0.8); light.position.set(5,15,8); light.castShadow=true; scene.add(light);
                 const roadGeo=new THREE.PlaneGeometry(roadWidth,200,1,1); const roadMat=new THREE.MeshStandardMaterial({color:COLORS.road}); road=new THREE.Mesh(roadGeo,roadMat); road.rotation.x=-Math.PI/2; road.position.set(0,0,-50); road.receiveShadow=true; scene.add(road);
                 const lineMat=new THREE.MeshStandardMaterial({color:0xFFFFFF}); for(let z=-100;z<0;z+=8){ const line=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.02,4),lineMat); line.position.set(0,0.05,z); scene.add(line); }
-                const grassGeo=new THREE.PlaneGeometry(roadWidth+20,200); const grassMat=new THREE.MeshStandardMaterial({color:COLORS.grass}); const grass=new THREE.Mesh(grassGeo,grassMat); grass.rotation.x=-Math.PI/2; grass.position.set(0,0.01,-50); scene.add(grass);
+                const grassGeo=new THREE.PlaneGeometry(roadWidth+18,200); const grassMat=new THREE.MeshStandardMaterial({color:COLORS.grass}); const grass=new THREE.Mesh(grassGeo,grassMat); grass.rotation.x=-Math.PI/2; grass.position.set(0,0.01,-50); scene.add(grass);
                 car=new THREE.Group(); const body=new THREE.Mesh(new THREE.BoxGeometry(1.8,1.0,3.0),new THREE.MeshStandardMaterial({color:0x4CAF50})); body.position.y=0.5; body.castShadow=true; car.add(body);
                 const cabin=new THREE.Mesh(new THREE.BoxGeometry(1.4,0.8,1.5),new THREE.MeshStandardMaterial({color:0x212121})); cabin.position.set(0,1.1,-0.3); cabin.castShadow=true; car.add(cabin);
-                const wheelGeo=new THREE.CylinderGeometry(0.4,0.4,0.3,8); const wheelMat=new THREE.MeshStandardMaterial({color:0x212121}); const positions=[[-0.7,0.2,1.0],[0.7,0.2,1.0],[-0.7,0.2,-1.0],[0.7,0.2,-1.0]]; positions.forEach(pos=>{ const w=new THREE.Mesh(wheelGeo,wheelMat); w.rotation.z=Math.PI/2; w.position.set(pos[0],pos[1],pos[2]); w.castShadow=true; car.add(w); }); car.position.set(0,0.5,0); scene.add(car);
-                for(let z=-150;z<0;z+=15){ for(let s=-1;s<=1;s+=2){ if(Math.random()>0.3){ const tree=new THREE.Group(); const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.4,3,6),new THREE.MeshStandardMaterial({color:0x8D6E63})); trunk.position.y=1.5; tree.add(trunk); const leaves=new THREE.Mesh(new THREE.ConeGeometry(1.0,2,6),new THREE.MeshStandardMaterial({color:0x2E7D32})); leaves.position.y=3; tree.add(leaves); tree.position.set(s*(roadWidth/2+5+Math.random()*5),0,z); scene.add(tree); trees.push(tree); } } }
-                const coinGeo=new THREE.CylinderGeometry(0.4,0.4,0.1,8); const coinMat=new THREE.MeshStandardMaterial({color:0xFFD700,emissive:0x442200}); for(let i=0;i<50;i++){ const coin=new THREE.Mesh(coinGeo,coinMat); coin.rotation.x=Math.PI/2; coin.visible=false; scene.add(coin); coinPool.push(coin); }
-                const obstacleTypes=[0x795548,0x9E9E9E,0x757575,0x5D4037]; for(let i=0;i<20;i++){ const type=obstacleTypes[Math.floor(Math.random()*obstacleTypes.length)]; const height=0.3+Math.random()*0.4; const obs=new THREE.Mesh(new THREE.BoxGeometry(0.8+Math.random()*0.4,height,0.8+Math.random()*0.4),new THREE.MeshStandardMaterial({color:type})); obs.visible=false; scene.add(obs); obstaclePool.push(obs); }
+                const wheelGeo=new THREE.CylinderGeometry(0.4,0.4,0.3,8); const wheelMat=new THREE.MeshStandardMaterial({color:0x212121}); [[-0.7,0.2,1.0],[0.7,0.2,1.0],[-0.7,0.2,-1.0],[0.7,0.2,-1.0]].forEach(pos=>{ const w=new THREE.Mesh(wheelGeo,wheelMat); w.rotation.z=Math.PI/2; w.position.set(pos[0],pos[1],pos[2]); w.castShadow=true; car.add(w); }); car.position.set(0,0.5,0); scene.add(car);
+                for(let z=-120;z<0;z+=18){ for(let s=-1;s<=1;s+=2){ if(Math.random()>0.4){ const tree=new THREE.Group(); const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.4,2.5,6),new THREE.MeshStandardMaterial({color:0x8D6E63})); trunk.position.y=1.2; tree.add(trunk); const leaves=new THREE.Mesh(new THREE.ConeGeometry(0.9,1.8,6),new THREE.MeshStandardMaterial({color:0x2E7D32})); leaves.position.y=2.6; tree.add(leaves); tree.position.set(s*(roadWidth/2+4+Math.random()*4),0,z); scene.add(tree); trees.push(tree); } } }
+                const coinGeo=new THREE.CylinderGeometry(0.4,0.4,0.1,8); const coinMat=new THREE.MeshStandardMaterial({color:0xFFD700,emissive:0x442200}); for(let i=0;i<40;i++){ const coin=new THREE.Mesh(coinGeo,coinMat); coin.rotation.x=Math.PI/2; coin.visible=false; scene.add(coin); coinPool.push(coin); }
+                const obstacleTypes=[0x795548,0x9E9E9E,0x757575]; for(let i=0;i<18;i++){ const obs=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.4,0.8),new THREE.MeshStandardMaterial({color:obstacleTypes[i%3]})); obs.visible=false; scene.add(obs); obstaclePool.push(obs); }
                 for(let i=0;i<4;i++){ const r=new THREE.Mesh(new THREE.BoxGeometry(1.6,1.3,3.0),new THREE.MeshStandardMaterial({color:COLORS.rickshaw})); r.position.set((i%2===0?-2:2),0.65,-50-i*25); scene.add(r); rickshaws.push(r); }
                 for(let i=0;i<2;i++){ const b=new THREE.Mesh(new THREE.BoxGeometry(2.5,3.0,8.0),new THREE.MeshStandardMaterial({color:COLORS.bus})); b.position.set((i%2===0?-1:3),1.5,-80-i*50); scene.add(b); buses.push(b); }
                 for(let i=0;i<3;i++){ const bi=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.7,1.2),new THREE.MeshStandardMaterial({color:COLORS.bike})); bi.position.set((i%2===0?0:4),0.35,-40-i*30); scene.add(bi); bikes.push(bi); }
                 document.getElementById('loadingProgress').style.width='100%'; document.getElementById('loadingPercentage').textContent='100%';
-                setTimeout(()=>{ document.getElementById('loading').style.display='none'; document.getElementById('startScreen').style.display='flex'; updateHomeScreenStats(); generateLevelButtons(); setTimeout(()=>showAd('start'),1000); },500);
+                setTimeout(()=>{ document.getElementById('loading').style.display='none'; document.getElementById('startScreen').style.display='flex'; updateHomeScreenStats(); generateLevelButtons(); setTimeout(()=>showAd('start'),1000); },300);
                 animate();
             }
             
-            function spawnCoin(z){ const coin=coinPool.find(c=>!c.visible); if(coin){ coin.visible=true; coin.position.set((Math.random()-0.5)*6,1.0,z); } }
-            function spawnObstacle(z){ const obs=obstaclePool.find(o=>!o.visible); if(obs){ obs.visible=true; obs.position.set((Math.random()-0.5)*6,0.3,z); obs.rotation.y=Math.random()*Math.PI; } }
+            function spawnCoin(z){ const coin=coinPool.find(c=>!c.visible); if(coin){ coin.visible=true; coin.position.set((Math.random()-0.5)*5.5,0.9,z); } }
+            function spawnObstacle(z){ const obs=obstaclePool.find(o=>!o.visible); if(obs){ obs.visible=true; obs.position.set((Math.random()-0.5)*5.5,0.2,z); obs.rotation.y=Math.random()*Math.PI; } }
             
             function updateGame(delta){
                 if(!gameRunning||gamePaused) return;
-                distance+=gameSpeed*delta*10; speedIncreaseTimer+=delta; if(speedIncreaseTimer>=SPEED_INCREASE_INTERVAL){ speedMultiplier+=SPEED_INCREASE_AMOUNT; gameSpeed=baseSpeed*speedMultiplier; speedIncreaseTimer=0; document.getElementById('speedDisplay').textContent=gameSpeed.toFixed(1)+'x'; }
-                if(isJumping){ car.position.y+=jumpVelocity*delta; jumpVelocity-=15*delta; if(car.position.y<=0.5){ car.position.y=0.5; isJumping=false; document.getElementById('jumpIndicator').style.display='none'; } } else if(controls.jump){ isJumping=true; jumpVelocity=8; playSound('jump'); document.getElementById('jumpIndicator').style.display='block'; setTimeout(()=>document.getElementById('jumpIndicator').style.display='none',500); }
-                const moveSpeed=8*delta*gameSpeed; const maxX=roadWidth/2-1.2; if(controls.left) car.position.x=Math.max(-maxX,car.position.x-moveSpeed); if(controls.right) car.position.x=Math.min(maxX,car.position.x+moveSpeed);
-                coinPool.forEach(coin=>{ if(!coin.visible) return; coin.position.z+=gameSpeed*delta*12; coin.rotation.y+=delta*5; if(Math.hypot(coin.position.x-car.position.x,coin.position.z-car.position.z)<1.5){ score++; coin.visible=false; playSound('coin'); if(gameMode==='level'&&score>=LEVEL_CONFIG[selectedLevel].coinsToComplete) levelComplete(); } if(coin.position.z>10) coin.visible=false; });
-                obstaclePool.forEach(obs=>{ if(!obs.visible) return; obs.position.z+=gameSpeed*delta*15; if(!isJumping&&Math.hypot(obs.position.x-car.position.x,obs.position.z-car.position.z)<1.5){ lives--; obs.visible=false; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },200); updateUI(); if(lives<=0) gameOver(); } if(obs.position.z>10) obs.visible=false; });
-                rickshaws.forEach(r=>{ r.position.z+=gameSpeed*delta*10; if(r.position.z>10) r.position.z=-100; if(!isJumping&&Math.hypot(r.position.x-car.position.x,r.position.z-car.position.z)<2.0){ lives--; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },200); updateUI(); if(lives<=0) gameOver(); } });
-                buses.forEach(b=>{ b.position.z+=gameSpeed*delta*7; if(b.position.z>10) b.position.z=-120; if(!isJumping&&Math.hypot(b.position.x-car.position.x,b.position.z-car.position.z)<3.0){ lives--; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },200); updateUI(); if(lives<=0) gameOver(); } });
-                bikes.forEach(bi=>{ bi.position.z+=gameSpeed*delta*13; if(bi.position.z>10) bi.position.z=-80; if(!isJumping&&Math.hypot(bi.position.x-car.position.x,bi.position.z-car.position.z)<1.3){ lives--; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },200); updateUI(); if(lives<=0) gameOver(); } });
-                if(Math.random()<delta*0.5) spawnCoin(-60); if(Math.random()<delta*0.35) spawnObstacle(-70);
-                camera.position.x=car.position.x*0.3; camera.position.y=6+car.position.y; camera.position.z=car.position.z+10; camera.lookAt(car.position.x,car.position.y+1,car.position.z-2);
+                const dt=Math.min(delta,0.033);
+                speedIncreaseTimer+=dt; if(speedIncreaseTimer>=SPEED_INCREASE_INTERVAL){ speedMultiplier+=SPEED_INCREASE_AMOUNT; gameSpeed=baseSpeed*speedMultiplier; speedIncreaseTimer=0; document.getElementById('speedDisplay').textContent=gameSpeed.toFixed(1)+'x'; }
+                if(isJumping){ car.position.y+=jumpVelocity*dt; jumpVelocity-=18*dt; if(car.position.y<=0.5){ car.position.y=0.5; isJumping=false; document.getElementById('jumpIndicator').style.display='none'; } } else if(controls.jump){ isJumping=true; jumpVelocity=7.5; playSound('jump'); document.getElementById('jumpIndicator').style.display='block'; setTimeout(()=>document.getElementById('jumpIndicator').style.display='none',400); }
+                const moveSpeed=9*dt*gameSpeed; const maxX=roadWidth/2-1.3; if(controls.left) car.position.x=Math.max(-maxX,car.position.x-moveSpeed); if(controls.right) car.position.x=Math.min(maxX,car.position.x+moveSpeed);
+                for(let coin of coinPool){ if(!coin.visible) continue; coin.position.z+=gameSpeed*dt*13; coin.rotation.y+=dt*8; if(Math.hypot(coin.position.x-car.position.x,coin.position.z-car.position.z)<1.3){ score++; coin.visible=false; playSound('coin'); let requiredCoins = LEVEL_CONFIG[selectedLevel].coinsToComplete; if(gameMode==='level'&&score>=requiredCoins) levelComplete(); } if(coin.position.z>8) coin.visible=false; }
+                for(let obs of obstaclePool){ if(!obs.visible) continue; obs.position.z+=gameSpeed*dt*14; if(!isJumping&&Math.hypot(obs.position.x-car.position.x,obs.position.z-car.position.z)<1.2){ lives--; obs.visible=false; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },150); updateUI(); if(lives<=0) gameOver(); } if(obs.position.z>8) obs.visible=false; }
+                for(let r of rickshaws){ r.position.z+=gameSpeed*dt*9; if(r.position.z>8) r.position.z=-80; if(!isJumping&&Math.hypot(r.position.x-car.position.x,r.position.z-car.position.z)<1.7){ lives--; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },150); updateUI(); if(lives<=0) gameOver(); } }
+                for(let b of buses){ b.position.z+=gameSpeed*dt*6.5; if(b.position.z>8) b.position.z=-100; if(!isJumping&&Math.hypot(b.position.x-car.position.x,b.position.z-car.position.z)<2.5){ lives--; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },150); updateUI(); if(lives<=0) gameOver(); } }
+                for(let bi of bikes){ bi.position.z+=gameSpeed*dt*12; if(bi.position.z>8) bi.position.z=-70; if(!isJumping&&Math.hypot(bi.position.x-car.position.x,bi.position.z-car.position.z)<1.2){ lives--; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },150); updateUI(); if(lives<=0) gameOver(); } }
+                if(Math.random()<dt*0.6) spawnCoin(-55); if(Math.random()<dt*0.4) spawnObstacle(-65);
+                camera.position.x=car.position.x*0.25; camera.position.y=5.5+car.position.y*0.3; camera.position.z=car.position.z+9; camera.lookAt(car.position.x,car.position.y+0.8,car.position.z-3);
                 updateUI();
             }
             
             function updateUI(){ document.getElementById('score').textContent=Math.floor(score); document.getElementById('lives').textContent=lives; document.getElementById('level').textContent=gameMode==='level'?selectedLevel:'∞'; document.getElementById('speedDisplay').textContent=gameSpeed.toFixed(1)+'x'; }
             function updateHomeScreenStats(){ document.getElementById('menuHighScore').textContent=highScore; document.getElementById('menuCurrentLevel').textContent=Math.min(currentLevel,MAX_LEVEL); }
-            function generateLevelButtons(){ const container=document.getElementById('levelSelectContainer'); container.innerHTML=''; for(let i=1;i<=MAX_LEVEL;i++){ const btn=document.createElement('button'); btn.className='level-btn'+(i>unlockedLevels?' locked':'')+(i===selectedLevel?' current':''); btn.innerHTML=`<div>${i}</div><div class="win-requirement">${LEVEL_CONFIG[i].coinsToComplete}</div>`; if(i<=unlockedLevels){ btn.onclick=()=>{ selectedLevel=i; document.getElementById('currentLevelDisplay').textContent=i; document.getElementById('coinsRequiredDisplay').textContent=LEVEL_CONFIG[i].coinsToComplete; document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('current')); btn.classList.add('current'); const diff=LEVEL_CONFIG[i].difficulty; document.getElementById('difficultyDisplay').textContent=diff.charAt(0).toUpperCase()+diff.slice(1); document.getElementById('difficultyDisplay').className='level-difficulty difficulty-'+diff; }; } container.appendChild(btn); } document.getElementById('currentLevelDisplay').textContent=selectedLevel; document.getElementById('coinsRequiredDisplay').textContent=LEVEL_CONFIG[selectedLevel].coinsToComplete; document.getElementById('levelProgressBar').style.width=((selectedLevel-1)/MAX_LEVEL*100)+'%'; const diff=LEVEL_CONFIG[selectedLevel].difficulty; document.getElementById('difficultyDisplay').textContent=diff.charAt(0).toUpperCase()+diff.slice(1); document.getElementById('difficultyDisplay').className='level-difficulty difficulty-'+diff; }
-            function startLevelMode(){ gameRunning=true; gamePaused=false; gameMode='level'; score=0; lives=1; gameSpeed=1.0; speedMultiplier=1.0; speedIncreaseTimer=0; isJumping=false; resetGameObjects(); document.getElementById('levelSelectScreen').style.display='none'; document.getElementById('startScreen').style.display='none'; document.getElementById('hud').style.display='flex'; document.getElementById('controls').style.display='flex'; document.getElementById('jumpBtn').style.display='flex'; document.getElementById('backBtn').style.display='flex'; document.getElementById('soundToggle').style.display='flex'; document.getElementById('modeIndicator').style.display='block'; document.getElementById('modeText').textContent='Level'; document.querySelector('.controls-info').style.display='block'; updateUI(); for(let i=0;i<6;i++) spawnCoin(-30-i*15); for(let i=0;i<3;i++) spawnObstacle(-40-i*20); }
-            function startNonstopMode(){ gameRunning=true; gamePaused=false; gameMode='nonstop'; score=0; lives=5; gameSpeed=1.0; speedMultiplier=1.0; speedIncreaseTimer=0; isJumping=false; resetGameObjects(); document.getElementById('startScreen').style.display='none'; document.getElementById('hud').style.display='flex'; document.getElementById('controls').style.display='flex'; document.getElementById('jumpBtn').style.display='flex'; document.getElementById('backBtn').style.display='flex'; document.getElementById('soundToggle').style.display='flex'; document.getElementById('modeIndicator').style.display='block'; document.getElementById('modeText').textContent='Nonstop'; document.querySelector('.controls-info').style.display='block'; updateUI(); for(let i=0;i<6;i++) spawnCoin(-30-i*15); for(let i=0;i<3;i++) spawnObstacle(-40-i*20); }
+            function generateLevelButtons(){ const container=document.getElementById('levelSelectContainer'); container.innerHTML=''; for(let i=1;i<=MAX_LEVEL;i++){ const coinsReq=getCoinsRequired(i); const btn=document.createElement('button'); btn.className='level-btn'+(i>unlockedLevels?' locked':'')+(i===selectedLevel?' current':''); btn.innerHTML=`<div>${i}</div><div class="win-requirement">${coinsReq}</div>`; if(i<=unlockedLevels){ btn.onclick=()=>{ selectedLevel=i; document.getElementById('currentLevelDisplay').textContent=i; let req=LEVEL_CONFIG[i].coinsToComplete; document.getElementById('coinsRequiredDisplay').textContent=req; document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('current')); btn.classList.add('current'); const diff=LEVEL_CONFIG[i].difficulty; document.getElementById('difficultyDisplay').textContent=diff.charAt(0).toUpperCase()+diff.slice(1); document.getElementById('difficultyDisplay').className='level-difficulty difficulty-'+diff; }; } container.appendChild(btn); } document.getElementById('currentLevelDisplay').textContent=selectedLevel; document.getElementById('coinsRequiredDisplay').textContent=LEVEL_CONFIG[selectedLevel].coinsToComplete; document.getElementById('levelProgressBar').style.width=((selectedLevel-1)/MAX_LEVEL*100)+'%'; const diff=LEVEL_CONFIG[selectedLevel].difficulty; document.getElementById('difficultyDisplay').textContent=diff.charAt(0).toUpperCase()+diff.slice(1); document.getElementById('difficultyDisplay').className='level-difficulty difficulty-'+diff; }
+            
+            function startLevelMode(){ if(!navigator.onLine){ document.getElementById('networkErrorScreen').style.display='flex'; return; } gameRunning=true; gamePaused=false; gameMode='level'; score=0; lives=1; gameSpeed=1.0; speedMultiplier=1.0; speedIncreaseTimer=0; isJumping=false; resetGameObjects(); document.getElementById('levelSelectScreen').style.display='none'; document.getElementById('startScreen').style.display='none'; document.getElementById('hud').style.display='flex'; document.getElementById('controls').style.display='flex'; document.getElementById('jumpBtn').style.display='flex'; document.getElementById('backBtn').style.display='flex'; document.getElementById('soundToggle').style.display='flex'; document.getElementById('modeIndicator').style.display='block'; document.getElementById('modeText').textContent='Level'; document.querySelector('.controls-info').style.display='block'; updateUI(); for(let i=0;i<6;i++) spawnCoin(-30-i*12); for(let i=0;i<2;i++) spawnObstacle(-40-i*18); }
+            function startNonstopMode(){ if(!navigator.onLine){ document.getElementById('networkErrorScreen').style.display='flex'; return; } gameRunning=true; gamePaused=false; gameMode='nonstop'; score=0; lives=5; gameSpeed=1.0; speedMultiplier=1.0; speedIncreaseTimer=0; isJumping=false; resetGameObjects(); document.getElementById('startScreen').style.display='none'; document.getElementById('hud').style.display='flex'; document.getElementById('controls').style.display='flex'; document.getElementById('jumpBtn').style.display='flex'; document.getElementById('backBtn').style.display='flex'; document.getElementById('soundToggle').style.display='flex'; document.getElementById('modeIndicator').style.display='block'; document.getElementById('modeText').textContent='Nonstop'; document.querySelector('.controls-info').style.display='block'; updateUI(); for(let i=0;i<6;i++) spawnCoin(-30-i*12); for(let i=0;i<2;i++) spawnObstacle(-40-i*18); }
             function resetGameObjects(){ coinPool.forEach(c=>c.visible=false); obstaclePool.forEach(o=>o.visible=false); rickshaws.forEach((r,i)=>{ r.position.z=-50-i*25; r.position.x=(i%2===0?-2:2); }); buses.forEach((b,i)=>{ b.position.z=-80-i*50; b.position.x=(i%2===0?-1:3); }); bikes.forEach((bi,i)=>{ bi.position.z=-40-i*30; bi.position.x=(i%2===0?0:4); }); if(car){ car.position.set(0,0.5,0); car.children[0].material.color.setHex(0x4CAF50); } }
-            function gameOver(){ if(!gameRunning) return; gameRunning=false; playSound('crash'); showAd('gameover').finally(()=>{ if(score>highScore){ highScore=score; localStorage.setItem('banglaCarHighScore',highScore); } document.getElementById('finalScoreText').textContent=score+' coins'; document.getElementById('highScoreText').textContent='High Score: '+highScore; document.getElementById('finalLevelText').textContent=gameMode==='level'?selectedLevel:'∞'; document.getElementById('hud').style.display='none'; document.getElementById('controls').style.display='none'; document.getElementById('jumpBtn').style.display='none'; document.getElementById('backBtn').style.display='none'; document.getElementById('soundToggle').style.display='none'; document.getElementById('modeIndicator').style.display='none'; document.querySelector('.controls-info').style.display='none'; document.getElementById('gameOverScreen').style.display='flex'; gameOverAdShown=false; }); }
-            function levelComplete(){ if(!gameRunning) return; gameRunning=false; showAd('levelcomplete').finally(()=>{ if(selectedLevel===MAX_LEVEL){ const rewardCode=`GR20-${Math.random().toString(36).substr(2,6).toUpperCase()}`; document.getElementById('rewardCodeDisplay').textContent=rewardCode; document.getElementById('rewardScreen').style.display='flex'; } if(score>highScore){ highScore=score; localStorage.setItem('banglaCarHighScore',highScore); } if(selectedLevel===currentLevel && selectedLevel<MAX_LEVEL){ currentLevel++; unlockedLevels=Math.min(MAX_LEVEL,Math.max(unlockedLevels,currentLevel)); localStorage.setItem('currentLevel',currentLevel); localStorage.setItem('unlockedLevels',unlockedLevels); } document.getElementById('levelCompleteScore').textContent=score+' coins'; document.getElementById('completedLevelText').textContent=selectedLevel; document.getElementById('hud').style.display='none'; document.getElementById('controls').style.display='none'; document.getElementById('jumpBtn').style.display='none'; document.getElementById('backBtn').style.display='none'; document.getElementById('soundToggle').style.display='none'; document.getElementById('modeIndicator').style.display='none'; document.querySelector('.controls-info').style.display='none'; if(selectedLevel!==MAX_LEVEL) document.getElementById('levelCompleteScreen').style.display='flex'; levelCompleteAdShown=false; }); }
+            function gameOver(){ if(!gameRunning) return; gameRunning=false; playSound('crash'); showAd('gameover').finally(()=>{ if(score>highScore){ highScore=score; localStorage.setItem('banglaCarHighScore',highScore); } document.getElementById('finalScoreText').textContent=score+' coins'; document.getElementById('highScoreText').textContent='High Score: '+highScore; document.getElementById('finalLevelText').textContent=gameMode==='level'?selectedLevel:'∞'; document.getElementById('hud').style.display='none'; document.getElementById('controls').style.display='none'; document.getElementById('jumpBtn').style.display='none'; document.getElementById('backBtn').style.display='none'; document.getElementById('soundToggle').style.display='none'; document.getElementById('modeIndicator').style.display='none'; document.querySelector('.controls-info').style.display='none'; document.getElementById('gameOverScreen').style.display='flex'; }); }
+            function levelComplete(){ if(!gameRunning) return; gameRunning=false; showAd('levelcomplete').finally(()=>{ if(selectedLevel===MAX_LEVEL){ const rewardCode=`GR20-${Math.random().toString(36).substr(2,6).toUpperCase()}`; document.getElementById('rewardCodeDisplay').textContent=rewardCode; document.getElementById('rewardScreen').style.display='flex'; } if(score>highScore){ highScore=score; localStorage.setItem('banglaCarHighScore',highScore); } if(selectedLevel===currentLevel && selectedLevel<MAX_LEVEL){ currentLevel++; unlockedLevels=Math.min(MAX_LEVEL,Math.max(unlockedLevels,currentLevel)); localStorage.setItem('currentLevel',currentLevel); localStorage.setItem('unlockedLevels',unlockedLevels); } document.getElementById('levelCompleteScore').textContent=score+' coins'; document.getElementById('completedLevelText').textContent=selectedLevel; document.getElementById('hud').style.display='none'; document.getElementById('controls').style.display='none'; document.getElementById('jumpBtn').style.display='none'; document.getElementById('backBtn').style.display='none'; document.getElementById('soundToggle').style.display='none'; document.getElementById('modeIndicator').style.display='none'; document.querySelector('.controls-info').style.display='none'; if(selectedLevel!==MAX_LEVEL) document.getElementById('levelCompleteScreen').style.display='flex'; }); }
             function continueToNextLevel(){ if(selectedLevel<MAX_LEVEL){ selectedLevel++; document.getElementById('levelCompleteScreen').style.display='none'; startLevelMode(); } }
             function restartGame(){ document.getElementById('gameOverScreen').style.display='none'; if(gameMode==='level') startLevelMode(); else startNonstopMode(); }
             function handleBackToMenu(){ gameRunning=false; document.getElementById('gameOverScreen').style.display='none'; document.getElementById('levelCompleteScreen').style.display='none'; document.getElementById('pauseMenu').style.display='none'; document.getElementById('startScreen').style.display='flex'; document.getElementById('hud').style.display='none'; document.getElementById('controls').style.display='none'; document.getElementById('jumpBtn').style.display='none'; document.getElementById('backBtn').style.display='none'; document.getElementById('soundToggle').style.display='none'; document.getElementById('modeIndicator').style.display='none'; document.querySelector('.controls-info').style.display='none'; updateHomeScreenStats(); generateLevelButtons(); }
-            function pauseGame(){ gamePaused=true; document.getElementById('pauseMenu').style.display='flex'; document.getElementById('pauseScore').textContent=score; document.getElementById('pauseLives').textContent=lives; document.getElementById('pauseLevel').textContent=gameMode==='level'?selectedLevel:'∞'; }
+            function pauseGame(){ gamePaused=true; document.getElementById('pauseMenu').style.display='flex'; document.getElementById('pauseScore').textContent=score; document.getElementById('pauseLives').textContent=lives; document.getElementById('pauseLevel').textContent=gameMode==='level'?selectedLevel:'∞'; document.getElementById('pauseSoundStatus').textContent=soundEnabled?'ON':'OFF'; }
             function resumeGame(){ gamePaused=false; document.getElementById('pauseMenu').style.display='none'; }
-            function animate(time=0){ if(gameRunning){ const delta=Math.min((time-(window.lastTime||time))/1000,0.05); window.lastTime=time; updateGame(delta); } if(renderer&&scene&&camera) renderer.render(scene,camera); animationFrame=requestAnimationFrame(animate); }
+            function animate(time=0){ if(gameRunning){ const delta=Math.min((time-(lastTimestamp||time))/1000,0.033); lastTimestamp=time; updateGame(delta); } if(renderer&&scene&&camera) renderer.render(scene,camera); animationFrame=requestAnimationFrame(animate); }
             
             function setupEventListeners(){
                 document.getElementById('leftBtn').addEventListener('touchstart',(e)=>{e.preventDefault();controls.left=true;}); document.getElementById('leftBtn').addEventListener('touchend',(e)=>{e.preventDefault();controls.left=false;}); document.getElementById('leftBtn').addEventListener('mousedown',()=>controls.left=true); document.getElementById('leftBtn').addEventListener('mouseup',()=>controls.left=false); document.getElementById('leftBtn').addEventListener('mouseleave',()=>controls.left=false);
@@ -870,17 +913,15 @@
                 document.getElementById('menuBtn2').addEventListener('click',handleBackToMenu);
                 document.getElementById('continueBtn').addEventListener('click',continueToNextLevel);
                 document.getElementById('selectAnotherLevelBtn').addEventListener('click',()=>{ document.getElementById('levelCompleteScreen').style.display='none'; document.getElementById('levelSelectScreen').style.display='flex'; });
-                document.getElementById('resetAfterRewardBtn').addEventListener('click',()=>{ const code=document.getElementById('rewardCodeDisplay').textContent; navigator.clipboard.writeText(code); alert('Code copied! Game progress will reset.'); currentLevel=1; unlockedLevels=1; selectedLevel=1; localStorage.setItem('currentLevel','1'); localStorage.setItem('unlockedLevels','1'); document.getElementById('rewardScreen').style.display='none'; handleBackToMenu(); });
+                document.getElementById('resetAfterRewardBtn').addEventListener('click',()=>{ const code=document.getElementById('rewardCodeDisplay').textContent; navigator.clipboard.writeText(code); alert('Code copied! Progress reset.'); currentLevel=1; unlockedLevels=1; selectedLevel=1; localStorage.setItem('currentLevel','1'); localStorage.setItem('unlockedLevels','1'); document.getElementById('rewardScreen').style.display='none'; handleBackToMenu(); });
                 document.getElementById('soundToggle').addEventListener('click',toggleSound);
-                document.getElementById('retryConnectionBtn').addEventListener('click',()=>{ if(navigator.onLine){ document.getElementById('networkErrorScreen').style.display='none'; if(gameMode==='level') startLevelMode(); else startNonstopMode(); } });
+                document.getElementById('retryConnectionBtn').addEventListener('click',()=>{ if(navigator.onLine){ document.getElementById('networkErrorScreen').style.display='none'; if(gameMode==='level') startLevelMode(); else startNonstopMode(); } else { alert('Still offline. Please connect to internet.'); } });
                 document.getElementById('backToMenuNetworkBtn').addEventListener('click',()=>{ document.getElementById('networkErrorScreen').style.display='none'; handleBackToMenu(); });
                 window.addEventListener('resize',()=>{ if(camera&&renderer){ camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth,window.innerHeight); } });
-                window.addEventListener('offline',()=>{ if(gameRunning){ gameRunning=false; document.getElementById('networkErrorScreen').style.display='flex'; } });
-                window.addEventListener('online',()=>{ document.getElementById('networkErrorScreen').style.display='none'; });
             }
-            window.copyRewardCode=function(){ const code=document.getElementById('rewardCodeDisplay').textContent; navigator.clipboard.writeText(code); alert('Code copied! Game will reset now.'); currentLevel=1; unlockedLevels=1; selectedLevel=1; localStorage.setItem('currentLevel','1'); localStorage.setItem('unlockedLevels','1'); document.getElementById('rewardScreen').style.display='none'; handleBackToMenu(); };
+            window.copyRewardCode=function(){ const code=document.getElementById('rewardCodeDisplay').textContent; navigator.clipboard.writeText(code); alert('Code copied! Game progress will reset.'); currentLevel=1; unlockedLevels=1; selectedLevel=1; localStorage.setItem('currentLevel','1'); localStorage.setItem('unlockedLevels','1'); document.getElementById('rewardScreen').style.display='none'; handleBackToMenu(); };
             
-            window.addEventListener('load',()=>{ initAudio(); initAds(); let prog=0; const iv=setInterval(()=>{ prog+=10; document.getElementById('loadingProgress').style.width=prog+'%'; document.getElementById('loadingPercentage').textContent=prog+'%'; if(prog>=100){ clearInterval(iv); initScene(); } },100); setupEventListeners(); document.getElementById('soundToggle').classList.toggle('muted',!soundEnabled); });
+            window.addEventListener('load',()=>{ initAudio(); initAds(); let prog=0; const iv=setInterval(()=>{ prog+=12; document.getElementById('loadingProgress').style.width=prog+'%'; document.getElementById('loadingPercentage').textContent=prog+'%'; if(prog>=100){ clearInterval(iv); initScene(); } },80); setupEventListeners(); document.getElementById('soundToggle').classList.toggle('muted',!soundEnabled); });
         })();
     </script>
 </body>
