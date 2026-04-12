@@ -8,8 +8,8 @@
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK (Rewarded Interstitial) -->
     <script src="//libtl.com/sdk.js" data-zone="10541383" data-sdk="show_10541383"></script>
-    <!-- Adexora SDK -->
-    <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
+    <!-- Adexora SDK with App ID 1964 -->
+    <script src="https://adexora.com/cdn/ads.js?id=1964"></script>
     <style>
         * {
             margin: 0;
@@ -790,7 +790,7 @@
             // Hide complete screen
             document.getElementById('levelCompleteScreen').style.display = 'none';
             isProcessing = true;
-            // 3 second countdown before next level ad sequence (updated from 7 to 3)
+            // 3 second countdown before next level ad sequence
             await showCountdown(3, `Next: Route ${nextLevel}<br>Starting in...`);
             // Start the full ad sequence (3 ads) for the next level
             const success = await startLevelEntrySequence(nextLevel);
@@ -903,7 +903,7 @@
             initAdsgram();
             buildLevelList();
             bindEvents();
-            console.log("Green Road v2 — Triple ad sequence (Adsgram → Monetag → Adexora) + 3 sec countdown before next level | MAX 10 levels");
+            console.log("Green Road v2 — Triple ad sequence (Adsgram → Monetag → Adexora) + 3 sec countdown before next level | MAX 10 levels | Adexora ID 1964");
         });
         window.addEventListener('beforeunload', () => saveProgress());
     </script>
