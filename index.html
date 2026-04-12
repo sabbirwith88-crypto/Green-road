@@ -482,9 +482,9 @@
         </div>
     </div>
 
-    <!-- Countdown Overlay (7 sec before next level ad sequence) -->
+    <!-- Countdown Overlay (3 sec before next level ad sequence) -->
     <div id="countdownOverlay" class="countdown-overlay" style="display: none;">
-        <div class="countdown-number" id="countdownNum">7</div>
+        <div class="countdown-number" id="countdownNum">3</div>
         <div class="countdown-message" id="countdownMsg">Next Level Starting in...</div>
     </div>
 
@@ -679,7 +679,7 @@
             return true;
         }
         
-        // ---------- COUNTDOWN (7 sec) before next level transition ----------
+        // ---------- COUNTDOWN (3 sec) before next level ----------
         function showCountdown(seconds, messagePrefix) {
             return new Promise((resolve) => {
                 const overlay = document.getElementById('countdownOverlay');
@@ -762,7 +762,6 @@
             
             // Show completion screen or reward if level 10
             if(level === MAX_LEVEL) {
-                // Show reward screen directly
                 showRewardScreen();
                 isProcessing = false;
                 return;
@@ -779,7 +778,7 @@
             completeDiv.style.display = 'flex';
         }
         
-        // Next Level logic: countdown 7 sec -> then start next level with 3-ad sequence
+        // Next Level logic: countdown 3 sec -> then start next level with 3-ad sequence
         async function handleNextLevelWithCountdown(currentCompletedLevel) {
             if(isProcessing) return;
             const nextLevel = currentCompletedLevel + 1;
@@ -791,8 +790,8 @@
             // Hide complete screen
             document.getElementById('levelCompleteScreen').style.display = 'none';
             isProcessing = true;
-            // 7 second countdown before next level ad sequence
-            await showCountdown(7, `Next: Route ${nextLevel}<br>Starting in...`);
+            // 3 second countdown before next level ad sequence (updated from 7 to 3)
+            await showCountdown(3, `Next: Route ${nextLevel}<br>Starting in...`);
             // Start the full ad sequence (3 ads) for the next level
             const success = await startLevelEntrySequence(nextLevel);
             if(success) {
@@ -904,7 +903,7 @@
             initAdsgram();
             buildLevelList();
             bindEvents();
-            console.log("Green Road v2 — Triple ad sequence (Adsgram → Monetag → Adexora) + 7 sec countdown before next level | MAX 10 levels");
+            console.log("Green Road v2 — Triple ad sequence (Adsgram → Monetag → Adexora) + 3 sec countdown before next level | MAX 10 levels");
         });
         window.addEventListener('beforeunload', () => saveProgress());
     </script>
