@@ -3,926 +3,910 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Green Road - Bangladeshi Car Racing</title>
+    <title>Green Road Challenge ‚Äî Triple Ad Sequence</title>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <!-- Monetag SDK (Rewarded Interstitial) -->
+    <script src="//libtl.com/sdk.js" data-zone="10541383" data-sdk="show_10541383"></script>
+    <!-- Adexora SDK -->
+    <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
     <style>
-        /* Global Reset - Performance Optimized */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
             user-select: none;
-            -webkit-user-select: none;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
-        
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #000;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        }
-        
+
         body {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a472a 0%, #0d2e1a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
         }
-        
-        /* Game Container */
-        #gameContainer {
-            position: fixed;
-            top: 0;
-            left: 0;
+
+        .game-container {
             width: 100%;
-            height: 100%;
+            max-width: 480px;
+            background: linear-gradient(180deg, #2e7d32 0%, #1b5e20 100%);
+            border-radius: 36px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.15);
             overflow: hidden;
-            z-index: 1;
+            border: 2px solid #f5b81b;
         }
-        
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            will-change: transform;
+
+        .road-header {
+            background: repeating-linear-gradient(90deg, #2a2a2a 0px, #2a2a2a 40px, #f5b81b 40px, #f5b81b 45px, #2a2a2a 45px, #2a2a2a 85px);
+            padding: 18px;
+            text-align: center;
+            border-bottom: 3px solid #f5b81b;
         }
-        
-        /* HUD */
-        #hud {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 12px 15px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+
+        .title {
+            font-size: 26px;
+            font-weight: 800;
             color: white;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            pointer-events: none;
+            text-shadow: 2px 2px 0 #1b5e20;
+            letter-spacing: 1px;
+            background: rgba(0,0,0,0.5);
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
         }
-        
-        .hud-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            min-width: 65px;
-        }
-        
-        .hud-label {
+
+        .subtitle {
+            color: #f5d742;
             font-size: 11px;
-            color: #aaa;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-top: 8px;
             font-weight: 600;
         }
-        
-        .hud-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        
-        .hud-value.score { color: #4fc3f7; }
-        .hud-value.lives { color: #ff5252; }
-        .hud-value.level { color: #69f0ae; }
-        .hud-value.speed { color: #ff9800; }
-        
-        /* Control Buttons */
-        #controls {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            z-index: 2000;
-            display: none;
-            padding: 0 5px;
-        }
-        
-        .control-btn {
-            flex: 1;
-            height: 80px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 3px solid;
-            border-radius: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.05s ease, background 0.1s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .control-btn:active {
-            transform: scale(0.96);
-            background: rgba(0, 0, 0, 0.95);
-            border-color: white;
-        }
-        
-        #leftBtn { border-color: #4CAF50; }
-        #rightBtn { border-color: #f44336; }
-        
-        #jumpBtn { 
-            position: fixed;
-            bottom: 110px;
-            right: 20px;
-            width: 80px;
-            height: 80px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 3px solid #FF9800;
-            border-radius: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.05s ease;
-            z-index: 2000;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            -webkit-tap-highlight-color: transparent;
-            display: none;
-        }
-        
-        #jumpBtn:active {
-            transform: scale(0.96);
-            background: rgba(0, 0, 0, 0.95);
-            border-color: white;
-        }
-        
-        .back-btn {
-            position: fixed;
-            bottom: 625px;
-            left: 20px;
-            width: 55px;
-            height: 55px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 2000;
-            transition: transform 0.1s ease;
-            -webkit-tap-highlight-color: transparent;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        }
-        
-        .back-btn:active {
-            transform: scale(0.94);
-            background: rgba(0, 0, 0, 0.95);
-            border-color: white;
-        }
-        
-        .sound-toggle {
-            position: fixed;
-            bottom: 625px;
-            right: 20px;
-            width: 55px;
-            height: 55px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 2000;
-            transition: transform 0.1s ease;
-            -webkit-tap-highlight-color: transparent;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        }
-        
-        .sound-toggle:active {
-            transform: scale(0.94);
-            background: rgba(0, 0, 0, 0.95);
-        }
-        
-        .sound-toggle.muted {
-            color: #ff5252;
-            border-color: #ff5252;
-        }
-        
-        .mode-indicator {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            color: #FF9800;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-size: 14px;
-            font-weight: bold;
-            border: 1px solid rgba(255, 152, 0, 0.3);
-            z-index: 2000;
-            display: none;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            white-space: nowrap;
-        }
-        
-        .jump-indicator {
-            position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            color: #ff9800;
-            font-size: 18px;
-            font-weight: bold;
-            z-index: 2000;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 20px;
-            border-radius: 25px;
-            border: 1px solid rgba(255, 152, 0, 0.3);
-            display: none;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-        }
-        
-        .controls-info {
-            position: fixed;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 12px;
-            padding: 5px 15px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 20px;
-            z-index: 2000;
-            display: none;
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
-            white-space: nowrap;
-        }
-        
-        /* Screens */
-        .screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
-            z-index: 3000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            text-align: center;
+
+        .road-levels {
+            max-height: 460px;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            padding: 14px;
+            background: rgba(0,0,0,0.25);
+            scrollbar-width: thin;
         }
-        
-        .loading {
+
+        .road-levels::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .road-levels::-webkit-scrollbar-track {
+            background: #1b5e20;
+            border-radius: 10px;
+        }
+
+        .road-levels::-webkit-scrollbar-thumb {
+            background: #f5b81b;
+            border-radius: 10px;
+        }
+
+        .level-card {
+            background: linear-gradient(95deg, #2c2c2c 0%, #3a3a3a 100%);
+            margin-bottom: 12px;
+            border-radius: 20px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 6px solid #f5b81b;
+            border-right: 1px solid #f5b81b;
+            cursor: pointer;
+            transition: transform 0.08s linear, box-shadow 0.2s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+        }
+
+        .level-card:active {
+            transform: scale(0.97);
+        }
+
+        .level-card.locked {
+            opacity: 0.5;
+            border-left-color: #6c6c6c;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .level-number {
+            font-size: 26px;
+            font-weight: 800;
+            color: #f5b81b;
+            background: rgba(0,0,0,0.5);
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+        }
+
+        .level-info {
+            flex: 1;
+            padding-left: 14px;
+        }
+
+        .level-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .level-requirement {
+            font-size: 10px;
+            color: #f5d742;
+            margin-top: 3px;
+        }
+
+        .game-panel {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0d47a1 0%, #1a237e 100%);
-            z-index: 4000;
+            background: rgba(10, 25, 15, 0.97);
+            backdrop-filter: blur(16px);
+            z-index: 10000;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: white;
-        }
-        
-        .pause-menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 3500;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-            display: none;
             padding: 20px;
+            animation: fadeIn 0.2s ease;
         }
-        
-        .title {
-            font-size: 42px;
-            font-weight: 900;
-            background: linear-gradient(45deg, #4CAF50, #2E7D32, #69F0AE);
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .game-card {
+            background: linear-gradient(145deg, #1e3a2f, #0f2b1f);
+            border-radius: 48px;
+            padding: 28px 18px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            border: 2px solid #f5b81b;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.6);
+        }
+
+        .game-level-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f5c542;
+            text-shadow: 1px 1px 0 #1b5e20;
+            margin-bottom: 12px;
+        }
+
+        .instruction-box {
+            background: #0a2a12;
+            border-radius: 24px;
+            padding: 12px;
+            margin: 8px 0 12px 0;
+            color: #f5d742;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            border: 1px solid #f5b81b;
+        }
+
+        .game-progress {
+            background: #0a2a12;
+            border-radius: 36px;
+            padding: 10px;
+            margin: 12px 0;
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin: 20px 0;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #f5c542, #e5a812);
+            border: none;
+            padding: 16px 0;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 60px;
+            color: #1b4d1a;
+            cursor: pointer;
+            transition: all 0.08s linear;
+            box-shadow: 0 5px 0 #a05f10;
+            text-align: center;
+        }
+
+        .action-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #a05f10;
+        }
+
+        .action-btn.disabled-btn {
+            opacity: 0.55;
+            transform: none;
+            pointer-events: none;
+            filter: grayscale(0.15);
+        }
+
+        .complete-status {
+            background: #2e7d32;
+            padding: 10px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        .game-close-btn {
+            background: #3a3a3a;
+            color: #f5c542;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 16px;
+            cursor: pointer;
+        }
+
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.94);
+            backdrop-filter: blur(12px);
+            z-index: 11000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .countdown-number {
+            font-size: 100px;
+            background: linear-gradient(45deg, #f5c542, #f59e0b);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            animation: titleGlow 2s infinite alternate;
+            animation: pulse 0.5s ease-out;
+            font-weight: 800;
         }
-        
-        @keyframes titleGlow {
-            0% { text-shadow: 0 0 20px rgba(76, 175, 80, 0.5); }
-            100% { text-shadow: 0 0 30px rgba(105, 240, 174, 0.8); }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.25); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
         }
-        
-        .subtitle {
-            color: #b0bec5;
-            font-size: 16px;
-            margin-bottom: 20px;
-            max-width: 300px;
-            line-height: 1.4;
-            padding: 0 10px;
+
+        .countdown-message {
+            font-size: 20px;
+            margin-top: 20px;
+            color: #f5c542;
+            text-align: center;
+            padding: 0 20px;
+            font-weight: 500;
         }
-        
+
+        .levelcomplete-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #166534, #0a3b1a);
+            z-index: 9000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .complete-title {
+            font-size: 42px;
+            font-weight: 900;
+            color: #f5c542;
+            text-shadow: 2px 2px 0 #14532d;
+            margin-bottom: 16px;
+        }
+
         .btn {
-            background: linear-gradient(45deg, #4CAF50, #2E7D32);
-            color: white;
+            background: linear-gradient(45deg, #f5c542, #f59e0b);
             border: none;
-            padding: 14px 30px;
+            padding: 14px 28px;
             font-size: 18px;
             font-weight: 700;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: transform 0.1s ease, opacity 0.2s ease;
+            border-radius: 40px;
             margin: 8px;
-            min-width: 200px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .btn:active {
-            transform: scale(0.97);
-            opacity: 0.9;
-        }
-        
-        .btn.red { background: linear-gradient(45deg, #d32f2f, #f44336); }
-        .btn.blue { background: linear-gradient(45deg, #2196F3, #0D47A1); }
-        .btn.gold { background: linear-gradient(45deg, #FFD700, #FF9800); }
-        .btn.purple { background: linear-gradient(45deg, #9C27B0, #7B1FA2); }
-        
-        .level-select-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            max-width: 320px;
-            margin: 15px 0;
-            max-height: 350px;
-            overflow-y: auto;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .level-btn {
-            width: 65px;
-            height: 65px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
             cursor: pointer;
-            transition: transform 0.05s ease, background 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            -webkit-tap-highlight-color: transparent;
+            color: #1b4d1a;
+            transition: transform 0.08s linear;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        
-        .level-btn:active {
+
+        .btn:active {
             transform: scale(0.96);
-            background: rgba(76, 175, 80, 0.5);
         }
-        
-        .level-btn.locked {
-            background: rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.3);
-            cursor: default;
-            pointer-events: none;
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #3a3a3a, #222);
+            color: #f5c542;
         }
-        
-        .level-btn.current {
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
-            border-color: #4CAF50;
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
-        }
-        
-        .win-requirement {
-            font-size: 10px;
-            color: #FFD700;
-            margin-top: 2px;
-        }
-        
-        .loading-bar {
-            width: 250px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        
-        .loading-progress {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #69F0AE);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        .loading-percentage {
-            margin-top: 10px;
-            font-size: 16px;
-            color: #69F0AE;
-        }
-        
-        .game-over-options {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 20px;
-            width: 100%;
-            max-width: 280px;
-        }
-        
-        .score-display {
-            font-size: 32px;
-            color: #FFD700;
-            margin: 15px 0;
-            font-weight: bold;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        }
-        
-        .coin-popup {
-            position: fixed;
-            color: #FFD700;
-            font-size: 24px;
-            font-weight: bold;
-            z-index: 2500;
-            pointer-events: none;
-            animation: coinFloat 1s ease-out forwards;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-        }
-        
-        @keyframes coinFloat {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-80px) scale(0.5); opacity: 0; }
-        }
-        
-        .level-info {
-            color: #b0bec5;
-            font-size: 14px;
-            margin: 10px 0;
-            text-align: center;
-        }
-        
-        .level-difficulty {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 8px;
-        }
-        
-        .difficulty-easy { background: rgba(76, 175, 80, 0.3); color: #69f0ae; }
-        .difficulty-medium { background: rgba(255, 152, 0, 0.3); color: #ffb74d; }
-        .difficulty-hard { background: rgba(244, 67, 54, 0.3); color: #ff8a80; }
-        .difficulty-extreme { background: rgba(156, 39, 176, 0.3); color: #ea80fc; }
-        
-        .level-requirement {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            padding: 12px;
-            margin: 15px 0;
-            border-left: 4px solid #4CAF50;
-        }
-        
-        .requirement-text {
-            color: #69F0AE;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        
-        .requirement-value {
-            color: #FFD700;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        .level-progress {
-            width: 90%;
-            max-width: 300px;
-            height: 8px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 4px;
-            margin: 10px 0;
-            overflow: hidden;
-        }
-        
-        .level-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-        
-        .game-stats {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 15px 0;
-            flex-wrap: wrap;
-        }
-        
-        .stat-item {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px 15px;
-            border-radius: 12px;
-            min-width: 100px;
-        }
-        
-        .stat-label {
-            font-size: 11px;
-            color: #b0bec5;
-            margin-bottom: 3px;
-        }
-        
-        .stat-value {
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-        }
-        
-        .instructions {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            max-width: 320px;
-            width: 100%;
-            margin-top: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .instruction-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: 12px 0;
-            color: #b0bec5;
-            font-size: 14px;
-        }
-        
-        .instruction-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: bold;
-            color: white;
-        }
-        
+
         .reward-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #FFD700 0%, #FF9800 100%);
-            z-index: 3500;
+            background: linear-gradient(135deg, #f5c542, #e5940a);
+            z-index: 9500;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: white;
             text-align: center;
             padding: 20px;
-            display: none;
         }
-        
+
         .reward-code {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px 20px;
-            border-radius: 15px;
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 3px;
-            color: #FFD700;
-            margin: 20px 0;
-            border: 2px solid white;
+            background: rgba(0,0,0,0.8);
+            padding: 16px 24px;
+            border-radius: 24px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #f5c542;
+            margin: 20px;
             cursor: pointer;
-            transition: transform 0.1s ease;
-            user-select: all;
-            -webkit-user-select: all;
+            border: 2px solid white;
         }
-        
-        .reward-code:active { transform: scale(0.98); }
-        
-        .network-error {
+
+        .footer-note {
+            text-align: center;
+            padding: 12px;
+            background: rgba(0,0,0,0.5);
+            color: #f5d742;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Ad Sequence Modal */
+        .ad-sequence-panel {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
-            z-index: 3500;
+            background: rgba(0, 0, 0, 0.96);
+            backdrop-filter: blur(20px);
+            z-index: 12000;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
             color: white;
             text-align: center;
-            padding: 20px;
-            display: none;
         }
-        
-        .pause-stats {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 20px;
-            margin: 20px 0;
+
+        .ad-sequence-card {
+            background: #1e2a1f;
+            border-radius: 56px;
+            padding: 32px 24px;
+            max-width: 340px;
             width: 90%;
-            max-width: 320px;
+            border: 2px solid #f5c542;
+            box-shadow: 0 20px 35px black;
         }
-        
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
+
+        .ad-step-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .ad-step-message {
+            font-size: 22px;
+            font-weight: 800;
+            color: #f5c542;
             margin: 12px 0;
-            font-size: 16px;
         }
-        
-        .pause-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-            max-width: 280px;
+
+        .ad-description {
+            font-size: 14px;
+            margin-bottom: 24px;
+            color: #dddddd;
         }
-        
-        .pause-title {
-            font-size: 36px;
-            font-weight: 900;
-            background: linear-gradient(45deg, #FF9800, #FF5722);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
+
+        .next-step-btn {
+            background: linear-gradient(45deg, #f5c542, #e5a812);
+            border: none;
+            padding: 14px 32px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 60px;
+            color: #1b4d1a;
+            cursor: pointer;
+            transition: 0.08s linear;
+            box-shadow: 0 5px 0 #8b5e10;
+            width: 80%;
+            margin-top: 8px;
         }
-        
-        ::-webkit-scrollbar { display: none; }
+
+        .next-step-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #8b5e10;
+        }
+
+        .ad-loading-text {
+            font-size: 14px;
+            color: #f5b81b;
+            margin-top: 16px;
+        }
     </style>
 </head>
 <body>
-    <div id="loading" class="loading"><div class="loading-text">Green Road</div><div class="loading-bar"><div class="loading-progress" id="loadingProgress"></div></div><div class="loading-percentage" id="loadingPercentage">0%</div></div>
-    <div id="startScreen" class="screen" style="display: none;"><div class="title">GREEN ROAD</div><p class="subtitle">Drive through Bangladesh! 1 life per level</p><div class="game-stats"><div class="stat-item"><div class="stat-label">High Score</div><div class="stat-value" id="menuHighScore">0</div></div><div class="stat-item"><div class="stat-label">Best Level</div><div class="stat-value" id="menuCurrentLevel">1</div></div></div><button class="btn gold" id="selectLevelBtn">Select Level</button><button class="btn purple" id="nonstopPlayBtn">Nonstop Play</button><button class="btn blue" id="howToPlayBtn">How to Play</button><div class="instructions" id="instructions" style="display: none;"><div class="instruction-item"><div class="instruction-icon">°˚</div><div>Left</div></div><div class="instruction-item"><div class="instruction-icon">°˙</div><div>Right</div></div><div class="instruction-item"><div class="instruction-icon">°¸</div><div>Jump</div></div><div class="instruction-item"><div class="instruction-icon">ï0Ù3</div><div>Collect coins to win</div></div><div class="instruction-item"><div class="instruction-icon">Å7≈8Ñ1Ç5</div><div>1 life per level</div></div><button class="btn" onclick="document.getElementById('instructions').style.display='none'" style="margin-top: 10px; padding: 10px 20px; font-size: 14px;">Close</button></div></div>
-    <div id="levelSelectScreen" class="screen" style="display:none;"><div class="back-btn" id="backFromLevelSelectBtn">°˚</div><h2 class="title" style="font-size: 32px;">Select Level</h2><div class="level-info">Current: <span id="currentLevelDisplay">1</span><span id="difficultyDisplay" class="level-difficulty difficulty-easy">Easy</span></div><div class="level-requirement"><div class="requirement-text">Coins needed:</div><div class="requirement-value" id="coinsRequiredDisplay">1</div></div><div class="level-progress"><div id="levelProgressBar" class="level-progress-bar" style="width: 1%;"></div></div><div class="level-select-container" id="levelSelectContainer"></div><button class="btn gold" id="startSelectedLevelBtn" style="margin-top: 10px;">Start</button></div>
-    <div id="gameOverScreen" class="screen" style="display:none;"><h2 class="title" style="background:linear-gradient(45deg,#d32f2f,#f44336);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Game Over!</h2><div class="score-display" id="finalScoreText">0 coins</div><div class="subtitle" id="highScoreText">High Score: 0</div><div class="subtitle">Level: <span id="finalLevelText">1</span></div><div class="game-over-options"><button class="btn gold" id="restartBtn">Play Again</button><button class="btn blue" id="menuBtn">Menu</button></div></div>
-    <div id="levelCompleteScreen" class="screen" style="display:none;"><h2 class="title" style="background:linear-gradient(45deg,#4CAF50,#2E7D32);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Complete!</h2><div class="score-display" id="levelCompleteScore">0 coins</div><div class="subtitle">Level <span id="completedLevelText">1</span> done!</div><div class="game-over-options"><button class="btn gold" id="continueBtn">Next Level</button><button class="btn blue" id="selectAnotherLevelBtn">Select Level</button><button class="btn" id="menuBtn2">Menu</button></div></div>
-    <div id="rewardScreen" class="reward-screen"><h2 style="font-size: 32px;">CONGRATULATIONS!</h2><p>You completed all 20 levels!</p><p>Your reward code:</p><div class="reward-code" id="rewardCodeDisplay" onclick="copyRewardCode()">GR20-XXXXXX</div><p class="copy-instruction">Click to copy</p><button class="btn gold" id="resetAfterRewardBtn">Copy & Reset</button></div>
-    <div id="pauseMenu" class="pause-menu"><h2 class="pause-title">Paused</h2><div class="pause-stats"><div class="stat-row"><span>Score:</span><span class="stat-value" id="pauseScore">0</span></div><div class="stat-row"><span>Lives:</span><span class="stat-value" id="pauseLives">1</span></div><div class="stat-row"><span>Level:</span><span class="stat-value" id="pauseLevel">1</span></div><div class="stat-row"><span>Sound:</span><span class="stat-value" id="pauseSoundStatus">ON</span></div></div><div class="pause-options"><button class="btn gold" id="resumeBtn">Resume</button><button class="btn blue" id="restartFromPauseBtn">Restart</button><button class="btn" id="backToMenuFromPauseBtn">Menu</button></div></div>
-    <div id="networkErrorScreen" class="network-error"><h2>Å7≤2Ñ1Ç5 No Internet Connection</h2><p>Please check your network and try again</p><button class="btn red" id="retryConnectionBtn">Retry</button><button class="btn blue" id="backToMenuNetworkBtn">Back to Menu</button></div>
-    <div id="gameContainer"></div>
-    <div class="sound-toggle" id="soundToggle" style="display: none;"></div>
-    <div id="hud"><div class="hud-section"><div class="hud-label">COINS</div><div class="hud-value score" id="score">0</div></div><div class="hud-section"><div class="hud-label">LIVES</div><div class="hud-value lives" id="lives">1</div></div><div class="hud-section"><div class="hud-label">LEVEL</div><div class="hud-value level" id="level">1</div></div><div class="hud-section"><div class="hud-label">SPEED</div><div class="hud-value speed" id="speedDisplay">1.0x</div></div></div>
-    <div class="jump-indicator" id="jumpIndicator">JUMP!</div><div class="mode-indicator" id="modeIndicator">Mode: <span id="modeText">Level</span></div>
-    <div id="jumpBtn">°¸</div><div id="controls"><div class="control-btn" id="leftBtn">°˚</div><div class="control-btn" id="rightBtn">°˙</div></div>
-    <div class="back-btn" id="backBtn" style="display:none;">°˚</div><div class="controls-info"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <div class="game-container">
+        <div class="road-header">
+            <div class="title">GREEN ROAD</div>
+            <div class="subtitle">3 Ads Before Every Ride | 10 Levels</div>
+        </div>
+        <div class="road-levels" id="levelListContainer"></div>
+        <div class="footer-note">Each level: tap 5 road tasks to complete</div>
+    </div>
+
+    <!-- Game Panel (5 buttons gameplay) -->
+    <div id="gamePanel" class="game-panel" style="display: none;">
+        <div class="game-card">
+            <div class="game-level-title" id="gameLevelTitle">ROUTE 1</div>
+            <div class="instruction-box">Click all 5 buttons to complete this level</div>
+            <div class="game-progress" id="gameProgressText">0 / 5 tasks done</div>
+            <div class="buttons-grid" id="buttonsGrid"></div>
+            <div class="complete-status" id="completeStatusMsg">Press each button once</div>
+            <button class="game-close-btn" id="exitGameBtn">Back to Road</button>
+        </div>
+    </div>
+
+    <!-- Countdown Overlay (7 sec before next level ad sequence) -->
+    <div id="countdownOverlay" class="countdown-overlay" style="display: none;">
+        <div class="countdown-number" id="countdownNum">7</div>
+        <div class="countdown-message" id="countdownMsg">Next Level Starting in...</div>
+    </div>
+
+    <!-- Level Complete Screen -->
+    <div id="levelCompleteScreen" class="levelcomplete-screen" style="display: none;">
+        <div class="complete-title">Level Clear!</div>
+        <div style="color: white; font-size: 18px; margin-bottom: 20px;" id="completeLevelMsg"></div>
+        <button class="btn" id="nextLevelBtnFromComplete">Next Level</button>
+        <button class="btn btn-secondary" id="backToRoadCompleteBtn">Road Menu</button>
+    </div>
+
+    <!-- Reward Screen (Final level 10) -->
+    <div id="rewardScreen" class="reward-screen" style="display: none;">
+        <h2 style="color: white; font-size: 28px; font-weight: 800;">üèÜ Master Driver</h2>
+        <p style="color: white; font-size: 16px; margin-top: 6px;">All 10 levels conquered!</p>
+        <p style="color: white; margin-top: 12px;">Your reward code:</p>
+        <div class="reward-code" id="rewardCodeDisplay" onclick="copyRewardCodeGlobal()">GR10-XXXXXX</div>
+        <p style="color: white; font-size: 11px;">tap to copy</p>
+        <button class="btn" id="resetAllBtn">Copy & Reset Game</button>
+    </div>
+
+    <!-- Ad Sequence Modal (3-step: Adsgram ‚Üí Monetag ‚Üí Adexora) -->
+    <div id="adSequencePanel" class="ad-sequence-panel" style="display: none;">
+        <div class="ad-sequence-card">
+            <div class="ad-step-icon" id="adStepIcon">üé¨</div>
+            <div class="ad-step-message" id="adStepMessage">Loading ad...</div>
+            <div class="ad-description" id="adDescription">Please complete ad to continue</div>
+            <button id="nextStepAdBtn" class="next-step-btn" style="display: none;">‚û° Next Step</button>
+            <div id="adLoadingIndicator" class="ad-loading-text">Processing...</div>
+        </div>
+    </div>
+
     <script>
-        (function(){
-            // Game configuration - MAX 20 levels
-            const MAX_LEVEL = 20;
-            let scene, camera, renderer, car, road;
-            let coinPool=[], obstaclePool=[], rickshaws=[], buses=[], bikes=[], trees=[];
-            let gameRunning=false, gamePaused=false, animationFrame, lastTimestamp=0;
-            let score=0, lives=1, highScore=0, currentLevel=1, unlockedLevels=1;
-            let gameSpeed=1.0, baseSpeed=1.0, speedMultiplier=1.0, roadWidth=10;
-            let isJumping=false, jumpVelocity=0, selectedLevel=1, speedIncreaseTimer=0;
-            const SPEED_INCREASE_INTERVAL=10, SPEED_INCREASE_AMOUNT=0.08;
-            let soundEnabled=true, audioContext=null, gainNode=null;
-            let AdController=null, adInitialized=false;
-            let gameStartAdShown=false, gameOverAdShown=false, levelCompleteAdShown=false;
-            let controls={left:false,right:false,jump:false}, gameMode='level';
-            
-            // ----- COIN REQUIREMENT LOGIC (Progressive) -----
-            // Level 1-10: 7 to 20 coins (increments by ~1.44 each level, but exact as requested)
-            // Level 1:7, L2:8, L3:9, L4:10, L5:11, L6:12, L7:13, L8:14, L9:15, L10:16, L11:17, L12:18, L13:19, L14:20, L15:21, L16:22, L17:23, L18:24, L19:25, L20:25
-            // But user said: level 1-10 max 20 coin, level 11-20 max 25 coin. So:
-            // Level 1:7, 2:8, 3:9, 4:10, 5:11, 6:12, 7:13, 8:14, 9:15, 10:16, 11:17, 12:18, 13:19, 14:20, 15:21, 16:22, 17:23, 18:24, 19:25, 20:25
-            function getCoinsRequired(level) {
-                if (level >= 1 && level <= 10) {
-                    return 6 + level; // L1:7, L10:16
-                } else if (level >= 11 && level <= 19) {
-                    return 6 + level; // L11:17, L19:25
-                } else if (level === 20) {
-                    return 25;
-                }
-                return 25;
-            }
-            
-            // Load saved data
-            try{
-                highScore=parseInt(localStorage.getItem('banglaCarHighScore'))||0;
-                currentLevel=Math.min(MAX_LEVEL, parseInt(localStorage.getItem('currentLevel'))||1);
-                unlockedLevels=Math.min(MAX_LEVEL, parseInt(localStorage.getItem('unlockedLevels'))||1);
-                soundEnabled=localStorage.getItem('banglaCarSoundEnabled')!=='false';
-                selectedLevel=Math.min(currentLevel,MAX_LEVEL);
-            }catch(e){}
-            
-            // Level config with dynamic coin requirement
-            const LEVEL_CONFIG={};
-            for(let i=1;i<=MAX_LEVEL;i++){ 
-                let coinsNeeded = getCoinsRequired(i);
-                let difficulty = i<=4?'easy':i<=8?'medium':i<=12?'hard':'extreme';
-                LEVEL_CONFIG[i]={lives:1, coinsToComplete:coinsNeeded, difficulty:difficulty};
-            }
-            
-            const COLORS={road:0x2E7D32,grass:0x388E3C,sky:0x87CEEB,rickshaw:0xFF9800,bus:0xD32F2F,bike:0x1976D2};
-            
-            // Network monitoring
-            let wasOffline=false;
-            function checkNetworkAndHandle(){
-                if(!navigator.onLine){
-                    if(gameRunning && !wasOffline){
-                        wasOffline=true;
-                        gameRunning=false;
-                        gamePaused=false;
-                        document.getElementById('networkErrorScreen').style.display='flex';
-                        document.getElementById('hud').style.display='none';
-                        document.getElementById('controls').style.display='none';
-                        document.getElementById('jumpBtn').style.display='none';
-                        document.getElementById('backBtn').style.display='none';
-                        document.getElementById('soundToggle').style.display='none';
-                        document.getElementById('modeIndicator').style.display='none';
-                        document.querySelector('.controls-info').style.display='none';
-                    }
+        // ---------- CONFIG ----------
+        const MAX_LEVEL = 10;          // level 10 reward
+        let currentUnlockedLevel = 1;
+        let activeGameLevel = null;
+        let buttonClickState = [];
+        let gameCompletedFlag = false;
+        let isProcessing = false;
+        let adSequenceActive = false;
+        let pendingResolveNextStep = null;
+        
+        // Adsgram controller
+        let adController = null;
+        let adInitialized = false;
+        
+        // ---------- PROGRESS ----------
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('greenRoadProgress');
+                if(saved) {
+                    const data = JSON.parse(saved);
+                    currentUnlockedLevel = Math.min(MAX_LEVEL, data.unlockedLevel || 1);
                 } else {
-                    if(wasOffline){
-                        wasOffline=false;
-                        document.getElementById('networkErrorScreen').style.display='none';
+                    currentUnlockedLevel = 1;
+                }
+            } catch(e) { currentUnlockedLevel = 1; }
+        }
+        function saveProgress() {
+            localStorage.setItem('greenRoadProgress', JSON.stringify({ unlockedLevel: currentUnlockedLevel }));
+        }
+        
+        // ---------- ADS INIT ----------
+        function initAdsgram() {
+            try {
+                if(typeof window.Adsgram !== 'undefined') {
+                    adController = window.Adsgram.init({ blockId: "int-24179" });
+                    adInitialized = true;
+                } else { console.warn("Adsgram not loaded"); }
+            } catch(e) { console.error(e); }
+        }
+        
+        // Individual ad functions (promise-based)
+        function showAdsgramAd() {
+            return new Promise((resolve) => {
+                if(!adInitialized || !adController) {
+                    console.log("Adsgram missing, skip");
+                    resolve();
+                    return;
+                }
+                adController.show().then(() => resolve()).catch(() => resolve());
+            });
+        }
+        
+        function showMonetagAd() {
+            return new Promise((resolve) => {
+                if(typeof window.show_10541383 === 'function') {
+                    window.show_10541383().then(() => resolve()).catch(() => resolve());
+                } else {
+                    console.warn("Monetag not ready");
+                    resolve();
+                }
+            });
+        }
+        
+        function showAdexoraAd() {
+            return new Promise((resolve) => {
+                if(typeof window.showAdexora === 'function') {
+                    window.showAdexora().then(() => resolve()).catch(() => resolve());
+                } else {
+                    console.warn("Adexora not ready");
+                    resolve();
+                }
+            });
+        }
+        
+        // ---------- AD SEQUENCE UI ----------
+        const adSeqPanel = document.getElementById('adSequencePanel');
+        const adStepMsg = document.getElementById('adStepMessage');
+        const adDescription = document.getElementById('adDescription');
+        const nextStepBtn = document.getElementById('nextStepAdBtn');
+        const adLoadingIndicator = document.getElementById('adLoadingIndicator');
+        
+        function showAdSequenceUI(stepName, description) {
+            adStepMsg.innerText = stepName;
+            adDescription.innerText = description;
+            nextStepBtn.style.display = 'none';
+            adLoadingIndicator.style.display = 'block';
+            adSeqPanel.style.display = 'flex';
+        }
+        
+        function hideAdSequenceUI() {
+            adSeqPanel.style.display = 'none';
+            nextStepBtn.style.display = 'none';
+            if(pendingResolveNextStep) {
+                pendingResolveNextStep();
+                pendingResolveNextStep = null;
+            }
+        }
+        
+        function waitForNextStepButton() {
+            return new Promise((resolve) => {
+                pendingResolveNextStep = resolve;
+                nextStepBtn.style.display = 'block';
+                adLoadingIndicator.style.display = 'none';
+                const onClick = () => {
+                    nextStepBtn.removeEventListener('click', onClick);
+                    if(pendingResolveNextStep) {
+                        pendingResolveNextStep();
+                        pendingResolveNextStep = null;
                     }
+                    nextStepBtn.style.display = 'none';
+                    resolve();
+                };
+                nextStepBtn.addEventListener('click', onClick, { once: true });
+            });
+        }
+        
+        // ---------- 3-STEP AD SEQUENCE (Adsgram -> Monetag -> Adexora) ----------
+        async function runFullAdSequence() {
+            // Step 1: Adsgram
+            showAdSequenceUI("üì¢ Step 1/3: Adsgram", "Showing interstitial ad...");
+            await showAdsgramAd();
+            showAdSequenceUI("‚úÖ Step 1 Complete", "Click next to continue");
+            await waitForNextStepButton();
+            
+            // Step 2: Monetag
+            showAdSequenceUI("üí∞ Step 2/3: Monetag", "Loading reward ad...");
+            await showMonetagAd();
+            showAdSequenceUI("‚úÖ Step 2 Complete", "Click next for final ad");
+            await waitForNextStepButton();
+            
+            // Step 3: Adexora
+            showAdSequenceUI("‚ö° Step 3/3: Adexora", "Final ad, almost there!");
+            await showAdexoraAd();
+            showAdSequenceUI("‚úÖ Ad Sequence Done", "Starting game now!");
+            await new Promise(r => setTimeout(r, 400));
+            hideAdSequenceUI();
+        }
+        
+        // ---------- ENTRY: LEVEL START (with mandatory 3 ads) ----------
+        async function startLevelEntrySequence(level) {
+            if(adSequenceActive || isProcessing) return false;
+            adSequenceActive = true;
+            isProcessing = true;
+            
+            // Hide any game panel if visible
+            document.getElementById('gamePanel').style.display = 'none';
+            
+            // Run 3-step ad sequence
+            await runFullAdSequence();
+            
+            // After all ads, start actual gameplay
+            adSequenceActive = false;
+            activeGameLevel = level;
+            buttonClickState = [false, false, false, false, false];
+            gameCompletedFlag = false;
+            renderGamePanel(level);
+            document.getElementById('gamePanel').style.display = 'flex';
+            isProcessing = false;
+            return true;
+        }
+        
+        // ---------- COUNTDOWN (7 sec) before next level transition ----------
+        function showCountdown(seconds, messagePrefix) {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('countdownOverlay');
+                const countdownNum = document.getElementById('countdownNum');
+                const msgSpan = document.getElementById('countdownMsg');
+                msgSpan.innerHTML = messagePrefix || "Next Level Starting in...";
+                overlay.style.display = 'flex';
+                let remaining = seconds;
+                countdownNum.textContent = remaining;
+                const interval = setInterval(() => {
+                    remaining--;
+                    if(remaining >= 1) {
+                        countdownNum.textContent = remaining;
+                    } else {
+                        clearInterval(interval);
+                        overlay.style.display = 'none';
+                        resolve();
+                    }
+                }, 1000);
+            });
+        }
+        
+        // ---------- GAME MECHANICS (5 tasks) ----------
+        const TASKS = ['Green Signal', 'Yield Lane', 'Stop Ahead', 'Crosswalk', 'Road Merge'];
+        
+        function renderGamePanel(level) {
+            const titleSpan = document.getElementById('gameLevelTitle');
+            titleSpan.innerHTML = `ROUTE ${level}`;
+            const clickedCount = buttonClickState.filter(v => v === true).length;
+            document.getElementById('gameProgressText').innerHTML = `Progress: ${clickedCount} / 5 completed`;
+            const grid = document.getElementById('buttonsGrid');
+            grid.innerHTML = '';
+            for(let i = 0; i < 5; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'action-btn';
+                if(buttonClickState[i]) {
+                    btn.classList.add('disabled-btn');
+                    btn.innerText = `${TASKS[i]} ‚úì`;
+                    btn.disabled = true;
+                } else {
+                    btn.innerText = `${TASKS[i]}`;
+                }
+                btn.dataset.index = i;
+                btn.onclick = (e) => {
+                    if(gameCompletedFlag) return;
+                    if(buttonClickState[i]) return;
+                    buttonClickState[i] = true;
+                    renderGamePanel(level);
+                    const allClicked = buttonClickState.every(v => v === true);
+                    if(allClicked && !gameCompletedFlag) {
+                        gameCompletedFlag = true;
+                        handleLevelComplete(activeGameLevel);
+                    }
+                };
+                grid.appendChild(btn);
+            }
+            const remaining = 5 - clickedCount;
+            const statusDiv = document.getElementById('completeStatusMsg');
+            if(clickedCount === 5) statusDiv.innerHTML = '‚úÖ All tasks done! Level cleared!';
+            else statusDiv.innerHTML = `${remaining} task${remaining !== 1 ? 's' : ''} remaining - Tap all 5`;
+        }
+        
+        async function handleLevelComplete(level) {
+            if(isProcessing) return;
+            isProcessing = true;
+            document.getElementById('gamePanel').style.display = 'none';
+            
+            // Update unlocked level (if completed the current max unlocked)
+            if(level === currentUnlockedLevel && level < MAX_LEVEL) {
+                currentUnlockedLevel = level + 1;
+                saveProgress();
+                buildLevelList();
+            } else if(level > currentUnlockedLevel) {
+                if(level <= MAX_LEVEL) {
+                    currentUnlockedLevel = level;
+                    saveProgress();
+                    buildLevelList();
                 }
             }
-            setInterval(checkNetworkAndHandle, 500);
             
-            function initAds(){ try{ if(typeof window.Adsgram!=='undefined'){ AdController=window.Adsgram.init({blockId:"int-24179"}); adInitialized=true; } }catch(e){} }
-            function showAd(type){ if(!adInitialized||!AdController) return Promise.resolve(); return AdController.show().catch(()=>{}); }
-            
-            function initAudio(){ try{ audioContext=new(window.AudioContext||window.webkitAudioContext)(); gainNode=audioContext.createGain(); gainNode.connect(audioContext.destination); gainNode.gain.value=soundEnabled?0.2:0; }catch(e){} }
-            function playSound(type){ if(!audioContext||!soundEnabled||!gainNode) return; try{ const osc=audioContext.createOscillator(); const gain=audioContext.createGain(); osc.connect(gain); gain.connect(gainNode); if(type==='coin'){ osc.frequency.value=1000; osc.frequency.exponentialRampToValueAtTime(2000,audioContext.currentTime+0.1); gain.gain.value=0.15; gain.gain.exponentialRampToValueAtTime(0.01,audioContext.currentTime+0.2); osc.start(); osc.stop(audioContext.currentTime+0.2); } else if(type==='jump'){ osc.frequency.value=400; osc.frequency.exponentialRampToValueAtTime(800,audioContext.currentTime+0.15); gain.gain.value=0.2; gain.gain.exponentialRampToValueAtTime(0.01,audioContext.currentTime+0.25); osc.start(); osc.stop(audioContext.currentTime+0.25); } else if(type==='crash'){ osc.type='sawtooth'; osc.frequency.value=200; osc.frequency.exponentialRampToValueAtTime(50,audioContext.currentTime+0.3); gain.gain.value=0.25; gain.gain.exponentialRampToValueAtTime(0.01,audioContext.currentTime+0.4); osc.start(); osc.stop(audioContext.currentTime+0.4); } }catch(e){} }
-            function toggleSound(){ soundEnabled=!soundEnabled; localStorage.setItem('banglaCarSoundEnabled',soundEnabled); document.getElementById('soundToggle').classList.toggle('muted',!soundEnabled); if(audioContext&&gainNode) gainNode.gain.value=soundEnabled?0.2:0; }
-            
-            function initScene(){
-                scene=new THREE.Scene(); scene.background=new THREE.Color(COLORS.sky); scene.fog=new THREE.Fog(COLORS.sky,20,150);
-                camera=new THREE.PerspectiveCamera(55,window.innerWidth/window.innerHeight,0.1,1000); camera.position.set(0,6,12);
-                renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"high-performance"}); 
-                renderer.setSize(window.innerWidth,window.innerHeight); renderer.shadowMap.enabled=true; 
-                document.getElementById('gameContainer').appendChild(renderer.domElement);
-                const ambient=new THREE.AmbientLight(0xffffff,0.6); scene.add(ambient);
-                const light=new THREE.DirectionalLight(0xffffff,0.8); light.position.set(5,15,8); light.castShadow=true; scene.add(light);
-                const roadGeo=new THREE.PlaneGeometry(roadWidth,200,1,1); const roadMat=new THREE.MeshStandardMaterial({color:COLORS.road}); road=new THREE.Mesh(roadGeo,roadMat); road.rotation.x=-Math.PI/2; road.position.set(0,0,-50); road.receiveShadow=true; scene.add(road);
-                const lineMat=new THREE.MeshStandardMaterial({color:0xFFFFFF}); for(let z=-100;z<0;z+=8){ const line=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.02,4),lineMat); line.position.set(0,0.05,z); scene.add(line); }
-                const grassGeo=new THREE.PlaneGeometry(roadWidth+18,200); const grassMat=new THREE.MeshStandardMaterial({color:COLORS.grass}); const grass=new THREE.Mesh(grassGeo,grassMat); grass.rotation.x=-Math.PI/2; grass.position.set(0,0.01,-50); scene.add(grass);
-                car=new THREE.Group(); const body=new THREE.Mesh(new THREE.BoxGeometry(1.8,1.0,3.0),new THREE.MeshStandardMaterial({color:0x4CAF50})); body.position.y=0.5; body.castShadow=true; car.add(body);
-                const cabin=new THREE.Mesh(new THREE.BoxGeometry(1.4,0.8,1.5),new THREE.MeshStandardMaterial({color:0x212121})); cabin.position.set(0,1.1,-0.3); cabin.castShadow=true; car.add(cabin);
-                const wheelGeo=new THREE.CylinderGeometry(0.4,0.4,0.3,8); const wheelMat=new THREE.MeshStandardMaterial({color:0x212121}); [[-0.7,0.2,1.0],[0.7,0.2,1.0],[-0.7,0.2,-1.0],[0.7,0.2,-1.0]].forEach(pos=>{ const w=new THREE.Mesh(wheelGeo,wheelMat); w.rotation.z=Math.PI/2; w.position.set(pos[0],pos[1],pos[2]); w.castShadow=true; car.add(w); }); car.position.set(0,0.5,0); scene.add(car);
-                for(let z=-120;z<0;z+=18){ for(let s=-1;s<=1;s+=2){ if(Math.random()>0.4){ const tree=new THREE.Group(); const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.4,2.5,6),new THREE.MeshStandardMaterial({color:0x8D6E63})); trunk.position.y=1.2; tree.add(trunk); const leaves=new THREE.Mesh(new THREE.ConeGeometry(0.9,1.8,6),new THREE.MeshStandardMaterial({color:0x2E7D32})); leaves.position.y=2.6; tree.add(leaves); tree.position.set(s*(roadWidth/2+4+Math.random()*4),0,z); scene.add(tree); trees.push(tree); } } }
-                const coinGeo=new THREE.CylinderGeometry(0.4,0.4,0.1,8); const coinMat=new THREE.MeshStandardMaterial({color:0xFFD700,emissive:0x442200}); for(let i=0;i<40;i++){ const coin=new THREE.Mesh(coinGeo,coinMat); coin.rotation.x=Math.PI/2; coin.visible=false; scene.add(coin); coinPool.push(coin); }
-                const obstacleTypes=[0x795548,0x9E9E9E,0x757575]; for(let i=0;i<18;i++){ const obs=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.4,0.8),new THREE.MeshStandardMaterial({color:obstacleTypes[i%3]})); obs.visible=false; scene.add(obs); obstaclePool.push(obs); }
-                for(let i=0;i<4;i++){ const r=new THREE.Mesh(new THREE.BoxGeometry(1.6,1.3,3.0),new THREE.MeshStandardMaterial({color:COLORS.rickshaw})); r.position.set((i%2===0?-2:2),0.65,-50-i*25); scene.add(r); rickshaws.push(r); }
-                for(let i=0;i<2;i++){ const b=new THREE.Mesh(new THREE.BoxGeometry(2.5,3.0,8.0),new THREE.MeshStandardMaterial({color:COLORS.bus})); b.position.set((i%2===0?-1:3),1.5,-80-i*50); scene.add(b); buses.push(b); }
-                for(let i=0;i<3;i++){ const bi=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.7,1.2),new THREE.MeshStandardMaterial({color:COLORS.bike})); bi.position.set((i%2===0?0:4),0.35,-40-i*30); scene.add(bi); bikes.push(bi); }
-                document.getElementById('loadingProgress').style.width='100%'; document.getElementById('loadingPercentage').textContent='100%';
-                setTimeout(()=>{ document.getElementById('loading').style.display='none'; document.getElementById('startScreen').style.display='flex'; updateHomeScreenStats(); generateLevelButtons(); setTimeout(()=>showAd('start'),1000); },300);
-                animate();
+            // Show completion screen or reward if level 10
+            if(level === MAX_LEVEL) {
+                // Show reward screen directly
+                showRewardScreen();
+                isProcessing = false;
+                return;
+            } else {
+                showLevelCompleteScreen(level);
+                isProcessing = false;
             }
-            
-            function spawnCoin(z){ const coin=coinPool.find(c=>!c.visible); if(coin){ coin.visible=true; coin.position.set((Math.random()-0.5)*5.5,0.9,z); } }
-            function spawnObstacle(z){ const obs=obstaclePool.find(o=>!o.visible); if(obs){ obs.visible=true; obs.position.set((Math.random()-0.5)*5.5,0.2,z); obs.rotation.y=Math.random()*Math.PI; } }
-            
-            function updateGame(delta){
-                if(!gameRunning||gamePaused) return;
-                const dt=Math.min(delta,0.033);
-                speedIncreaseTimer+=dt; if(speedIncreaseTimer>=SPEED_INCREASE_INTERVAL){ speedMultiplier+=SPEED_INCREASE_AMOUNT; gameSpeed=baseSpeed*speedMultiplier; speedIncreaseTimer=0; document.getElementById('speedDisplay').textContent=gameSpeed.toFixed(1)+'x'; }
-                if(isJumping){ car.position.y+=jumpVelocity*dt; jumpVelocity-=18*dt; if(car.position.y<=0.5){ car.position.y=0.5; isJumping=false; document.getElementById('jumpIndicator').style.display='none'; } } else if(controls.jump){ isJumping=true; jumpVelocity=7.5; playSound('jump'); document.getElementById('jumpIndicator').style.display='block'; setTimeout(()=>document.getElementById('jumpIndicator').style.display='none',400); }
-                const moveSpeed=9*dt*gameSpeed; const maxX=roadWidth/2-1.3; if(controls.left) car.position.x=Math.max(-maxX,car.position.x-moveSpeed); if(controls.right) car.position.x=Math.min(maxX,car.position.x+moveSpeed);
-                for(let coin of coinPool){ if(!coin.visible) continue; coin.position.z+=gameSpeed*dt*13; coin.rotation.y+=dt*8; if(Math.hypot(coin.position.x-car.position.x,coin.position.z-car.position.z)<1.3){ score++; coin.visible=false; playSound('coin'); let requiredCoins = LEVEL_CONFIG[selectedLevel].coinsToComplete; if(gameMode==='level'&&score>=requiredCoins) levelComplete(); } if(coin.position.z>8) coin.visible=false; }
-                for(let obs of obstaclePool){ if(!obs.visible) continue; obs.position.z+=gameSpeed*dt*14; if(!isJumping&&Math.hypot(obs.position.x-car.position.x,obs.position.z-car.position.z)<1.2){ lives--; obs.visible=false; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },150); updateUI(); if(lives<=0) gameOver(); } if(obs.position.z>8) obs.visible=false; }
-                for(let r of rickshaws){ r.position.z+=gameSpeed*dt*9; if(r.position.z>8) r.position.z=-80; if(!isJumping&&Math.hypot(r.position.x-car.position.x,r.position.z-car.position.z)<1.7){ lives--; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },150); updateUI(); if(lives<=0) gameOver(); } }
-                for(let b of buses){ b.position.z+=gameSpeed*dt*6.5; if(b.position.z>8) b.position.z=-100; if(!isJumping&&Math.hypot(b.position.x-car.position.x,b.position.z-car.position.z)<2.5){ lives--; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },150); updateUI(); if(lives<=0) gameOver(); } }
-                for(let bi of bikes){ bi.position.z+=gameSpeed*dt*12; if(bi.position.z>8) bi.position.z=-70; if(!isJumping&&Math.hypot(bi.position.x-car.position.x,bi.position.z-car.position.z)<1.2){ lives--; playSound('crash'); car.children[0].material.color.setHex(0xff0000); setTimeout(()=>{ if(car.children[0].material) car.children[0].material.color.setHex(0x4CAF50); },150); updateUI(); if(lives<=0) gameOver(); } }
-                if(Math.random()<dt*0.6) spawnCoin(-55); if(Math.random()<dt*0.4) spawnObstacle(-65);
-                camera.position.x=car.position.x*0.25; camera.position.y=5.5+car.position.y*0.3; camera.position.z=car.position.z+9; camera.lookAt(car.position.x,car.position.y+0.8,car.position.z-3);
-                updateUI();
+        }
+        
+        function showLevelCompleteScreen(level) {
+            const completeDiv = document.getElementById('levelCompleteScreen');
+            document.getElementById('completeLevelMsg').innerHTML = `Route ${level} completed! üéâ`;
+            completeDiv.dataset.currentLevel = level;
+            completeDiv.style.display = 'flex';
+        }
+        
+        // Next Level logic: countdown 7 sec -> then start next level with 3-ad sequence
+        async function handleNextLevelWithCountdown(currentCompletedLevel) {
+            if(isProcessing) return;
+            const nextLevel = currentCompletedLevel + 1;
+            if(nextLevel > MAX_LEVEL) {
+                document.getElementById('levelCompleteScreen').style.display = 'none';
+                showRewardScreen();
+                return;
             }
-            
-            function updateUI(){ document.getElementById('score').textContent=Math.floor(score); document.getElementById('lives').textContent=lives; document.getElementById('level').textContent=gameMode==='level'?selectedLevel:'°ﬁ'; document.getElementById('speedDisplay').textContent=gameSpeed.toFixed(1)+'x'; }
-            function updateHomeScreenStats(){ document.getElementById('menuHighScore').textContent=highScore; document.getElementById('menuCurrentLevel').textContent=Math.min(currentLevel,MAX_LEVEL); }
-            function generateLevelButtons(){ const container=document.getElementById('levelSelectContainer'); container.innerHTML=''; for(let i=1;i<=MAX_LEVEL;i++){ const coinsReq=getCoinsRequired(i); const btn=document.createElement('button'); btn.className='level-btn'+(i>unlockedLevels?' locked':'')+(i===selectedLevel?' current':''); btn.innerHTML=`<div>${i}</div><div class="win-requirement">${coinsReq}</div>`; if(i<=unlockedLevels){ btn.onclick=()=>{ selectedLevel=i; document.getElementById('currentLevelDisplay').textContent=i; let req=LEVEL_CONFIG[i].coinsToComplete; document.getElementById('coinsRequiredDisplay').textContent=req; document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('current')); btn.classList.add('current'); const diff=LEVEL_CONFIG[i].difficulty; document.getElementById('difficultyDisplay').textContent=diff.charAt(0).toUpperCase()+diff.slice(1); document.getElementById('difficultyDisplay').className='level-difficulty difficulty-'+diff; }; } container.appendChild(btn); } document.getElementById('currentLevelDisplay').textContent=selectedLevel; document.getElementById('coinsRequiredDisplay').textContent=LEVEL_CONFIG[selectedLevel].coinsToComplete; document.getElementById('levelProgressBar').style.width=((selectedLevel-1)/MAX_LEVEL*100)+'%'; const diff=LEVEL_CONFIG[selectedLevel].difficulty; document.getElementById('difficultyDisplay').textContent=diff.charAt(0).toUpperCase()+diff.slice(1); document.getElementById('difficultyDisplay').className='level-difficulty difficulty-'+diff; }
-            
-            function startLevelMode(){ if(!navigator.onLine){ document.getElementById('networkErrorScreen').style.display='flex'; return; } gameRunning=true; gamePaused=false; gameMode='level'; score=0; lives=1; gameSpeed=1.0; speedMultiplier=1.0; speedIncreaseTimer=0; isJumping=false; resetGameObjects(); document.getElementById('levelSelectScreen').style.display='none'; document.getElementById('startScreen').style.display='none'; document.getElementById('hud').style.display='flex'; document.getElementById('controls').style.display='flex'; document.getElementById('jumpBtn').style.display='flex'; document.getElementById('backBtn').style.display='flex'; document.getElementById('soundToggle').style.display='flex'; document.getElementById('modeIndicator').style.display='block'; document.getElementById('modeText').textContent='Level'; document.querySelector('.controls-info').style.display='block'; updateUI(); for(let i=0;i<6;i++) spawnCoin(-30-i*12); for(let i=0;i<2;i++) spawnObstacle(-40-i*18); }
-            function startNonstopMode(){ if(!navigator.onLine){ document.getElementById('networkErrorScreen').style.display='flex'; return; } gameRunning=true; gamePaused=false; gameMode='nonstop'; score=0; lives=5; gameSpeed=1.0; speedMultiplier=1.0; speedIncreaseTimer=0; isJumping=false; resetGameObjects(); document.getElementById('startScreen').style.display='none'; document.getElementById('hud').style.display='flex'; document.getElementById('controls').style.display='flex'; document.getElementById('jumpBtn').style.display='flex'; document.getElementById('backBtn').style.display='flex'; document.getElementById('soundToggle').style.display='flex'; document.getElementById('modeIndicator').style.display='block'; document.getElementById('modeText').textContent='Nonstop'; document.querySelector('.controls-info').style.display='block'; updateUI(); for(let i=0;i<6;i++) spawnCoin(-30-i*12); for(let i=0;i<2;i++) spawnObstacle(-40-i*18); }
-            function resetGameObjects(){ coinPool.forEach(c=>c.visible=false); obstaclePool.forEach(o=>o.visible=false); rickshaws.forEach((r,i)=>{ r.position.z=-50-i*25; r.position.x=(i%2===0?-2:2); }); buses.forEach((b,i)=>{ b.position.z=-80-i*50; b.position.x=(i%2===0?-1:3); }); bikes.forEach((bi,i)=>{ bi.position.z=-40-i*30; bi.position.x=(i%2===0?0:4); }); if(car){ car.position.set(0,0.5,0); car.children[0].material.color.setHex(0x4CAF50); } }
-            function gameOver(){ if(!gameRunning) return; gameRunning=false; playSound('crash'); showAd('gameover').finally(()=>{ if(score>highScore){ highScore=score; localStorage.setItem('banglaCarHighScore',highScore); } document.getElementById('finalScoreText').textContent=score+' coins'; document.getElementById('highScoreText').textContent='High Score: '+highScore; document.getElementById('finalLevelText').textContent=gameMode==='level'?selectedLevel:'°ﬁ'; document.getElementById('hud').style.display='none'; document.getElementById('controls').style.display='none'; document.getElementById('jumpBtn').style.display='none'; document.getElementById('backBtn').style.display='none'; document.getElementById('soundToggle').style.display='none'; document.getElementById('modeIndicator').style.display='none'; document.querySelector('.controls-info').style.display='none'; document.getElementById('gameOverScreen').style.display='flex'; }); }
-            function levelComplete(){ if(!gameRunning) return; gameRunning=false; showAd('levelcomplete').finally(()=>{ if(selectedLevel===MAX_LEVEL){ const rewardCode=`GR20-${Math.random().toString(36).substr(2,6).toUpperCase()}`; document.getElementById('rewardCodeDisplay').textContent=rewardCode; document.getElementById('rewardScreen').style.display='flex'; } if(score>highScore){ highScore=score; localStorage.setItem('banglaCarHighScore',highScore); } if(selectedLevel===currentLevel && selectedLevel<MAX_LEVEL){ currentLevel++; unlockedLevels=Math.min(MAX_LEVEL,Math.max(unlockedLevels,currentLevel)); localStorage.setItem('currentLevel',currentLevel); localStorage.setItem('unlockedLevels',unlockedLevels); } document.getElementById('levelCompleteScore').textContent=score+' coins'; document.getElementById('completedLevelText').textContent=selectedLevel; document.getElementById('hud').style.display='none'; document.getElementById('controls').style.display='none'; document.getElementById('jumpBtn').style.display='none'; document.getElementById('backBtn').style.display='none'; document.getElementById('soundToggle').style.display='none'; document.getElementById('modeIndicator').style.display='none'; document.querySelector('.controls-info').style.display='none'; if(selectedLevel!==MAX_LEVEL) document.getElementById('levelCompleteScreen').style.display='flex'; }); }
-            function continueToNextLevel(){ if(selectedLevel<MAX_LEVEL){ selectedLevel++; document.getElementById('levelCompleteScreen').style.display='none'; startLevelMode(); } }
-            function restartGame(){ document.getElementById('gameOverScreen').style.display='none'; if(gameMode==='level') startLevelMode(); else startNonstopMode(); }
-            function handleBackToMenu(){ gameRunning=false; document.getElementById('gameOverScreen').style.display='none'; document.getElementById('levelCompleteScreen').style.display='none'; document.getElementById('pauseMenu').style.display='none'; document.getElementById('startScreen').style.display='flex'; document.getElementById('hud').style.display='none'; document.getElementById('controls').style.display='none'; document.getElementById('jumpBtn').style.display='none'; document.getElementById('backBtn').style.display='none'; document.getElementById('soundToggle').style.display='none'; document.getElementById('modeIndicator').style.display='none'; document.querySelector('.controls-info').style.display='none'; updateHomeScreenStats(); generateLevelButtons(); }
-            function pauseGame(){ gamePaused=true; document.getElementById('pauseMenu').style.display='flex'; document.getElementById('pauseScore').textContent=score; document.getElementById('pauseLives').textContent=lives; document.getElementById('pauseLevel').textContent=gameMode==='level'?selectedLevel:'°ﬁ'; document.getElementById('pauseSoundStatus').textContent=soundEnabled?'ON':'OFF'; }
-            function resumeGame(){ gamePaused=false; document.getElementById('pauseMenu').style.display='none'; }
-            function animate(time=0){ if(gameRunning){ const delta=Math.min((time-(lastTimestamp||time))/1000,0.033); lastTimestamp=time; updateGame(delta); } if(renderer&&scene&&camera) renderer.render(scene,camera); animationFrame=requestAnimationFrame(animate); }
-            
-            function setupEventListeners(){
-                document.getElementById('leftBtn').addEventListener('touchstart',(e)=>{e.preventDefault();controls.left=true;}); document.getElementById('leftBtn').addEventListener('touchend',(e)=>{e.preventDefault();controls.left=false;}); document.getElementById('leftBtn').addEventListener('mousedown',()=>controls.left=true); document.getElementById('leftBtn').addEventListener('mouseup',()=>controls.left=false); document.getElementById('leftBtn').addEventListener('mouseleave',()=>controls.left=false);
-                document.getElementById('rightBtn').addEventListener('touchstart',(e)=>{e.preventDefault();controls.right=true;}); document.getElementById('rightBtn').addEventListener('touchend',(e)=>{e.preventDefault();controls.right=false;}); document.getElementById('rightBtn').addEventListener('mousedown',()=>controls.right=true); document.getElementById('rightBtn').addEventListener('mouseup',()=>controls.right=false); document.getElementById('rightBtn').addEventListener('mouseleave',()=>controls.right=false);
-                document.getElementById('jumpBtn').addEventListener('touchstart',(e)=>{e.preventDefault();controls.jump=true;}); document.getElementById('jumpBtn').addEventListener('touchend',(e)=>{e.preventDefault();controls.jump=false;}); document.getElementById('jumpBtn').addEventListener('mousedown',()=>controls.jump=true); document.getElementById('jumpBtn').addEventListener('mouseup',()=>controls.jump=false);
-                window.addEventListener('keydown',(e)=>{ const k=e.key.toLowerCase(); if(k==='arrowleft'||k==='a'){controls.left=true;e.preventDefault();} if(k==='arrowright'||k==='d'){controls.right=true;e.preventDefault();} if(k==='arrowup'||k==='w'||k===' '){controls.jump=true;e.preventDefault();} if(k==='escape'&&gameRunning&&!gamePaused){pauseGame();e.preventDefault();} });
-                window.addEventListener('keyup',(e)=>{ const k=e.key.toLowerCase(); if(k==='arrowleft'||k==='a') controls.left=false; if(k==='arrowright'||k==='d') controls.right=false; if(k==='arrowup'||k==='w'||k===' ') controls.jump=false; });
-                document.getElementById('selectLevelBtn').addEventListener('click',()=>{ document.getElementById('startScreen').style.display='none'; document.getElementById('levelSelectScreen').style.display='flex'; generateLevelButtons(); });
-                document.getElementById('nonstopPlayBtn').addEventListener('click',()=>{ document.getElementById('startScreen').style.display='none'; startNonstopMode(); });
-                document.getElementById('howToPlayBtn').addEventListener('click',()=>{ document.getElementById('instructions').style.display='block'; });
-                document.getElementById('backFromLevelSelectBtn').addEventListener('click',()=>{ document.getElementById('levelSelectScreen').style.display='none'; document.getElementById('startScreen').style.display='flex'; });
-                document.getElementById('startSelectedLevelBtn').addEventListener('click',()=>{ document.getElementById('levelSelectScreen').style.display='none'; startLevelMode(); });
-                document.getElementById('backBtn').addEventListener('click',()=>{ if(gameRunning) handleBackToMenu(); });
-                document.getElementById('resumeBtn').addEventListener('click',resumeGame);
-                document.getElementById('restartFromPauseBtn').addEventListener('click',()=>{ document.getElementById('pauseMenu').style.display='none'; restartGame(); });
-                document.getElementById('backToMenuFromPauseBtn').addEventListener('click',()=>{ document.getElementById('pauseMenu').style.display='none'; handleBackToMenu(); });
-                document.getElementById('restartBtn').addEventListener('click',restartGame);
-                document.getElementById('menuBtn').addEventListener('click',handleBackToMenu);
-                document.getElementById('menuBtn2').addEventListener('click',handleBackToMenu);
-                document.getElementById('continueBtn').addEventListener('click',continueToNextLevel);
-                document.getElementById('selectAnotherLevelBtn').addEventListener('click',()=>{ document.getElementById('levelCompleteScreen').style.display='none'; document.getElementById('levelSelectScreen').style.display='flex'; });
-                document.getElementById('resetAfterRewardBtn').addEventListener('click',()=>{ const code=document.getElementById('rewardCodeDisplay').textContent; navigator.clipboard.writeText(code); alert('Code copied! Progress reset.'); currentLevel=1; unlockedLevels=1; selectedLevel=1; localStorage.setItem('currentLevel','1'); localStorage.setItem('unlockedLevels','1'); document.getElementById('rewardScreen').style.display='none'; handleBackToMenu(); });
-                document.getElementById('soundToggle').addEventListener('click',toggleSound);
-                document.getElementById('retryConnectionBtn').addEventListener('click',()=>{ if(navigator.onLine){ document.getElementById('networkErrorScreen').style.display='none'; if(gameMode==='level') startLevelMode(); else startNonstopMode(); } else { alert('Still offline. Please connect to internet.'); } });
-                document.getElementById('backToMenuNetworkBtn').addEventListener('click',()=>{ document.getElementById('networkErrorScreen').style.display='none'; handleBackToMenu(); });
-                window.addEventListener('resize',()=>{ if(camera&&renderer){ camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth,window.innerHeight); } });
+            // Hide complete screen
+            document.getElementById('levelCompleteScreen').style.display = 'none';
+            isProcessing = true;
+            // 7 second countdown before next level ad sequence
+            await showCountdown(7, `Next: Route ${nextLevel}<br>Starting in...`);
+            // Start the full ad sequence (3 ads) for the next level
+            const success = await startLevelEntrySequence(nextLevel);
+            if(success) {
+                // gameplay started inside startLevelEntrySequence
+                isProcessing = false;
+            } else {
+                isProcessing = false;
             }
-            window.copyRewardCode=function(){ const code=document.getElementById('rewardCodeDisplay').textContent; navigator.clipboard.writeText(code); alert('Code copied! Game progress will reset.'); currentLevel=1; unlockedLevels=1; selectedLevel=1; localStorage.setItem('currentLevel','1'); localStorage.setItem('unlockedLevels','1'); document.getElementById('rewardScreen').style.display='none'; handleBackToMenu(); };
-            
-            window.addEventListener('load',()=>{ initAudio(); initAds(); let prog=0; const iv=setInterval(()=>{ prog+=12; document.getElementById('loadingProgress').style.width=prog+'%'; document.getElementById('loadingPercentage').textContent=prog+'%'; if(prog>=100){ clearInterval(iv); initScene(); } },80); setupEventListeners(); document.getElementById('soundToggle').classList.toggle('muted',!soundEnabled); });
-        })();
+        }
+        
+        // ---------- REWARD & RESET ----------
+        function showRewardScreen() {
+            const code = `GR10-${Math.random().toString(36).substr(2, 8).toUpperCase()}`;
+            document.getElementById('rewardCodeDisplay').textContent = code;
+            document.getElementById('rewardScreen').style.display = 'flex';
+        }
+        
+        function resetGameAndCopy() {
+            const codeElem = document.getElementById('rewardCodeDisplay');
+            const code = codeElem.textContent;
+            navigator.clipboard.writeText(code).catch(()=>{});
+            alert('Reward code copied! Game progress reset to Level 1.');
+            currentUnlockedLevel = 1;
+            saveProgress();
+            buildLevelList();
+            document.getElementById('rewardScreen').style.display = 'none';
+            document.getElementById('levelCompleteScreen').style.display = 'none';
+            document.getElementById('gamePanel').style.display = 'none';
+            if(adSeqPanel) adSeqPanel.style.display = 'none';
+            isProcessing = false;
+            adSequenceActive = false;
+            if(pendingResolveNextStep) {
+                pendingResolveNextStep();
+                pendingResolveNextStep = null;
+            }
+        }
+        
+        window.copyRewardCodeGlobal = function() {
+            const codeElem = document.getElementById('rewardCodeDisplay');
+            const code = codeElem.textContent;
+            navigator.clipboard.writeText(code);
+            alert('Code copied: ' + code);
+        };
+        
+        // ---------- LEVEL LIST UI ----------
+        function buildLevelList() {
+            const container = document.getElementById('levelListContainer');
+            container.innerHTML = '';
+            for(let i = 1; i <= MAX_LEVEL; i++) {
+                const isUnlocked = (i <= currentUnlockedLevel);
+                const card = document.createElement('div');
+                card.className = 'level-card' + (isUnlocked ? '' : ' locked');
+                if(isUnlocked) {
+                    card.onclick = () => {
+                        if(adSequenceActive || isProcessing) return;
+                        startLevelEntrySequence(i);
+                    };
+                }
+                let statusIcon = isUnlocked ? (i < currentUnlockedLevel ? '‚úì' : 'üîì') : 'üîí';
+                let statusClass = isUnlocked ? 'completed-badge' : 'locked-badge';
+                card.innerHTML = `
+                    <div class="level-number">${i}</div>
+                    <div class="level-info">
+                        <div class="level-name">Route ${i}</div>
+                        <div class="level-requirement">5 road tasks</div>
+                    </div>
+                    <div class="level-status ${statusClass}">${statusIcon}</div>
+                `;
+                container.appendChild(card);
+            }
+        }
+        
+        // ---------- EXIT GAME ----------
+        function exitGameToRoad() {
+            if(adSequenceActive) {
+                hideAdSequenceUI();
+                adSequenceActive = false;
+                if(pendingResolveNextStep) pendingResolveNextStep();
+                pendingResolveNextStep = null;
+            }
+            document.getElementById('gamePanel').style.display = 'none';
+            isProcessing = false;
+        }
+        
+        function backToRoadFromComplete() {
+            document.getElementById('levelCompleteScreen').style.display = 'none';
+            isProcessing = false;
+        }
+        
+        // ---------- EVENT BINDINGS ----------
+        function bindEvents() {
+            const nextBtn = document.getElementById('nextLevelBtnFromComplete');
+            const backBtn = document.getElementById('backToRoadCompleteBtn');
+            const resetRewardBtn = document.getElementById('resetAllBtn');
+            const exitGame = document.getElementById('exitGameBtn');
+            if(nextBtn) nextBtn.onclick = () => {
+                const completeDiv = document.getElementById('levelCompleteScreen');
+                const currentLvl = parseInt(completeDiv.dataset.currentLevel);
+                if(!isNaN(currentLvl)) handleNextLevelWithCountdown(currentLvl);
+            };
+            if(backBtn) backBtn.onclick = () => backToRoadFromComplete();
+            if(resetRewardBtn) resetRewardBtn.onclick = () => resetGameAndCopy();
+            if(exitGame) exitGame.onclick = () => exitGameToRoad();
+        }
+        
+        // ---------- INIT GAME ----------
+        window.addEventListener('load', () => {
+            loadProgress();
+            initAdsgram();
+            buildLevelList();
+            bindEvents();
+            console.log("Green Road v2 ‚Äî Triple ad sequence (Adsgram ‚Üí Monetag ‚Üí Adexora) + 7 sec countdown before next level | MAX 10 levels");
+        });
+        window.addEventListener('beforeunload', () => saveProgress());
     </script>
 </body>
 </html>
