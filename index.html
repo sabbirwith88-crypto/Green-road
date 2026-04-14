@@ -3,22 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Green Road Challenge — Playable Ads Sequence</title>
+    <title>Green Road Challenge — Triple Ad Sequence</title>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK (Rewarded Interstitial) -->
     <script src="//libtl.com/sdk.js" data-zone="10541383" data-sdk="show_10541383"></script>
-    <!-- Telegram Playable Ads SDK (RichInfo) -->
-    <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-    <script>
-        // Initialize Telegram Ads Controller globally
-        window.TelegramAdsController = new TelegramAdsController();
-        window.TelegramAdsController.initialize({
-            pubId: "1008310",
-            appId: "7019",
-        });
-        console.log("Telegram Ads Controller initialized for playable ads");
-    </script>
+    <!-- Adexora SDK with App ID 1964 -->
+    <script src="https://adexora.com/cdn/ads.js?id=1964"></script>
     <style>
         * {
             margin: 0;
@@ -396,6 +387,7 @@
             font-weight: 600;
         }
 
+        /* Ad Sequence Modal */
         .ad-sequence-panel {
             position: fixed;
             top: 0;
@@ -499,6 +491,7 @@
         <div class="footer-note">Each level: tap 5 road tasks to complete</div>
     </div>
 
+    <!-- Game Panel (5 buttons gameplay) -->
     <div id="gamePanel" class="game-panel" style="display: none;">
         <div class="game-card">
             <div class="game-level-title" id="gameLevelTitle">ROUTE 1</div>
@@ -510,11 +503,13 @@
         </div>
     </div>
 
+    <!-- Countdown Overlay (3 sec before next level ad sequence) -->
     <div id="countdownOverlay" class="countdown-overlay" style="display: none;">
         <div class="countdown-number" id="countdownNum">3</div>
         <div class="countdown-message" id="countdownMsg">Next Level Starting in...</div>
     </div>
 
+    <!-- Level Complete Screen -->
     <div id="levelCompleteScreen" class="levelcomplete-screen" style="display: none;">
         <div class="complete-title">Level Clear!</div>
         <div style="color: white; font-size: 18px; margin-bottom: 20px;" id="completeLevelMsg"></div>
@@ -522,6 +517,7 @@
         <button class="btn btn-secondary" id="backToRoadCompleteBtn">Road Menu</button>
     </div>
 
+    <!-- Reward Screen (Final level 10) -->
     <div id="rewardScreen" class="reward-screen" style="display: none;">
         <h2 style="color: white; font-size: 28px; font-weight: 800;">🏆 Master Driver</h2>
         <p style="color: white; font-size: 16px; margin-top: 6px;">All 10 levels conquered!</p>
@@ -531,6 +527,7 @@
         <button class="btn" id="resetAllBtn">Copy & Reset Game</button>
     </div>
 
+    <!-- Ad Sequence Modal (3-step: Adsgram → Monetag → Adexora) -->
     <div id="adSequencePanel" class="ad-sequence-panel" style="display: none;">
         <div class="ad-sequence-card">
             <div class="ad-step-icon" id="adStepIcon">🎬</div>
@@ -552,34 +549,51 @@
         let adSequenceActive = false;
         let pendingResolveNextStep = null;
         
+        // Adsgram controller
         let adController = null;
         let adInitialized = false;
         
-        // ---------- NETWORK HANDLING ----------
-        function showOfflineExitAndCloseGame(message) {
+        // ---------- NETWORK OFFLINE EXIT HANDLER ----------
+        function showOfflineExitAndCloseGame(message = "No internet connection. Exiting to Road Menu.") {
+            // Remove any existing toast
+            const existingToast = document.querySelector('.offline-toast');
+            if(existingToast) existingToast.remove();
             const toast = document.createElement('div');
             toast.className = 'offline-toast';
-            toast.innerText = message || "No internet connection. Exiting to Road Menu.";
+            toast.innerText = message;
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            setTimeout(() => { if(toast.parentNode) toast.remove(); }, 3000);
+            
+            // Force exit all game states
             forceExitAllGameScreens();
         }
         
         function forceExitAllGameScreens() {
+            // Close game panel, ad sequence, countdown, level complete, reward
             document.getElementById('gamePanel').style.display = 'none';
             document.getElementById('adSequencePanel').style.display = 'none';
             document.getElementById('countdownOverlay').style.display = 'none';
             document.getElementById('levelCompleteScreen').style.display = 'none';
+            // Reward screen remains only if we intentionally want to keep? But according to exit logic, we close reward too
+            // But reward appears only after final level; we should close it if offline happens during reward? Safer to close.
             document.getElementById('rewardScreen').style.display = 'none';
-            if(pendingResolveNextStep) { pendingResolveNextStep(); pendingResolveNextStep = null; }
+            
+            // Reset all flags
+            if(pendingResolveNextStep) {
+                pendingResolveNextStep();
+                pendingResolveNextStep = null;
+            }
             adSequenceActive = false;
             isProcessing = false;
             gameCompletedFlag = false;
             activeGameLevel = null;
         }
         
-        function isNetworkOnline() { return navigator.onLine; }
+        function isNetworkOnline() {
+            return navigator.onLine;
+        }
         
+        // Listen to offline event globally -> immediately exit game if any active screen
         window.addEventListener('offline', () => {
             if(adSequenceActive || document.getElementById('gamePanel').style.display === 'flex' || 
                document.getElementById('adSequencePanel').style.display === 'flex' ||
@@ -589,12 +603,21 @@
             }
         });
         
+        // Also online event just for info (optional)
+        window.addEventListener('online', () => {
+            console.log("Network back online");
+        });
+        
         // ---------- PROGRESS ----------
         function loadProgress() {
             try {
                 const saved = localStorage.getItem('greenRoadProgress');
-                if(saved) currentUnlockedLevel = Math.min(MAX_LEVEL, JSON.parse(saved).unlockedLevel || 1);
-                else currentUnlockedLevel = 1;
+                if(saved) {
+                    const data = JSON.parse(saved);
+                    currentUnlockedLevel = Math.min(MAX_LEVEL, data.unlockedLevel || 1);
+                } else {
+                    currentUnlockedLevel = 1;
+                }
             } catch(e) { currentUnlockedLevel = 1; }
         }
         function saveProgress() {
@@ -607,18 +630,24 @@
                 if(typeof window.Adsgram !== 'undefined') {
                     adController = window.Adsgram.init({ blockId: "int-24179" });
                     adInitialized = true;
-                }
+                } else { console.warn("Adsgram not loaded"); }
             } catch(e) { console.error(e); }
         }
         
+        // Individual ad functions with network pre-check & timeout protection
         function withNetworkGuard(fn, adName) {
             return new Promise(async (resolve) => {
                 if(!isNetworkOnline()) {
+                    console.warn(`${adName} skipped: offline`);
                     showOfflineExitAndCloseGame(`📡 No internet. Cannot load ${adName}. Exiting.`);
-                    resolve();
+                    resolve(); // still resolve to avoid hanging but exit already triggered
                     return;
                 }
-                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 12000);
+                // timeout fallback (10 seconds) to avoid infinite stuck
+                const timeoutId = setTimeout(() => {
+                    console.warn(`${adName} timeout, continuing`);
+                    resolve();
+                }, 10000);
                 try {
                     await fn();
                     clearTimeout(timeoutId);
@@ -626,7 +655,10 @@
                 } catch(e) {
                     clearTimeout(timeoutId);
                     console.error(`${adName} error:`, e);
-                    if(!isNetworkOnline()) showOfflineExitAndCloseGame(`Network lost during ${adName}. Exiting.`);
+                    // If offline during call, exit
+                    if(!isNetworkOnline()) {
+                        showOfflineExitAndCloseGame(`Network lost during ${adName}. Exiting.`);
+                    }
                     resolve();
                 }
             });
@@ -634,53 +666,29 @@
         
         function showAdsgramAd() {
             return withNetworkGuard(async () => {
-                if(adInitialized && adController) await adController.show();
+                if(!adInitialized || !adController) return;
+                await adController.show();
             }, "Adsgram");
         }
         
         function showMonetagAd() {
             return withNetworkGuard(async () => {
-                if(typeof window.show_10541383 === 'function') await window.show_10541383();
-                else await new Promise(r => setTimeout(r, 600));
+                if(typeof window.show_10541383 === 'function') {
+                    await window.show_10541383();
+                } else {
+                    console.warn("Monetag not ready");
+                }
             }, "Monetag");
         }
         
-        // ---------- CORRECT TELEGRAM PLAYABLE ADS ----------
-        function showTelegramPlayableAd() {
+        function showAdexoraAd() {
             return withNetworkGuard(async () => {
-                // Wait for controller to be fully ready
-                let attempts = 0;
-                while (!window.TelegramAdsController && attempts < 10) {
-                    await new Promise(r => setTimeout(r, 200));
-                    attempts++;
+                if(typeof window.showAdexora === 'function') {
+                    await window.showAdexora();
+                } else {
+                    console.warn("Adexora not ready");
                 }
-                if (!window.TelegramAdsController) {
-                    console.warn("TelegramAdsController not available after waiting");
-                    return;
-                }
-                
-                // The correct method for playable ads is showPlayableAd()
-                // Based on RichInfo documentation
-                if (typeof window.TelegramAdsController.showPlayableAd === 'function') {
-                    console.log("Calling TelegramAdsController.showPlayableAd()");
-                    await window.TelegramAdsController.showPlayableAd();
-                } 
-                // Fallback: try showRewardedAd (sometimes playable is under rewarded)
-                else if (typeof window.TelegramAdsController.showRewardedAd === 'function') {
-                    console.log("Falling back to showRewardedAd()");
-                    await window.TelegramAdsController.showRewardedAd();
-                }
-                // Another fallback: showInterstitial (not ideal but better than nothing)
-                else if (typeof window.TelegramAdsController.showInterstitial === 'function') {
-                    console.log("Falling back to showInterstitial()");
-                    await window.TelegramAdsController.showInterstitial();
-                }
-                else {
-                    console.warn("No known ad method found. Available methods:", Object.keys(window.TelegramAdsController));
-                    // Simulate ad completion to avoid blocking
-                    await new Promise(r => setTimeout(r, 500));
-                }
-            }, "TelegramPlayable");
+            }, "Adexora");
         }
         
         // ---------- AD SEQUENCE UI ----------
@@ -701,11 +709,15 @@
         function hideAdSequenceUI() {
             adSeqPanel.style.display = 'none';
             nextStepBtn.style.display = 'none';
-            if(pendingResolveNextStep) { pendingResolveNextStep(); pendingResolveNextStep = null; }
+            if(pendingResolveNextStep) {
+                pendingResolveNextStep();
+                pendingResolveNextStep = null;
+            }
         }
         
         function waitForNextStepButton() {
             return new Promise((resolve) => {
+                // If offline during waiting, exit
                 if(!isNetworkOnline()) {
                     showOfflineExitAndCloseGame("Network lost while waiting. Exiting.");
                     resolve();
@@ -716,12 +728,15 @@
                 adLoadingIndicator.style.display = 'none';
                 const onClick = () => {
                     nextStepBtn.removeEventListener('click', onClick);
-                    if(pendingResolveNextStep) pendingResolveNextStep();
-                    pendingResolveNextStep = null;
+                    if(pendingResolveNextStep) {
+                        pendingResolveNextStep();
+                        pendingResolveNextStep = null;
+                    }
                     nextStepBtn.style.display = 'none';
                     resolve();
                 };
                 nextStepBtn.addEventListener('click', onClick, { once: true });
+                // Additional guard: if offline while waiting, auto exit
                 const interval = setInterval(() => {
                     if(!isNetworkOnline() && adSeqPanel.style.display === 'flex') {
                         clearInterval(interval);
@@ -731,14 +746,22 @@
                         resolve();
                     }
                 }, 1000);
+                // Cleanup on resolve
                 const originalResolve = resolve;
-                resolve = (val) => { clearInterval(interval); originalResolve(val); };
+                resolve = (val) => {
+                    clearInterval(interval);
+                    originalResolve(val);
+                };
             });
         }
         
-        // ---------- 3-STEP AD SEQUENCE ----------
+        // ---------- 3-STEP AD SEQUENCE with offline exit at any stage ----------
         async function runFullAdSequence() {
-            if(!isNetworkOnline()) throw new Error("offline");
+            // initial network check
+            if(!isNetworkOnline()) {
+                showOfflineExitAndCloseGame("No internet connection. Cannot start ad sequence. Exiting.");
+                throw new Error("offline");
+            }
             
             // Step 1: Adsgram
             showAdSequenceUI("📢 Step 1/3: Adsgram", "Showing interstitial ad...");
@@ -756,28 +779,43 @@
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
-            // Step 3: Telegram Playable Ad
-            showAdSequenceUI("🎮 Step 3/3: Telegram Playable Ad", "Interactive playable ad, almost there!");
-            await showTelegramPlayableAd();
+            // Step 3: Adexora
+            showAdSequenceUI("⚡ Step 3/3: Adexora", "Final ad, almost there!");
+            await showAdexoraAd();
             if(!isNetworkOnline()) throw new Error("offline");
             showAdSequenceUI("✅ Ad Sequence Done", "Starting game now!");
             await new Promise(r => setTimeout(r, 400));
             hideAdSequenceUI();
         }
         
-        // ---------- LEVEL ENTRY ----------
+        // ---------- ENTRY: LEVEL START (with mandatory 3 ads) ----------
         async function startLevelEntrySequence(level) {
             if(adSequenceActive || isProcessing) return false;
+            
+            // Critical: check network before starting whole flow
             if(!isNetworkOnline()) {
-                showOfflineExitAndCloseGame("Internet required to play.");
+                showOfflineExitAndCloseGame("Internet required to play. Please connect and try again.");
                 return false;
             }
+            
             adSequenceActive = true;
             isProcessing = true;
+            
+            // Hide any game panel if visible
             document.getElementById('gamePanel').style.display = 'none';
+            
             try {
+                // Run 3-step ad sequence (throws if offline detected)
                 await runFullAdSequence();
-                if(!isNetworkOnline()) throw new Error("offline");
+                
+                // After all ads, start actual gameplay (only if still online)
+                if(!isNetworkOnline()) {
+                    showOfflineExitAndCloseGame("Connection lost after ads. Exiting.");
+                    adSequenceActive = false;
+                    isProcessing = false;
+                    return false;
+                }
+                
                 activeGameLevel = level;
                 buttonClickState = [false, false, false, false, false];
                 gameCompletedFlag = false;
@@ -787,10 +825,12 @@
                 isProcessing = false;
                 return true;
             } catch(err) {
+                console.warn("Ad sequence aborted due to offline or error", err);
                 hideAdSequenceUI();
                 adSequenceActive = false;
                 isProcessing = false;
-                if(!isNetworkOnline()) showOfflineExitAndCloseGame("Network issue. Exiting.");
+                // ensure exit
+                if(!isNetworkOnline()) showOfflineExitAndCloseGame("Network issue. Exiting to menu.");
                 else showOfflineExitAndCloseGame("Ad sequence failed. Returning to road.");
                 return false;
             }
@@ -815,8 +855,13 @@
                         return;
                     }
                     remaining--;
-                    if(remaining >= 1) countdownNum.textContent = remaining;
-                    else { clearInterval(interval); overlay.style.display = 'none'; resolve(); }
+                    if(remaining >= 1) {
+                        countdownNum.textContent = remaining;
+                    } else {
+                        clearInterval(interval);
+                        overlay.style.display = 'none';
+                        resolve();
+                    }
                 }, 1000);
             });
         }
@@ -825,26 +870,30 @@
         const TASKS = ['Green Signal', 'Yield Lane', 'Stop Ahead', 'Crosswalk', 'Road Merge'];
         
         function renderGamePanel(level) {
-            document.getElementById('gameLevelTitle').innerHTML = `ROUTE ${level}`;
+            const titleSpan = document.getElementById('gameLevelTitle');
+            titleSpan.innerHTML = `ROUTE ${level}`;
             const clickedCount = buttonClickState.filter(v => v === true).length;
             document.getElementById('gameProgressText').innerHTML = `Progress: ${clickedCount} / 5 completed`;
             const grid = document.getElementById('buttonsGrid');
             grid.innerHTML = '';
             for(let i = 0; i < 5; i++) {
                 const btn = document.createElement('button');
-                btn.className = 'action-btn' + (buttonClickState[i] ? ' disabled-btn' : '');
+                btn.className = 'action-btn';
                 if(buttonClickState[i]) {
+                    btn.classList.add('disabled-btn');
                     btn.innerText = `${TASKS[i]} ✓`;
                     btn.disabled = true;
                 } else {
                     btn.innerText = `${TASKS[i]}`;
                 }
+                btn.dataset.index = i;
                 btn.onclick = () => {
                     if(gameCompletedFlag) return;
                     if(buttonClickState[i]) return;
                     buttonClickState[i] = true;
                     renderGamePanel(level);
-                    if(buttonClickState.every(v => v === true) && !gameCompletedFlag) {
+                    const allClicked = buttonClickState.every(v => v === true);
+                    if(allClicked && !gameCompletedFlag) {
                         gameCompletedFlag = true;
                         handleLevelComplete(activeGameLevel);
                     }
@@ -852,24 +901,36 @@
                 grid.appendChild(btn);
             }
             const remaining = 5 - clickedCount;
-            document.getElementById('completeStatusMsg').innerHTML = clickedCount === 5 ? '✅ All tasks done! Level cleared!' : `${remaining} task${remaining !== 1 ? 's' : ''} remaining - Tap all 5`;
+            const statusDiv = document.getElementById('completeStatusMsg');
+            if(clickedCount === 5) statusDiv.innerHTML = '✅ All tasks done! Level cleared!';
+            else statusDiv.innerHTML = `${remaining} task${remaining !== 1 ? 's' : ''} remaining - Tap all 5`;
         }
         
         async function handleLevelComplete(level) {
             if(isProcessing) return;
             isProcessing = true;
             document.getElementById('gamePanel').style.display = 'none';
+            
             if(level === currentUnlockedLevel && level < MAX_LEVEL) {
                 currentUnlockedLevel = level + 1;
                 saveProgress();
                 buildLevelList();
-            } else if(level > currentUnlockedLevel && level <= MAX_LEVEL) {
-                currentUnlockedLevel = level;
-                saveProgress();
-                buildLevelList();
+            } else if(level > currentUnlockedLevel) {
+                if(level <= MAX_LEVEL) {
+                    currentUnlockedLevel = level;
+                    saveProgress();
+                    buildLevelList();
+                }
             }
-            if(level === MAX_LEVEL) { showRewardScreen(); isProcessing = false; }
-            else { showLevelCompleteScreen(level); isProcessing = false; }
+            
+            if(level === MAX_LEVEL) {
+                showRewardScreen();
+                isProcessing = false;
+                return;
+            } else {
+                showLevelCompleteScreen(level);
+                isProcessing = false;
+            }
         }
         
         function showLevelCompleteScreen(level) {
@@ -896,8 +957,11 @@
                 return;
             }
             const success = await startLevelEntrySequence(nextLevel);
-            isProcessing = false;
-            if(!success) forceExitAllGameScreens();
+            if(!success) {
+                isProcessing = false;
+            } else {
+                isProcessing = false;
+            }
         }
         
         function showRewardScreen() {
@@ -907,7 +971,8 @@
         }
         
         function resetGameAndCopy() {
-            const code = document.getElementById('rewardCodeDisplay').textContent;
+            const codeElem = document.getElementById('rewardCodeDisplay');
+            const code = codeElem.textContent;
             navigator.clipboard.writeText(code).catch(()=>{});
             alert('Reward code copied! Game progress reset to Level 1.');
             currentUnlockedLevel = 1;
@@ -917,7 +982,8 @@
         }
         
         window.copyRewardCodeGlobal = function() {
-            const code = document.getElementById('rewardCodeDisplay').textContent;
+            const codeElem = document.getElementById('rewardCodeDisplay');
+            const code = codeElem.textContent;
             navigator.clipboard.writeText(code);
             alert('Code copied: ' + code);
         };
@@ -930,10 +996,20 @@
                 const card = document.createElement('div');
                 card.className = 'level-card' + (isUnlocked ? '' : ' locked');
                 if(isUnlocked) {
-                    card.onclick = () => { if(!adSequenceActive && !isProcessing) startLevelEntrySequence(i); };
+                    card.onclick = () => {
+                        if(adSequenceActive || isProcessing) return;
+                        startLevelEntrySequence(i);
+                    };
                 }
                 let statusIcon = isUnlocked ? (i < currentUnlockedLevel ? '✓' : '🔓') : '🔒';
-                card.innerHTML = `<div class="level-number">${i}</div><div class="level-info"><div class="level-name">Route ${i}</div><div class="level-requirement">5 road tasks</div></div><div class="level-status">${statusIcon}</div>`;
+                card.innerHTML = `
+                    <div class="level-number">${i}</div>
+                    <div class="level-info">
+                        <div class="level-name">Route ${i}</div>
+                        <div class="level-requirement">5 road tasks</div>
+                    </div>
+                    <div class="level-status">${statusIcon}</div>
+                `;
                 container.appendChild(card);
             }
         }
@@ -955,13 +1031,18 @@
         }
         
         function bindEvents() {
-            document.getElementById('nextLevelBtnFromComplete').onclick = () => {
-                const lvl = parseInt(document.getElementById('levelCompleteScreen').dataset.currentLevel);
-                if(!isNaN(lvl)) handleNextLevelWithCountdown(lvl);
+            const nextBtn = document.getElementById('nextLevelBtnFromComplete');
+            const backBtn = document.getElementById('backToRoadCompleteBtn');
+            const resetRewardBtn = document.getElementById('resetAllBtn');
+            const exitGame = document.getElementById('exitGameBtn');
+            if(nextBtn) nextBtn.onclick = () => {
+                const completeDiv = document.getElementById('levelCompleteScreen');
+                const currentLvl = parseInt(completeDiv.dataset.currentLevel);
+                if(!isNaN(currentLvl)) handleNextLevelWithCountdown(currentLvl);
             };
-            document.getElementById('backToRoadCompleteBtn').onclick = () => backToRoadFromComplete();
-            document.getElementById('resetAllBtn').onclick = () => resetGameAndCopy();
-            document.getElementById('exitGameBtn').onclick = () => exitGameToRoad();
+            if(backBtn) backBtn.onclick = () => backToRoadFromComplete();
+            if(resetRewardBtn) resetRewardBtn.onclick = () => resetGameAndCopy();
+            if(exitGame) exitGame.onclick = () => exitGameToRoad();
         }
         
         window.addEventListener('load', () => {
