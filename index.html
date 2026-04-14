@@ -3,13 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Green Road Challenge — Triple Ad Sequence</title>
+    <title>Green Road Challenge — Triple Ad Sequence (Telegram Rich Ads)</title>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK (Rewarded Interstitial) -->
     <script src="//libtl.com/sdk.js" data-zone="10541383" data-sdk="show_10541383"></script>
-    <!-- Adexora SDK with App ID 1964 -->
-    <script src="https://adexora.com/cdn/ads.js?id=1964"></script>
+    <!-- Telegram Rich Ads SDK (replaces Adexora) -->
+    <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
+    <script>
+        // Initialize Telegram Ads Controller (global object as per docs)
+        window.TelegramAdsController = new TelegramAdsController();
+        window.TelegramAdsController.initialize({
+            pubId: "1008310",
+            appId: "7019",
+        });
+    </script>
     <style>
         * {
             margin: 0;
@@ -527,7 +535,7 @@
         <button class="btn" id="resetAllBtn">Copy & Reset Game</button>
     </div>
 
-    <!-- Ad Sequence Modal (3-step: Adsgram → Monetag → Adexora) -->
+    <!-- Ad Sequence Modal (3-step: Adsgram → Monetag → Telegram Rich Ads) -->
     <div id="adSequencePanel" class="ad-sequence-panel" style="display: none;">
         <div class="ad-sequence-card">
             <div class="ad-step-icon" id="adStepIcon">🎬</div>
@@ -555,7 +563,6 @@
         
         // ---------- NETWORK OFFLINE EXIT HANDLER ----------
         function showOfflineExitAndCloseGame(message = "No internet connection. Exiting to Road Menu.") {
-            // Remove any existing toast
             const existingToast = document.querySelector('.offline-toast');
             if(existingToast) existingToast.remove();
             const toast = document.createElement('div');
@@ -564,21 +571,16 @@
             document.body.appendChild(toast);
             setTimeout(() => { if(toast.parentNode) toast.remove(); }, 3000);
             
-            // Force exit all game states
             forceExitAllGameScreens();
         }
         
         function forceExitAllGameScreens() {
-            // Close game panel, ad sequence, countdown, level complete, reward
             document.getElementById('gamePanel').style.display = 'none';
             document.getElementById('adSequencePanel').style.display = 'none';
             document.getElementById('countdownOverlay').style.display = 'none';
             document.getElementById('levelCompleteScreen').style.display = 'none';
-            // Reward screen remains only if we intentionally want to keep? But according to exit logic, we close reward too
-            // But reward appears only after final level; we should close it if offline happens during reward? Safer to close.
             document.getElementById('rewardScreen').style.display = 'none';
             
-            // Reset all flags
             if(pendingResolveNextStep) {
                 pendingResolveNextStep();
                 pendingResolveNextStep = null;
@@ -603,7 +605,6 @@
             }
         });
         
-        // Also online event just for info (optional)
         window.addEventListener('online', () => {
             console.log("Network back online");
         });
@@ -634,20 +635,19 @@
             } catch(e) { console.error(e); }
         }
         
-        // Individual ad functions with network pre-check & timeout protection
+        // Network guard for all ad calls
         function withNetworkGuard(fn, adName) {
             return new Promise(async (resolve) => {
                 if(!isNetworkOnline()) {
                     console.warn(`${adName} skipped: offline`);
                     showOfflineExitAndCloseGame(`📡 No internet. Cannot load ${adName}. Exiting.`);
-                    resolve(); // still resolve to avoid hanging but exit already triggered
+                    resolve();
                     return;
                 }
-                // timeout fallback (10 seconds) to avoid infinite stuck
                 const timeoutId = setTimeout(() => {
                     console.warn(`${adName} timeout, continuing`);
                     resolve();
-                }, 10000);
+                }, 12000);
                 try {
                     await fn();
                     clearTimeout(timeoutId);
@@ -655,7 +655,6 @@
                 } catch(e) {
                     clearTimeout(timeoutId);
                     console.error(`${adName} error:`, e);
-                    // If offline during call, exit
                     if(!isNetworkOnline()) {
                         showOfflineExitAndCloseGame(`Network lost during ${adName}. Exiting.`);
                     }
@@ -677,18 +676,40 @@
                     await window.show_10541383();
                 } else {
                     console.warn("Monetag not ready");
+                    await new Promise(r => setTimeout(r, 600));
                 }
             }, "Monetag");
         }
         
-        function showAdexoraAd() {
+        // ---------- TELEGRAM RICH ADS (replaces Adexora) ----------
+        function showTelegramRichAd() {
             return withNetworkGuard(async () => {
-                if(typeof window.showAdexora === 'function') {
-                    await window.showAdexora();
-                } else {
-                    console.warn("Adexora not ready");
+                // Wait a bit to ensure controller is ready
+                if (!window.TelegramAdsController) {
+                    console.warn("TelegramAdsController not available yet");
+                    // Fallback: wait and retry once
+                    await new Promise(r => setTimeout(r, 800));
                 }
-            }, "Adexora");
+                
+                if (window.TelegramAdsController) {
+                    // Determine available method: showInterstitial (common for rich ads) or showAd
+                    if (typeof window.TelegramAdsController.showInterstitial === 'function') {
+                        await window.TelegramAdsController.showInterstitial();
+                    } else if (typeof window.TelegramAdsController.showAd === 'function') {
+                        await window.TelegramAdsController.showAd();
+                    } else if (typeof window.TelegramAdsController.showRewardedVideo === 'function') {
+                        // fallback for rewarded video if needed
+                        await window.TelegramAdsController.showRewardedVideo();
+                    } else {
+                        console.warn("No known ad method on TelegramAdsController");
+                        // Still consider it "shown" to not block user
+                        await new Promise(r => setTimeout(r, 400));
+                    }
+                } else {
+                    console.warn("TelegramAdsController missing after init");
+                    await new Promise(r => setTimeout(r, 400));
+                }
+            }, "TelegramRichAds");
         }
         
         // ---------- AD SEQUENCE UI ----------
@@ -717,7 +738,6 @@
         
         function waitForNextStepButton() {
             return new Promise((resolve) => {
-                // If offline during waiting, exit
                 if(!isNetworkOnline()) {
                     showOfflineExitAndCloseGame("Network lost while waiting. Exiting.");
                     resolve();
@@ -736,7 +756,7 @@
                     resolve();
                 };
                 nextStepBtn.addEventListener('click', onClick, { once: true });
-                // Additional guard: if offline while waiting, auto exit
+                // Network guard during waiting
                 const interval = setInterval(() => {
                     if(!isNetworkOnline() && adSeqPanel.style.display === 'flex') {
                         clearInterval(interval);
@@ -746,7 +766,6 @@
                         resolve();
                     }
                 }, 1000);
-                // Cleanup on resolve
                 const originalResolve = resolve;
                 resolve = (val) => {
                     clearInterval(interval);
@@ -755,9 +774,8 @@
             });
         }
         
-        // ---------- 3-STEP AD SEQUENCE with offline exit at any stage ----------
+        // ---------- 3-STEP AD SEQUENCE (Adsgram → Monetag → Telegram Rich Ads) ----------
         async function runFullAdSequence() {
-            // initial network check
             if(!isNetworkOnline()) {
                 showOfflineExitAndCloseGame("No internet connection. Cannot start ad sequence. Exiting.");
                 throw new Error("offline");
@@ -779,9 +797,9 @@
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
-            // Step 3: Adexora
-            showAdSequenceUI("⚡ Step 3/3: Adexora", "Final ad, almost there!");
-            await showAdexoraAd();
+            // Step 3: Telegram Rich Ads (replaces Adexora)
+            showAdSequenceUI("📱 Step 3/3: Telegram Rich Ads", "Final ad, almost there!");
+            await showTelegramRichAd();
             if(!isNetworkOnline()) throw new Error("offline");
             showAdSequenceUI("✅ Ad Sequence Done", "Starting game now!");
             await new Promise(r => setTimeout(r, 400));
@@ -792,7 +810,6 @@
         async function startLevelEntrySequence(level) {
             if(adSequenceActive || isProcessing) return false;
             
-            // Critical: check network before starting whole flow
             if(!isNetworkOnline()) {
                 showOfflineExitAndCloseGame("Internet required to play. Please connect and try again.");
                 return false;
@@ -800,15 +817,11 @@
             
             adSequenceActive = true;
             isProcessing = true;
-            
-            // Hide any game panel if visible
             document.getElementById('gamePanel').style.display = 'none';
             
             try {
-                // Run 3-step ad sequence (throws if offline detected)
                 await runFullAdSequence();
                 
-                // After all ads, start actual gameplay (only if still online)
                 if(!isNetworkOnline()) {
                     showOfflineExitAndCloseGame("Connection lost after ads. Exiting.");
                     adSequenceActive = false;
@@ -825,11 +838,10 @@
                 isProcessing = false;
                 return true;
             } catch(err) {
-                console.warn("Ad sequence aborted due to offline or error", err);
+                console.warn("Ad sequence aborted", err);
                 hideAdSequenceUI();
                 adSequenceActive = false;
                 isProcessing = false;
-                // ensure exit
                 if(!isNetworkOnline()) showOfflineExitAndCloseGame("Network issue. Exiting to menu.");
                 else showOfflineExitAndCloseGame("Ad sequence failed. Returning to road.");
                 return false;
