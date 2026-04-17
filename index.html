@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Green Road — Triple Ad Gateway | Level Up</title>
+    <title>Green Road — Adsgram → Monetag → Giga Pub | Auto Next Level After Link Return</title>
+    
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK (Rewarded Interstitial) -->
     <script src="//libtl.com/sdk.js" data-zone="10541383" data-sdk="show_10541383"></script>
-    <!-- Adexora SDK -->
-    <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
+    <!-- Giga Pub SDK (Project ID 6331) -->
+    <script src="https://ad.gigapub.tech/script?id=6331"></script>
+    
     <style>
         * {
             margin: 0;
@@ -513,7 +515,7 @@
     <div class="game-container">
         <div class="road-header">
             <div class="title">GREEN ROAD</div>
-            <div class="subtitle">🔥 3 Ads Before Every Ride: Adsgram + Monetag + Adexora 🔥</div>
+            <div class="subtitle">🚀 3 Ads Before Every Ride: Adsgram → Monetag → Giga Pub</div>
             <div class="badge-pattern">🎯 NEXT LEVEL: Open link → Return → Auto-starts!</div>
         </div>
         <div class="road-levels" id="levelListContainer"></div>
@@ -588,10 +590,10 @@
         let adSequenceActive = false;
         let pendingResolveNextStep = null;
         
-        let adController = null;
-        let adInitialized = false;
+        let adsgramController = null;
+        let adsgramInitialized = false;
         
-        // External link requirement - AUTO START when returning
+        // External link requirement
         const EXTERNAL_NEXT_LEVEL_URL = "https://www.profitablecpmratenetwork.com/xan60uuv?key=369dc68341066c06e3d471f3785f73fb";
         let externalLinkVisitedForCurrentLevel = false;
         let currentCompleteLevel = null;
@@ -670,8 +672,9 @@
         function initAdsgram() {
             try {
                 if(typeof window.Adsgram !== 'undefined') {
-                    adController = window.Adsgram.init({ blockId: "int-24179" });
-                    adInitialized = true;
+                    adsgramController = window.Adsgram.init({ blockId: "int-24179" });
+                    adsgramInitialized = true;
+                    console.log("Adsgram ready");
                 } else { console.warn("Adsgram not loaded"); }
             } catch(e) { console.error(e); }
         }
@@ -683,7 +686,7 @@
                     resolve();
                     return;
                 }
-                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 12000);
+                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 15000);
                 try {
                     await fn();
                     clearTimeout(timeoutId);
@@ -699,8 +702,14 @@
         
         function showAdsgramAd() {
             return withNetworkGuard(async () => {
-                if(!adInitialized || !adController) return;
-                await adController.show();
+                if(!adsgramInitialized || !adsgramController) {
+                    console.warn("Adsgram not ready, reinitializing...");
+                    initAdsgram();
+                    if(adsgramController) await adsgramController.show();
+                    else throw new Error("Adsgram unavailable");
+                } else {
+                    await adsgramController.show();
+                }
             }, "Adsgram");
         }
         
@@ -711,17 +720,19 @@
             }, "Monetag");
         }
         
-        // Adexora Ad integration
-        function showAdexoraAd() {
+        // Giga Pub Ad – using window.showGiga()
+        function showGigaPubAd() {
             return withNetworkGuard(async () => {
-                if(typeof window.showAdexora === 'function') {
-                    await window.showAdexora();
+                if(typeof window.showGiga === 'function') {
+                    console.log("Launching Giga Pub ad (project 6331)");
+                    await window.showGiga();
+                    console.log("Giga Pub ad completed");
                 } else {
-                    console.warn("Adexora not ready");
-                    // fallback resolve to avoid blocking
-                    await new Promise(r => setTimeout(r, 500));
+                    console.warn("Giga Pub SDK not loaded or showGiga missing");
+                    // fallback: wait a moment
+                    await new Promise(resolve => setTimeout(resolve, 1500));
                 }
-            }, "Adexora");
+            }, "Giga Pub");
         }
         
         // ---------- AD UI HELPERS ----------
@@ -741,7 +752,6 @@
         
         function hideAdSequenceUI() {
             adSeqPanel.style.display = 'none';
-            nextStepBtn.style.display = 'none';
             if(pendingResolveNextStep) {
                 pendingResolveNextStep();
                 pendingResolveNextStep = null;
@@ -775,34 +785,32 @@
                         resolve();
                     }
                 }, 1000);
+                // keep reference for cleanup
                 const originalResolve = resolve;
                 resolve = (val) => { clearInterval(interval); originalResolve(val); };
             });
         }
         
-        // ---------- MAIN SEQUENCE: ADSGRAM + MONETAG + ADEXORA ----------
+        // ---------- MAIN SEQUENCE: Adsgram → Monetag → Giga Pub ----------
         async function runFullAdSequence() {
             if(!isNetworkOnline()) throw new Error("offline");
             
-            // 1. Adsgram
-            showAdSequenceUI("📢 Step 1/3", "Showing interstitial ad (Adsgram)");
+            showAdSequenceUI("📢 Step 1/3", "Showing Adsgram interstitial ad...");
             await showAdsgramAd();
             if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Step 1 Complete", "Click next to continue");
+            showAdSequenceUI("✅ Step 1 Complete", "Click next to continue to Monetag ad");
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
-            // 2. Monetag
-            showAdSequenceUI("💰 Step 2/3", "Loading reward ad (Monetag)");
+            showAdSequenceUI("💰 Step 2/3", "Loading Monetag rewarded ad...");
             await showMonetagAd();
             if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad (Adexora)");
+            showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad (Giga Pub)");
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
-            // 3. Adexora
-            showAdSequenceUI("🎬 Step 3/3", "Final interstitial ad (Adexora)");
-            await showAdexoraAd();
+            showAdSequenceUI("🎬 Step 3/3", "Final ad from Giga Pub (project 6331)");
+            await showGigaPubAd();
             if(!isNetworkOnline()) throw new Error("offline");
             showAdSequenceUI("✅ Ad Sequence Done", "Starting game now!");
             await new Promise(r => setTimeout(r, 400));
@@ -857,7 +865,7 @@
                     btn.innerText = `${TASKS[i]} ✓`;
                     btn.disabled = true;
                 } else {
-                    btn.innerText = `${TASKS[i]} `;
+                    btn.innerText = `${TASKS[i]}`;
                 }
                 btn.onclick = () => {
                     if(gameCompletedFlag || buttonClickState[i]) return;
@@ -910,6 +918,7 @@
             waitingMsgDiv.style.display = 'block';
             manualBtn.style.display = 'none';
             
+            // Attach dynamic link
             const dynamicLink = document.getElementById('dynamicExternalLink');
             if(dynamicLink) {
                 dynamicLink.onclick = (e) => {
@@ -918,6 +927,7 @@
                 };
             }
             
+            // Manual fallback button
             manualBtn.onclick = () => {
                 if(!externalLinkVisitedForCurrentLevel) {
                     markLinkVisitedAndAutoStart();
@@ -1061,7 +1071,7 @@
                 if(isUnlocked) {
                     card.onclick = () => { if(!adSequenceActive && !isProcessing) startLevelEntrySequence(i); };
                 }
-                let adTypeIcon = "🎬 Adsgram + Monetag + Adexora";
+                let adTypeIcon = "🎬 Adsgram → Monetag → Giga Pub";
                 let statusIcon = isUnlocked ? (i < currentUnlockedLevel ? '✓' : '🔓') : '🔒';
                 card.innerHTML = `
                     <div class="level-number">${i}</div>
@@ -1111,6 +1121,12 @@
             initAdsgram();
             buildLevelList();
             bindEvents();
+            // Check Giga Pub availability
+            if(typeof window.showGiga === 'function') {
+                console.log("✅ Giga Pub SDK ready (project 6331)");
+            } else {
+                console.warn("⚠️ Giga Pub showGiga not available");
+            }
         });
         window.addEventListener('beforeunload', () => saveProgress());
     </script>
