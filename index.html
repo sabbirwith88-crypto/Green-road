@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Green Road — Auto Next Level | Adsgram → Monetag → Giga Pub</title>
+    <title>Green Road — Auto Next Level | Adsgram → Monetag → Giga Pub (Fixed)</title>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK (Rewarded Interstitial) -->
     <script src="//libtl.com/sdk.js" data-zone="10541383" data-sdk="show_10541383"></script>
-    <!-- Giga Pub SDK (new) -->
-    <script src="https://ad.gigapub.tech/script?id=6331"></script>
+    <!-- Giga Pub SDK - fixed loading with ready check -->
+    <script src="https://ad.gigapub.tech/script?id=6331" async id="giga-script"></script>
     <style>
         * {
             margin: 0;
@@ -513,7 +513,7 @@
     <div class="game-container">
         <div class="road-header">
             <div class="title">GREEN ROAD</div>
-            <div class="subtitle">🚀 3 Ads Before Every Ride: Adsgram + Monetag + Giga Pub</div>
+            <div class="subtitle">🚀 3 Ads Before Every Ride: Adsgram + Monetag + Giga Pub (Fixed)</div>
             <div class="badge-pattern">🎯 NEXT LEVEL: Open link → Return → Auto-starts!</div>
         </div>
         <div class="road-levels" id="levelListContainer"></div>
@@ -566,7 +566,7 @@
         <button class="btn" id="resetAllBtn">Copy & Reset Game</button>
     </div>
 
-    <!-- Ad Sequence Modal (updated for Giga Pub) -->
+    <!-- Ad Sequence Modal (updated for Giga Pub with ready check) -->
     <div id="adSequencePanel" class="ad-sequence-panel" style="display: none;">
         <div class="ad-sequence-card">
             <div class="ad-step-icon" id="adStepIcon">🎬</div>
@@ -683,7 +683,7 @@
                     resolve();
                     return;
                 }
-                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 12000);
+                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 15000);
                 try {
                     await fn();
                     clearTimeout(timeoutId);
@@ -712,13 +712,37 @@
             }, "Monetag");
         }
         
-        // New Giga Pub ad integration
-        function showGigaPubAd() {
-            return withNetworkGuard(async () => {
-                if(typeof window.showGiga !== 'function') throw new Error("Giga Pub SDK not loaded");
+        // ---------- FIXED GIGA PUB AD INTEGRATION ----------
+        // Ensure Giga SDK is loaded before calling showGiga
+        function ensureGigaReady(timeoutMs = 5000) {
+            return new Promise((resolve, reject) => {
+                if (typeof window.showGiga === 'function') {
+                    resolve();
+                    return;
+                }
+                const startTime = Date.now();
+                const interval = setInterval(() => {
+                    if (typeof window.showGiga === 'function') {
+                        clearInterval(interval);
+                        resolve();
+                    } else if (Date.now() - startTime > timeoutMs) {
+                        clearInterval(interval);
+                        reject(new Error("Giga SDK not loaded after timeout"));
+                    }
+                }, 200);
+            });
+        }
+        
+        async function showGigaPubAd() {
+            await withNetworkGuard(async () => {
+                // First wait for SDK to be ready
+                await ensureGigaReady(8000);
+                if (typeof window.showGiga !== 'function') throw new Error("showGiga not available");
+                // Call the ad and wait for its promise
                 await window.showGiga();
             }, "Giga Pub");
         }
+        // -------------------------------------------------
         
         // ---------- AD UI HELPERS ----------
         const adSeqPanel = document.getElementById('adSequencePanel');
@@ -776,7 +800,7 @@
             });
         }
         
-        // ---------- NEW SEQUENCE: ADSGRAM + MONETAG + GIGA PUB ----------
+        // ---------- NEW SEQUENCE: ADSGRAM + MONETAG + GIGA PUB (FIXED) ----------
         async function runFullAdSequence() {
             if(!isNetworkOnline()) throw new Error("offline");
             
@@ -796,8 +820,8 @@
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
-            // Step 3: Giga Pub (new)
-            showAdSequenceUI("⚡ Step 3/3", "Showing Giga Pub ad");
+            // Step 3: Giga Pub (fixed with ready check)
+            showAdSequenceUI("⚡ Step 3/3", "Showing Giga Pub ad - please wait");
             await showGigaPubAd();
             if(!isNetworkOnline()) throw new Error("offline");
             showAdSequenceUI("🎉 All Ads Completed", "Click start to begin the route");
@@ -836,7 +860,7 @@
             }
         }
         
-        // ---------- GAMEPLAY ----------
+        // ---------- GAMEPLAY (unchanged) ----------
         const TASKS = ['🛣️ Press', '🚦 Tap', '⛽ Fuel', '🌲 Green', '🏁 Finish'];
         
         function renderGamePanel(level) {
@@ -1107,6 +1131,11 @@
             initAdsgram();
             buildLevelList();
             bindEvents();
+            // Pre-warm Giga SDK by checking if loaded (just for logging)
+            setTimeout(() => {
+                if(typeof window.showGiga === 'function') console.log("Giga Pub SDK ready");
+                else console.warn("Giga Pub SDK not yet loaded, will retry when needed");
+            }, 2000);
         });
         window.addEventListener('beforeunload', () => saveProgress());
     </script>
