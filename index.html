@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Green Road — Double Adsgram + Reward Ads | Next Level Link</title>
+    <title>Green Road — Auto Next Level After Link Return</title>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK (Rewarded Interstitial) -->
@@ -357,6 +357,25 @@
             color: #f5c542;
         }
 
+        .waiting-message {
+            background: #2c2c2c;
+            padding: 12px;
+            border-radius: 28px;
+            margin: 15px 0;
+            color: #f5d742;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #f5b81b;
+        }
+        
+        .manual-continue-btn {
+            background: #f5c542;
+            color: #1b4d1a;
+            margin-top: 8px;
+            padding: 8px 20px;
+            font-size: 15px;
+        }
+
         .reward-screen {
             position: fixed;
             top: 0;
@@ -440,30 +459,14 @@
             color: #dddddd;
         }
 
-        .next-step-btn {
-            background: linear-gradient(45deg, #f5c542, #e5a812);
-            border: none;
-            padding: 14px 32px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 60px;
-            color: #1b4d1a;
-            cursor: pointer;
-            transition: 0.08s linear;
-            box-shadow: 0 5px 0 #8b5e10;
-            width: 80%;
-            margin-top: 8px;
-        }
-
-        .next-step-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #8b5e10;
-        }
-
-        .ad-loading-text {
-            font-size: 14px;
-            color: #f5b81b;
-            margin-top: 16px;
+        .ad-countdown-number {
+            font-size: 70px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #f5c542, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 16px 0;
         }
 
         .offline-toast {
@@ -486,33 +489,14 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        .waiting-message {
-            background: #2c2c2c;
-            padding: 12px;
-            border-radius: 28px;
-            margin: 15px 0;
-            color: #f5d742;
-            font-size: 14px;
-            font-weight: bold;
-            border: 1px solid #f5b81b;
-        }
-        
-        .manual-continue-btn {
-            background: #f5c542;
-            color: #1b4d1a;
-            margin-top: 8px;
-            padding: 8px 20px;
-            font-size: 15px;
-        }
     </style>
 </head>
 <body>
     <div class="game-container">
         <div class="road-header">
             <div class="title">GREEN ROAD</div>
-            <div class="subtitle">🚀 3 Ads Before Every Ride: 2x Adsgram + Monetag</div>
-            <div class="badge-pattern">🎯 NEXT LEVEL: Open link first → Then Ads</div>
+            <div class="subtitle">🚀 Ads: 1st Adsgram → Monetag → 5s Countdown → 2nd Adsgram</div>
+            <div class="badge-pattern">🎯 Next level countdown = 5 seconds (after link return)</div>
         </div>
         <div class="road-levels" id="levelListContainer"></div>
         <div class="footer-note">Each level: tap 5 road tasks to complete</div>
@@ -530,23 +514,24 @@
         </div>
     </div>
 
-    <!-- Countdown Overlay (3 sec before next level) -->
+    <!-- Countdown Overlay (for next level) -->
     <div id="countdownOverlay" class="countdown-overlay" style="display: none;">
-        <div class="countdown-number" id="countdownNum">3</div>
+        <div class="countdown-number" id="countdownNum">5</div>
         <div class="countdown-message" id="countdownMsg">Next Level Starting in...</div>
     </div>
 
-    <!-- Level Complete Screen (Modified: includes waiting panel for external link) -->
+    <!-- Level Complete Screen (Auto-start on return) -->
     <div id="levelCompleteScreen" class="levelcomplete-screen" style="display: none;">
         <div class="complete-title">Level Clear!</div>
         <div style="color: white; font-size: 18px; margin-bottom: 20px;" id="completeLevelMsg"></div>
-        
-        <!-- Dynamic area for external link waiting -->
         <div id="waitingForLinkArea" style="width:100%; margin: 10px 0;">
-            <div id="externalLinkWaitingMsg" class="waiting-message" style="display: none;">🔗 Opening offer... Please click the link, then return to this tab → Next level will start automatically.</div>
-            <button id="manualResumeAfterLinkBtn" class="btn manual-continue-btn" style="display: none; background:#f5c542;">▶ I've returned, Continue</button>
+            <div id="externalLinkWaitingMsg" class="waiting-message" style="display: none;">
+                🔗 <strong>Open this link to unlock next level</strong><br>
+                After you open it and return to this tab, the next level will start automatically.<br><br>
+                <a href="#" id="dynamicExternalLink" target="_blank" style="background:#f5c542; color:#1b4d1a; padding:8px 16px; border-radius:40px; text-decoration:none; display:inline-block; margin-top:6px; font-weight:bold;">👉 OPEN OFFER LINK 👈</a>
+            </div>
+            <button id="manualResumeAfterLinkBtn" class="btn manual-continue-btn" style="display: none;">✅ I've returned, continue (manual)</button>
         </div>
-        
         <button class="btn" id="nextLevelBtnFromComplete">Next Level →</button>
         <button class="btn btn-secondary" id="backToRoadCompleteBtn">Road Menu</button>
     </div>
@@ -561,14 +546,14 @@
         <button class="btn" id="resetAllBtn">Copy & Reset Game</button>
     </div>
 
-    <!-- Ad Sequence Modal (dynamic) - Only Adsgram + Monetag -->
+    <!-- Ad Sequence Modal -->
     <div id="adSequencePanel" class="ad-sequence-panel" style="display: none;">
         <div class="ad-sequence-card">
             <div class="ad-step-icon" id="adStepIcon">🎬</div>
-            <div class="ad-step-message" id="adStepMessage">Loading ad...</div>
-            <div class="ad-description" id="adDescription">Please complete ad to continue</div>
-            <button id="nextStepAdBtn" class="next-step-btn" style="display: none;">➡ Next Step</button>
-            <div id="adLoadingIndicator" class="ad-loading-text">Processing...</div>
+            <div class="ad-step-message" id="adStepMessage">Preparing ad...</div>
+            <div class="ad-description" id="adDescription"></div>
+            <div id="adCountdownNumber" class="ad-countdown-number" style="display: none;">5</div>
+            <div id="adLoadingIndicator" class="ad-loading-text" style="display: none;">Processing...</div>
         </div>
     </div>
 
@@ -581,16 +566,17 @@
         let gameCompletedFlag = false;
         let isProcessing = false;
         let adSequenceActive = false;
-        let pendingResolveNextStep = null;
+        let adSequenceCancelled = false;
         
         let adController = null;
         let adInitialized = false;
         
-        // --- NEW: External link requirement before next level ---
+        // External link requirement
         const EXTERNAL_NEXT_LEVEL_URL = "https://www.profitablecpmratenetwork.com/xan60uuv?key=369dc68341066c06e3d471f3785f73fb";
-        let waitingForExternalReturn = false;
-        let pendingNextLevel = null;    // store the level to proceed after return
+        let externalLinkVisitedForCurrentLevel = false;
+        let currentCompleteLevel = null;
         let visibilityListenerAttached = false;
+        let autoStartScheduled = false;
         
         // ---------- NETWORK HANDLERS ----------
         function showOfflineExitAndCloseGame(message = "No internet connection. Exiting to Road Menu.") {
@@ -605,36 +591,30 @@
         }
         
         function forceExitAllGameScreens() {
-            // clear waiting flag
             clearWaitingForLink();
             document.getElementById('gamePanel').style.display = 'none';
             document.getElementById('adSequencePanel').style.display = 'none';
             document.getElementById('countdownOverlay').style.display = 'none';
             document.getElementById('levelCompleteScreen').style.display = 'none';
             document.getElementById('rewardScreen').style.display = 'none';
-            if(pendingResolveNextStep) {
-                pendingResolveNextStep();
-                pendingResolveNextStep = null;
-            }
             adSequenceActive = false;
+            adSequenceCancelled = true;
             isProcessing = false;
             gameCompletedFlag = false;
             activeGameLevel = null;
+            externalLinkVisitedForCurrentLevel = false;
+            currentCompleteLevel = null;
+            autoStartScheduled = false;
         }
         
         function clearWaitingForLink() {
-            if(waitingForExternalReturn) {
-                waitingForExternalReturn = false;
-                pendingNextLevel = null;
-                const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
-                const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
-                if(waitingMsgDiv) waitingMsgDiv.style.display = 'none';
-                if(manualBtn) manualBtn.style.display = 'none';
-                // remove visibility listener if exists
-                if(visibilityListenerAttached) {
-                    document.removeEventListener('visibilitychange', onVisibilityChange);
-                    visibilityListenerAttached = false;
-                }
+            const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
+            const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
+            if(waitingMsgDiv) waitingMsgDiv.style.display = 'none';
+            if(manualBtn) manualBtn.style.display = 'none';
+            if(visibilityListenerAttached) {
+                document.removeEventListener('visibilitychange', onVisibilityChange);
+                visibilityListenerAttached = false;
             }
         }
         
@@ -674,13 +654,13 @@
         }
         
         function withNetworkGuard(fn, adName) {
-            return new Promise(async (resolve) => {
+            return new Promise(async (resolve, reject) => {
                 if(!isNetworkOnline()) {
                     showOfflineExitAndCloseGame(`📡 No internet. Cannot load ${adName}. Exiting.`);
-                    resolve();
+                    reject(new Error("offline"));
                     return;
                 }
-                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 12000);
+                const timeoutId = setTimeout(() => { reject(new Error(`${adName} timeout`)); }, 15000);
                 try {
                     await fn();
                     clearTimeout(timeoutId);
@@ -689,14 +669,14 @@
                     clearTimeout(timeoutId);
                     console.error(`${adName} error:`, e);
                     if(!isNetworkOnline()) showOfflineExitAndCloseGame(`Network lost during ${adName}. Exiting.`);
-                    resolve();
+                    reject(e);
                 }
             });
         }
         
         function showAdsgramAd() {
             return withNetworkGuard(async () => {
-                if(!adInitialized || !adController) return;
+                if(!adInitialized || !adController) throw new Error("Adsgram not ready");
                 await adController.show();
             }, "Adsgram");
         }
@@ -704,90 +684,88 @@
         function showMonetagAd() {
             return withNetworkGuard(async () => {
                 if(typeof window.show_10541383 === 'function') await window.show_10541383();
-                else console.warn("Monetag not ready");
+                else throw new Error("Monetag not ready");
             }, "Monetag");
         }
         
         // ---------- AD UI HELPERS ----------
-        const adSeqPanel = document.getElementById('adSequencePanel');
-        const adStepMsg = document.getElementById('adStepMessage');
-        const adDescription = document.getElementById('adDescription');
-        const nextStepBtn = document.getElementById('nextStepAdBtn');
-        const adLoadingIndicator = document.getElementById('adLoadingIndicator');
-        
-        function showAdSequenceUI(stepName, description) {
-            adStepMsg.innerText = stepName;
-            adDescription.innerText = description;
-            nextStepBtn.style.display = 'none';
-            adLoadingIndicator.style.display = 'block';
-            adSeqPanel.style.display = 'flex';
+        function showAdPanel(stepName, description, icon = "🎬") {
+            const panel = document.getElementById('adSequencePanel');
+            document.getElementById('adStepMessage').innerText = stepName;
+            document.getElementById('adDescription').innerText = description;
+            document.getElementById('adStepIcon').innerText = icon;
+            document.getElementById('adCountdownNumber').style.display = 'none';
+            document.getElementById('adLoadingIndicator').style.display = 'none';
+            panel.style.display = 'flex';
         }
         
-        function hideAdSequenceUI() {
-            adSeqPanel.style.display = 'none';
-            nextStepBtn.style.display = 'none';
-            if(pendingResolveNextStep) {
-                pendingResolveNextStep();
-                pendingResolveNextStep = null;
-            }
+        function hideAdPanel() {
+            document.getElementById('adSequencePanel').style.display = 'none';
         }
         
-        function waitForNextStepButton() {
-            return new Promise((resolve) => {
-                if(!isNetworkOnline()) {
-                    showOfflineExitAndCloseGame("Network lost while waiting. Exiting.");
-                    resolve();
-                    return;
+        async function showCountdownInAdPanel(seconds, stepName, description) {
+            const panel = document.getElementById('adSequencePanel');
+            const stepMsg = document.getElementById('adStepMessage');
+            const adDesc = document.getElementById('adDescription');
+            const countdownEl = document.getElementById('adCountdownNumber');
+            const iconEl = document.getElementById('adStepIcon');
+            
+            stepMsg.innerText = stepName;
+            adDesc.innerText = description;
+            iconEl.innerText = "⏳";
+            countdownEl.style.display = "block";
+            panel.style.display = 'flex';
+            
+            for(let i = seconds; i >= 0; i--) {
+                if(!isNetworkOnline() || adSequenceCancelled) {
+                    throw new Error("Cancelled or offline");
                 }
-                pendingResolveNextStep = resolve;
-                nextStepBtn.style.display = 'block';
-                adLoadingIndicator.style.display = 'none';
-                const onClick = () => {
-                    nextStepBtn.removeEventListener('click', onClick);
-                    if(pendingResolveNextStep) pendingResolveNextStep();
-                    pendingResolveNextStep = null;
-                    nextStepBtn.style.display = 'none';
-                    resolve();
-                };
-                nextStepBtn.addEventListener('click', onClick, { once: true });
-                const interval = setInterval(() => {
-                    if(!isNetworkOnline() && adSeqPanel.style.display === 'flex') {
-                        clearInterval(interval);
-                        showOfflineExitAndCloseGame("Connection lost during ad step. Exiting.");
-                        if(pendingResolveNextStep) pendingResolveNextStep();
-                        pendingResolveNextStep = null;
-                        resolve();
-                    }
-                }, 1000);
-                const originalResolve = resolve;
-                resolve = (val) => { clearInterval(interval); originalResolve(val); };
-            });
+                countdownEl.innerText = i;
+                if(i === 0) break;
+                await new Promise(r => setTimeout(r, 1000));
+            }
+            countdownEl.style.display = 'none';
+            iconEl.innerText = "🎬";
+            adDesc.innerText = "Now showing ad...";
         }
         
-        // ---------- MAIN SEQUENCE: DOUBLE ADSGRAM + MONETAG ----------
+        // Main ad sequence as requested:
+        // 1. Adsgram (immediate)
+        // 2. Monetag (immediate)
+        // 3. 5-second countdown → second Adsgram
         async function runFullAdSequence() {
-            if(!isNetworkOnline()) throw new Error("offline");
-            
-            showAdSequenceUI("📢 Step 1/3", "Showing interstitial ad (Adsgram)");
-            await showAdsgramAd();
-            if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Step 1 Complete", "Click next to continue");
-            await waitForNextStepButton();
-            if(!isNetworkOnline()) throw new Error("offline");
-            
-            showAdSequenceUI("💰 Step 2/3", "Loading reward ad (Monetag)");
-            await showMonetagAd();
-            if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad (Second Adsgram)");
-            await waitForNextStepButton();
-            if(!isNetworkOnline()) throw new Error("offline");
-            
-            showAdSequenceUI("🎬 Step 3/3", "Final interstitial ad (Adsgram)");
-            await showAdsgramAd();
-            if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Ad Sequence Done", "Starting game now!");
-            await new Promise(r => setTimeout(r, 400));
-            hideAdSequenceUI();
+            adSequenceCancelled = false;
+            adSequenceActive = true;
+            try {
+                // Step 1: First Adsgram (no countdown)
+                showAdPanel("📢 Step 1/3", "Showing first Adsgram ad...", "📢");
+                await showAdsgramAd();
+                if(adSequenceCancelled) throw new Error("cancelled");
+                await new Promise(r => setTimeout(r, 500));
+                
+                // Step 2: Monetag (no countdown)
+                showAdPanel("💰 Step 2/3", "Showing Monetag ad...", "💰");
+                await showMonetagAd();
+                if(adSequenceCancelled) throw new Error("cancelled");
+                await new Promise(r => setTimeout(r, 500));
+                
+                // Step 3: 5-second countdown THEN second Adsgram
+                await showCountdownInAdPanel(5, "⏳ Step 3/3", "Final ad will start in");
+                await showAdsgramAd();
+                if(adSequenceCancelled) throw new Error("cancelled");
+                await new Promise(r => setTimeout(r, 400));
+                
+                hideAdPanel();
+                adSequenceActive = false;
+                return true;
+            } catch(err) {
+                console.warn("Ad sequence error:", err);
+                hideAdPanel();
+                adSequenceActive = false;
+                if(!isNetworkOnline()) showOfflineExitAndCloseGame("Network lost during ads.");
+                else showOfflineExitAndCloseGame("Ad sequence interrupted. Please try again.");
+                return false;
+            }
         }
         
         // ---------- LEVEL ENTRY ----------
@@ -797,28 +775,25 @@
                 showOfflineExitAndCloseGame("Internet required to play.");
                 return false;
             }
-            adSequenceActive = true;
             isProcessing = true;
             document.getElementById('gamePanel').style.display = 'none';
-            try {
-                await runFullAdSequence();
-                if(!isNetworkOnline()) throw new Error("offline");
-                activeGameLevel = level;
-                buttonClickState = [false, false, false, false, false];
-                gameCompletedFlag = false;
-                renderGamePanel(level);
-                document.getElementById('gamePanel').style.display = 'flex';
-                adSequenceActive = false;
+            const success = await runFullAdSequence();
+            if(!success) {
                 isProcessing = false;
-                return true;
-            } catch(err) {
-                hideAdSequenceUI();
-                adSequenceActive = false;
-                isProcessing = false;
-                if(!isNetworkOnline()) showOfflineExitAndCloseGame("Network issue. Exiting.");
-                else showOfflineExitAndCloseGame("Ad sequence failed. Try again later.");
                 return false;
             }
+            if(!isNetworkOnline()) {
+                showOfflineExitAndCloseGame("Network lost after ads. Exiting.");
+                isProcessing = false;
+                return false;
+            }
+            activeGameLevel = level;
+            buttonClickState = [false, false, false, false, false];
+            gameCompletedFlag = false;
+            renderGamePanel(level);
+            document.getElementById('gamePanel').style.display = 'flex';
+            isProcessing = false;
+            return true;
         }
         
         // ---------- GAMEPLAY ----------
@@ -879,76 +854,18 @@
         
         function showLevelCompleteScreen(level) {
             const completeDiv = document.getElementById('levelCompleteScreen');
-            document.getElementById('completeLevelMsg').innerHTML = `Route ${level} completed! 🎉`;
+            document.getElementById('completeLevelMsg').innerHTML = `Route ${level} completed! 🎉<br><span style="font-size:14px;">➡️ Open the link below, then return here → Next level auto-starts!</span>`;
             completeDiv.dataset.currentLevel = level;
-            // Reset waiting UI elements
+            currentCompleteLevel = level;
+            externalLinkVisitedForCurrentLevel = false;
+            autoStartScheduled = false;
+            
             clearWaitingForLink();
             const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
             const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
-            waitingMsgDiv.style.display = 'none';
-            manualBtn.style.display = 'none';
-            completeDiv.style.display = 'flex';
-        }
-        
-        // Visibility change: auto resume when user returns after opening link
-        function onVisibilityChange() {
-            if(document.visibilityState === 'visible' && waitingForExternalReturn && pendingNextLevel !== null) {
-                console.log("Tab visible, auto-resuming next level");
-                proceedToNextLevelAfterLink(pendingNextLevel);
-            }
-        }
-        
-        async function proceedToNextLevelAfterLink(levelToProceed) {
-            if(!waitingForExternalReturn) return;
-            // Clear waiting state
-            waitingForExternalReturn = false;
-            if(visibilityListenerAttached) {
-                document.removeEventListener('visibilitychange', onVisibilityChange);
-                visibilityListenerAttached = false;
-            }
-            const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
-            const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
-            if(waitingMsgDiv) waitingMsgDiv.style.display = 'none';
-            if(manualBtn) manualBtn.style.display = 'none';
-            const completeScreen = document.getElementById('levelCompleteScreen');
-            if(completeScreen.style.display !== 'flex') return;
-            // Now continue actual next level flow: countdown + ads
-            completeScreen.style.display = 'none';
-            isProcessing = true;
-            await showCountdown(3, `Next: Route ${levelToProceed}<br>Starting in...`);
-            if(!isNetworkOnline()) {
-                showOfflineExitAndCloseGame("Network lost before next level.");
-                isProcessing = false;
-                return;
-            }
-            const success = await startLevelEntrySequence(levelToProceed);
-            isProcessing = false;
-            if(!success) forceExitAllGameScreens();
-        }
-        
-        // New: handle next level click with external link requirement
-        function handleNextLevelWithExternalLink(currentLevel) {
-            if(waitingForExternalReturn) {
-                // Already waiting, just remind
-                alert("Please return to the game after opening the link, it will auto-start.");
-                return;
-            }
-            const nextLevel = currentLevel + 1;
-            if(nextLevel > MAX_LEVEL) {
-                document.getElementById('levelCompleteScreen').style.display = 'none';
-                showRewardScreen();
-                return;
-            }
-            // Set waiting flag
-            waitingForExternalReturn = true;
-            pendingNextLevel = nextLevel;
-            
-            // Show waiting UI on complete screen
-            const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
-            const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
             waitingMsgDiv.style.display = 'block';
-            waitingMsgDiv.innerHTML = "🔗 Click the link below to continue:<br><span style='font-size:12px;'>After opening, return to this tab → Next level ads will start automatically</span><br><br><a href='#' id='dynamicExternalLink' target='_blank' style='background:#f5c542; color:#1b4d1a; padding:8px 16px; border-radius:40px; text-decoration:none; display:inline-block; margin-top:8px; font-weight:bold;'>👉 OPEN OFFER LINK 👈</a>";
-            // Attach click for dynamic link
+            manualBtn.style.display = 'none';
+            
             const dynamicLink = document.getElementById('dynamicExternalLink');
             if(dynamicLink) {
                 dynamicLink.onclick = (e) => {
@@ -956,20 +873,88 @@
                     window.open(EXTERNAL_NEXT_LEVEL_URL, '_blank');
                 };
             }
-            manualBtn.style.display = 'inline-block';
+            
             manualBtn.onclick = () => {
-                if(waitingForExternalReturn && pendingNextLevel) {
-                    proceedToNextLevelAfterLink(pendingNextLevel);
-                }
+                if(!externalLinkVisitedForCurrentLevel) markLinkVisitedAndAutoStart();
             };
             
-            // Also automatically open in new tab for convenience (popup may be blocked, but we also show manual link)
-            window.open(EXTERNAL_NEXT_LEVEL_URL, '_blank');
-            
-            // Attach visibility listener
             if(!visibilityListenerAttached) {
                 document.addEventListener('visibilitychange', onVisibilityChange);
                 visibilityListenerAttached = true;
+            }
+            completeDiv.style.display = 'flex';
+        }
+        
+        function markLinkVisitedAndAutoStart() {
+            if(externalLinkVisitedForCurrentLevel || autoStartScheduled) return;
+            externalLinkVisitedForCurrentLevel = true;
+            autoStartScheduled = true;
+            
+            const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
+            const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
+            if(waitingMsgDiv) waitingMsgDiv.style.display = 'none';
+            if(manualBtn) manualBtn.style.display = 'none';
+            
+            const toast = document.createElement('div');
+            toast.className = 'offline-toast';
+            toast.style.background = '#2e7d32';
+            toast.innerText = '✅ Link visited! Starting next level automatically...';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+            
+            setTimeout(() => {
+                if(currentCompleteLevel && currentCompleteLevel < MAX_LEVEL) {
+                    proceedToActualNextLevel(currentCompleteLevel);
+                }
+            }, 800);
+        }
+        
+        function onVisibilityChange() {
+            if(document.visibilityState === 'visible' && !externalLinkVisitedForCurrentLevel && currentCompleteLevel && 
+               document.getElementById('levelCompleteScreen').style.display === 'flex' && !autoStartScheduled) {
+                markLinkVisitedAndAutoStart();
+            }
+        }
+        
+        async function proceedToActualNextLevel(currentLevel) {
+            const nextLevel = currentLevel + 1;
+            if(nextLevel > MAX_LEVEL) {
+                document.getElementById('levelCompleteScreen').style.display = 'none';
+                showRewardScreen();
+                return;
+            }
+            document.getElementById('levelCompleteScreen').style.display = 'none';
+            isProcessing = true;
+            // 5-second countdown before next level (changed from 3 to 5)
+            await showCountdown(5, `Next: Route ${nextLevel}<br>Starting in...`);
+            if(!isNetworkOnline()) {
+                showOfflineExitAndCloseGame("Network lost before next level.");
+                isProcessing = false;
+                return;
+            }
+            const success = await startLevelEntrySequence(nextLevel);
+            isProcessing = false;
+            if(!success) forceExitAllGameScreens();
+            externalLinkVisitedForCurrentLevel = false;
+            currentCompleteLevel = null;
+            autoStartScheduled = false;
+        }
+        
+        function handleNextLevelClick() {
+            if(!currentCompleteLevel) return;
+            if(currentCompleteLevel >= MAX_LEVEL) {
+                document.getElementById('levelCompleteScreen').style.display = 'none';
+                showRewardScreen();
+                return;
+            }
+            if(!externalLinkVisitedForCurrentLevel) {
+                const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
+                if(waitingMsgDiv) waitingMsgDiv.style.display = 'block';
+                const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
+                manualBtn.style.display = 'inline-block';
+                window.open(EXTERNAL_NEXT_LEVEL_URL, '_blank');
+            } else {
+                proceedToActualNextLevel(currentCompleteLevel);
             }
         }
         
@@ -1029,12 +1014,12 @@
                 if(isUnlocked) {
                     card.onclick = () => { if(!adSequenceActive && !isProcessing) startLevelEntrySequence(i); };
                 }
-                let adTypeIcon = "🎬 2x Adsgram + 🎁 Monetag";
+                let adTypeIcon = "🎬 Adsgram → 🎁 Monetag → ⏳5s → Adsgram";
                 let statusIcon = isUnlocked ? (i < currentUnlockedLevel ? '✓' : '🔓') : '🔒';
                 card.innerHTML = `
                     <div class="level-number">${i}</div>
                     <div class="level-info">
-                        <div class="level-name">Route ${i} <span style="font-size:9px;">${adTypeIcon}</span></div>
+                        <div class="level-name">Route ${i} <span style="font-size:8px;">${adTypeIcon}</span></div>
                         <div class="level-requirement">5 road tasks</div>
                     </div>
                     <div class="level-status">${statusIcon}</div>
@@ -1045,30 +1030,29 @@
         
         function exitGameToRoad() {
             if(adSequenceActive) {
-                hideAdSequenceUI();
+                adSequenceCancelled = true;
+                hideAdPanel();
                 adSequenceActive = false;
-                if(pendingResolveNextStep) pendingResolveNextStep();
-                pendingResolveNextStep = null;
             }
             clearWaitingForLink();
             document.getElementById('gamePanel').style.display = 'none';
             isProcessing = false;
+            externalLinkVisitedForCurrentLevel = false;
+            currentCompleteLevel = null;
+            autoStartScheduled = false;
         }
         
         function backToRoadFromComplete() {
             clearWaitingForLink();
             document.getElementById('levelCompleteScreen').style.display = 'none';
             isProcessing = false;
+            externalLinkVisitedForCurrentLevel = false;
+            currentCompleteLevel = null;
+            autoStartScheduled = false;
         }
         
         function bindEvents() {
-            document.getElementById('nextLevelBtnFromComplete').onclick = () => {
-                const completeDiv = document.getElementById('levelCompleteScreen');
-                const currentLvl = parseInt(completeDiv.dataset.currentLevel);
-                if(!isNaN(currentLvl)) {
-                    handleNextLevelWithExternalLink(currentLvl);
-                }
-            };
+            document.getElementById('nextLevelBtnFromComplete').onclick = () => handleNextLevelClick();
             document.getElementById('backToRoadCompleteBtn').onclick = () => backToRoadFromComplete();
             document.getElementById('resetAllBtn').onclick = () => resetGameAndCopy();
             document.getElementById('exitGameBtn').onclick = () => exitGameToRoad();
