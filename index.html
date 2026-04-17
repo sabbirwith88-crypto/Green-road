@@ -459,14 +459,30 @@
             color: #dddddd;
         }
 
-        .ad-countdown-number {
-            font-size: 70px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #f5c542, #f59e0b);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin: 16px 0;
+        .next-step-btn {
+            background: linear-gradient(45deg, #f5c542, #e5a812);
+            border: none;
+            padding: 14px 32px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 60px;
+            color: #1b4d1a;
+            cursor: pointer;
+            transition: 0.08s linear;
+            box-shadow: 0 5px 0 #8b5e10;
+            width: 80%;
+            margin-top: 8px;
+        }
+
+        .next-step-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #8b5e10;
+        }
+
+        .ad-loading-text {
+            font-size: 14px;
+            color: #f5b81b;
+            margin-top: 16px;
         }
 
         .offline-toast {
@@ -489,14 +505,24 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* countdown inside ad panel */
+        .ad-countdown-number {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #f5c542, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div class="game-container">
         <div class="road-header">
             <div class="title">GREEN ROAD</div>
-            <div class="subtitle">🚀 Ads: 1st Adsgram → Monetag → 5s Countdown → 2nd Adsgram</div>
-            <div class="badge-pattern">🎯 Next level countdown = 5 seconds (after link return)</div>
+            <div class="subtitle">🚀 3 Ads Before Every Ride: 2x Adsgram + Monetag</div>
+            <div class="badge-pattern">🎯 5s countdown before each ad | Auto next level</div>
         </div>
         <div class="road-levels" id="levelListContainer"></div>
         <div class="footer-note">Each level: tap 5 road tasks to complete</div>
@@ -514,9 +540,9 @@
         </div>
     </div>
 
-    <!-- Countdown Overlay (for next level) -->
+    <!-- Countdown Overlay (for level transition) -->
     <div id="countdownOverlay" class="countdown-overlay" style="display: none;">
-        <div class="countdown-number" id="countdownNum">5</div>
+        <div class="countdown-number" id="countdownNum">3</div>
         <div class="countdown-message" id="countdownMsg">Next Level Starting in...</div>
     </div>
 
@@ -524,6 +550,7 @@
     <div id="levelCompleteScreen" class="levelcomplete-screen" style="display: none;">
         <div class="complete-title">Level Clear!</div>
         <div style="color: white; font-size: 18px; margin-bottom: 20px;" id="completeLevelMsg"></div>
+        
         <div id="waitingForLinkArea" style="width:100%; margin: 10px 0;">
             <div id="externalLinkWaitingMsg" class="waiting-message" style="display: none;">
                 🔗 <strong>Open this link to unlock next level</strong><br>
@@ -532,6 +559,7 @@
             </div>
             <button id="manualResumeAfterLinkBtn" class="btn manual-continue-btn" style="display: none;">✅ I've returned, continue (manual)</button>
         </div>
+        
         <button class="btn" id="nextLevelBtnFromComplete">Next Level →</button>
         <button class="btn btn-secondary" id="backToRoadCompleteBtn">Road Menu</button>
     </div>
@@ -550,10 +578,11 @@
     <div id="adSequencePanel" class="ad-sequence-panel" style="display: none;">
         <div class="ad-sequence-card">
             <div class="ad-step-icon" id="adStepIcon">🎬</div>
-            <div class="ad-step-message" id="adStepMessage">Preparing ad...</div>
-            <div class="ad-description" id="adDescription"></div>
-            <div id="adCountdownNumber" class="ad-countdown-number" style="display: none;">5</div>
-            <div id="adLoadingIndicator" class="ad-loading-text" style="display: none;">Processing...</div>
+            <div class="ad-step-message" id="adStepMessage">Loading ad...</div>
+            <div class="ad-description" id="adDescription">Please complete ad to continue</div>
+            <div id="adCountdownDisplay" class="ad-countdown-number" style="display: none;"></div>
+            <button id="nextStepAdBtn" class="next-step-btn" style="display: none;">➡ Next Step</button>
+            <div id="adLoadingIndicator" class="ad-loading-text">Processing...</div>
         </div>
     </div>
 
@@ -566,12 +595,12 @@
         let gameCompletedFlag = false;
         let isProcessing = false;
         let adSequenceActive = false;
-        let adSequenceCancelled = false;
+        let pendingResolveNextStep = null;
         
         let adController = null;
         let adInitialized = false;
         
-        // External link requirement
+        // External link requirement - AUTO START when returning
         const EXTERNAL_NEXT_LEVEL_URL = "https://www.profitablecpmratenetwork.com/xan60uuv?key=369dc68341066c06e3d471f3785f73fb";
         let externalLinkVisitedForCurrentLevel = false;
         let currentCompleteLevel = null;
@@ -597,8 +626,11 @@
             document.getElementById('countdownOverlay').style.display = 'none';
             document.getElementById('levelCompleteScreen').style.display = 'none';
             document.getElementById('rewardScreen').style.display = 'none';
+            if(pendingResolveNextStep) {
+                pendingResolveNextStep();
+                pendingResolveNextStep = null;
+            }
             adSequenceActive = false;
-            adSequenceCancelled = true;
             isProcessing = false;
             gameCompletedFlag = false;
             activeGameLevel = null;
@@ -654,13 +686,13 @@
         }
         
         function withNetworkGuard(fn, adName) {
-            return new Promise(async (resolve, reject) => {
+            return new Promise(async (resolve) => {
                 if(!isNetworkOnline()) {
                     showOfflineExitAndCloseGame(`📡 No internet. Cannot load ${adName}. Exiting.`);
-                    reject(new Error("offline"));
+                    resolve();
                     return;
                 }
-                const timeoutId = setTimeout(() => { reject(new Error(`${adName} timeout`)); }, 15000);
+                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 12000);
                 try {
                     await fn();
                     clearTimeout(timeoutId);
@@ -669,14 +701,14 @@
                     clearTimeout(timeoutId);
                     console.error(`${adName} error:`, e);
                     if(!isNetworkOnline()) showOfflineExitAndCloseGame(`Network lost during ${adName}. Exiting.`);
-                    reject(e);
+                    resolve();
                 }
             });
         }
         
         function showAdsgramAd() {
             return withNetworkGuard(async () => {
-                if(!adInitialized || !adController) throw new Error("Adsgram not ready");
+                if(!adInitialized || !adController) return;
                 await adController.show();
             }, "Adsgram");
         }
@@ -684,88 +716,131 @@
         function showMonetagAd() {
             return withNetworkGuard(async () => {
                 if(typeof window.show_10541383 === 'function') await window.show_10541383();
-                else throw new Error("Monetag not ready");
+                else console.warn("Monetag not ready");
             }, "Monetag");
         }
         
-        // ---------- AD UI HELPERS ----------
-        function showAdPanel(stepName, description, icon = "🎬") {
-            const panel = document.getElementById('adSequencePanel');
-            document.getElementById('adStepMessage').innerText = stepName;
-            document.getElementById('adDescription').innerText = description;
-            document.getElementById('adStepIcon').innerText = icon;
-            document.getElementById('adCountdownNumber').style.display = 'none';
-            document.getElementById('adLoadingIndicator').style.display = 'none';
-            panel.style.display = 'flex';
-        }
-        
-        function hideAdPanel() {
-            document.getElementById('adSequencePanel').style.display = 'none';
-        }
-        
-        async function showCountdownInAdPanel(seconds, stepName, description) {
-            const panel = document.getElementById('adSequencePanel');
-            const stepMsg = document.getElementById('adStepMessage');
-            const adDesc = document.getElementById('adDescription');
-            const countdownEl = document.getElementById('adCountdownNumber');
-            const iconEl = document.getElementById('adStepIcon');
+        // ---------- 5-SECOND COUNTDOWN BEFORE AD (inside ad panel) ----------
+        async function countdownBeforeAd(seconds, stepLabel) {
+            const countdownDiv = document.getElementById('adCountdownDisplay');
+            const stepMsgDiv = document.getElementById('adStepMessage');
+            const descDiv = document.getElementById('adDescription');
+            const nextBtn = document.getElementById('nextStepAdBtn');
+            const loadingIndicator = document.getElementById('adLoadingIndicator');
             
-            stepMsg.innerText = stepName;
-            adDesc.innerText = description;
-            iconEl.innerText = "⏳";
-            countdownEl.style.display = "block";
-            panel.style.display = 'flex';
+            // Hide next button and loading indicator during countdown
+            nextBtn.style.display = 'none';
+            loadingIndicator.style.display = 'none';
+            countdownDiv.style.display = 'block';
             
-            for(let i = seconds; i >= 0; i--) {
-                if(!isNetworkOnline() || adSequenceCancelled) {
-                    throw new Error("Cancelled or offline");
+            for(let i = seconds; i >= 1; i--) {
+                if(!isNetworkOnline()) {
+                    countdownDiv.style.display = 'none';
+                    throw new Error("offline");
                 }
-                countdownEl.innerText = i;
-                if(i === 0) break;
+                stepMsgDiv.innerText = `⏳ ${stepLabel} in ${i}s`;
+                descDiv.innerText = `Please wait, ad will start in ${i} second${i !== 1 ? 's' : ''}`;
+                countdownDiv.innerText = `${i}`;
                 await new Promise(r => setTimeout(r, 1000));
             }
-            countdownEl.style.display = 'none';
-            iconEl.innerText = "🎬";
-            adDesc.innerText = "Now showing ad...";
+            // Countdown finished
+            countdownDiv.style.display = 'none';
+            stepMsgDiv.innerText = `📢 ${stepLabel} now!`;
+            descDiv.innerText = `Showing ad... please don't close`;
+            loadingIndicator.style.display = 'block';
+            await new Promise(r => setTimeout(r, 200)); // small buffer
         }
         
-        // Main ad sequence as requested:
-        // 1. Adsgram (immediate)
-        // 2. Monetag (immediate)
-        // 3. 5-second countdown → second Adsgram
-        async function runFullAdSequence() {
-            adSequenceCancelled = false;
-            adSequenceActive = true;
-            try {
-                // Step 1: First Adsgram (no countdown)
-                showAdPanel("📢 Step 1/3", "Showing first Adsgram ad...", "📢");
-                await showAdsgramAd();
-                if(adSequenceCancelled) throw new Error("cancelled");
-                await new Promise(r => setTimeout(r, 500));
-                
-                // Step 2: Monetag (no countdown)
-                showAdPanel("💰 Step 2/3", "Showing Monetag ad...", "💰");
-                await showMonetagAd();
-                if(adSequenceCancelled) throw new Error("cancelled");
-                await new Promise(r => setTimeout(r, 500));
-                
-                // Step 3: 5-second countdown THEN second Adsgram
-                await showCountdownInAdPanel(5, "⏳ Step 3/3", "Final ad will start in");
-                await showAdsgramAd();
-                if(adSequenceCancelled) throw new Error("cancelled");
-                await new Promise(r => setTimeout(r, 400));
-                
-                hideAdPanel();
-                adSequenceActive = false;
-                return true;
-            } catch(err) {
-                console.warn("Ad sequence error:", err);
-                hideAdPanel();
-                adSequenceActive = false;
-                if(!isNetworkOnline()) showOfflineExitAndCloseGame("Network lost during ads.");
-                else showOfflineExitAndCloseGame("Ad sequence interrupted. Please try again.");
-                return false;
+        // ---------- AD UI HELPERS ----------
+        const adSeqPanel = document.getElementById('adSequencePanel');
+        const adStepMsg = document.getElementById('adStepMessage');
+        const adDescription = document.getElementById('adDescription');
+        const nextStepBtn = document.getElementById('nextStepAdBtn');
+        const adLoadingIndicator = document.getElementById('adLoadingIndicator');
+        const adCountdownDisplay = document.getElementById('adCountdownDisplay');
+        
+        function showAdSequenceUI(stepName, description) {
+            adStepMsg.innerText = stepName;
+            adDescription.innerText = description;
+            nextStepBtn.style.display = 'none';
+            adLoadingIndicator.style.display = 'block';
+            adCountdownDisplay.style.display = 'none';
+            adSeqPanel.style.display = 'flex';
+        }
+        
+        function hideAdSequenceUI() {
+            adSeqPanel.style.display = 'none';
+            nextStepBtn.style.display = 'none';
+            adCountdownDisplay.style.display = 'none';
+            if(pendingResolveNextStep) {
+                pendingResolveNextStep();
+                pendingResolveNextStep = null;
             }
+        }
+        
+        function waitForNextStepButton() {
+            return new Promise((resolve) => {
+                if(!isNetworkOnline()) {
+                    showOfflineExitAndCloseGame("Network lost while waiting. Exiting.");
+                    resolve();
+                    return;
+                }
+                pendingResolveNextStep = resolve;
+                nextStepBtn.style.display = 'block';
+                adLoadingIndicator.style.display = 'none';
+                adCountdownDisplay.style.display = 'none';
+                const onClick = () => {
+                    nextStepBtn.removeEventListener('click', onClick);
+                    if(pendingResolveNextStep) pendingResolveNextStep();
+                    pendingResolveNextStep = null;
+                    nextStepBtn.style.display = 'none';
+                    resolve();
+                };
+                nextStepBtn.addEventListener('click', onClick, { once: true });
+                const interval = setInterval(() => {
+                    if(!isNetworkOnline() && adSeqPanel.style.display === 'flex') {
+                        clearInterval(interval);
+                        showOfflineExitAndCloseGame("Connection lost during ad step. Exiting.");
+                        if(pendingResolveNextStep) pendingResolveNextStep();
+                        pendingResolveNextStep = null;
+                        resolve();
+                    }
+                }, 1000);
+                const originalResolve = resolve;
+                resolve = (val) => { clearInterval(interval); originalResolve(val); };
+            });
+        }
+        
+        // ---------- MAIN SEQUENCE: DOUBLE ADSGRAM + MONETAG with 5s countdown before each ad ----------
+        async function runFullAdSequence() {
+            if(!isNetworkOnline()) throw new Error("offline");
+            
+            // STEP 1: Adsgram with 5s countdown
+            showAdSequenceUI("📢 Step 1/3", "Preparing first ad (Adsgram)");
+            await countdownBeforeAd(5, "Step 1 ad");
+            await showAdsgramAd();
+            if(!isNetworkOnline()) throw new Error("offline");
+            showAdSequenceUI("✅ Step 1 Complete", "Click next to continue");
+            await waitForNextStepButton();
+            if(!isNetworkOnline()) throw new Error("offline");
+            
+            // STEP 2: Monetag with 5s countdown
+            showAdSequenceUI("💰 Step 2/3", "Preparing reward ad (Monetag)");
+            await countdownBeforeAd(5, "Step 2 ad");
+            await showMonetagAd();
+            if(!isNetworkOnline()) throw new Error("offline");
+            showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad");
+            await waitForNextStepButton();
+            if(!isNetworkOnline()) throw new Error("offline");
+            
+            // STEP 3: Second Adsgram with 5s countdown
+            showAdSequenceUI("🎬 Step 3/3", "Preparing final ad (Adsgram)");
+            await countdownBeforeAd(5, "Step 3 ad");
+            await showAdsgramAd();
+            if(!isNetworkOnline()) throw new Error("offline");
+            showAdSequenceUI("✅ Ad Sequence Done", "Starting game now!");
+            await new Promise(r => setTimeout(r, 400));
+            hideAdSequenceUI();
         }
         
         // ---------- LEVEL ENTRY ----------
@@ -775,25 +850,28 @@
                 showOfflineExitAndCloseGame("Internet required to play.");
                 return false;
             }
+            adSequenceActive = true;
             isProcessing = true;
             document.getElementById('gamePanel').style.display = 'none';
-            const success = await runFullAdSequence();
-            if(!success) {
+            try {
+                await runFullAdSequence();
+                if(!isNetworkOnline()) throw new Error("offline");
+                activeGameLevel = level;
+                buttonClickState = [false, false, false, false, false];
+                gameCompletedFlag = false;
+                renderGamePanel(level);
+                document.getElementById('gamePanel').style.display = 'flex';
+                adSequenceActive = false;
                 isProcessing = false;
+                return true;
+            } catch(err) {
+                hideAdSequenceUI();
+                adSequenceActive = false;
+                isProcessing = false;
+                if(!isNetworkOnline()) showOfflineExitAndCloseGame("Network issue. Exiting.");
+                else showOfflineExitAndCloseGame("Ad sequence failed. Try again later.");
                 return false;
             }
-            if(!isNetworkOnline()) {
-                showOfflineExitAndCloseGame("Network lost after ads. Exiting.");
-                isProcessing = false;
-                return false;
-            }
-            activeGameLevel = level;
-            buttonClickState = [false, false, false, false, false];
-            gameCompletedFlag = false;
-            renderGamePanel(level);
-            document.getElementById('gamePanel').style.display = 'flex';
-            isProcessing = false;
-            return true;
         }
         
         // ---------- GAMEPLAY ----------
@@ -875,18 +953,22 @@
             }
             
             manualBtn.onclick = () => {
-                if(!externalLinkVisitedForCurrentLevel) markLinkVisitedAndAutoStart();
+                if(!externalLinkVisitedForCurrentLevel) {
+                    markLinkVisitedAndAutoStart();
+                }
             };
             
             if(!visibilityListenerAttached) {
                 document.addEventListener('visibilitychange', onVisibilityChange);
                 visibilityListenerAttached = true;
             }
+            
             completeDiv.style.display = 'flex';
         }
         
         function markLinkVisitedAndAutoStart() {
-            if(externalLinkVisitedForCurrentLevel || autoStartScheduled) return;
+            if(externalLinkVisitedForCurrentLevel) return;
+            if(autoStartScheduled) return;
             externalLinkVisitedForCurrentLevel = true;
             autoStartScheduled = true;
             
@@ -925,8 +1007,7 @@
             }
             document.getElementById('levelCompleteScreen').style.display = 'none';
             isProcessing = true;
-            // 5-second countdown before next level (changed from 3 to 5)
-            await showCountdown(5, `Next: Route ${nextLevel}<br>Starting in...`);
+            await showCountdown(3, `Next: Route ${nextLevel}<br>Starting in...`);
             if(!isNetworkOnline()) {
                 showOfflineExitAndCloseGame("Network lost before next level.");
                 isProcessing = false;
@@ -1014,12 +1095,12 @@
                 if(isUnlocked) {
                     card.onclick = () => { if(!adSequenceActive && !isProcessing) startLevelEntrySequence(i); };
                 }
-                let adTypeIcon = "🎬 Adsgram → 🎁 Monetag → ⏳5s → Adsgram";
+                let adTypeIcon = "🎬 2x Adsgram + 🎁 Monetag";
                 let statusIcon = isUnlocked ? (i < currentUnlockedLevel ? '✓' : '🔓') : '🔒';
                 card.innerHTML = `
                     <div class="level-number">${i}</div>
                     <div class="level-info">
-                        <div class="level-name">Route ${i} <span style="font-size:8px;">${adTypeIcon}</span></div>
+                        <div class="level-name">Route ${i} <span style="font-size:9px;">${adTypeIcon}</span></div>
                         <div class="level-requirement">5 road tasks</div>
                     </div>
                     <div class="level-status">${statusIcon}</div>
@@ -1030,9 +1111,10 @@
         
         function exitGameToRoad() {
             if(adSequenceActive) {
-                adSequenceCancelled = true;
-                hideAdPanel();
+                hideAdSequenceUI();
                 adSequenceActive = false;
+                if(pendingResolveNextStep) pendingResolveNextStep();
+                pendingResolveNextStep = null;
             }
             clearWaitingForLink();
             document.getElementById('gamePanel').style.display = 'none';
