@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Green Road — Auto Next Level | Adsgram → Monetag → Giga Pub (Fixed)</title>
+    <title>Green Road — Auto Next Level | Adsgram → Giga Pub → Monetag (Fixed)</title>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK (Rewarded Interstitial) -->
     <script src="//libtl.com/sdk.js" data-zone="10541383" data-sdk="show_10541383"></script>
-    <!-- Giga Pub SDK - fixed loading with ready check -->
+    <!-- Giga Pub SDK - fixed loading with retry -->
     <script src="https://ad.gigapub.tech/script?id=6331" async id="giga-script"></script>
     <style>
         * {
@@ -513,7 +513,7 @@
     <div class="game-container">
         <div class="road-header">
             <div class="title">GREEN ROAD</div>
-            <div class="subtitle">🚀 3 Ads Before Every Ride: Adsgram + Monetag + Giga Pub (Fixed)</div>
+            <div class="subtitle">🚀 3 Ads Before Every Ride: Adsgram → Giga Pub → Monetag</div>
             <div class="badge-pattern">🎯 NEXT LEVEL: Open link → Return → Auto-starts!</div>
         </div>
         <div class="road-levels" id="levelListContainer"></div>
@@ -566,7 +566,7 @@
         <button class="btn" id="resetAllBtn">Copy & Reset Game</button>
     </div>
 
-    <!-- Ad Sequence Modal (updated for Giga Pub with ready check) -->
+    <!-- Ad Sequence Modal -->
     <div id="adSequencePanel" class="ad-sequence-panel" style="display: none;">
         <div class="ad-sequence-card">
             <div class="ad-step-icon" id="adStepIcon">🎬</div>
@@ -676,14 +676,17 @@
             } catch(e) { console.error(e); }
         }
         
-        function withNetworkGuard(fn, adName) {
-            return new Promise(async (resolve) => {
+        // Universal ad wrapper with timeout and network guard
+        function withAdGuard(fn, adName, timeoutMs = 15000) {
+            return new Promise(async (resolve, reject) => {
                 if(!isNetworkOnline()) {
                     showOfflineExitAndCloseGame(`📡 No internet. Cannot load ${adName}. Exiting.`);
-                    resolve();
+                    reject(new Error("offline"));
                     return;
                 }
-                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 15000);
+                const timeoutId = setTimeout(() => {
+                    reject(new Error(`${adName} timeout after ${timeoutMs}ms`));
+                }, timeoutMs);
                 try {
                     await fn();
                     clearTimeout(timeoutId);
@@ -691,58 +694,52 @@
                 } catch(e) {
                     clearTimeout(timeoutId);
                     console.error(`${adName} error:`, e);
-                    if(!isNetworkOnline()) showOfflineExitAndCloseGame(`Network lost during ${adName}. Exiting.`);
-                    else showOfflineExitAndCloseGame(`${adName} failed. Try again.`);
-                    resolve();
+                    reject(e);
                 }
             });
         }
         
         function showAdsgramAd() {
-            return withNetworkGuard(async () => {
+            return withAdGuard(async () => {
                 if(!adInitialized || !adController) throw new Error("Adsgram not ready");
                 await adController.show();
             }, "Adsgram");
         }
         
         function showMonetagAd() {
-            return withNetworkGuard(async () => {
-                if(typeof window.show_10541383 === 'function') await window.show_10541383();
-                else throw new Error("Monetag not ready");
+            return withAdGuard(async () => {
+                if(typeof window.show_10541383 !== 'function') throw new Error("Monetag SDK not loaded");
+                await window.show_10541383();
             }, "Monetag");
         }
         
-        // ---------- FIXED GIGA PUB AD INTEGRATION ----------
-        // Ensure Giga SDK is loaded before calling showGiga
-        function ensureGigaReady(timeoutMs = 5000) {
+        // Improved Giga Pub with explicit SDK ready check
+        function ensureGigaSDK(maxWaitMs = 8000) {
             return new Promise((resolve, reject) => {
                 if (typeof window.showGiga === 'function') {
                     resolve();
                     return;
                 }
-                const startTime = Date.now();
+                const start = Date.now();
                 const interval = setInterval(() => {
                     if (typeof window.showGiga === 'function') {
                         clearInterval(interval);
                         resolve();
-                    } else if (Date.now() - startTime > timeoutMs) {
+                    } else if (Date.now() - start > maxWaitMs) {
                         clearInterval(interval);
-                        reject(new Error("Giga SDK not loaded after timeout"));
+                        reject(new Error("Giga SDK not loaded"));
                     }
                 }, 200);
             });
         }
         
         async function showGigaPubAd() {
-            await withNetworkGuard(async () => {
-                // First wait for SDK to be ready
-                await ensureGigaReady(8000);
-                if (typeof window.showGiga !== 'function') throw new Error("showGiga not available");
-                // Call the ad and wait for its promise
+            await withAdGuard(async () => {
+                await ensureGigaSDK(10000);
+                if (typeof window.showGiga !== 'function') throw new Error("showGiga missing");
                 await window.showGiga();
             }, "Giga Pub");
         }
-        // -------------------------------------------------
         
         // ---------- AD UI HELPERS ----------
         const adSeqPanel = document.getElementById('adSequencePanel');
@@ -786,6 +783,7 @@
                     resolve();
                 };
                 nextStepBtn.addEventListener('click', onClick, { once: true });
+                // Monitor network during wait
                 const interval = setInterval(() => {
                     if(!isNetworkOnline() && adSeqPanel.style.display === 'flex') {
                         clearInterval(interval);
@@ -800,7 +798,7 @@
             });
         }
         
-        // ---------- NEW SEQUENCE: ADSGRAM + MONETAG + GIGA PUB (FIXED) ----------
+        // ---------- SEQUENCE: ADSGRAM → GIGA PUB → MONETAG ----------
         async function runFullAdSequence() {
             if(!isNetworkOnline()) throw new Error("offline");
             
@@ -812,17 +810,17 @@
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
-            // Step 2: Monetag
-            showAdSequenceUI("💰 Step 2/3", "Loading Monetag rewarded ad");
-            await showMonetagAd();
+            // Step 2: Giga Pub
+            showAdSequenceUI("⚡ Step 2/3", "Showing Giga Pub ad (please wait)");
+            await showGigaPubAd();
             if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad (Giga Pub)");
+            showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad (Monetag)");
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
-            // Step 3: Giga Pub (fixed with ready check)
-            showAdSequenceUI("⚡ Step 3/3", "Showing Giga Pub ad - please wait");
-            await showGigaPubAd();
+            // Step 3: Monetag
+            showAdSequenceUI("🎁 Step 3/3", "Showing Monetag rewarded ad");
+            await showMonetagAd();
             if(!isNetworkOnline()) throw new Error("offline");
             showAdSequenceUI("🎉 All Ads Completed", "Click start to begin the route");
             await waitForNextStepButton();
@@ -854,13 +852,14 @@
                 hideAdSequenceUI();
                 adSequenceActive = false;
                 isProcessing = false;
-                if(!isNetworkOnline()) showOfflineExitAndCloseGame("Network issue. Exiting.");
-                else showOfflineExitAndCloseGame("Ad sequence failed. Try again later.");
+                let errorMsg = "Ad sequence failed. Try again later.";
+                if(!isNetworkOnline()) errorMsg = "Network issue. Exiting.";
+                showOfflineExitAndCloseGame(errorMsg);
                 return false;
             }
         }
         
-        // ---------- GAMEPLAY (unchanged) ----------
+        // ---------- GAMEPLAY ----------
         const TASKS = ['🛣️ Press', '🚦 Tap', '⛽ Fuel', '🌲 Green', '🏁 Finish'];
         
         function renderGamePanel(level) {
@@ -1081,7 +1080,7 @@
                 if(isUnlocked) {
                     card.onclick = () => { if(!adSequenceActive && !isProcessing) startLevelEntrySequence(i); };
                 }
-                let adTypeIcon = "🎬 Adsgram + 🎁 Monetag + ⚡ Giga";
+                let adTypeIcon = "🎬 Adsgram → ⚡ Giga → 🎁 Monetag";
                 let statusIcon = isUnlocked ? (i < currentUnlockedLevel ? '✓' : '🔓') : '🔒';
                 card.innerHTML = `
                     <div class="level-number">${i}</div>
@@ -1131,7 +1130,7 @@
             initAdsgram();
             buildLevelList();
             bindEvents();
-            // Pre-warm Giga SDK by checking if loaded (just for logging)
+            // Pre-warm Giga SDK check (just for logging)
             setTimeout(() => {
                 if(typeof window.showGiga === 'function') console.log("Giga Pub SDK ready");
                 else console.warn("Giga Pub SDK not yet loaded, will retry when needed");
