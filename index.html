@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Green Road — Adsgram → Monetag → Giga Pub | Auto Next Level After Link Return</title>
+    <title>Green Road — Fixed: Adsgram → Monetag → Giga Pub</title>
     
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK (Rewarded Interstitial) -->
     <script src="//libtl.com/sdk.js" data-zone="10541383" data-sdk="show_10541383"></script>
-    <!-- Giga Pub SDK (Project ID 6331) -->
+    <!-- Giga Pub SDK (Project ID 6331) - CORRECT URL -->
     <script src="https://ad.gigapub.tech/script?id=6331"></script>
     
     <style>
@@ -515,7 +515,7 @@
     <div class="game-container">
         <div class="road-header">
             <div class="title">GREEN ROAD</div>
-            <div class="subtitle">🚀 3 Ads Before Every Ride: Adsgram → Monetag → Giga Pub</div>
+            <div class="subtitle">🚀 Adsgram ➜ Monetag ➜ Giga Pub (Fixed)</div>
             <div class="badge-pattern">🎯 NEXT LEVEL: Open link → Return → Auto-starts!</div>
         </div>
         <div class="road-levels" id="levelListContainer"></div>
@@ -686,7 +686,10 @@
                     resolve();
                     return;
                 }
-                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 15000);
+                const timeoutId = setTimeout(() => { 
+                    console.warn(`${adName} timeout`);
+                    resolve(); 
+                }, 15000);
                 try {
                     await fn();
                     clearTimeout(timeoutId);
@@ -695,6 +698,12 @@
                     clearTimeout(timeoutId);
                     console.error(`${adName} error:`, e);
                     if(!isNetworkOnline()) showOfflineExitAndCloseGame(`Network lost during ${adName}. Exiting.`);
+                    else {
+                        // For Giga Pub failure, show error and exit
+                        if(adName === "Giga Pub") {
+                            showOfflineExitAndCloseGame("Giga Pub ad failed. Please try again later.");
+                        }
+                    }
                     resolve();
                 }
             });
@@ -715,22 +724,25 @@
         
         function showMonetagAd() {
             return withNetworkGuard(async () => {
-                if(typeof window.show_10541383 === 'function') await window.show_10541383();
-                else console.warn("Monetag not ready");
+                if(typeof window.show_10541383 === 'function') {
+                    await window.show_10541383();
+                } else {
+                    console.warn("Monetag not ready");
+                    throw new Error("Monetag SDK missing");
+                }
             }, "Monetag");
         }
         
-        // Giga Pub Ad – using window.showGiga()
+        // ***** Giga Pub Ad - FIXED: strictly shows Giga Pub, not Monetag *****
         function showGigaPubAd() {
             return withNetworkGuard(async () => {
                 if(typeof window.showGiga === 'function') {
                     console.log("Launching Giga Pub ad (project 6331)");
-                    await window.showGiga();
-                    console.log("Giga Pub ad completed");
+                    await window.showGiga();   // Exact call as requested
+                    console.log("Giga Pub ad completed successfully");
                 } else {
-                    console.warn("Giga Pub SDK not loaded or showGiga missing");
-                    // fallback: wait a moment
-                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    console.error("Giga Pub SDK not loaded or showGiga missing");
+                    throw new Error("Giga Pub not available");
                 }
             }, "Giga Pub");
         }
@@ -785,16 +797,16 @@
                         resolve();
                     }
                 }, 1000);
-                // keep reference for cleanup
                 const originalResolve = resolve;
                 resolve = (val) => { clearInterval(interval); originalResolve(val); };
             });
         }
         
-        // ---------- MAIN SEQUENCE: Adsgram → Monetag → Giga Pub ----------
+        // ---------- MAIN SEQUENCE: STRICTLY Adsgram → Monetag → Giga Pub ----------
         async function runFullAdSequence() {
             if(!isNetworkOnline()) throw new Error("offline");
             
+            // Step 1: Adsgram
             showAdSequenceUI("📢 Step 1/3", "Showing Adsgram interstitial ad...");
             await showAdsgramAd();
             if(!isNetworkOnline()) throw new Error("offline");
@@ -802,6 +814,7 @@
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
+            // Step 2: Monetag
             showAdSequenceUI("💰 Step 2/3", "Loading Monetag rewarded ad...");
             await showMonetagAd();
             if(!isNetworkOnline()) throw new Error("offline");
@@ -809,9 +822,11 @@
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
+            // Step 3: Giga Pub (NO fallback to Monetag)
             showAdSequenceUI("🎬 Step 3/3", "Final ad from Giga Pub (project 6331)");
             await showGigaPubAd();
             if(!isNetworkOnline()) throw new Error("offline");
+            
             showAdSequenceUI("✅ Ad Sequence Done", "Starting game now!");
             await new Promise(r => setTimeout(r, 400));
             hideAdSequenceUI();
@@ -843,7 +858,7 @@
                 adSequenceActive = false;
                 isProcessing = false;
                 if(!isNetworkOnline()) showOfflineExitAndCloseGame("Network issue. Exiting.");
-                else showOfflineExitAndCloseGame("Ad sequence failed. Try again later.");
+                else showOfflineExitAndCloseGame("Ad sequence failed (Giga Pub may be unavailable). Please try again.");
                 return false;
             }
         }
@@ -918,7 +933,6 @@
             waitingMsgDiv.style.display = 'block';
             manualBtn.style.display = 'none';
             
-            // Attach dynamic link
             const dynamicLink = document.getElementById('dynamicExternalLink');
             if(dynamicLink) {
                 dynamicLink.onclick = (e) => {
@@ -927,7 +941,6 @@
                 };
             }
             
-            // Manual fallback button
             manualBtn.onclick = () => {
                 if(!externalLinkVisitedForCurrentLevel) {
                     markLinkVisitedAndAutoStart();
@@ -1121,11 +1134,10 @@
             initAdsgram();
             buildLevelList();
             bindEvents();
-            // Check Giga Pub availability
             if(typeof window.showGiga === 'function') {
                 console.log("✅ Giga Pub SDK ready (project 6331)");
             } else {
-                console.warn("⚠️ Giga Pub showGiga not available");
+                console.warn("⚠️ Giga Pub showGiga not available – check SDK URL");
             }
         });
         window.addEventListener('beforeunload', () => saveProgress());
