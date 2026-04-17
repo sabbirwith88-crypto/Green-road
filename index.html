@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Green Road — Auto Next Level After Link Return</title>
+    <title>Green Road — Triple Ad Gateway | Level Up</title>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK (Rewarded Interstitial) -->
     <script src="//libtl.com/sdk.js" data-zone="10541383" data-sdk="show_10541383"></script>
+    <!-- Adexora SDK -->
+    <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
     <style>
         * {
             margin: 0;
@@ -505,24 +507,14 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* countdown inside ad panel */
-        .ad-countdown-number {
-            font-size: 48px;
-            font-weight: 800;
-            background: linear-gradient(45deg, #f5c542, #f59e0b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 10px 0;
-        }
     </style>
 </head>
 <body>
     <div class="game-container">
         <div class="road-header">
             <div class="title">GREEN ROAD</div>
-            <div class="subtitle">🚀 3 Ads Before Every Ride: 2x Adsgram + Monetag</div>
-            <div class="badge-pattern">🎯 5s countdown before each ad | Auto next level</div>
+            <div class="subtitle">🔥 3 Ads Before Every Ride: Adsgram + Monetag + Adexora 🔥</div>
+            <div class="badge-pattern">🎯 NEXT LEVEL: Open link → Return → Auto-starts!</div>
         </div>
         <div class="road-levels" id="levelListContainer"></div>
         <div class="footer-note">Each level: tap 5 road tasks to complete</div>
@@ -540,7 +532,7 @@
         </div>
     </div>
 
-    <!-- Countdown Overlay (for level transition) -->
+    <!-- Countdown Overlay -->
     <div id="countdownOverlay" class="countdown-overlay" style="display: none;">
         <div class="countdown-number" id="countdownNum">3</div>
         <div class="countdown-message" id="countdownMsg">Next Level Starting in...</div>
@@ -580,7 +572,6 @@
             <div class="ad-step-icon" id="adStepIcon">🎬</div>
             <div class="ad-step-message" id="adStepMessage">Loading ad...</div>
             <div class="ad-description" id="adDescription">Please complete ad to continue</div>
-            <div id="adCountdownDisplay" class="ad-countdown-number" style="display: none;"></div>
             <button id="nextStepAdBtn" class="next-step-btn" style="display: none;">➡ Next Step</button>
             <div id="adLoadingIndicator" class="ad-loading-text">Processing...</div>
         </div>
@@ -720,35 +711,17 @@
             }, "Monetag");
         }
         
-        // ---------- 5-SECOND COUNTDOWN BEFORE AD (inside ad panel) ----------
-        async function countdownBeforeAd(seconds, stepLabel) {
-            const countdownDiv = document.getElementById('adCountdownDisplay');
-            const stepMsgDiv = document.getElementById('adStepMessage');
-            const descDiv = document.getElementById('adDescription');
-            const nextBtn = document.getElementById('nextStepAdBtn');
-            const loadingIndicator = document.getElementById('adLoadingIndicator');
-            
-            // Hide next button and loading indicator during countdown
-            nextBtn.style.display = 'none';
-            loadingIndicator.style.display = 'none';
-            countdownDiv.style.display = 'block';
-            
-            for(let i = seconds; i >= 1; i--) {
-                if(!isNetworkOnline()) {
-                    countdownDiv.style.display = 'none';
-                    throw new Error("offline");
+        // Adexora Ad integration
+        function showAdexoraAd() {
+            return withNetworkGuard(async () => {
+                if(typeof window.showAdexora === 'function') {
+                    await window.showAdexora();
+                } else {
+                    console.warn("Adexora not ready");
+                    // fallback resolve to avoid blocking
+                    await new Promise(r => setTimeout(r, 500));
                 }
-                stepMsgDiv.innerText = `⏳ ${stepLabel} in ${i}s`;
-                descDiv.innerText = `Please wait, ad will start in ${i} second${i !== 1 ? 's' : ''}`;
-                countdownDiv.innerText = `${i}`;
-                await new Promise(r => setTimeout(r, 1000));
-            }
-            // Countdown finished
-            countdownDiv.style.display = 'none';
-            stepMsgDiv.innerText = `📢 ${stepLabel} now!`;
-            descDiv.innerText = `Showing ad... please don't close`;
-            loadingIndicator.style.display = 'block';
-            await new Promise(r => setTimeout(r, 200)); // small buffer
+            }, "Adexora");
         }
         
         // ---------- AD UI HELPERS ----------
@@ -757,21 +730,18 @@
         const adDescription = document.getElementById('adDescription');
         const nextStepBtn = document.getElementById('nextStepAdBtn');
         const adLoadingIndicator = document.getElementById('adLoadingIndicator');
-        const adCountdownDisplay = document.getElementById('adCountdownDisplay');
         
         function showAdSequenceUI(stepName, description) {
             adStepMsg.innerText = stepName;
             adDescription.innerText = description;
             nextStepBtn.style.display = 'none';
             adLoadingIndicator.style.display = 'block';
-            adCountdownDisplay.style.display = 'none';
             adSeqPanel.style.display = 'flex';
         }
         
         function hideAdSequenceUI() {
             adSeqPanel.style.display = 'none';
             nextStepBtn.style.display = 'none';
-            adCountdownDisplay.style.display = 'none';
             if(pendingResolveNextStep) {
                 pendingResolveNextStep();
                 pendingResolveNextStep = null;
@@ -788,7 +758,6 @@
                 pendingResolveNextStep = resolve;
                 nextStepBtn.style.display = 'block';
                 adLoadingIndicator.style.display = 'none';
-                adCountdownDisplay.style.display = 'none';
                 const onClick = () => {
                     nextStepBtn.removeEventListener('click', onClick);
                     if(pendingResolveNextStep) pendingResolveNextStep();
@@ -811,32 +780,29 @@
             });
         }
         
-        // ---------- MAIN SEQUENCE: DOUBLE ADSGRAM + MONETAG with 5s countdown before each ad ----------
+        // ---------- MAIN SEQUENCE: ADSGRAM + MONETAG + ADEXORA ----------
         async function runFullAdSequence() {
             if(!isNetworkOnline()) throw new Error("offline");
             
-            // STEP 1: Adsgram with 5s countdown
-            showAdSequenceUI("📢 Step 1/3", "Preparing first ad (Adsgram)");
-            await countdownBeforeAd(5, "Step 1 ad");
+            // 1. Adsgram
+            showAdSequenceUI("📢 Step 1/3", "Showing interstitial ad (Adsgram)");
             await showAdsgramAd();
             if(!isNetworkOnline()) throw new Error("offline");
             showAdSequenceUI("✅ Step 1 Complete", "Click next to continue");
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
-            // STEP 2: Monetag with 5s countdown
-            showAdSequenceUI("💰 Step 2/3", "Preparing reward ad (Monetag)");
-            await countdownBeforeAd(5, "Step 2 ad");
+            // 2. Monetag
+            showAdSequenceUI("💰 Step 2/3", "Loading reward ad (Monetag)");
             await showMonetagAd();
             if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad");
+            showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad (Adexora)");
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
-            // STEP 3: Second Adsgram with 5s countdown
-            showAdSequenceUI("🎬 Step 3/3", "Preparing final ad (Adsgram)");
-            await countdownBeforeAd(5, "Step 3 ad");
-            await showAdsgramAd();
+            // 3. Adexora
+            showAdSequenceUI("🎬 Step 3/3", "Final interstitial ad (Adexora)");
+            await showAdexoraAd();
             if(!isNetworkOnline()) throw new Error("offline");
             showAdSequenceUI("✅ Ad Sequence Done", "Starting game now!");
             await new Promise(r => setTimeout(r, 400));
@@ -1095,7 +1061,7 @@
                 if(isUnlocked) {
                     card.onclick = () => { if(!adSequenceActive && !isProcessing) startLevelEntrySequence(i); };
                 }
-                let adTypeIcon = "🎬 2x Adsgram + 🎁 Monetag";
+                let adTypeIcon = "🎬 Adsgram + Monetag + Adexora";
                 let statusIcon = isUnlocked ? (i < currentUnlockedLevel ? '✓' : '🔓') : '🔒';
                 card.innerHTML = `
                     <div class="level-number">${i}</div>
