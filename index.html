@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Green Road — Auto Next Level After Link Return</title>
+    <title>Green Road — Giga Pub + Adsgram + Monetag</title>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK (Rewarded Interstitial) -->
     <script src="//libtl.com/sdk.js" data-zone="10541383" data-sdk="show_10541383"></script>
+    <!-- Giga Pub SDK - NEW -->
+    <script src="https://ad.gigapub.tech/script?id=6331" async></script>
     <style>
         * {
             margin: 0;
@@ -511,7 +513,7 @@
     <div class="game-container">
         <div class="road-header">
             <div class="title">GREEN ROAD</div>
-            <div class="subtitle">🚀 3 Ads Before Every Ride: 2x Adsgram + Monetag</div>
+            <div class="subtitle">🎮 Giga Pub → 📢 Adsgram → 💰 Monetag (3 ads/level)</div>
             <div class="badge-pattern">🎯 NEXT LEVEL: Open link → Return → Auto-starts!</div>
         </div>
         <div class="road-levels" id="levelListContainer"></div>
@@ -567,7 +569,7 @@
     <!-- Ad Sequence Modal -->
     <div id="adSequencePanel" class="ad-sequence-panel" style="display: none;">
         <div class="ad-sequence-card">
-            <div class="ad-step-icon" id="adStepIcon">🎬</div>
+            <div class="ad-step-icon" id="adStepIcon">🎮</div>
             <div class="ad-step-message" id="adStepMessage">Loading ad...</div>
             <div class="ad-description" id="adDescription">Please complete ad to continue</div>
             <button id="nextStepAdBtn" class="next-step-btn" style="display: none;">➡ Next Step</button>
@@ -664,7 +666,7 @@
             localStorage.setItem('greenRoadProgress', JSON.stringify({ unlockedLevel: currentUnlockedLevel }));
         }
         
-        // ---------- ADS INIT ----------
+        // ---------- ADS INIT (Adsgram + Giga Pub readiness)----------
         function initAdsgram() {
             try {
                 if(typeof window.Adsgram !== 'undefined') {
@@ -674,6 +676,33 @@
             } catch(e) { console.error(e); }
         }
         
+        // Wait for Giga Pub SDK (window.showGiga)
+        function waitForGigaPub(timeoutMs = 8000) {
+            return new Promise((resolve, reject) => {
+                if (typeof window.showGiga === 'function') {
+                    resolve();
+                    return;
+                }
+                const start = Date.now();
+                const interval = setInterval(() => {
+                    if (typeof window.showGiga === 'function') {
+                        clearInterval(interval);
+                        resolve();
+                    } else if (Date.now() - start > timeoutMs) {
+                        clearInterval(interval);
+                        reject(new Error("Giga Pub SDK not loaded within timeout"));
+                    }
+                }, 200);
+            });
+        }
+        
+        async function showGigaAd() {
+            await waitForGigaPub();
+            return withNetworkGuard(async () => {
+                await window.showGiga();
+            }, "Giga Pub");
+        }
+        
         function withNetworkGuard(fn, adName) {
             return new Promise(async (resolve) => {
                 if(!isNetworkOnline()) {
@@ -681,7 +710,7 @@
                     resolve();
                     return;
                 }
-                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 12000);
+                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 15000);
                 try {
                     await fn();
                     clearTimeout(timeoutId);
@@ -697,7 +726,7 @@
         
         function showAdsgramAd() {
             return withNetworkGuard(async () => {
-                if(!adInitialized || !adController) return;
+                if(!adInitialized || !adController) throw new Error("Adsgram not ready");
                 await adController.show();
             }, "Adsgram");
         }
@@ -705,7 +734,7 @@
         function showMonetagAd() {
             return withNetworkGuard(async () => {
                 if(typeof window.show_10541383 === 'function') await window.show_10541383();
-                else console.warn("Monetag not ready");
+                else throw new Error("Monetag not ready");
             }, "Monetag");
         }
         
@@ -713,10 +742,12 @@
         const adSeqPanel = document.getElementById('adSequencePanel');
         const adStepMsg = document.getElementById('adStepMessage');
         const adDescription = document.getElementById('adDescription');
+        const adStepIcon = document.getElementById('adStepIcon');
         const nextStepBtn = document.getElementById('nextStepAdBtn');
         const adLoadingIndicator = document.getElementById('adLoadingIndicator');
         
-        function showAdSequenceUI(stepName, description) {
+        function showAdSequenceUI(stepName, description, iconEmoji = "🎮") {
+            adStepIcon.innerText = iconEmoji;
             adStepMsg.innerText = stepName;
             adDescription.innerText = description;
             nextStepBtn.style.display = 'none';
@@ -765,28 +796,31 @@
             });
         }
         
-        // ---------- MAIN SEQUENCE: DOUBLE ADSGRAM + MONETAG ----------
+        // ---------- MAIN SEQUENCE: GIGA PUB → ADSGRAM → MONETAG ----------
         async function runFullAdSequence() {
             if(!isNetworkOnline()) throw new Error("offline");
             
-            showAdSequenceUI("📢 Step 1/3", "Showing interstitial ad (Adsgram)");
-            await showAdsgramAd();
+            // Step 1: Giga Pub
+            showAdSequenceUI("🎮 Step 1/3: Giga Pub", "Showing Giga Pub interstitial ad", "🎮");
+            await showGigaAd();
             if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Step 1 Complete", "Click next to continue");
+            showAdSequenceUI("✅ Step 1 Complete", "Click next to continue → Adsgram", "✅");
             await waitForNextStepButton();
             if(!isNetworkOnline()) throw new Error("offline");
             
-            showAdSequenceUI("💰 Step 2/3", "Loading reward ad (Monetag)");
+            // Step 2: Adsgram
+            showAdSequenceUI("📢 Step 2/3: Adsgram", "Loading Adsgram rewarded ad", "📢");
+            await showAdsgramAd();
+            if(!isNetworkOnline()) throw new Error("offline");
+            showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad → Monetag", "✅");
+            await waitForNextStepButton();
+            if(!isNetworkOnline()) throw new Error("offline");
+            
+            // Step 3: Monetag
+            showAdSequenceUI("💰 Step 3/3: Monetag", "Final Monetag interstitial", "💰");
             await showMonetagAd();
             if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad (Second Adsgram)");
-            await waitForNextStepButton();
-            if(!isNetworkOnline()) throw new Error("offline");
-            
-            showAdSequenceUI("🎬 Step 3/3", "Final interstitial ad (Adsgram)");
-            await showAdsgramAd();
-            if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Ad Sequence Done", "Starting game now!");
+            showAdSequenceUI("🎉 Ad Sequence Done", "Starting game now!", "🚀");
             await new Promise(r => setTimeout(r, 400));
             hideAdSequenceUI();
         }
@@ -892,7 +926,6 @@
             waitingMsgDiv.style.display = 'block';
             manualBtn.style.display = 'none';
             
-            // Attach dynamic link
             const dynamicLink = document.getElementById('dynamicExternalLink');
             if(dynamicLink) {
                 dynamicLink.onclick = (e) => {
@@ -901,7 +934,6 @@
                 };
             }
             
-            // Manual fallback button
             manualBtn.onclick = () => {
                 if(!externalLinkVisitedForCurrentLevel) {
                     markLinkVisitedAndAutoStart();
@@ -916,20 +948,17 @@
             completeDiv.style.display = 'flex';
         }
         
-        // Called when user returns from link OR clicks manual button
         function markLinkVisitedAndAutoStart() {
             if(externalLinkVisitedForCurrentLevel) return;
             if(autoStartScheduled) return;
             externalLinkVisitedForCurrentLevel = true;
             autoStartScheduled = true;
             
-            // Hide waiting UI
             const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
             const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
             if(waitingMsgDiv) waitingMsgDiv.style.display = 'none';
             if(manualBtn) manualBtn.style.display = 'none';
             
-            // Show a brief toast
             const toast = document.createElement('div');
             toast.className = 'offline-toast';
             toast.style.background = '#2e7d32';
@@ -937,7 +966,6 @@
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 2000);
             
-            // Auto-start next level after a short delay (give time to close toast)
             setTimeout(() => {
                 if(currentCompleteLevel && currentCompleteLevel < MAX_LEVEL) {
                     proceedToActualNextLevel(currentCompleteLevel);
@@ -959,7 +987,6 @@
                 showRewardScreen();
                 return;
             }
-            // Close complete screen
             document.getElementById('levelCompleteScreen').style.display = 'none';
             isProcessing = true;
             await showCountdown(3, `Next: Route ${nextLevel}<br>Starting in...`);
@@ -971,13 +998,11 @@
             const success = await startLevelEntrySequence(nextLevel);
             isProcessing = false;
             if(!success) forceExitAllGameScreens();
-            // reset flags
             externalLinkVisitedForCurrentLevel = false;
             currentCompleteLevel = null;
             autoStartScheduled = false;
         }
         
-        // Manual next level button (in case auto-start fails)
         function handleNextLevelClick() {
             if(!currentCompleteLevel) return;
             if(currentCompleteLevel >= MAX_LEVEL) {
@@ -986,7 +1011,6 @@
                 return;
             }
             if(!externalLinkVisitedForCurrentLevel) {
-                // Show waiting UI again and open link
                 const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
                 if(waitingMsgDiv) waitingMsgDiv.style.display = 'block';
                 const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
@@ -1053,7 +1077,7 @@
                 if(isUnlocked) {
                     card.onclick = () => { if(!adSequenceActive && !isProcessing) startLevelEntrySequence(i); };
                 }
-                let adTypeIcon = "🎬 2x Adsgram + 🎁 Monetag";
+                let adTypeIcon = "🎮 Giga → 📢 Adsgram → 💰 Monetag";
                 let statusIcon = isUnlocked ? (i < currentUnlockedLevel ? '✓' : '🔓') : '🔒';
                 card.innerHTML = `
                     <div class="level-number">${i}</div>
@@ -1101,6 +1125,8 @@
         window.addEventListener('load', () => {
             loadProgress();
             initAdsgram();
+            // pre-warm Giga Pub check (silent)
+            waitForGigaPub(5000).catch(e => console.warn("Giga Pub not ready yet", e));
             buildLevelList();
             bindEvents();
         });
