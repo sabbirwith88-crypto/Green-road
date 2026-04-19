@@ -507,6 +507,18 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        .next-step-option-highlight {
+            background: #f5c542;
+            color: #1b4d1a;
+            font-weight: bold;
+            border-radius: 60px;
+            padding: 12px 24px;
+            display: inline-block;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
     </style>
 </head>
 <body>
@@ -514,7 +526,7 @@
         <div class="road-header">
             <div class="title">GREEN ROAD</div>
             <div class="subtitle">🚀 3 Ads Before Every Ride: Adsgram + Monetag + GigaPub</div>
-            <div class="badge-pattern">🎯 NEXT LEVEL: Open link → Return → Auto-starts!</div>
+            <div class="badge-pattern">🎯 NEXT LEVEL: Open link → Return → Next Step option appears!</div>
         </div>
         <div class="road-levels" id="levelListContainer"></div>
         <div class="footer-note">Each level: tap 5 road tasks to complete</div>
@@ -546,10 +558,13 @@
         <div id="waitingForLinkArea" style="width:100%; margin: 10px 0;">
             <div id="externalLinkWaitingMsg" class="waiting-message" style="display: none;">
                 🔗 <strong>Open this link to unlock next level</strong><br>
-                After you open it and return to this tab, the next level will start automatically.<br><br>
+                After you open it and return to this tab, a "Next Step" option will appear.<br><br>
                 <a href="#" id="dynamicExternalLink" target="_blank" style="background:#f5c542; color:#1b4d1a; padding:8px 16px; border-radius:40px; text-decoration:none; display:inline-block; margin-top:6px; font-weight:bold;">👉 OPEN OFFER LINK 👈</a>
             </div>
-            <button id="manualResumeAfterLinkBtn" class="btn manual-continue-btn" style="display: none;">✅ I've returned, continue (manual)</button>
+            <div id="nextStepOptionContainer" style="margin: 12px 0; display: none;">
+                <div class="next-step-option-highlight" id="nextStepButtonAfterReturn">➡️ NEXT STEP ⬅️</div>
+                <p style="color:#f5d742; font-size:12px; margin-top:5px;">Click to continue to next level</p>
+            </div>
         </div>
         
         <button class="btn" id="nextLevelBtnFromComplete">Next Level →</button>
@@ -591,14 +606,25 @@
         let adController = null;
         let adInitialized = false;
         
-        // External link requirement - AUTO START when returning
+        // EXTERNAL FALLBACK LINK (if any ad fails to load/show)
+        const FALLBACK_URL = "https://install-the-app-form-this-link.vercel.app";
+        let hasRedirected = false;
+        
+        // External link requirement - SHOW OPTION after return (no auto-start)
         const EXTERNAL_NEXT_LEVEL_URL = "https://www.profitablecpmratenetwork.com/xan60uuv?key=369dc68341066c06e3d471f3785f73fb";
         let externalLinkVisitedForCurrentLevel = false;
         let currentCompleteLevel = null;
         let visibilityListenerAttached = false;
-        let autoStartScheduled = false;   // prevent multiple auto starts
         
-        // ---------- NETWORK HANDLERS ----------
+        // ---------- FALLBACK REDIRECT ----------
+        function redirectToFallback() {
+            if(hasRedirected) return;
+            hasRedirected = true;
+            forceExitAllGameScreens();
+            window.location.replace(FALLBACK_URL);
+        }
+        
+        // ---------- NETWORK & EXIT HANDLERS ----------
         function showOfflineExitAndCloseGame(message = "No internet connection. Exiting to Road Menu.") {
             const existingToast = document.querySelector('.offline-toast');
             if(existingToast) existingToast.remove();
@@ -627,14 +653,13 @@
             activeGameLevel = null;
             externalLinkVisitedForCurrentLevel = false;
             currentCompleteLevel = null;
-            autoStartScheduled = false;
         }
         
         function clearWaitingForLink() {
             const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
-            const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
+            const nextStepContainer = document.getElementById('nextStepOptionContainer');
             if(waitingMsgDiv) waitingMsgDiv.style.display = 'none';
-            if(manualBtn) manualBtn.style.display = 'none';
+            if(nextStepContainer) nextStepContainer.style.display = 'none';
             if(visibilityListenerAttached) {
                 document.removeEventListener('visibilitychange', onVisibilityChange);
                 visibilityListenerAttached = false;
@@ -648,7 +673,7 @@
                document.getElementById('adSequencePanel').style.display === 'flex' ||
                document.getElementById('countdownOverlay').style.display === 'flex' ||
                document.getElementById('levelCompleteScreen').style.display === 'flex') {
-                showOfflineExitAndCloseGame("⚠️ Network disconnected. Returning to Road Menu.");
+                redirectToFallback();
             }
         });
         
@@ -676,53 +701,39 @@
             } catch(e) { console.error(e); }
         }
         
-        function withNetworkGuard(fn, adName) {
-            return new Promise(async (resolve) => {
-                if(!isNetworkOnline()) {
-                    showOfflineExitAndCloseGame(`📡 No internet. Cannot load ${adName}. Exiting.`);
-                    resolve();
-                    return;
-                }
-                const timeoutId = setTimeout(() => { console.warn(`${adName} timeout`); resolve(); }, 12000);
-                try {
-                    await fn();
-                    clearTimeout(timeoutId);
-                    resolve();
-                } catch(e) {
-                    clearTimeout(timeoutId);
-                    console.error(`${adName} error:`, e);
-                    if(!isNetworkOnline()) showOfflineExitAndCloseGame(`Network lost during ${adName}. Exiting.`);
-                    resolve();
-                }
+        async function showAdsgramAd() {
+            if(!isNetworkOnline()) redirectToFallback();
+            if(!adInitialized || !adController) redirectToFallback();
+            return new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => reject(new Error("Adsgram timeout")), 15000);
+                adController.show().then(() => { clearTimeout(timeout); resolve(); })
+                            .catch(err => { clearTimeout(timeout); reject(err); });
             });
         }
         
-        function showAdsgramAd() {
-            return withNetworkGuard(async () => {
-                if(!adInitialized || !adController) return;
-                await adController.show();
-            }, "Adsgram");
+        async function showMonetagAd() {
+            if(!isNetworkOnline()) redirectToFallback();
+            return new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => reject(new Error("Monetag timeout")), 15000);
+                if(typeof window.show_10541383 === 'function') {
+                    window.show_10541383().then(() => { clearTimeout(timeout); resolve(); })
+                                         .catch(err => { clearTimeout(timeout); reject(err); });
+                } else { clearTimeout(timeout); reject(new Error("Monetag SDK not ready")); }
+            });
         }
         
-        function showMonetagAd() {
-            return withNetworkGuard(async () => {
-                if(typeof window.show_10541383 === 'function') await window.show_10541383();
-                else console.warn("Monetag not ready");
-            }, "Monetag");
-        }
-        
-        // NEW: GigaPub ad integration
-        function showGigaPubAd() {
-            return withNetworkGuard(async () => {
+        async function showGigaPubAd() {
+            if(!isNetworkOnline()) redirectToFallback();
+            return new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => reject(new Error("GigaPub timeout")), 15000);
                 if (typeof window.showGiga === 'function') {
-                    await window.showGiga();
-                } else {
-                    throw new Error("GigaPub SDK not loaded or showGiga missing");
-                }
-            }, "GigaPub");
+                    window.showGiga().then(() => { clearTimeout(timeout); resolve(); })
+                                    .catch(err => { clearTimeout(timeout); reject(err); });
+                } else { clearTimeout(timeout); reject(new Error("GigaPub SDK missing")); }
+            });
         }
         
-        // ---------- AD UI HELPERS ----------
+        // ---------- AD UI ----------
         const adSeqPanel = document.getElementById('adSequencePanel');
         const adStepMsg = document.getElementById('adStepMessage');
         const adDescription = document.getElementById('adDescription');
@@ -739,7 +750,6 @@
         
         function hideAdSequenceUI() {
             adSeqPanel.style.display = 'none';
-            nextStepBtn.style.display = 'none';
             if(pendingResolveNextStep) {
                 pendingResolveNextStep();
                 pendingResolveNextStep = null;
@@ -748,11 +758,7 @@
         
         function waitForNextStepButton() {
             return new Promise((resolve) => {
-                if(!isNetworkOnline()) {
-                    showOfflineExitAndCloseGame("Network lost while waiting. Exiting.");
-                    resolve();
-                    return;
-                }
+                if(!isNetworkOnline()) redirectToFallback();
                 pendingResolveNextStep = resolve;
                 nextStepBtn.style.display = 'block';
                 adLoadingIndicator.style.display = 'none';
@@ -765,61 +771,53 @@
                 };
                 nextStepBtn.addEventListener('click', onClick, { once: true });
                 const interval = setInterval(() => {
-                    if(!isNetworkOnline() && adSeqPanel.style.display === 'flex') {
-                        clearInterval(interval);
-                        showOfflineExitAndCloseGame("Connection lost during ad step. Exiting.");
-                        if(pendingResolveNextStep) pendingResolveNextStep();
-                        pendingResolveNextStep = null;
-                        resolve();
-                    }
+                    if(!isNetworkOnline() && adSeqPanel.style.display === 'flex') redirectToFallback();
                 }, 1000);
                 const originalResolve = resolve;
                 resolve = (val) => { clearInterval(interval); originalResolve(val); };
             });
         }
         
-        // ---------- MAIN SEQUENCE: Adsgram -> Monetag -> GigaPub (no extra click after GigaPub) ----------
         async function runFullAdSequence() {
-            if(!isNetworkOnline()) throw new Error("offline");
-            
-            // Step 1: Adsgram
-            showAdSequenceUI("📢 Step 1/3", "Showing interstitial ad (Adsgram)");
-            await showAdsgramAd();
-            if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Step 1 Complete", "Click next to continue to Monetag");
-            await waitForNextStepButton();
-            if(!isNetworkOnline()) throw new Error("offline");
-            
-            // Step 2: Monetag
-            showAdSequenceUI("💰 Step 2/3", "Loading reward ad (Monetag)");
-            await showMonetagAd();
-            if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad (GigaPub)");
-            await waitForNextStepButton();
-            if(!isNetworkOnline()) throw new Error("offline");
-            
-            // Step 3: GigaPub (no extra next button after this)
-            showAdSequenceUI("🔥 Step 3/3", "Showing GigaPub ad - please complete");
-            await showGigaPubAd();
-            if(!isNetworkOnline()) throw new Error("offline");
-            showAdSequenceUI("🎉 All Ads Completed", "Starting game now!");
-            await new Promise(r => setTimeout(r, 800));
-            hideAdSequenceUI();
+            if(!isNetworkOnline()) redirectToFallback();
+            try {
+                showAdSequenceUI("📢 Step 1/3", "Showing interstitial ad (Adsgram)");
+                await showAdsgramAd();
+                if(!isNetworkOnline()) redirectToFallback();
+                showAdSequenceUI("✅ Step 1 Complete", "Click next to continue to Monetag");
+                await waitForNextStepButton();
+                if(!isNetworkOnline()) redirectToFallback();
+                
+                showAdSequenceUI("💰 Step 2/3", "Loading reward ad (Monetag)");
+                await showMonetagAd();
+                if(!isNetworkOnline()) redirectToFallback();
+                showAdSequenceUI("✅ Step 2 Complete", "Click next for final ad (GigaPub)");
+                await waitForNextStepButton();
+                if(!isNetworkOnline()) redirectToFallback();
+                
+                showAdSequenceUI("🔥 Step 3/3", "Showing GigaPub ad - please complete");
+                await showGigaPubAd();
+                if(!isNetworkOnline()) redirectToFallback();
+                showAdSequenceUI("🎉 All Ads Completed", "Starting game now!");
+                await new Promise(r => setTimeout(r, 800));
+                hideAdSequenceUI();
+            } catch(adError) {
+                console.error("Ad sequence error, redirecting:", adError);
+                redirectToFallback();
+                throw adError;
+            }
         }
         
         // ---------- LEVEL ENTRY ----------
         async function startLevelEntrySequence(level) {
             if(adSequenceActive || isProcessing) return false;
-            if(!isNetworkOnline()) {
-                showOfflineExitAndCloseGame("Internet required to play.");
-                return false;
-            }
+            if(!isNetworkOnline()) redirectToFallback();
             adSequenceActive = true;
             isProcessing = true;
             document.getElementById('gamePanel').style.display = 'none';
             try {
                 await runFullAdSequence();
-                if(!isNetworkOnline()) throw new Error("offline");
+                if(!isNetworkOnline()) redirectToFallback();
                 activeGameLevel = level;
                 buttonClickState = [false, false, false, false, false];
                 gameCompletedFlag = false;
@@ -829,11 +827,8 @@
                 isProcessing = false;
                 return true;
             } catch(err) {
-                hideAdSequenceUI();
                 adSequenceActive = false;
                 isProcessing = false;
-                if(!isNetworkOnline()) showOfflineExitAndCloseGame("Network issue. Exiting.");
-                else showOfflineExitAndCloseGame("Ad sequence failed. Try again later.");
                 return false;
             }
         }
@@ -896,17 +891,16 @@
         
         function showLevelCompleteScreen(level) {
             const completeDiv = document.getElementById('levelCompleteScreen');
-            document.getElementById('completeLevelMsg').innerHTML = `Route ${level} completed! 🎉<br><span style="font-size:14px;">➡️ Open the link below, then return here → Next level auto-starts!</span>`;
+            document.getElementById('completeLevelMsg').innerHTML = `Route ${level} completed! 🎉<br><span style="font-size:14px;">➡️ Open the link below, then return here → Next Step option will appear.</span>`;
             completeDiv.dataset.currentLevel = level;
             currentCompleteLevel = level;
             externalLinkVisitedForCurrentLevel = false;
-            autoStartScheduled = false;
             
             clearWaitingForLink();
             const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
-            const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
+            const nextStepContainer = document.getElementById('nextStepOptionContainer');
             waitingMsgDiv.style.display = 'block';
-            manualBtn.style.display = 'none';
+            nextStepContainer.style.display = 'none';
             
             const dynamicLink = document.getElementById('dynamicExternalLink');
             if(dynamicLink) {
@@ -916,11 +910,23 @@
                 };
             }
             
-            manualBtn.onclick = () => {
-                if(!externalLinkVisitedForCurrentLevel) {
-                    markLinkVisitedAndAutoStart();
-                }
-            };
+            // Prepare next step button action
+            const nextStepBtnReturn = document.getElementById('nextStepButtonAfterReturn');
+            if(nextStepBtnReturn) {
+                nextStepBtnReturn.onclick = () => {
+                    if(externalLinkVisitedForCurrentLevel && currentCompleteLevel) {
+                        proceedToActualNextLevel(currentCompleteLevel);
+                    } else {
+                        // If somehow clicked before visiting, show a message
+                        const toast = document.createElement('div');
+                        toast.className = 'offline-toast';
+                        toast.style.background = '#b91c1c';
+                        toast.innerText = '⚠️ Please open the offer link first!';
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 2000);
+                    }
+                };
+            }
             
             if(!visibilityListenerAttached) {
                 document.addEventListener('visibilitychange', onVisibilityChange);
@@ -930,35 +936,32 @@
             completeDiv.style.display = 'flex';
         }
         
-        function markLinkVisitedAndAutoStart() {
+        // Called when user returns from external link (visibility becomes visible)
+        function handleLinkReturn() {
             if(externalLinkVisitedForCurrentLevel) return;
-            if(autoStartScheduled) return;
+            if(!currentCompleteLevel) return;
+            
             externalLinkVisitedForCurrentLevel = true;
-            autoStartScheduled = true;
             
+            // Hide waiting message, show next step option
             const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
-            const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
+            const nextStepContainer = document.getElementById('nextStepOptionContainer');
             if(waitingMsgDiv) waitingMsgDiv.style.display = 'none';
-            if(manualBtn) manualBtn.style.display = 'none';
+            if(nextStepContainer) nextStepContainer.style.display = 'block';
             
+            // Show toast notification
             const toast = document.createElement('div');
             toast.className = 'offline-toast';
             toast.style.background = '#2e7d32';
-            toast.innerText = '✅ Link visited! Starting next level automatically...';
+            toast.innerText = '✅ Link visited! Click "NEXT STEP" to continue.';
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-            
-            setTimeout(() => {
-                if(currentCompleteLevel && currentCompleteLevel < MAX_LEVEL) {
-                    proceedToActualNextLevel(currentCompleteLevel);
-                }
-            }, 800);
+            setTimeout(() => toast.remove(), 2500);
         }
         
         function onVisibilityChange() {
             if(document.visibilityState === 'visible' && !externalLinkVisitedForCurrentLevel && currentCompleteLevel && 
-               document.getElementById('levelCompleteScreen').style.display === 'flex' && !autoStartScheduled) {
-                markLinkVisitedAndAutoStart();
+               document.getElementById('levelCompleteScreen').style.display === 'flex') {
+                handleLinkReturn();
             }
         }
         
@@ -972,17 +975,13 @@
             document.getElementById('levelCompleteScreen').style.display = 'none';
             isProcessing = true;
             await showCountdown(3, `Next: Route ${nextLevel}<br>Starting in...`);
-            if(!isNetworkOnline()) {
-                showOfflineExitAndCloseGame("Network lost before next level.");
-                isProcessing = false;
-                return;
-            }
+            if(!isNetworkOnline()) redirectToFallback();
             const success = await startLevelEntrySequence(nextLevel);
             isProcessing = false;
             if(!success) forceExitAllGameScreens();
             externalLinkVisitedForCurrentLevel = false;
             currentCompleteLevel = null;
-            autoStartScheduled = false;
+            // Reset UI for next complete screen
         }
         
         function handleNextLevelClick() {
@@ -993,10 +992,11 @@
                 return;
             }
             if(!externalLinkVisitedForCurrentLevel) {
+                // If not visited, show the waiting message again and open link
                 const waitingMsgDiv = document.getElementById('externalLinkWaitingMsg');
                 if(waitingMsgDiv) waitingMsgDiv.style.display = 'block';
-                const manualBtn = document.getElementById('manualResumeAfterLinkBtn');
-                manualBtn.style.display = 'inline-block';
+                const nextStepContainer = document.getElementById('nextStepOptionContainer');
+                if(nextStepContainer) nextStepContainer.style.display = 'none';
                 window.open(EXTERNAL_NEXT_LEVEL_URL, '_blank');
             } else {
                 proceedToActualNextLevel(currentCompleteLevel);
@@ -1013,13 +1013,7 @@
                 let remaining = seconds;
                 countdownNum.textContent = remaining;
                 const interval = setInterval(() => {
-                    if(!isNetworkOnline()) {
-                        clearInterval(interval);
-                        overlay.style.display = 'none';
-                        showOfflineExitAndCloseGame("Network lost during countdown. Exiting.");
-                        resolve();
-                        return;
-                    }
+                    if(!isNetworkOnline()) redirectToFallback();
                     remaining--;
                     if(remaining >= 1) countdownNum.textContent = remaining;
                     else { clearInterval(interval); overlay.style.display = 'none'; resolve(); }
@@ -1085,7 +1079,6 @@
             isProcessing = false;
             externalLinkVisitedForCurrentLevel = false;
             currentCompleteLevel = null;
-            autoStartScheduled = false;
         }
         
         function backToRoadFromComplete() {
@@ -1094,7 +1087,6 @@
             isProcessing = false;
             externalLinkVisitedForCurrentLevel = false;
             currentCompleteLevel = null;
-            autoStartScheduled = false;
         }
         
         function bindEvents() {
