@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Green Road — Highway Challenge | Stylish Auto Next Level</title>
+    <title>Green Road — Highway Challenge | One-Click Reward Reset (Fixed Copy)</title>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK (Rewarded Interstitial) -->
@@ -31,7 +31,6 @@
             overflow-x: hidden;
         }
 
-        /* animated road lines background */
         body::before {
             content: '';
             position: fixed;
@@ -119,7 +118,6 @@
             border: 1px solid #f5b81b;
         }
 
-        /* Custom scrollbar for level list */
         .road-levels {
             max-height: 460px;
             overflow-y: auto;
@@ -205,7 +203,6 @@
             font-weight: bold;
         }
 
-        /* Game Panel (stylish) */
         .game-panel {
             position: fixed;
             top: 0;
@@ -305,7 +302,6 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        /* countdown */
         .countdown-overlay {
             position: fixed;
             top: 0;
@@ -333,7 +329,6 @@
             0% { text-shadow: 0 0 0px #f5b81b; opacity: 1; }
             100% { text-shadow: 0 0 20px #f5b81b; opacity: 0.9; }
         }
-        /* level complete screen */
         .levelcomplete-screen {
             position: fixed;
             top: 0;
@@ -374,7 +369,6 @@
             background: linear-gradient(45deg, #2c2c2c, #1a1a1a);
             color: #f5c542;
         }
-        /* ad sequence panel */
         .ad-sequence-panel {
             position: fixed;
             top: 0;
@@ -451,6 +445,97 @@
             margin-top: 16px;
             cursor: pointer;
         }
+
+        /* REWARD SCREEN - SINGLE BUTTON (FIXED COPY) */
+        .reward-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, #f5b81b, #a05e0a);
+            backdrop-filter: blur(12px);
+            z-index: 13000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: slideUp 0.3s ease-out;
+        }
+        .reward-card {
+            background: rgba(10, 25, 12, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 64px;
+            padding: 32px 24px;
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            border: 2px solid #ffdd77;
+            box-shadow: 0 30px 45px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,215,0,0.4);
+        }
+        .reward-title {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #FFEAA7, #F5A623);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .reward-desc {
+            color: #ffe6a3;
+            font-size: 1rem;
+            margin: 10px 0 8px;
+            font-weight: 500;
+        }
+        .reward-code-box {
+            background: #0a1a0c;
+            border: 2px solid #f5b81b;
+            border-radius: 60px;
+            padding: 18px 12px;
+            margin: 20px 0;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.55rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #FFE484;
+            text-shadow: 0 0 4px #f5b81b;
+            word-break: break-all;
+        }
+        .single-reset-btn {
+            background: linear-gradient(145deg, #f5c542, #daa520);
+            border: none;
+            width: 100%;
+            padding: 18px 0;
+            font-size: 1.4rem;
+            font-weight: 800;
+            border-radius: 80px;
+            color: #1f3a1a;
+            cursor: pointer;
+            transition: 0.1s linear;
+            box-shadow: 0 8px 0 #8b5e0c;
+            margin-top: 12px;
+            font-family: inherit;
+            letter-spacing: 1px;
+        }
+        .single-reset-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #8b5e0c;
+        }
+        @media (max-width: 520px) {
+            .single-reset-btn {
+                font-size: 1.2rem;
+                padding: 16px 0;
+            }
+            .reward-code-box {
+                font-size: 1.3rem;
+                padding: 14px 8px;
+            }
+            .reward-title {
+                font-size: 1.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -498,17 +583,17 @@
     <button class="btn btn-secondary" id="backToRoadCompleteBtn">ROAD MENU</button>
 </div>
 
-<!-- reward -->
-<div id="rewardScreen" class="reward-screen" style="display: none; background: radial-gradient(circle, #f5c542, #b8740a);">
-    <h2 style="color: #1b3b1a; font-size: 34px; font-weight: 900;">🏁 LEGEND DRIVER 🏁</h2>
-    <p style="color: #fff3cf; font-size: 18px;">All 10 levels conquered!</p>
-    <p style="color: #fff3cf; margin-top: 12px;">Your exclusive reward code:</p>
-    <div class="reward-code" id="rewardCodeDisplay" style="background: #0a1f0e; color: #ffd966; padding: 14px 24px; border-radius: 50px; cursor: pointer;">GR10-XXXXXX</div>
-    <p style="color: white; font-size: 11px;">tap to copy</p>
-    <button class="btn" id="resetAllBtn" style="background: #0f2b1a; color: #f5c542;">Copy & Reset Game</button>
+<!-- REWARD SCREEN - SINGLE COPY+RESET BUTTON (ROBUST COPY FIXED) -->
+<div id="rewardScreen" class="reward-screen" style="display: none;">
+    <div class="reward-card">
+        <div class="reward-title">🏁 LEGEND DRIVER 🏁</div>
+        <div class="reward-desc">🎉 All 10 routes conquered! 🎉<br>Your exclusive reward code:</div>
+        <div class="reward-code-box" id="rewardCodeDisplay">GR10-XXXXXX</div>
+        <button class="single-reset-btn" id="copyAndResetBtn">📋 COPY & RESET GAME 🔄</button>
+    </div>
 </div>
 
-<!-- ad sequence panel (improved) -->
+<!-- ad sequence panel -->
 <div id="adSequencePanel" class="ad-sequence-panel" style="display: none;">
     <div class="ad-sequence-card">
         <div class="ad-step-icon" id="adStepIcon">🎬</div>
@@ -539,6 +624,15 @@
     let activeFallbackResolver = null;
     let fallbackTimeoutId = null;
     let adController = null, adInitialized = false;
+
+    function showToastMessage(msg, isSuccess = true) {
+        const toast = document.createElement('div');
+        toast.className = 'offline-toast';
+        toast.style.background = isSuccess ? '#2e7d32' : '#b91c1c';
+        toast.innerText = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2300);
+    }
 
     function showOfflineExitAndCloseGame(msg) {
         const toast = document.createElement('div');
@@ -747,7 +841,7 @@
         externalLinkVisitedForCurrentLevel = true; autoStartScheduled = true;
         document.getElementById('externalLinkWaitingMsg').style.display = 'none';
         document.getElementById('manualResumeAfterLinkBtn').style.display = 'none';
-        const toast = document.createElement('div'); toast.className = 'offline-toast'; toast.style.background='#2e7d32'; toast.innerText='✅ Link visited! Next level starting...'; document.body.appendChild(toast); setTimeout(()=>toast.remove(),1800);
+        showToastMessage("✅ Link opened! Next route loading...", true);
         setTimeout(()=>{ if(currentCompleteLevel && currentCompleteLevel < MAX_LEVEL) proceedToActualNextLevel(currentCompleteLevel); }, 800);
     }
 
@@ -796,21 +890,68 @@
         });
     }
 
+    // FIXED: Robust copy function with fallback + reset
+    function copyTextFallback(text) {
+        return new Promise((resolve) => {
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => resolve(true)).catch(() => {
+                    // fallback to textarea method
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    const success = document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    resolve(success);
+                });
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                const success = document.execCommand('copy');
+                document.body.removeChild(textarea);
+                resolve(success);
+            }
+        });
+    }
+
+    async function copyAndResetGame() {
+        const codeElem = document.getElementById('rewardCodeDisplay');
+        const rewardCode = codeElem ? codeElem.innerText.trim() : '';
+        if (!rewardCode || rewardCode === 'GR10-XXXXXX') {
+            showToastMessage("No valid code to copy. Please complete the game again.", false);
+            return;
+        }
+        // Try to copy the code
+        const copied = await copyTextFallback(rewardCode);
+        if (copied) {
+            showToastMessage(`✅ Code copied: ${rewardCode}`, true);
+        } else {
+            showToastMessage("⚠️ Could not copy code, but game will reset.", false);
+        }
+        // Reset game progress
+        currentUnlockedLevel = 1;
+        saveProgress();
+        buildLevelList();
+        // Close reward screen and force exit any active game panels
+        document.getElementById('rewardScreen').style.display = 'none';
+        forceExitAllGameScreens();
+        showToastMessage("🔄 Game reset! Start from Highway 1 🔄", true);
+    }
+
     function showRewardScreen() {
         const code = `GR10-${Math.random().toString(36).substr(2,8).toUpperCase()}`;
-        document.getElementById('rewardCodeDisplay').textContent = code;
+        const codeDiv = document.getElementById('rewardCodeDisplay');
+        if(codeDiv) codeDiv.textContent = code;
         document.getElementById('rewardScreen').style.display = 'flex';
     }
-    function resetGameAndCopy() {
-        const code = document.getElementById('rewardCodeDisplay').textContent;
-        navigator.clipboard.writeText(code);
-        alert('Code copied! Game reset to Level 1.');
-        currentUnlockedLevel = 1; saveProgress(); buildLevelList(); forceExitAllGameScreens();
-    }
-    window.copyRewardCodeGlobal = function() {
-        const code = document.getElementById('rewardCodeDisplay').textContent;
-        navigator.clipboard.writeText(code); alert('Code copied: '+code);
-    };
+
     function buildLevelList() {
         const container = document.getElementById('levelListContainer');
         container.innerHTML = '';
@@ -823,16 +964,19 @@
             container.appendChild(card);
         }
     }
+
     function exitGameToRoad() {
         if(adSequenceActive) { document.getElementById('adSequencePanel').style.display='none'; adSequenceActive=false; if(activeFallbackResolver) activeFallbackResolver(); activeFallbackResolver=null; }
         clearWaitingForLink(); document.getElementById('gamePanel').style.display='none'; isProcessing=false; externalLinkVisitedForCurrentLevel=false; currentCompleteLevel=null; autoStartScheduled=false;
     }
     function backToRoadFromComplete() { clearWaitingForLink(); document.getElementById('levelCompleteScreen').style.display='none'; isProcessing=false; externalLinkVisitedForCurrentLevel=false; currentCompleteLevel=null; autoStartScheduled=false; }
 
+    // EVENT BINDINGS
     document.getElementById('nextLevelBtnFromComplete').onclick = handleNextLevelClick;
     document.getElementById('backToRoadCompleteBtn').onclick = backToRoadFromComplete;
-    document.getElementById('resetAllBtn').onclick = resetGameAndCopy;
     document.getElementById('exitGameBtn').onclick = exitGameToRoad;
+    const copyResetBtn = document.getElementById('copyAndResetBtn');
+    if(copyResetBtn) copyResetBtn.addEventListener('click', copyAndResetGame);
 
     window.addEventListener('load', () => { loadProgress(); initAdsgram(); buildLevelList(); });
     window.addEventListener('beforeunload', () => saveProgress());
