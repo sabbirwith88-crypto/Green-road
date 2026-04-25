@@ -59,7 +59,7 @@
             max-width: 500px;
             margin: 0 auto;
             min-height: 100vh;
-            background: var(--bg-primary);
+            background: radial-gradient(circle at 10% 20%, #0f0f0f, #000);
             position: relative;
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
@@ -119,7 +119,8 @@
         
         /* Header */
         .header {
-            background: var(--bg-secondary);
+            background: rgba(18,18,18,0.95);
+            backdrop-filter: blur(15px);
             padding: 16px 20px;
             display: flex;
             justify-content: space-between;
@@ -133,7 +134,10 @@
         .app-title {
             font-size: 1.3rem;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            background: linear-gradient(45deg, var(--purple), var(--blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
         .user-profile {
@@ -153,11 +157,12 @@
             position: absolute;
             top: 70px;
             right: 15px;
-            background: var(--bg-card);
+            background: rgba(30,30,30,0.98);
+            backdrop-filter: blur(20px);
             border-radius: 24px;
             padding: 12px;
             min-width: 240px;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(108,92,231,0.3);
             display: none;
             z-index: 150;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
@@ -178,11 +183,22 @@
         /* Balance Card */
         .balance-card {
             background: linear-gradient(135deg, var(--purple), var(--purple-dark));
-            border-radius: 32px;
+            border-radius: 36px;
             padding: 28px;
             margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
         }
-        .balance-amount { font-size: 2.8rem; font-weight: 700; margin: 8px 0; }
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+        }
+        .balance-amount { font-size: 2.8rem; font-weight: 700; margin: 8px 0; position: relative; }
         
         /* Stats Grid */
         .stats-grid {
@@ -193,10 +209,11 @@
         }
         .stat-card {
             background: var(--bg-card);
-            border-radius: 24px;
+            border-radius: 28px;
             padding: 16px;
             text-align: center;
             border: 1px solid var(--border);
+            backdrop-filter: blur(4px);
         }
         .stat-value { font-size: 1.6rem; font-weight: 700; }
         
@@ -206,7 +223,8 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--bg-secondary);
+            background: rgba(18,18,18,0.96);
+            backdrop-filter: blur(12px);
             display: flex;
             justify-content: space-around;
             padding: 10px 0 20px;
@@ -228,9 +246,10 @@
             flex: 1;
             border-radius: 20px;
             cursor: pointer;
+            transition: 0.2s;
         }
         .nav-btn i { font-size: 1.4rem; }
-        .nav-btn.active { color: white; background: var(--bg-elevated); }
+        .nav-btn.active { color: white; background: var(--bg-elevated); box-shadow: 0 0 8px rgba(108,92,231,0.3); }
         
         .content-section {
             display: none;
@@ -239,15 +258,16 @@
             animation: fade 0.3s;
         }
         .content-section.active { display: block; }
-        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         
         /* Task Cards */
         .task-card {
             background: var(--bg-card);
-            border-radius: 28px;
+            border-radius: 32px;
             padding: 22px;
             margin-bottom: 24px;
             border: 1px solid var(--border);
+            transition: 0.2s;
         }
         .task-header {
             display: flex;
@@ -285,7 +305,7 @@
         }
         .step-btn.completed { background: var(--success); border-color: var(--success); }
         .step-btn.locked { opacity: 0.3; cursor: not-allowed; }
-        .step-btn.active-step { border: 2px solid var(--warning); box-shadow: 0 0 8px var(--warning); }
+        .step-btn.active-step { border: 2px solid var(--warning); box-shadow: 0 0 8px var(--warning); background: #2a2a2a; }
         
         .claim-btn {
             background: var(--gold);
@@ -297,7 +317,9 @@
             border: none;
             margin-top: 16px;
             cursor: pointer;
+            transition: 0.2s;
         }
+        .claim-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .cooldown-timer {
             background: #1a1a1a;
             border-radius: 60px;
@@ -362,6 +384,9 @@
         .rules-box h4 {
             margin-bottom: 16px;
             font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .rule-item {
             display: flex;
@@ -469,9 +494,6 @@
             text-decoration: none;
             cursor: pointer;
         }
-        .support-link:hover {
-            text-decoration: underline;
-        }
         
         .modal {
             display: none;
@@ -486,11 +508,12 @@
         .modal.active { display: flex; }
         .modal-content {
             background: var(--bg-card);
-            border-radius: 40px;
+            border-radius: 48px;
             padding: 32px;
             width: 90%;
             max-width: 340px;
             text-align: center;
+            border: 1px solid #444;
         }
         .modal-btn {
             padding: 12px 20px;
@@ -518,7 +541,10 @@
             cursor: pointer;
             margin-bottom: 20px;
             color: var(--text-secondary);
+            transition: 0.2s;
         }
+        .back-button:hover { color: var(--purple); }
+        
         @media (max-width: 480px) {
             .step-btn { width: 48px; height: 48px; font-size: 1rem; }
         }
@@ -528,9 +554,10 @@
 <div class="app-container">
     <div id="usernameOverlay" class="overlay">
         <div class="username-card">
-            <h2>Welcome</h2>
-            <p style="color:#aaa; margin:10px 0;">Enter your Telegram username</p>
-            <input type="text" id="telegramUsername" placeholder="@username">
+            <i class="fab fa-telegram" style="font-size: 3rem; color: #0088cc;"></i>
+            <h2>Welcome to Earn For Earn</h2>
+            <p style="color:#aaa; margin:10px 0;">Enter your Telegram username to get started</p>
+            <input type="text" id="telegramUsername" placeholder="@yourusername">
             <button id="startBtn">Continue</button>
         </div>
     </div>
@@ -561,12 +588,15 @@
                     <div class="stat-card"><div class="stat-value" id="refBonus">0.000</div><div>Ref Bonus</div></div>
                 </div>
                 <div class="rules-box">
-                    <h4>Platform Rules</h4>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> No automated tools – permanent ban</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Minimum age 18 for withdrawals</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Withdrawal requires $2.000 + 3 referrals</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> 3% service fee applies</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Fake task completions = account suspension</div>
+                    <h4><i class="fas fa-gavel"></i> Platform Rules</h4>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> No automated tools or cheating – permanent ban</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Minimum age 18 years for withdrawals</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Withdrawal requires $2.000 balance + 3 referrals</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> 3% service fee applies to all withdrawals</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Fake task completions lead to immediate account suspension</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Each link: stay 12 seconds on the page to complete</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Each video ad must be watched fully to count</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> One account per person – multiple accounts will be banned</div>
                 </div>
                 <div id="homeStatusMessage" class="status-message" style="display: none;"></div>
             </div>
@@ -576,6 +606,7 @@
                 <h3 style="margin-bottom: 20px;">High Value Tasks</h3>
                 <div class="task-card">
                     <div class="task-header"><span><i class="fas fa-link"></i> 10 Links Challenge</span><span class="task-reward">$0.015</span></div>
+                    <div class="warning-text" style="background:rgba(253,203,110,0.1); padding:12px; border-radius:20px; margin-bottom:15px; font-size:0.85rem;">⏱️ Each link: stay 12 seconds → auto-complete when you return.</div>
                     <div class="steps-container" id="linkSteps"></div>
                     <div id="linkCooldownArea"></div>
                     <button id="claimLinkBtn" class="claim-btn" style="display: none;">Claim Reward</button>
@@ -583,6 +614,7 @@
                 </div>
                 <div class="task-card">
                     <div class="task-header"><span><i class="fas fa-video"></i> 10 Video Ads Challenge</span><span class="task-reward">$0.015</span></div>
+                    <div class="warning-text" style="background:rgba(253,203,110,0.1); padding:12px; border-radius:20px; margin-bottom:15px; font-size:0.85rem;">📺 Watch full ads from Adsgram, Monetag, Giga. Each ad unlocks the next step.</div>
                     <div class="steps-container" id="videoSteps"></div>
                     <div id="videoCooldownArea"></div>
                     <button id="claimVideoBtn" class="claim-btn" style="display: none;">Claim Reward</button>
@@ -608,7 +640,7 @@
                     <div class="requirement-item" id="reqRefs"><i class="fas fa-users"></i> Minimum 3 Referrals <span id="refsStatus"></span></div>
                 </div>
                 <input type="text" id="binanceAccount" class="form-input" placeholder="Binance Email / UID">
-                <input type="number" id="withdrawAmount" step="0.001" min="2" class="form-input" placeholder="Amount">
+                <input type="number" id="withdrawAmount" step="0.001" min="2" class="form-input" placeholder="Amount ($)">
                 <button id="submitWithdraw" class="claim-btn" style="background: var(--purple);">Request Withdrawal</button>
                 <div style="margin-top: 30px;"><h4>Withdrawal History</h4><div id="historyList"></div></div>
             </div>
@@ -618,7 +650,7 @@
                 <div class="referral-professional">
                     <i class="fas fa-user-plus" style="font-size: 2.5rem; color: var(--purple);"></i>
                     <h3 style="margin: 15px 0;">Invite Friends</h3>
-                    <p style="color: var(--text-secondary);">Earn $0.05 for each friend who joins. They also receive $0.05.</p>
+                    <p style="color: var(--text-secondary);">Earn $0.05 for each friend who joins using your link. They also receive $0.05.</p>
                     <div class="referral-link-box" id="referralLinkDisplay"></div>
                     <div class="btn-group">
                         <button class="btn-primary" id="copyLinkBtn"><i class="fas fa-copy"></i> Copy Link</button>
@@ -642,12 +674,14 @@
                     <p>• Minimum referrals: 3 active referrals</p>
                     <p>• 3% service fee deducted automatically</p>
                     <p>• Processing time: within 7 days after approval</p>
+                    <p>• Unlimited withdrawals if conditions are met</p>
                 </div>
                 <div class="info-card">
                     <h4><i class="fas fa-tasks"></i> Task Details</h4>
-                    <p>• 10 Links: stay 12 seconds per link → auto-complete</p>
+                    <p>• 10 Links: stay 12 seconds per link → auto-complete when you return after full time</p>
                     <p>• 10 Video Ads: watch full rewarded ads (Adsgram, Monetag, Giga)</p>
                     <p>• Cooldown period: 2 minutes after claiming each reward</p>
+                    <p>• One-time Telegram tasks: $0.003 each, join and verify</p>
                 </div>
                 <div class="info-card">
                     <h4><i class="fas fa-gavel"></i> Legal</h4>
@@ -666,9 +700,24 @@
     </div>
 </div>
 
-<div class="modal" id="timerModal"><div class="modal-content"><h3>Stay on Link</h3><div id="timerCountdown" style="font-size: 3.5rem; margin: 20px;">12</div><p>Return to app after timer ends</p><button class="modal-btn" id="cancelTimerBtn">Cancel</button></div></div>
-<div class="modal" id="tryAgainModal"><div class="modal-content"><i class="fas fa-exclamation-circle" style="font-size: 2.5rem; color: var(--error);"></i><h3>Verification Failed</h3><p>You returned before 12 seconds. Please try again.</p><button class="modal-btn" id="tryAgainRetryBtn" style="background: var(--purple);">Try Again</button><button class="modal-btn" id="tryAgainCancelBtn">Cancel</button></div></div>
-<div class="loading-spinner" id="spinner"><div style="border:3px solid #333; border-top:3px solid var(--purple); width:45px; height:45px; border-radius:50%; animation: spin 1s linear infinite;"></div><p style="margin-top: 15px;">Loading ad...</p></div>
+<div class="modal" id="timerModal">
+    <div class="modal-content">
+        <h3>⏳ Stay on Link</h3>
+        <div id="timerCountdown" style="font-size: 3.5rem; margin: 20px;">12</div>
+        <p>Do NOT close this window. Return to app after timer ends.</p>
+        <button class="modal-btn" id="cancelTimerBtn">Cancel Task</button>
+    </div>
+</div>
+<div class="modal" id="tryAgainModal">
+    <div class="modal-content">
+        <i class="fas fa-exclamation-circle" style="font-size: 2.5rem; color: var(--error);"></i>
+        <h3>Verification Failed</h3>
+        <p>You returned before completing 12 seconds. Please try again and stay on the link page for the full duration.</p>
+        <button class="modal-btn" id="tryAgainRetryBtn" style="background: var(--purple);">Try Again</button>
+        <button class="modal-btn" id="tryAgainCancelBtn">Cancel</button>
+    </div>
+</div>
+<div class="loading-spinner" id="spinner"><div style="border:3px solid #333; border-top:3px solid var(--purple); width:45px; height:45px; border-radius:50%; animation: spin 1s linear infinite;"></div><p style="margin-top: 15px;">Processing...</p></div>
 
 <script>
     const firebaseConfig = {
@@ -753,7 +802,7 @@
         renderLinkUI(); renderVideoUI(); renderTelegramTasks(); renderReferralsList(); updateWithdrawUI(); displayHistory();
     }
     
-    // LINK TASK (unchanged, working)
+    // LINK TASK with fixed 12-second auto-OK and try-again
     function renderLinkUI() {
         const cooldown = Math.max(0, (userData.linkTask?.cooldownUntil||0)-Date.now());
         const canStart = cooldown<=0;
@@ -776,36 +825,71 @@
         if(claimBtn) claimBtn.onclick = () => claimLinkReward();
     }
     
-    async function startLinkStep(step) { /* same as before, omitted for brevity but fully functional */ 
+    async function startLinkStep(step) {
         pendingStep = step;
         const modal = document.getElementById('timerModal');
         const timerDisp = document.getElementById('timerCountdown');
         let sec=12; timerDisp.innerText=sec;
         showModal(modal);
         const interval = setInterval(()=>{ sec--; timerDisp.innerText=sec; if(sec<=0) clearInterval(interval); },1000);
-        window.open(LINK_URLS[step-1], '_blank');
+        const link = LINK_URLS[step-1];
+        window.open(link, '_blank');
         stepStartTime = Date.now();
+        
         const onVisibility = () => {
             if(!document.hidden && pendingStep===step) {
                 const elapsed = (Date.now()-stepStartTime)/1000;
                 if(elapsed >= 12) {
-                    clearInterval(interval); hideModal(modal); document.removeEventListener('visibilitychange', onVisibility);
+                    clearInterval(interval);
+                    hideModal(modal);
+                    document.removeEventListener('visibilitychange', onVisibility);
                     completeLinkStep(step);
                 } else {
-                    clearInterval(interval); hideModal(modal); document.removeEventListener('visibilitychange', onVisibility);
+                    clearInterval(interval);
+                    hideModal(modal);
+                    document.removeEventListener('visibilitychange', onVisibility);
                     showTryAgain(step);
                 }
                 pendingStep=null;
             }
         };
         document.addEventListener('visibilitychange', onVisibility);
-        document.getElementById('cancelTimerBtn').onclick = () => { clearInterval(interval); hideModal(modal); document.removeEventListener('visibilitychange', onVisibility); pendingStep=null; };
+        document.getElementById('cancelTimerBtn').onclick = () => {
+            clearInterval(interval);
+            hideModal(modal);
+            document.removeEventListener('visibilitychange', onVisibility);
+            pendingStep=null;
+        };
     }
-    function showTryAgain(step) { const modal=document.getElementById('tryAgainModal'); showModal(modal); document.getElementById('tryAgainRetryBtn').onclick = ()=>{ hideModal(modal); startLinkStep(step); }; document.getElementById('tryAgainCancelBtn').onclick = ()=>hideModal(modal); }
-    async function completeLinkStep(step) { const ns = linkStepsDone+1; await updateUser({ linkTask: { steps: ns, cooldownUntil: userData.linkTask?.cooldownUntil||0 } }); linkStepsDone=ns; refreshUI(); showStatus(`Link ${step} completed!`, 'success'); }
-    async function claimLinkReward() { if(linkStepsDone<10) return showStatus('Complete all 10 links', 'error'); if((userData.linkTask?.cooldownUntil||0)-Date.now()>0) return showStatus('Cooldown active', 'error'); const reward=0.015; const newBal=(userData.balance||0)+reward; await updateUser({ balance:newBal, totalEarned:(userData.totalEarned||0)+reward, linkTask:{ steps:0, cooldownUntil:Date.now()+120000 } }); linkStepsDone=0; showStatus(`+$${reward.toFixed(3)} claimed!`, 'success'); refreshUI(); }
     
-    // ========== FIXED VIDEO ADS ==========
+    function showTryAgain(step) {
+        const modal=document.getElementById('tryAgainModal');
+        showModal(modal);
+        document.getElementById('tryAgainRetryBtn').onclick = ()=>{ hideModal(modal); startLinkStep(step); };
+        document.getElementById('tryAgainCancelBtn').onclick = ()=>hideModal(modal);
+    }
+    
+    async function completeLinkStep(step) {
+        const ns = linkStepsDone+1;
+        await updateUser({ linkTask: { steps: ns, cooldownUntil: userData.linkTask?.cooldownUntil||0 } });
+        linkStepsDone=ns;
+        refreshUI();
+        showStatus(`Link ${step} completed successfully!`, 'success');
+    }
+    
+    async function claimLinkReward() {
+        if(linkStepsDone<10) return showStatus('Complete all 10 links first', 'error');
+        const cooldown = (userData.linkTask?.cooldownUntil||0)-Date.now();
+        if(cooldown>0) return showStatus('Cooldown active', 'error');
+        const reward=0.015;
+        const newBal=(userData.balance||0)+reward;
+        await updateUser({ balance:newBal, totalEarned:(userData.totalEarned||0)+reward, linkTask:{ steps:0, cooldownUntil:Date.now()+120000 } });
+        linkStepsDone=0;
+        showStatus(`Reward claimed! +$${reward.toFixed(3)}`, 'success');
+        refreshUI();
+    }
+    
+    // ========== VIDEO ADS FIXED: Better error handling & retry ==========
     const adSeq = {1:'adsgram',2:'monetag',3:'giga',4:'adsgram',5:'monetag',6:'giga',7:'adsgram',8:'monetag',9:'giga',10:'adsgram'};
     
     function renderVideoUI() {
@@ -837,53 +921,63 @@
             let completed = false;
             
             if(adType === 'adsgram') {
-                // Adsgram integration
                 if(window.Adsgram) {
-                    const controller = window.Adsgram.init({ blockId: "int-28543" });
-                    if(controller) {
-                        await controller.show();
-                        completed = true;
+                    try {
+                        const controller = window.Adsgram.init({ blockId: "int-28543" });
+                        if(controller) {
+                            await controller.show();
+                            completed = true;
+                        } else {
+                            showStatus("Adsgram not initialized", "error");
+                        }
+                    } catch(adErr) {
+                        console.error("Adsgram error:", adErr);
+                        showStatus(`Adsgram error: ${adErr.message || 'no ads'}`, "error");
                     }
                 } else {
-                    console.warn("Adsgram not loaded");
-                    showStatus("Ad network not ready, please retry", "error");
+                    showStatus("Adsgram SDK not loaded", "error");
                 }
             } 
             else if(adType === 'monetag') {
-                // Monetag rewarded interstitial
                 if(window.show_10541383) {
-                    await window.show_10541383();
-                    completed = true;
+                    try {
+                        await window.show_10541383();
+                        completed = true;
+                    } catch(mErr) {
+                        console.error("Monetag error:", mErr);
+                        showStatus("Monetag ad failed", "error");
+                    }
                 } else {
-                    console.warn("Monetag not ready");
-                    showStatus("Monetag SDK not loaded", "error");
+                    showStatus("Monetag SDK not ready", "error");
                 }
             }
             else if(adType === 'giga') {
-                // Giga Pub
                 if(window.showGiga) {
-                    await window.showGiga();
-                    completed = true;
+                    try {
+                        await window.showGiga();
+                        completed = true;
+                    } catch(gErr) {
+                        console.error("Giga error:", gErr);
+                        showStatus("Giga ad failed", "error");
+                    }
                 } else {
-                    console.warn("Giga not ready");
                     showStatus("Giga SDK not loaded", "error");
                 }
             }
             
             showSpinner(false);
             if(completed) {
-                // Mark step as completed after successful ad view
                 const newSteps = videoStepsDone + 1;
                 await updateUser({ videoTask: { steps: newSteps, cooldownUntil: userData.videoTask?.cooldownUntil||0 } });
                 videoStepsDone = newSteps;
                 refreshUI();
                 showStatus(`Ad ${step} completed!`, 'success');
             } else {
-                showStatus(`Ad ${step} failed. Please retry.`, 'error');
+                showStatus(`Ad ${step} failed. Please retry later.`, 'error');
             }
         } catch(err) {
             showSpinner(false);
-            console.error("Ad error:", err);
+            console.error("Ad general error:", err);
             showStatus(`Ad error: ${err.message || 'unknown'}`, 'error');
         }
     }
@@ -894,8 +988,7 @@
         if(cooldown>0) return showStatus('Cooldown active', 'error');
         const reward = 0.015;
         const newBal = (userData.balance||0) + reward;
-        const newTotal = (userData.totalEarned||0) + reward;
-        await updateUser({ balance: newBal, totalEarned: newTotal, videoTask: { steps: 0, cooldownUntil: Date.now() + 120000 } });
+        await updateUser({ balance: newBal, totalEarned: (userData.totalEarned||0)+reward, videoTask: { steps: 0, cooldownUntil: Date.now() + 120000 } });
         videoStepsDone = 0;
         showStatus(`Video reward claimed! +$${reward.toFixed(3)}`, 'success');
         refreshUI();
