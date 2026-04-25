@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Earn For Earn - Professional Platform</title>
+    <title>Earn For Earn – টেলিগ্রাম মিনি অ্যাপ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Firebase SDK (Realtime DB only) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -16,7 +19,7 @@
     <!-- Giga Pub SDK -->
     <script src="https://ad.gigapub.tech/script?id=6432"></script>
     
-    <!-- Adsgram SDK -->
+    <!-- Adsgram SDK (fixed blockId) -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     
     <style>
@@ -62,59 +65,6 @@
             background: radial-gradient(circle at 10% 20%, #0f0f0f, #000);
             position: relative;
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-        
-        /* Username Modal */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.96);
-            backdrop-filter: blur(12px);
-            z-index: 3000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .username-card {
-            background: var(--bg-card);
-            border-radius: 32px;
-            padding: 36px 28px;
-            width: 100%;
-            max-width: 360px;
-            border: 1px solid rgba(108,92,231,0.3);
-            text-align: center;
-        }
-        
-        .username-card input {
-            width: 100%;
-            padding: 16px 20px;
-            background: #000;
-            border: 1px solid var(--border);
-            border-radius: 60px;
-            color: white;
-            font-size: 1rem;
-            margin: 20px 0;
-            outline: none;
-        }
-        
-        .username-card input:focus {
-            border-color: var(--purple);
-        }
-        
-        .username-card button {
-            background: var(--purple);
-            border: none;
-            padding: 16px;
-            border-radius: 60px;
-            color: white;
-            font-weight: 600;
-            width: 100%;
-            cursor: pointer;
         }
         
         /* Header */
@@ -373,7 +323,6 @@
             margin: 10px 0;
         }
         
-        /* Professional Rules Box */
         .rules-box {
             background: var(--bg-card);
             border-radius: 28px;
@@ -397,7 +346,6 @@
             font-size: 0.9rem;
         }
         
-        /* Referral Professional */
         .referral-professional {
             background: linear-gradient(145deg, #141414, #0c0c0c);
             border-radius: 32px;
@@ -446,7 +394,6 @@
             align-items: center;
         }
         
-        /* Status Messages */
         .status-message {
             padding: 12px 16px;
             border-radius: 60px;
@@ -464,13 +411,7 @@
             color: var(--error);
             border-left: 3px solid var(--error);
         }
-        .status-info {
-            background: rgba(9,132,227,0.15);
-            color: var(--blue);
-            border-left: 3px solid var(--blue);
-        }
         
-        /* Info Section Cards */
         .info-card {
             background: var(--bg-card);
             border-radius: 28px;
@@ -483,11 +424,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-        .info-card p {
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            line-height: 1.5;
         }
         .support-link {
             color: var(--blue);
@@ -545,6 +481,14 @@
         }
         .back-button:hover { color: var(--purple); }
         
+        .warning-text {
+            background: rgba(253,203,110,0.1);
+            padding: 12px;
+            border-radius: 24px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+        }
+        
         @media (max-width: 480px) {
             .step-btn { width: 48px; height: 48px; font-size: 1rem; }
         }
@@ -552,174 +496,141 @@
 </head>
 <body>
 <div class="app-container">
-    <div id="usernameOverlay" class="overlay">
-        <div class="username-card">
-            <i class="fab fa-telegram" style="font-size: 3rem; color: #0088cc;"></i>
-            <h2>Welcome to Earn For Earn</h2>
-            <p style="color:#aaa; margin:10px 0;">Enter your Telegram username to get started</p>
-            <input type="text" id="telegramUsername" placeholder="@yourusername">
-            <button id="startBtn">Continue</button>
-        </div>
-    </div>
-    
-    <div id="mainApp" style="display: none;">
+    <div id="mainApp" style="display: block;">
         <div class="header">
             <div class="app-title">Earn For Earn</div>
             <div class="user-profile" id="profileBtn"><span id="userInitial">U</span></div>
         </div>
         <div class="user-menu" id="userMenu">
             <div class="menu-item"><i class="fab fa-telegram"></i> <span id="menuUsername">-</span></div>
-            <div class="menu-item" id="menuReferral"><i class="fas fa-link"></i> My Referral Link</div>
-            <div class="menu-item" id="menuInfo"><i class="fas fa-info-circle"></i> Information</div>
-            <div class="menu-item" id="menuPrivacy"><i class="fas fa-shield-alt"></i> Privacy Policy</div>
-            <div class="menu-item" id="menuTerms"><i class="fas fa-file-contract"></i> Terms</div>
+            <div class="menu-item" id="menuReferral"><i class="fas fa-link"></i> আমার রেফারেল লিংক</div>
+            <div class="menu-item" id="menuInfo"><i class="fas fa-info-circle"></i> তথ্য</div>
+            <div class="menu-item" id="menuPrivacy"><i class="fas fa-shield-alt"></i> গোপনীয়তা নীতি</div>
+            <div class="menu-item" id="menuTerms"><i class="fas fa-file-contract"></i> শর্তাবলী</div>
         </div>
         
         <div class="main-content">
             <div id="homeSection" class="content-section active">
                 <div class="balance-card">
-                    <div>Your Balance</div>
+                    <div>আপনার ব্যালেন্স</div>
                     <div class="balance-amount" id="balanceAmount">0.000</div>
-                    <div>USD | 3 decimal precision</div>
+                    <div>USD | ৩ দশমিক নির্ভুলতা</div>
                 </div>
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-value" id="refCount">0</div><div>Referrals</div></div>
-                    <div class="stat-card"><div class="stat-value" id="totalEarned">0.000</div><div>Total Earned</div></div>
-                    <div class="stat-card"><div class="stat-value" id="refBonus">0.000</div><div>Ref Bonus</div></div>
+                    <div class="stat-card"><div class="stat-value" id="refCount">0</div><div>রেফারেল</div></div>
+                    <div class="stat-card"><div class="stat-value" id="totalEarned">0.000</div><div>মোট আয়</div></div>
+                    <div class="stat-card"><div class="stat-value" id="refBonus">0.000</div><div>রেফারেল বোনাস</div></div>
                 </div>
                 <div class="rules-box">
-                    <h4><i class="fas fa-gavel"></i> Platform Rules</h4>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> No automated tools or cheating – permanent ban</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Minimum age 18 years for withdrawals</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Withdrawal requires $2.000 balance + 3 referrals</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> 3% service fee applies to all withdrawals</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Fake task completions lead to immediate account suspension</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Each link: stay 12 seconds on the page to complete</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Each video ad must be watched fully to count</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> One account per person – multiple accounts will be banned</div>
+                    <h4><i class="fas fa-gavel"></i> প্ল্যাটফর্মের নিয়ম</h4>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> কোনো অটোমেটেড টুল বা প্রতারণা – স্থায়ী ব্যান</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> টাকা তোলার জন্য ন্যূনতম বয়স ১৮ বছর</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> টাকা তুলতে চাইলে ব্যালেন্স $2.000 + ৩ রেফারেল প্রয়োজন</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> প্রতিটি লিংক: ১২ সেকেন্ড অপেক্ষা করতে হবে (স্বয়ংক্রিয় কমপ্লিট)</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> প্রতিটি ভিডিও এড সম্পূর্ণ দেখতে হবে</div>
                 </div>
                 <div id="homeStatusMessage" class="status-message" style="display: none;"></div>
             </div>
             
             <div id="earnSection" class="content-section">
-                <div class="back-button" id="earnBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
-                <h3 style="margin-bottom: 20px;">High Value Tasks</h3>
+                <div class="back-button" id="earnBackBtn"><i class="fas fa-arrow-left"></i> পেছনে</div>
+                <h3 style="margin-bottom: 20px;">উচ্চ মানের টাস্ক</h3>
                 <div class="task-card">
-                    <div class="task-header"><span><i class="fas fa-link"></i> 10 Links Challenge</span><span class="task-reward">$0.015</span></div>
-                    <div class="warning-text" style="background:rgba(253,203,110,0.1); padding:12px; border-radius:20px; margin-bottom:15px; font-size:0.85rem;">⏱️ Each link: stay 12 seconds → auto-complete when you return.</div>
+                    <div class="task-header"><span><i class="fas fa-link"></i> ১০টি লিংক চ্যালেঞ্জ</span><span class="task-reward">$0.015</span></div>
+                    <div class="warning-text">⏱️ প্রতিটি লিংকে ১২ সেকেন্ড থাকতে হবে – ফিরে আসার পর স্বয়ংক্রিয় কমপ্লিট হবে।</div>
                     <div class="steps-container" id="linkSteps"></div>
                     <div id="linkCooldownArea"></div>
-                    <button id="claimLinkBtn" class="claim-btn" style="display: none;">Claim Reward</button>
+                    <button id="claimLinkBtn" class="claim-btn" style="display: none;">রিওয়ার্ড নিন</button>
                     <div id="linkProgress" class="cooldown-timer"></div>
                 </div>
                 <div class="task-card">
-                    <div class="task-header"><span><i class="fas fa-video"></i> 10 Video Ads Challenge</span><span class="task-reward">$0.015</span></div>
-                    <div class="warning-text" style="background:rgba(253,203,110,0.1); padding:12px; border-radius:20px; margin-bottom:15px; font-size:0.85rem;">📺 Watch full ads from Adsgram, Monetag, Giga. Each ad unlocks the next step.</div>
+                    <div class="task-header"><span><i class="fas fa-video"></i> ১০টি ভিডিও এডস চ্যালেঞ্জ</span><span class="task-reward">$0.015</span></div>
+                    <div class="warning-text">📺 Adsgram, Monetag, Giga থেকে সম্পূর্ণ বিজ্ঞাপন দেখুন। একটি সম্পূর্ণ হলে পরের ধাপ আনলক হবে।</div>
                     <div class="steps-container" id="videoSteps"></div>
                     <div id="videoCooldownArea"></div>
-                    <button id="claimVideoBtn" class="claim-btn" style="display: none;">Claim Reward</button>
+                    <button id="claimVideoBtn" class="claim-btn" style="display: none;">রিওয়ার্ড নিন</button>
                     <div id="videoProgress" class="cooldown-timer"></div>
                 </div>
-                <div style="margin: 20px 0 10px;"><h4>One-Time Telegram Rewards</h4></div>
+                <div style="margin: 20px 0 10px;"><h4>একবারের টেলিগ্রাম রিওয়ার্ড</h4></div>
                 <div id="telegramTasksArea"></div>
             </div>
             
             <div id="withdrawSection" class="content-section">
-                <div class="back-button" id="withdrawBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
+                <div class="back-button" id="withdrawBackBtn"><i class="fas fa-arrow-left"></i> পেছনে</div>
                 <div class="balance-card" style="background: linear-gradient(135deg, #1a2a3a, #0f1720);">
-                    <div>Available Balance</div>
+                    <div>উপলব্ধ ব্যালেন্স</div>
                     <div class="balance-amount" id="withdrawBalance">0.000</div>
                 </div>
                 <div class="withdraw-details">
-                    <div class="fee-breakdown"><span>Amount</span><span id="wdAmount">$0.00</span></div>
-                    <div class="fee-breakdown"><span>Fee (3%)</span><span id="wdFee">$0.00</span></div>
-                    <div class="fee-breakdown"><span>Net Receivable</span><span id="wdNet">$0.00</span></div>
+                    <div class="fee-breakdown"><span>উত্তোলনের পরিমাণ</span><span id="wdAmount">$0.00</span></div>
+                    <div class="fee-breakdown"><span>সার্ভিস ফি (৩%)</span><span id="wdFee">$0.00</span></div>
+                    <div class="fee-breakdown"><span>আপনি পাবেন (নেট)</span><span id="wdNet">$0.00</span></div>
                 </div>
                 <div>
-                    <div class="requirement-item" id="reqBal"><i class="fas fa-dollar-sign"></i> Minimum Balance $2.000 <span id="balStatus"></span></div>
-                    <div class="requirement-item" id="reqRefs"><i class="fas fa-users"></i> Minimum 3 Referrals <span id="refsStatus"></span></div>
+                    <div class="requirement-item" id="reqBal"><i class="fas fa-dollar-sign"></i> ন্যূনতম ব্যালেন্স $2.000 <span id="balStatus"></span></div>
+                    <div class="requirement-item" id="reqRefs"><i class="fas fa-users"></i> ন্যূনতম ৩ রেফারেল <span id="refsStatus"></span></div>
                 </div>
-                <input type="text" id="binanceAccount" class="form-input" placeholder="Binance Email / UID">
-                <input type="number" id="withdrawAmount" step="0.001" min="2" class="form-input" placeholder="Amount ($)">
-                <button id="submitWithdraw" class="claim-btn" style="background: var(--purple);">Request Withdrawal</button>
-                <div style="margin-top: 30px;"><h4>Withdrawal History</h4><div id="historyList"></div></div>
+                <input type="text" id="binanceAccount" class="form-input" placeholder="বিনান্স ইমেইল বা UID">
+                <input type="number" id="withdrawAmount" step="0.001" min="2" class="form-input" placeholder="পরিমাণ ($)">
+                <button id="submitWithdraw" class="claim-btn" style="background: var(--purple);">উত্তোলনের অনুরোধ করুন</button>
+                <div style="margin-top: 30px;"><h4>উত্তোলনের ইতিহাস</h4><div id="historyList"></div></div>
             </div>
             
             <div id="referralSection" class="content-section">
-                <div class="back-button" id="referralBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
+                <div class="back-button" id="referralBackBtn"><i class="fas fa-arrow-left"></i> পেছনে</div>
                 <div class="referral-professional">
                     <i class="fas fa-user-plus" style="font-size: 2.5rem; color: var(--purple);"></i>
-                    <h3 style="margin: 15px 0;">Invite Friends</h3>
-                    <p style="color: var(--text-secondary);">Earn $0.05 for each friend who joins using your link. They also receive $0.05.</p>
+                    <h3 style="margin: 15px 0;">বন্ধুদের আমন্ত্রণ জানান</h3>
+                    <p>আপনার লিংক ব্যবহার করে যারা যোগ দিবে, আপনি ও তারা $0.05 করে বোনাস পাবেন।</p>
                     <div class="referral-link-box" id="referralLinkDisplay"></div>
                     <div class="btn-group">
-                        <button class="btn-primary" id="copyLinkBtn"><i class="fas fa-copy"></i> Copy Link</button>
-                        <button class="btn-telegram" id="shareTelegramBtn"><i class="fab fa-telegram"></i> Share on Telegram</button>
+                        <button class="btn-primary" id="copyLinkBtn"><i class="fas fa-copy"></i> লিংক কপি করুন</button>
+                        <button class="btn-telegram" id="shareTelegramBtn"><i class="fab fa-telegram"></i> টেলিগ্রামে শেয়ার করুন</button>
                     </div>
                 </div>
-                <div style="margin-top: 25px;"><h4>Your Referrals</h4><div id="referralsList"></div></div>
+                <div style="margin-top: 25px;"><h4>আপনার রেফারেল তালিকা</h4><div id="referralsList"></div></div>
             </div>
             
             <div id="infoSection" class="content-section">
-                <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
-                <div class="info-card">
-                    <h4><i class="fas fa-headset"></i> Support</h4>
-                    <p><strong>Telegram:</strong> <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a></p>
-                    <p><strong>Email:</strong> earnforearnsuportteam@gmail.com</p>
-                    <p><strong>Business:</strong> earnforearnbusinessteam@gmail.com</p>
-                </div>
-                <div class="info-card">
-                    <h4><i class="fas fa-chart-line"></i> Withdrawal Conditions</h4>
-                    <p>• Minimum balance: $2.000 USD</p>
-                    <p>• Minimum referrals: 3 active referrals</p>
-                    <p>• 3% service fee deducted automatically</p>
-                    <p>• Processing time: within 7 days after approval</p>
-                    <p>• Unlimited withdrawals if conditions are met</p>
-                </div>
-                <div class="info-card">
-                    <h4><i class="fas fa-tasks"></i> Task Details</h4>
-                    <p>• 10 Links: stay 12 seconds per link → auto-complete when you return after full time</p>
-                    <p>• 10 Video Ads: watch full rewarded ads (Adsgram, Monetag, Giga)</p>
-                    <p>• Cooldown period: 2 minutes after claiming each reward</p>
-                    <p>• One-time Telegram tasks: $0.003 each, join and verify</p>
-                </div>
-                <div class="info-card">
-                    <h4><i class="fas fa-gavel"></i> Legal</h4>
-                    <p><a class="support-link" id="privacyPolicyLink">Privacy Policy</a> | <a class="support-link" id="termsConditionsLink">Terms & Conditions</a></p>
-                </div>
+                <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> পেছনে</div>
+                <div class="info-card"><h4><i class="fas fa-headset"></i> সাপোর্ট</h4><p>টেলিগ্রাম: <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a></p><p>ইমেইল: earnforearnsuportteam@gmail.com</p><p>ব্যবসায়িক: earnforearnbusinessteam@gmail.com</p></div>
+                <div class="info-card"><h4><i class="fas fa-chart-line"></i> উত্তোলনের শর্ত</h4><p>• ন্যূনতম ব্যালেন্স $2.000<br>• ন্যূনতম ৩ রেফারেল<br>• ৩% সার্ভিস ফি কাটা হবে<br>• অনুমোদনের পর ৭ দিনের মধ্যে প্রক্রিয়াকরণ</p></div>
+                <div class="info-card"><h4><i class="fas fa-tasks"></i> টাস্ক বিস্তারিত</h4><p>• ১০টি লিংক: ১২ সেকেন্ড অবস্থান → স্বয়ংক্রিয় কমপ্লিট<br>• ১০টি ভিডিও এডস: Adsgram, Monetag, Giga সম্পূর্ণ দেখুন<br>• রিওয়ার্ড দাবি করার পর ২ মিনিট কুলডাউন</p></div>
+                <div class="info-card"><h4><i class="fas fa-gavel"></i> আইনি তথ্য</h4><p><a class="support-link" id="privacyPolicyLink">গোপনীয়তা নীতি</a> | <a class="support-link" id="termsConditionsLink">শর্তাবলী</a></p></div>
             </div>
         </div>
         
         <div class="bottom-nav">
-            <button class="nav-btn active" id="navHome"><i class="fas fa-home"></i><span>Home</span></button>
-            <button class="nav-btn" id="navEarn"><i class="fas fa-bolt"></i><span>Earn</span></button>
-            <button class="nav-btn" id="navWithdraw"><i class="fas fa-wallet"></i><span>Cashout</span></button>
-            <button class="nav-btn" id="navReferral"><i class="fas fa-user-friends"></i><span>Referral</span></button>
-            <button class="nav-btn" id="navInfo"><i class="fas fa-info"></i><span>Info</span></button>
+            <button class="nav-btn active" id="navHome"><i class="fas fa-home"></i><span>হোম</span></button>
+            <button class="nav-btn" id="navEarn"><i class="fas fa-bolt"></i><span>আয় করুন</span></button>
+            <button class="nav-btn" id="navWithdraw"><i class="fas fa-wallet"></i><span>টাকা তুলুন</span></button>
+            <button class="nav-btn" id="navReferral"><i class="fas fa-user-friends"></i><span>রেফারেল</span></button>
+            <button class="nav-btn" id="navInfo"><i class="fas fa-info"></i><span>তথ্য</span></button>
         </div>
     </div>
 </div>
 
 <div class="modal" id="timerModal">
     <div class="modal-content">
-        <h3>⏳ Stay on Link</h3>
+        <h3>⏳ লিংকে থাকুন</h3>
         <div id="timerCountdown" style="font-size: 3.5rem; margin: 20px;">12</div>
-        <p>Do NOT close this window. Return to app after timer ends.</p>
-        <button class="modal-btn" id="cancelTimerBtn">Cancel Task</button>
+        <p>১২ সেকেন্ড সম্পূর্ণ না হওয়া পর্যন্ত এই পেজ ছেড়ে যাবেন না।</p>
+        <button class="modal-btn" id="cancelTimerBtn">বাতিল করুন</button>
     </div>
 </div>
 <div class="modal" id="tryAgainModal">
     <div class="modal-content">
         <i class="fas fa-exclamation-circle" style="font-size: 2.5rem; color: var(--error);"></i>
-        <h3>Verification Failed</h3>
-        <p>You returned before completing 12 seconds. Please try again and stay on the link page for the full duration.</p>
-        <button class="modal-btn" id="tryAgainRetryBtn" style="background: var(--purple);">Try Again</button>
-        <button class="modal-btn" id="tryAgainCancelBtn">Cancel</button>
+        <h3>ভেরিফিকেশন ব্যর্থ!</h3>
+        <p>আপনি ১২ সেকেন্ড আগেই ফিরে এসেছেন। দয়া করে আবার চেষ্টা করুন এবং পুরো সময় লিংকে অবস্থান করুন।</p>
+        <button class="modal-btn" id="tryAgainRetryBtn" style="background: var(--purple);">আবার চেষ্টা করুন</button>
+        <button class="modal-btn" id="tryAgainCancelBtn">বাতিল</button>
     </div>
 </div>
-<div class="loading-spinner" id="spinner"><div style="border:3px solid #333; border-top:3px solid var(--purple); width:45px; height:45px; border-radius:50%; animation: spin 1s linear infinite;"></div><p style="margin-top: 15px;">Processing...</p></div>
+<div class="loading-spinner" id="spinner"><div style="border:3px solid #333; border-top:3px solid var(--purple); width:45px; height:45px; border-radius:50%; animation: spin 1s linear infinite;"></div><p style="margin-top: 15px;">লোড হচ্ছে...</p></div>
 
 <script>
+    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM",
         authDomain: "earn-for-earn-55d3e.firebaseapp.com",
@@ -732,6 +643,13 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
+    // Telegram WebApp: auto detect username
+    let webApp = window.Telegram?.WebApp;
+    let tgUser = webApp?.initDataUnsafe?.user;
+    let username = (tgUser?.username || tgUser?.first_name || "user_" + Date.now()).toLowerCase().replace(/[^a-z0-9_]/g, '');
+    if (!username) username = "webapp_user_" + Math.random().toString(36).substr(2, 8);
+    
+    // 10 Links
     const LINK_URLS = [
         "https://www.profitablecpmratenetwork.com/xan60uuv?key=369dc68341066c06e3d471f3785f73fb",
         "https://omg10.com/4/10686606", "https://link.gigapub.tech/l/9jfxp27o6m",
@@ -741,7 +659,8 @@
         "https://www.profitablecpmratenetwork.com/link9", "https://omg10.com/4/link10"
     ];
     
-    let currentUser = null, userData = null;
+    let currentUser = username;
+    let userData = null;
     let linkStepsDone = 0, videoStepsDone = 0;
     let pendingStep = null, stepStartTime = 0;
     
@@ -757,36 +676,43 @@
     }
     
     async function fetchUser(u) { try { return (await db.ref(`users/${u}`).once('value')).val(); } catch(e){ return null; } }
-    async function updateUser(upd) { if(!currentUser) return; await db.ref(`users/${currentUser.username}`).update(upd); if(userData) Object.assign(userData, upd); refreshUI(); }
+    async function updateUser(upd) { if(!currentUser) return; await db.ref(`users/${currentUser}`).update(upd); if(userData) Object.assign(userData, upd); refreshUI(); }
     
-    async function initUser(username, referralFrom) {
-        let existing = await fetchUser(username);
+    async function initUser() {
+        let existing = await fetchUser(currentUser);
         if(!existing) {
-            const refCode = username.slice(0,5).toUpperCase() + Math.random().toString(36).substr(2,5).toUpperCase();
+            const refCode = currentUser.slice(0,5).toUpperCase() + Math.random().toString(36).substr(2,5).toUpperCase();
             const newUser = {
-                username, balance:0, totalEarned:0, referralBonus:0, referrals:[], referralCode:refCode,
+                username: currentUser, balance:0, totalEarned:0, referralBonus:0, referrals:[], referralCode:refCode,
                 createdAt:Date.now(), linkTask:{steps:0, cooldownUntil:0}, videoTask:{steps:0, cooldownUntil:0},
                 oneTimeTasks:{telegramUpdate:false, telegramProof:false}, withdrawalHistory:[]
             };
-            await db.ref(`users/${username}`).set(newUser);
+            await db.ref(`users/${currentUser}`).set(newUser);
             userData = newUser;
-            if(referralFrom && referralFrom !== username) {
-                const refData = await fetchUser(referralFrom);
-                if(refData && !refData.referrals.some(r=>r.username===username)) {
-                    const bonus = 0.05;
-                    const upRefs = [...(refData.referrals||[]), {username, date:Date.now(), bonus}];
-                    await db.ref(`users/${referralFrom}`).update({ referrals:upRefs, referralBonus:(refData.referralBonus||0)+bonus, balance:(refData.balance||0)+bonus, totalEarned:(refData.totalEarned||0)+bonus });
-                    await db.ref(`users/${username}`).update({ balance:bonus, totalEarned:bonus, referralBonus:bonus });
-                    userData.balance = bonus; userData.totalEarned = bonus; userData.referralBonus = bonus;
-                    showStatus(`Referral bonus credited! +$${bonus.toFixed(3)}`, 'success');
+            // check referral from URL
+            const urlRef = new URLSearchParams(window.location.search).get('start');
+            if(urlRef) {
+                const snap = await db.ref('users').orderByChild('referralCode').equalTo(urlRef).once('value');
+                if(snap.exists()) {
+                    let referrerId = Object.keys(snap.val())[0];
+                    if(referrerId !== currentUser) {
+                        const refData = await fetchUser(referrerId);
+                        if(refData && !refData.referrals.some(r=>r.username===currentUser)) {
+                            const bonus = 0.05;
+                            const upRefs = [...(refData.referrals||[]), {username: currentUser, date:Date.now(), bonus}];
+                            await db.ref(`users/${referrerId}`).update({ referrals:upRefs, referralBonus:(refData.referralBonus||0)+bonus, balance:(refData.balance||0)+bonus, totalEarned:(refData.totalEarned||0)+bonus });
+                            await db.ref(`users/${currentUser}`).update({ balance:bonus, totalEarned:bonus, referralBonus:bonus });
+                            userData.balance = bonus; userData.totalEarned = bonus; userData.referralBonus = bonus;
+                            showStatus(`রেফারেল বোনাস! +$${bonus.toFixed(3)}`, 'success');
+                        }
+                    }
                 }
             }
         } else { userData = existing; }
-        currentUser = { username };
         linkStepsDone = userData.linkTask?.steps || 0;
         videoStepsDone = userData.videoTask?.steps || 0;
         refreshUI();
-        db.ref(`users/${username}`).on('value', snap=>{ if(snap.exists()){ userData = snap.val(); linkStepsDone=userData.linkTask?.steps||0; videoStepsDone=userData.videoTask?.steps||0; refreshUI(); } });
+        db.ref(`users/${currentUser}`).on('value', snap=>{ if(snap.exists()){ userData = snap.val(); linkStepsDone=userData.linkTask?.steps||0; videoStepsDone=userData.videoTask?.steps||0; refreshUI(); } });
     }
     
     function refreshUI() {
@@ -802,7 +728,7 @@
         renderLinkUI(); renderVideoUI(); renderTelegramTasks(); renderReferralsList(); updateWithdrawUI(); displayHistory();
     }
     
-    // LINK TASK with fixed 12-second auto-OK and try-again
+    // LINK TASK
     function renderLinkUI() {
         const cooldown = Math.max(0, (userData.linkTask?.cooldownUntil||0)-Date.now());
         const canStart = cooldown<=0;
@@ -815,12 +741,12 @@
             html+=`<div class="${cls}" data-linkstep="${i}">${i}</div>`;
         }
         document.getElementById('linkSteps').innerHTML=html;
-        document.getElementById('linkCooldownArea').innerHTML = cooldown>0 ? `<div class="cooldown-timer">Cooldown: ${Math.ceil(cooldown/1000)}s</div>` : '';
+        document.getElementById('linkCooldownArea').innerHTML = cooldown>0 ? `<div class="cooldown-timer">কুলডাউন: ${Math.ceil(cooldown/1000)}সেকেন্ড</div>` : '';
         const claimBtn=document.getElementById('claimLinkBtn');
         if(linkStepsDone>=10 && cooldown<=0) claimBtn.style.display='block'; else claimBtn.style.display='none';
-        document.getElementById('linkProgress').innerHTML = `Progress: ${linkStepsDone}/10 links`;
+        document.getElementById('linkProgress').innerHTML = `অগ্রগতি: ${linkStepsDone}/১০টি লিংক সম্পন্ন`;
         document.querySelectorAll('#linkSteps .step-btn').forEach(btn=>{
-            btn.onclick = async()=>{ let step=parseInt(btn.dataset.linkstep); if(linkStepsDone>=step) return; if(linkStepsDone+1!==step){ showStatus('Complete previous links first', 'error'); return; } if(cooldown>0){ showStatus('Cooldown active', 'error'); return; } startLinkStep(step); };
+            btn.onclick = async()=>{ let step=parseInt(btn.dataset.linkstep); if(linkStepsDone>=step) return; if(linkStepsDone+1!==step){ showStatus('আগের লিংকগুলো সম্পন্ন করুন', 'error'); return; } if(cooldown>0){ showStatus('কুলডাউন চলছে', 'error'); return; } startLinkStep(step); };
         });
         if(claimBtn) claimBtn.onclick = () => claimLinkReward();
     }
@@ -874,22 +800,21 @@
         await updateUser({ linkTask: { steps: ns, cooldownUntil: userData.linkTask?.cooldownUntil||0 } });
         linkStepsDone=ns;
         refreshUI();
-        showStatus(`Link ${step} completed successfully!`, 'success');
+        showStatus(`লিংক ${step} সম্পন্ন হয়েছে!`, 'success');
     }
     
     async function claimLinkReward() {
-        if(linkStepsDone<10) return showStatus('Complete all 10 links first', 'error');
-        const cooldown = (userData.linkTask?.cooldownUntil||0)-Date.now();
-        if(cooldown>0) return showStatus('Cooldown active', 'error');
+        if(linkStepsDone<10) return showStatus('১০টি লিংক সম্পন্ন করুন', 'error');
+        if((userData.linkTask?.cooldownUntil||0)-Date.now()>0) return showStatus('কুলডাউন চলছে', 'error');
         const reward=0.015;
         const newBal=(userData.balance||0)+reward;
         await updateUser({ balance:newBal, totalEarned:(userData.totalEarned||0)+reward, linkTask:{ steps:0, cooldownUntil:Date.now()+120000 } });
         linkStepsDone=0;
-        showStatus(`Reward claimed! +$${reward.toFixed(3)}`, 'success');
+        showStatus(`+$${reward.toFixed(3)} দাবি করা হয়েছে!`, 'success');
         refreshUI();
     }
     
-    // ========== VIDEO ADS FIXED: Better error handling & retry ==========
+    // VIDEO ADS (FIXED with proper Adsgram blockId)
     const adSeq = {1:'adsgram',2:'monetag',3:'giga',4:'adsgram',5:'monetag',6:'giga',7:'adsgram',8:'monetag',9:'giga',10:'adsgram'};
     
     function renderVideoUI() {
@@ -904,12 +829,12 @@
             html+=`<div class="${cls}" data-videostep="${i}">${i}</div>`;
         }
         document.getElementById('videoSteps').innerHTML=html;
-        document.getElementById('videoCooldownArea').innerHTML = cooldown>0 ? `<div class="cooldown-timer">Cooldown: ${Math.ceil(cooldown/1000)}s</div>` : '';
+        document.getElementById('videoCooldownArea').innerHTML = cooldown>0 ? `<div class="cooldown-timer">কুলডাউন: ${Math.ceil(cooldown/1000)}সেকেন্ড</div>` : '';
         const claimBtn=document.getElementById('claimVideoBtn');
         if(videoStepsDone>=10 && cooldown<=0) claimBtn.style.display='block'; else claimBtn.style.display='none';
-        document.getElementById('videoProgress').innerHTML = `Ads watched: ${videoStepsDone}/10`;
+        document.getElementById('videoProgress').innerHTML = `বিজ্ঞাপন দেখা হয়েছে: ${videoStepsDone}/১০টি`;
         document.querySelectorAll('#videoSteps .step-btn').forEach(btn=>{
-            btn.onclick = async()=>{ let step=parseInt(btn.dataset.videostep); if(videoStepsDone>=step) return; if(videoStepsDone+1!==step){ showStatus('Complete previous ads first', 'error'); return; } if(cooldown>0){ showStatus('Cooldown active', 'error'); return; } showVideoAd(step); };
+            btn.onclick = async()=>{ let step=parseInt(btn.dataset.videostep); if(videoStepsDone>=step) return; if(videoStepsDone+1!==step){ showStatus('আগের বিজ্ঞাপন সম্পন্ন করুন', 'error'); return; } if(cooldown>0){ showStatus('কুলডাউন চলছে', 'error'); return; } showVideoAd(step); };
         });
         if(claimBtn) claimBtn.onclick = () => claimVideoReward();
     }
@@ -919,8 +844,8 @@
         showSpinner(true);
         try {
             let completed = false;
-            
             if(adType === 'adsgram') {
+                // Fixed blockId: int-28543
                 if(window.Adsgram) {
                     try {
                         const controller = window.Adsgram.init({ blockId: "int-28543" });
@@ -928,76 +853,59 @@
                             await controller.show();
                             completed = true;
                         } else {
-                            showStatus("Adsgram not initialized", "error");
+                            showStatus("Adsgram initialized failed", "error");
                         }
-                    } catch(adErr) {
-                        console.error("Adsgram error:", adErr);
-                        showStatus(`Adsgram error: ${adErr.message || 'no ads'}`, "error");
+                    } catch(e) {
+                        console.error("Adsgram error", e);
+                        showStatus("Adsgram বিজ্ঞাপন লোড হয়নি", "error");
                     }
                 } else {
-                    showStatus("Adsgram SDK not loaded", "error");
+                    showStatus("Adsgram SDK লোড হয়নি", "error");
                 }
-            } 
+            }
             else if(adType === 'monetag') {
                 if(window.show_10541383) {
-                    try {
-                        await window.show_10541383();
-                        completed = true;
-                    } catch(mErr) {
-                        console.error("Monetag error:", mErr);
-                        showStatus("Monetag ad failed", "error");
-                    }
-                } else {
-                    showStatus("Monetag SDK not ready", "error");
-                }
+                    await window.show_10541383();
+                    completed = true;
+                } else showStatus("Monetag SDK প্রস্তুত নয়", "error");
             }
             else if(adType === 'giga') {
                 if(window.showGiga) {
-                    try {
-                        await window.showGiga();
-                        completed = true;
-                    } catch(gErr) {
-                        console.error("Giga error:", gErr);
-                        showStatus("Giga ad failed", "error");
-                    }
-                } else {
-                    showStatus("Giga SDK not loaded", "error");
-                }
+                    await window.showGiga();
+                    completed = true;
+                } else showStatus("Giga SDK প্রস্তুত নয়", "error");
             }
-            
             showSpinner(false);
             if(completed) {
                 const newSteps = videoStepsDone + 1;
                 await updateUser({ videoTask: { steps: newSteps, cooldownUntil: userData.videoTask?.cooldownUntil||0 } });
                 videoStepsDone = newSteps;
                 refreshUI();
-                showStatus(`Ad ${step} completed!`, 'success');
+                showStatus(`বিজ্ঞাপন ${step} সম্পন্ন!`, 'success');
             } else {
-                showStatus(`Ad ${step} failed. Please retry later.`, 'error');
+                showStatus(`বিজ্ঞাপন ${step} ব্যর্থ হয়েছে, আবার চেষ্টা করুন`, 'error');
             }
         } catch(err) {
             showSpinner(false);
-            console.error("Ad general error:", err);
-            showStatus(`Ad error: ${err.message || 'unknown'}`, 'error');
+            showStatus(`বিজ্ঞাপন ত্রুটি: ${err.message}`, 'error');
         }
     }
     
     async function claimVideoReward() {
-        if(videoStepsDone < 10) return showStatus('Watch all 10 ads first', 'error');
-        const cooldown = (userData.videoTask?.cooldownUntil||0)-Date.now();
-        if(cooldown>0) return showStatus('Cooldown active', 'error');
+        if(videoStepsDone < 10) return showStatus('১০টি বিজ্ঞাপন সম্পূর্ণ করুন', 'error');
+        if((userData.videoTask?.cooldownUntil||0)-Date.now()>0) return showStatus('কুলডাউন চলছে', 'error');
         const reward = 0.015;
         const newBal = (userData.balance||0) + reward;
         await updateUser({ balance: newBal, totalEarned: (userData.totalEarned||0)+reward, videoTask: { steps: 0, cooldownUntil: Date.now() + 120000 } });
         videoStepsDone = 0;
-        showStatus(`Video reward claimed! +$${reward.toFixed(3)}`, 'success');
+        showStatus(`ভিডিও রিওয়ার্ড দাবি করা হয়েছে! +$${reward.toFixed(3)}`, 'success');
         refreshUI();
     }
     
     // One-time Telegram tasks
     const tgTasks = [
-        {id:'telegramUpdate', title:'Join Update Channel', reward:0.003, link:'https://t.me/earnforearnupdate', key:'telegramUpdate'},
-        {id:'telegramProof', title:'Join Payment Proof Channel', reward:0.003, link:'https://t.me/earnforearnpaymentproof', key:'telegramProof'}
+        {id:'telegramUpdate', title:'আপডেট চ্যানেল জয়েন করুন', reward:0.003, link:'https://t.me/earnforearnupdate', key:'telegramUpdate'},
+        {id:'telegramProof', title:'পেমেন্ট প্রুফ চ্যানেল জয়েন করুন', reward:0.003, link:'https://t.me/earnforearnpaymentproof', key:'telegramProof'}
     ];
     function renderTelegramTasks() {
         const cont=document.getElementById('telegramTasksArea');
@@ -1007,21 +915,21 @@
         tgTasks.forEach(t=>{
             if(comp[t.key]) return;
             const div=document.createElement('div'); div.className='one-time-task';
-            div.innerHTML=`<div><strong>${t.title}</strong><br>+$${t.reward.toFixed(3)}</div><button class="tg-verify" style="background:#0088cc; border:none; padding:8px 16px; border-radius:40px; color:white; cursor:pointer;" data-link="${t.link}" data-key="${t.key}" data-reward="${t.reward}">Join & Verify</button>`;
+            div.innerHTML=`<div><strong>${t.title}</strong><br>+$${t.reward.toFixed(3)}</div><button class="tg-verify" style="background:#0088cc; border:none; padding:8px 16px; border-radius:40px; color:white; cursor:pointer;" data-link="${t.link}" data-key="${t.key}" data-reward="${t.reward}">জয়েন & ভেরিফাই</button>`;
             cont.appendChild(div);
         });
         document.querySelectorAll('.tg-verify').forEach(btn=>{
             btn.onclick = async()=>{
                 const link=btn.dataset.link, key=btn.dataset.key, reward=parseFloat(btn.dataset.reward);
                 window.open(link,'_blank');
-                if(confirm(`After joining the channel, confirm to claim $${reward.toFixed(3)}`)){
+                if(confirm(`চ্যানেলে জয়েন করার পর নিশ্চিত করুন $${reward.toFixed(3)} পেতে`)){
                     const one=userData.oneTimeTasks||{};
-                    if(one[key]) return showStatus('Already claimed', 'error');
+                    if(one[key]) return showStatus('ইতিমধ্যে নেওয়া হয়েছে', 'error');
                     one[key]=true;
                     const newBal=(userData.balance||0)+reward;
                     const newTotal=(userData.totalEarned||0)+reward;
                     await updateUser({ oneTimeTasks:one, balance:newBal, totalEarned:newTotal });
-                    showStatus(`+$${reward.toFixed(3)} added!`, 'success');
+                    showStatus(`+$${reward.toFixed(3)} যোগ হয়েছে!`, 'success');
                     refreshUI();
                 }
             };
@@ -1032,7 +940,7 @@
         const refs=userData.referrals||[];
         const container=document.getElementById('referralsList');
         if(!container) return;
-        if(refs.length===0){ container.innerHTML='<div class="task-card">No referrals yet</div>'; return; }
+        if(refs.length===0){ container.innerHTML='<div class="task-card">কোন রেফারেল নেই</div>'; return; }
         container.innerHTML=refs.map(r=>`<div class="friend-card"><span><i class="fab fa-telegram"></i> ${r.username}</span><span style="color:var(--success);">+$${r.bonus.toFixed(3)}</span></div>`).join('');
     }
     
@@ -1053,16 +961,16 @@
     async function submitWithdrawal() {
         const amt=parseFloat(document.getElementById('withdrawAmount').value);
         const acc=document.getElementById('binanceAccount').value.trim();
-        if(!acc) return showStatus('Enter Binance account', 'error');
-        if(amt<2) return showStatus('Minimum $2.000', 'error');
-        if((userData.balance||0)<amt) return showStatus('Insufficient balance', 'error');
-        if((userData.referrals||[]).length<3) return showStatus('Need 3 referrals', 'error');
+        if(!acc) return showStatus('বিনান্স অ্যাকাউন্ট লিখুন', 'error');
+        if(amt<2) return showStatus('ন্যূনতম $2.000', 'error');
+        if((userData.balance||0)<amt) return showStatus('পর্যাপ্ত ব্যালেন্স নেই', 'error');
+        if((userData.referrals||[]).length<3) return showStatus('৩ রেফারেল প্রয়োজন', 'error');
         const fee=amt*0.03, net=amt-fee;
         const wid={id:Date.now(), amount:amt, fee, netAmount:net, method:'Binance', details:acc, status:'pending', date:Date.now()};
         const newBal=(userData.balance||0)-amt;
         const hist=[...(userData.withdrawalHistory||[]), wid];
         await updateUser({ balance:newBal, withdrawalHistory:hist });
-        showStatus(`Withdrawal request submitted! Net: $${net.toFixed(3)}`, 'success');
+        showStatus(`উত্তোলনের অনুরোধ জমা! নেট: $${net.toFixed(3)}`, 'success');
         document.getElementById('binanceAccount').value='';
         document.getElementById('withdrawAmount').value='';
         refreshUI();
@@ -1073,8 +981,8 @@
         const hist=userData.withdrawalHistory||[];
         const cont=document.getElementById('historyList');
         if(!cont) return;
-        if(hist.length===0){ cont.innerHTML='<div class="task-card">No withdrawal requests</div>'; return; }
-        cont.innerHTML=hist.slice().reverse().map(w=>`<div class="task-card" style="margin:8px 0; padding:14px;"><small>${new Date(w.date).toLocaleString()}</small><br>Amount: $${w.amount.toFixed(3)} → Net: $${w.netAmount.toFixed(3)}<br>Status: ${w.status}</div>`).join('');
+        if(hist.length===0){ cont.innerHTML='<div class="task-card">কোন উত্তোলন অনুরোধ নেই</div>'; return; }
+        cont.innerHTML=hist.slice().reverse().map(w=>`<div class="task-card" style="margin:8px 0; padding:14px;"><small>${new Date(w.date).toLocaleString()}</small><br>পরিমাণ: $${w.amount.toFixed(3)} → নেট: $${w.netAmount.toFixed(3)}<br>স্ট্যাটাস: ${w.status}</div>`).join('');
     }
     
     // Navigation
@@ -1098,9 +1006,9 @@
     document.getElementById('referralBackBtn').onclick=()=>switchSection('homeSection');
     document.getElementById('infoBackBtn').onclick=()=>switchSection('homeSection');
     
-    document.getElementById('copyLinkBtn').onclick=()=>{ const link=`https://t.me/earnforearn_bot?start=${userData.referralCode}`; navigator.clipboard.writeText(link); showStatus('Referral link copied!', 'success'); };
+    document.getElementById('copyLinkBtn').onclick=()=>{ const link=`https://t.me/earnforearn_bot?start=${userData.referralCode}`; navigator.clipboard.writeText(link); showStatus('রেফারেল লিংক কপি করা হয়েছে!', 'success'); };
     document.getElementById('shareTelegramBtn').onclick=()=>{ const link=`https://t.me/earnforearn_bot?start=${userData.referralCode}`; window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Join%20Earn%20For%20Earn%20and%20earn%20real%20USD!`,'_blank'); };
-    document.getElementById('menuReferral').onclick=()=>{ const link=`https://t.me/earnforearn_bot?start=${userData.referralCode}`; navigator.clipboard.writeText(link); showStatus('Link copied', 'success'); };
+    document.getElementById('menuReferral').onclick=()=>{ const link=`https://t.me/earnforearn_bot?start=${userData.referralCode}`; navigator.clipboard.writeText(link); showStatus('লিংক কপি', 'success'); };
     document.getElementById('profileBtn').onclick=()=>document.getElementById('userMenu').classList.toggle('active');
     document.getElementById('menuPrivacy').onclick=()=>window.open('https://earn-for-earn-privacy-police.vercel.app/','_blank');
     document.getElementById('menuTerms').onclick=()=>window.open('https://earn-for-earn-terms-condition.vercel.app/','_blank');
@@ -1108,22 +1016,14 @@
     document.getElementById('telegramSupportLink').onclick=()=>window.open('https://t.me/earnforearnsupport','_blank');
     document.getElementById('privacyPolicyLink').onclick=()=>window.open('https://earn-for-earn-privacy-police.vercel.app/','_blank');
     document.getElementById('termsConditionsLink').onclick=()=>window.open('https://earn-for-earn-terms-condition.vercel.app/','_blank');
+    
     document.addEventListener('click',(e)=>{ if(!e.target.closest('#profileBtn')&&!e.target.closest('#userMenu')) document.getElementById('userMenu').classList.remove('active'); });
     
-    const urlRef = new URLSearchParams(window.location.search).get('start');
-    document.getElementById('startBtn').onclick = async()=>{
-        let uname = document.getElementById('telegramUsername').value.trim().replace('@','').toLowerCase();
-        if(uname.length<3) return showStatus('Username must be at least 3 characters', 'error');
-        let referrer=null;
-        if(urlRef){
-            const snap = await db.ref('users').orderByChild('referralCode').equalTo(urlRef).once('value');
-            if(snap.exists()) referrer = Object.keys(snap.val())[0];
-        }
-        await initUser(uname, referrer);
-        document.getElementById('usernameOverlay').style.display='none';
-        document.getElementById('mainApp').style.display='block';
-        refreshUI();
-    };
+    // Start app
+    initUser();
+    
+    // Expand Telegram WebApp
+    if(webApp) webApp.expand();
 </script>
 </body>
 </html>
