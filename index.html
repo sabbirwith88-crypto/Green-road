@@ -17,7 +17,7 @@
     <script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
     <!-- Giga Pub SDK -->
     <script src="https://ad.gigapub.tech/script?id=6432"></script>
-    <!-- Adsgram SDK with blockId int-24179 -->
+    <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     
     <style>
@@ -271,6 +271,7 @@
             margin: 12px 0;
             color: var(--warning);
             font-size: 0.9rem;
+            font-family: monospace;
         }
         .warning-text {
             background: rgba(231,76,60,0.15);
@@ -501,7 +502,7 @@
                 <div id="homeStatusMessage" class="status-message" style="display: none;"></div>
             </div>
             
-            <!-- Earn Section (Two Tasks) -->
+            <!-- Earn Section -->
             <div id="earnSection" class="content-section">
                 <div class="back-button" id="earnBackBtn"><i class="fas fa-arrow-left"></i> Back to Home</div>
                 <h3 style="margin-bottom: 20px;">High Value Tasks</h3>
@@ -513,7 +514,7 @@
                         <span class="task-reward">$0.003</span>
                     </div>
                     <div class="warning-text">
-                        <i class="fas fa-exclamation-triangle"></i> ⚠️ Your account is now at risk if you break our rules! This is your last warning. Stay on each link for exactly 10 seconds to unlock the next step.
+                        <i class="fas fa-exclamation-triangle"></i> ⚠️ Your account is at risk if you break our rules! Stay on each link for exactly 10 seconds to unlock the next step.
                     </div>
                     <div class="steps-container" id="linkStepsContainer"></div>
                     <div id="linkCooldownArea"></div>
@@ -613,15 +614,17 @@
     </div>
 </div>
 
-<!-- Modals -->
+<!-- Timer Modal -->
 <div class="modal" id="timerModal">
     <div class="modal-content">
         <h3>⏳ Stay on Link Page</h3>
         <div id="timerCountdown" style="font-size: 3rem; margin: 20px;">10</div>
-        <p>Do not close or leave this window. After 10 seconds, return to app to auto-unlock next step.</p>
+        <p>Do not close this window. After 10 seconds, return to app to auto-unlock next step.</p>
         <button class="modal-btn" id="cancelTimerBtn">Cancel Task</button>
     </div>
 </div>
+
+<!-- Risk Warning Modal -->
 <div class="modal" id="tryAgainModal">
     <div class="modal-content">
         <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; color: var(--error);"></i>
@@ -631,6 +634,7 @@
         <button class="modal-btn" id="tryAgainCancelBtn">Cancel</button>
     </div>
 </div>
+
 <div class="loading-spinner" id="spinner"><div style="border:3px solid #333; border-top:3px solid var(--purple); width:45px; height:45px; border-radius:50%; animation: spin 1s linear infinite;"></div><p style="margin-top:15px;">Loading ad...</p></div>
 
 <script>
@@ -654,17 +658,19 @@
     if (!username) username = "webapp_" + Math.random().toString(36).substr(2, 8);
     if (webApp) webApp.expand();
     
-    // Link URLs: Adsterra smart link, Monetag direct, Giga pub
+    // Link URLs (open in new tab)
     const LINK_URLS = [
-        "https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d",  // Adsterra smart link
-        "https://omg10.com/4/10686606",   // Monetag direct
-        "https://link.gigapub.tech/l/9jfxp27o6m"   // Giga pub
+        "https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d",
+        "https://omg10.com/4/10686606",
+        "https://link.gigapub.tech/l/9jfxp27o6m"
     ];
     
     let currentUser = username;
     let userData = null;
     let linkStepsDone = 0, videoStepsDone = 0;
     let pendingLinkStep = null, linkStartTime = 0;
+    let linkInterval = null;
+    let cooldownInterval = null;
     
     function showSpinner(show) { document.getElementById('spinner').style.display = show ? 'flex' : 'none'; }
     function showModal(modal) { modal.classList.add('active'); }
@@ -732,9 +738,56 @@
         renderReferralsList();
         updateWithdrawUI();
         displayHistory();
+        startCooldownCountdowns();
     }
     
-    // ========== 3-STEP LINK TASK (fixed: 10-second timer, auto-unlock, risk warning) ==========
+    function startCooldownCountdowns() {
+        // Link cooldown
+        const linkCooldown = (userData.linkTask?.cooldownUntil||0) - Date.now();
+        const linkCooldownDiv = document.getElementById('linkCooldownArea');
+        if(linkCooldown > 0 && linkCooldownDiv) {
+            const updateLink = () => {
+                const remaining = Math.max(0, (userData.linkTask?.cooldownUntil||0) - Date.now());
+                if(remaining <= 0) {
+                    if(linkCooldownInterval) clearInterval(linkCooldownInterval);
+                    linkCooldownDiv.innerHTML = '';
+                    renderLinkTaskUI();
+                } else {
+                    linkCooldownDiv.innerHTML = `<div class="cooldown-timer">Cooldown: ${Math.ceil(remaining/1000)}s</div>`;
+                }
+            };
+            updateLink();
+            if(window.linkCooldownInterval) clearInterval(window.linkCooldownInterval);
+            window.linkCooldownInterval = setInterval(updateLink, 1000);
+        } else if(linkCooldownDiv) {
+            if(window.linkCooldownInterval) clearInterval(window.linkCooldownInterval);
+            linkCooldownDiv.innerHTML = '';
+        }
+        
+        // Video cooldown
+        const videoCooldown = (userData.videoTask?.cooldownUntil||0) - Date.now();
+        const videoCooldownDiv = document.getElementById('videoCooldownArea');
+        if(videoCooldown > 0 && videoCooldownDiv) {
+            const updateVideo = () => {
+                const remaining = Math.max(0, (userData.videoTask?.cooldownUntil||0) - Date.now());
+                if(remaining <= 0) {
+                    if(window.videoCooldownInterval) clearInterval(window.videoCooldownInterval);
+                    videoCooldownDiv.innerHTML = '';
+                    renderVideoTaskUI();
+                } else {
+                    videoCooldownDiv.innerHTML = `<div class="cooldown-timer">Cooldown: ${Math.ceil(remaining/1000)}s</div>`;
+                }
+            };
+            updateVideo();
+            if(window.videoCooldownInterval) clearInterval(window.videoCooldownInterval);
+            window.videoCooldownInterval = setInterval(updateVideo, 1000);
+        } else if(videoCooldownDiv) {
+            if(window.videoCooldownInterval) clearInterval(window.videoCooldownInterval);
+            videoCooldownDiv.innerHTML = '';
+        }
+    }
+    
+    // 3-STEP LINK TASK (fixed timer)
     function renderLinkTaskUI() {
         const cooldown = Math.max(0, (userData.linkTask?.cooldownUntil||0)-Date.now());
         const canStart = cooldown<=0;
@@ -751,7 +804,6 @@
                      </div>`;
         }
         document.getElementById('linkStepsContainer').innerHTML = html;
-        document.getElementById('linkCooldownArea').innerHTML = cooldown>0 ? `<div class="cooldown-timer">Cooldown: ${Math.ceil(cooldown/1000)}s</div>` : '';
         const claimBtn = document.getElementById('claimLinkRewardBtn');
         if(linkStepsDone >= 3 && cooldown<=0) claimBtn.style.display='block'; else claimBtn.style.display='none';
         document.getElementById('linkProgress').innerHTML = `Progress: ${linkStepsDone}/3 links completed`;
@@ -767,38 +819,42 @@
         const timerDisp = document.getElementById('timerCountdown');
         let sec = 10;
         timerDisp.innerText = sec;
-        showModal(modal);
-        // Countdown update
-        const interval = setInterval(() => {
+        // Clear any existing interval
+        if(linkInterval) clearInterval(linkInterval);
+        linkInterval = setInterval(() => {
             sec--;
             timerDisp.innerText = sec;
-            if (sec <= 0) clearInterval(interval);
+            if(sec <= 0) {
+                clearInterval(linkInterval);
+                linkInterval = null;
+                // Time's up, but we still need to wait for user to return
+                timerDisp.innerText = "Time's up!";
+            }
         }, 1000);
         
-        // Open link in new tab
+        showModal(modal);
+        
+        // Open link in new tab (Chrome)
         const link = LINK_URLS[step-1];
-        const newTab = window.open(link, '_blank');
-        if (!newTab) {
-            showStatus("Popup blocked! Please allow popups for this site.", "error");
-            clearInterval(interval);
-            hideModal(modal);
-            return;
-        }
+        window.open(link, '_blank');
         linkStartTime = Date.now();
         
         const onVisibility = () => {
             if (!document.hidden && pendingLinkStep === step) {
                 const elapsed = (Date.now() - linkStartTime) / 1000;
                 if (elapsed >= 10) {
-                    clearInterval(interval);
+                    // Success
+                    if(linkInterval) clearInterval(linkInterval);
+                    linkInterval = null;
                     hideModal(modal);
                     document.removeEventListener('visibilitychange', onVisibility);
                     completeLinkStep(step);
                 } else {
-                    clearInterval(interval);
+                    // Too early - risk warning
+                    if(linkInterval) clearInterval(linkInterval);
+                    linkInterval = null;
                     hideModal(modal);
                     document.removeEventListener('visibilitychange', onVisibility);
-                    // Show risk warning
                     showRiskWarning(step);
                 }
                 pendingLinkStep = null;
@@ -811,7 +867,8 @@
         const newCancel = cancelBtn.cloneNode(true);
         cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
         newCancel.onclick = () => {
-            clearInterval(interval);
+            if(linkInterval) clearInterval(linkInterval);
+            linkInterval = null;
             hideModal(modal);
             document.removeEventListener('visibilitychange', onVisibility);
             pendingLinkStep = null;
@@ -853,7 +910,7 @@
         refreshUI();
     }
     
-    // ========== 3-STEP VIDEO ADS (Adsgram blockId int-24179) ==========
+    // VIDEO ADS (unchanged, working)
     const videoAdTypes = { 1: 'adsgram', 2: 'monetag', 3: 'giga' };
     
     function renderVideoTaskUI() {
@@ -872,7 +929,6 @@
                      </div>`;
         }
         document.getElementById('videoStepsContainer').innerHTML = html;
-        document.getElementById('videoCooldownArea').innerHTML = cooldown>0 ? `<div class="cooldown-timer">Cooldown: ${Math.ceil(cooldown/1000)}s</div>` : '';
         const claimBtn = document.getElementById('claimVideoRewardBtn');
         if(videoStepsDone >= 3 && cooldown<=0) claimBtn.style.display='block'; else claimBtn.style.display='none';
         document.getElementById('videoProgress').innerHTML = `Ads watched: ${videoStepsDone}/3`;
