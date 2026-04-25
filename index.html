@@ -6,10 +6,10 @@
     <title>Earn For Earn – Telegram Mini App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Telegram WebApp SDK (auto username & ID) -->
+    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Firebase (Realtime DB) – No Auth, we use Telegram ID as key -->
+    <!-- Firebase (Realtime DB) – No Auth -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
@@ -43,7 +43,6 @@
             --error: #d63031;
             --warning: #fdcb6e;
             --gold: #f9ca24;
-            --orange: #e17055;
         }
         
         body {
@@ -404,6 +403,13 @@
             margin-top: 20px;
             border: 1px solid var(--border);
         }
+        .rules-box h4 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
         .rule-item {
             display: flex;
             align-items: center;
@@ -592,7 +598,7 @@
             <div class="back-button" id="tasksBackBtn"><i class="fas fa-arrow-left"></i> Back to Home</div>
             <h3 style="margin-bottom:20px;">High Value Tasks</h3>
             
-            <!-- Link Challenge -->
+            <!-- 3‑Link Challenge -->
             <div class="task-card">
                 <div class="task-header"><span><i class="fas fa-link"></i> 3‑Link Challenge</span><span class="task-reward">$0.003</span></div>
                 <div class="chrome-required"><i class="fab fa-chrome"></i> ⚠️ MUST open with Chrome browser. Tasks will NOT complete if opened with other browsers.</div>
@@ -604,7 +610,7 @@
                 <div class="info-note"><i class="fas fa-info-circle"></i> After claiming reward, 40s cooldown applies.</div>
             </div>
             
-            <!-- Video Ads Challenge -->
+            <!-- 3‑Video Ads Challenge -->
             <div class="task-card">
                 <div class="task-header"><span><i class="fas fa-video"></i> 3‑Video Ads Challenge</span><span class="task-reward">$0.003</span></div>
                 <div class="warning-text"><i class="fas fa-exclamation-triangle"></i> Watch each rewarded ad completely. Skipping or closing early will fail the step.</div>
@@ -728,7 +734,6 @@
     let telegramId = tgUser?.id ? tgUser.id.toString() : null;
     let telegramUsername = tgUser?.username || tgUser?.first_name || (telegramId ? "user_" + telegramId : "guest_" + Date.now());
     if(!telegramId) {
-        // Fallback: generate a random ID (should not happen in real Telegram Mini App)
         telegramId = "guest_" + Date.now();
         telegramUsername = "guest_" + Date.now();
     }
@@ -738,14 +743,14 @@
     let linkStepsDone = 0, videoStepsDone = 0;
     let pendingLinkStep = null, linkStartTime = 0, linkInterval = null;
     
-    // Link URLs (10-second requirement)
+    // 3 Links (10 seconds each)
     const LINK_URLS = [
         "https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d",
         "https://omg10.com/4/10686606",
         "https://link.gigapub.tech/l/9jfxp27o6m"
     ];
     
-    // Helper functions
+    // ==================== HELPER FUNCTIONS ====================
     function showSpinner(show) { document.getElementById('spinner').style.display = show ? 'flex' : 'none'; }
     function showModal(modal) { modal.classList.add('active'); }
     function hideModal(modal) { modal.classList.remove('active'); }
@@ -757,7 +762,6 @@
         setTimeout(() => el.style.display = 'none', 4000);
     }
     
-    // ==================== FIREBASE USER DATA (Auto-login with Telegram ID) ====================
     async function updateUser(updates) {
         if(!telegramId) return;
         await db.ref(`users/${telegramId}`).update(updates);
@@ -772,7 +776,6 @@
     async function initUser() {
         let data = await fetchUserData();
         if(!data) {
-            // New user: create default profile with referral code
             const refCode = telegramUsername.slice(0,5).toUpperCase() + Math.random().toString(36).substr(2,5).toUpperCase();
             const newUser = {
                 username: telegramUsername,
@@ -791,7 +794,7 @@
             await db.ref(`users/${telegramId}`).set(newUser);
             data = newUser;
             
-            // Check URL for referral (start parameter)
+            // Check referral from URL parameter 'start'
             const urlParams = new URLSearchParams(window.location.search);
             const startRef = urlParams.get('start');
             if(startRef) {
@@ -824,7 +827,6 @@
         linkStepsDone = userData.linkTask?.steps || 0;
         videoStepsDone = userData.videoTask?.steps || 0;
         refreshUI();
-        // Real-time listener
         db.ref(`users/${telegramId}`).on('value', snap => {
             if(snap.exists()) {
                 userData = snap.val();
@@ -854,7 +856,7 @@
         displayWithdrawalHistory();
     }
     
-    // ==================== LINK TASK (10-second rule) ====================
+    // ==================== LINK TASK (10 second rule) ====================
     function renderLinkTaskUI() {
         const cooldown = Math.max(0, (userData.linkTask?.cooldownUntil||0) - Date.now());
         const canStart = cooldown <= 0;
@@ -1009,7 +1011,7 @@
         refreshUI();
     }
     
-    // ==================== TELEGRAM ONE-TIME TASKS ====================
+    // ==================== ONE‑TIME TELEGRAM TASKS ====================
     const tgTasks = [
         {id:'telegramUpdate', title:'Join Update Channel', reward:0.003, link:'https://t.me/earnforearnupdate', key:'telegramUpdate'},
         {id:'telegramProof', title:'Join Payment Proof Channel', reward:0.003, link:'https://t.me/earnforearnpaymentproof', key:'telegramProof'}
@@ -1105,18 +1107,129 @@
         container.innerHTML = hist.slice().reverse().map(w => `<div class="task-card" style="margin:8px 0; padding:14px;"><small>${new Date(w.date).toLocaleString()}</small><br>Amount: $${w.amount.toFixed(3)} → Net: $${w.netAmount.toFixed(3)}<br>Status: ${w.status}</div>`).join('');
     }
     
-    // ==================== LANGUAGE SELECTOR (with localStorage) ====================
-    let currentLang = localStorage.getItem('selectedLanguage') || 'en';
+    // ==================== MULTILINGUAL SYSTEM (6 languages, persistent) ====================
     const translations = {
-        en: { /* full translations would be here – for brevity we keep default English but structure works */ },
-        // Other languages can be added similarly
+        en: {
+            home: "Home", tasks: "Tasks", cashout: "Cashout", referral: "Referral", info: "Info",
+            your_balance: "Your Balance", total_earned: "Total Earned", ref_bonus: "Ref Bonus",
+            platform_rules: "Platform Rules", rule1: "No automated tools – permanent ban", rule2: "Minimum age 18 for withdrawals",
+            rule3: "Withdraw requires $0.500 balance + 3 referrals", rule4: "3% service fee applies",
+            rule5: "Each link step: stay 10 seconds → auto-unlock next", rule6: "Chrome browser mandatory for link tasks",
+            link_challenge: "3-Link Challenge", chrome_required: "⚠️ MUST open with Chrome browser",
+            link_warning: "Stay on each link for exactly 10 seconds to unlock next step.",
+            claim_reward: "Claim $0.003 Reward", cooldown_note: "After claiming reward, 40s cooldown applies.",
+            video_challenge: "3-Video Ads Challenge", video_warning: "Watch each rewarded ad completely.",
+            video_note: "Ads: Adsgram → Monetag → Giga. Cooldown 40s after claim.",
+            one_time_rewards: "One-Time Telegram Rewards", available_balance: "Available Balance",
+            withdraw_requirements: "Withdrawal Requirements (All must be met)", min_balance: "Minimum Balance: $0.500",
+            min_refs: "Minimum Referrals: 3 active referrals", amount: "Amount", fee: "Fee (3%)", you_receive: "You Receive",
+            request_withdrawal: "Request Withdrawal", withdrawal_history: "Withdrawal History",
+            invite_friends: "Invite Friends, Earn $0.05 Each", referral_desc: "Share your unique link. Both you and your friend get $0.05 bonus instantly!",
+            copy_link: "Copy Link", share_telegram: "Share on Telegram", your_referrals: "Your Referrals",
+            support: "Support", withdraw_conditions: "Withdrawal Conditions", task_details: "Task Details", additional_rules: "Additional Rules",
+            rule7: "No multiple accounts – one per person", rule8: "VPN or proxy usage may result in ban",
+            rule9: "All tasks must be done manually", rule10: "Support responds within 48 hours"
+        },
+        hi: { home: "होम", tasks: "कार्य", cashout: "नकद निकालें", referral: "रेफरल", info: "जानकारी",
+            your_balance: "आपकी बैलेंस", total_earned: "कुल कमाई", ref_bonus: "रेफरल बोनस",
+            platform_rules: "प्लेटफॉर्म नियम", rule1: "कोई स्वचालित उपकरण – स्थायी प्रतिबंध", rule2: "निकासी के लिए न्यूनतम आयु 18 वर्ष",
+            rule3: "निकासी के लिए $0.500 बैलेंस + 3 रेफरल", rule4: "3% सेवा शुल्क", rule5: "प्रत्येक लिंक: 10 सेकंड रुकें → अगला अनलॉक", rule6: "लिंक कार्यों के लिए Chrome अनिवार्य",
+            link_challenge: "3-लिंक चैलेंज", chrome_required: "⚠️ Chrome ब्राउज़र से खोलें", link_warning: "प्रत्येक लिंक पर पूरे 10 सेकंड रुकें।",
+            claim_reward: "$0.003 दावा करें", cooldown_note: "40 सेकंड का कूलडाउन", video_challenge: "3-वीडियो विज्ञापन चैलेंज",
+            video_warning: "प्रत्येक विज्ञापन पूरा देखें।", video_note: "Adsgram → Monetag → Giga, 40s कूलडाउन",
+            one_time_rewards: "एक बार के टेलीग्राम इनाम", available_balance: "उपलब्ध बैलेंस",
+            withdraw_requirements: "निकासी आवश्यकताएँ (सभी पूरी करें)", min_balance: "न्यूनतम बैलेंस: $0.500", min_refs: "न्यूनतम रेफरल: 3",
+            amount: "राशि", fee: "शुल्क (3%)", you_receive: "आपको मिलेगा", request_withdrawal: "निकासी का अनुरोध करें", withdrawal_history: "निकासी इतिहास",
+            invite_friends: "दोस्तों को आमंत्रित करें, $0.05 कमाएं", referral_desc: "अपना अनोखा लिंक साझा करें। आपको और आपके मित्र दोनों को $0.05 बोनस मिलेगा!",
+            copy_link: "लिंक कॉपी करें", share_telegram: "टेलीग्राम पर साझा करें", your_referrals: "आपके रेफरल",
+            support: "सहायता", withdraw_conditions: "निकासी की शर्तें", task_details: "कार्य विवरण", additional_rules: "अतिरिक्त नियम",
+            rule7: "एक से अधिक खाते नहीं", rule8: "VPN/प्रॉक्सी पर प्रतिबंध", rule9: "सभी कार्य मैन्युअल", rule10: "48 घंटे में समर्थन"
+        },
+        bn: { home: "হোম", tasks: "টাস্ক", cashout: "ক্যাশআউট", referral: "রেফারেল", info: "তথ্য",
+            your_balance: "আপনার ব্যালেন্স", total_earned: "মোট আয়", ref_bonus: "রেফারেল বোনাস",
+            platform_rules: "প্ল্যাটফর্মের নিয়ম", rule1: "কোনো অটোমেটেড টুল – স্থায়ী ব্যান", rule2: "টাকা তোলার জন্য ন্যূনতম বয়স ১৮ বছর",
+            rule3: "টাকা তুলতে চাইলে ব্যালেন্স $0.500 + ৩ রেফারেল প্রয়োজন", rule4: "৩% সার্ভিস ফি", rule5: "প্রতি লিংকে ১০ সেকেন্ড থাকুন → পরবর্তী আনলক", rule6: "লিংক টাস্কের জন্য Chrome প্রয়োজন",
+            link_challenge: "৩-লিংক চ্যালেঞ্জ", chrome_required: "⚠️ Chrome ব্রাউজারে খুলুন", link_warning: "প্রতি লিংকে পুরো ১০ সেকেন্ড থাকুন।",
+            claim_reward: "$0.০০৩ দাবি করুন", cooldown_note: "৪০ সেকেন্ড কুলডাউন", video_challenge: "৩-ভিডিও বিজ্ঞাপন চ্যালেঞ্জ",
+            video_warning: "সম্পূর্ণ বিজ্ঞাপন দেখুন।", video_note: "Adsgram → Monetag → Giga, ৪০সে কুলডাউন",
+            one_time_rewards: "একবারের টেলিগ্রাম রিওয়ার্ড", available_balance: "উপলব্ধ ব্যালেন্স",
+            withdraw_requirements: "টাকা তোলার শর্ত (সব পূরণ করুন)", min_balance: "ন্যূনতম ব্যালেন্স: $0.৫০০", min_refs: "ন্যূনতম রেফারেল: ৩",
+            amount: "পরিমাণ", fee: "ফি (৩%)", you_receive: "আপনি পাবেন", request_withdrawal: "উত্তোলনের অনুরোধ করুন", withdrawal_history: "উত্তোলনের ইতিহাস",
+            invite_friends: "বন্ধুদের আমন্ত্রণ জানান, $0.০৫ আয় করুন", referral_desc: "আপনার লিংক শেয়ার করুন। আপনারা উভয়েই $0.০৫ বোনাস পাবেন!",
+            copy_link: "লিংক কপি করুন", share_telegram: "টেলিগ্রামে শেয়ার করুন", your_referrals: "আপনার রেফারেল",
+            support: "সাপোর্ট", withdraw_conditions: "উত্তোলনের শর্ত", task_details: "টাস্ক বিস্তারিত", additional_rules: "অতিরিক্ত নিয়ম",
+            rule7: "একাধিক অ্যাকাউন্ট নয়", rule8: "VPN/প্রক্সি ব্যবহার নিষিদ্ধ", rule9: "সব টাস্ক ম্যানুয়ালি করতে হবে", rule10: "৪৮ ঘণ্টার মধ্যে সাপোর্ট উত্তর দেবে"
+        },
+        es: { home: "Inicio", tasks: "Tareas", cashout: "Retirar", referral: "Referidos", info: "Información",
+            your_balance: "Su Saldo", total_earned: "Ganado Total", ref_bonus: "Bono Ref",
+            platform_rules: "Reglas de la Plataforma", rule1: "No herramientas automatizadas – prohibición permanente", rule2: "Edad mínima 18 años para retiros",
+            rule3: "Retiro requiere $0.500 de saldo + 3 referidos", rule4: "Se aplica una tarifa del 3%", rule5: "Cada enlace: permanezca 10 segundos → desbloqueo automático", rule6: "Navegador Chrome obligatorio para tareas de enlace",
+            link_challenge: "Desafío de 3 Enlaces", chrome_required: "⚠️ ABRIR con Chrome", link_warning: "Permanezca 10 segundos en cada enlace.",
+            claim_reward: "Reclamar $0.003", cooldown_note: "Enfriamiento de 40s", video_challenge: "Desafío de 3 Anuncios",
+            video_warning: "Vea cada anuncio completo.", video_note: "Adsgram → Monetag → Giga, enfriamiento 40s",
+            one_time_rewards: "Recompensas Únicas de Telegram", available_balance: "Saldo Disponible",
+            withdraw_requirements: "Requisitos de Retiro (Todos deben cumplirse)", min_balance: "Saldo Mínimo: $0.500", min_refs: "Referidos Mínimos: 3",
+            amount: "Monto", fee: "Tarifa (3%)", you_receive: "Usted Recibe", request_withdrawal: "Solicitar Retiro", withdrawal_history: "Historial de Retiros",
+            invite_friends: "Invita Amigos, Gana $0.05 Cada Uno", referral_desc: "Comparte tu enlace único. ¡Tú y tu amigo reciben $0.05 de bonificación al instante!",
+            copy_link: "Copiar Enlace", share_telegram: "Compartir en Telegram", your_referrals: "Tus Referidos",
+            support: "Soporte", withdraw_conditions: "Condiciones de Retiro", task_details: "Detalles de Tareas", additional_rules: "Reglas Adicionales",
+            rule7: "No múltiples cuentas", rule8: "Uso de VPN/proxy puede resultar en prohibición", rule9: "Todas las tareas deben hacerse manualmente", rule10: "Soporte responde en 48 horas"
+        },
+        ar: { home: "الرئيسية", tasks: "المهام", cashout: "سحب", referral: "إحالة", info: "معلومات",
+            your_balance: "رصيدك", total_earned: "إجمالي الربح", ref_bonus: "مكافأة الإحالة",
+            platform_rules: "قواعد المنصة", rule1: "لا أدوات آلية – حظر دائم", rule2: "الحد الأدنى للعمر 18 سنة للسحب",
+            rule3: "السحب يتطلب رصيد $0.500 + 3 إحالات", rule4: "رسوم خدمة 3%", rule5: "كل رابط: ابق 10 ثوانٍ → فتح تلقائي", rule6: "متصفح Chrome إلزامي لمهام الروابط",
+            link_challenge: "تحدي 3 روابط", chrome_required: "⚠️ افتح مع Chrome", link_warning: "ابق على كل رابط لمدة 10 ثوانٍ بالضبط.",
+            claim_reward: "استلم $0.003", cooldown_note: "تهدئة 40 ثانية", video_challenge: "تحدي 3 إعلانات",
+            video_warning: "شاهد كل إعلان بالكامل.", video_note: "Adsgram → Monetag → Giga، تهدئة 40 ثانية",
+            one_time_rewards: "مكافآت تليغرام لمرة واحدة", available_balance: "الرصيد المتاح",
+            withdraw_requirements: "متطلبات السحب (يجب تحقيق الكل)", min_balance: "الحد الأدنى للرصيد: $0.500", min_refs: "الحد الأدنى للإحالات: 3",
+            amount: "المبلغ", fee: "الرسوم (3%)", you_receive: "ستستلم", request_withdrawal: "طلب سحب", withdrawal_history: "سجل السحوبات",
+            invite_friends: "ادعُ أصدقاءك, اربح $0.05 لكل منهم", referral_desc: "شارك رابطك الفريد. كلاكما تحصل على مكافأة $0.05 فوراً!",
+            copy_link: "نسخ الرابط", share_telegram: "مشاركة على تليغرام", your_referrals: "إحالاتك",
+            support: "الدعم", withdraw_conditions: "شروط السحب", task_details: "تفاصيل المهام", additional_rules: "قواعد إضافية",
+            rule7: "لا حسابات متعددة", rule8: "استخدام VPN/بروكسي قد يؤدي إلى حظر", rule9: "جميع المهام يدوية", rule10: "الدعم يرد خلال 48 ساعة"
+        },
+        fr: { home: "Accueil", tasks: "Tâches", cashout: "Retirer", referral: "Parrainage", info: "Infos",
+            your_balance: "Votre Solde", total_earned: "Total Gagné", ref_bonus: "Bonus Parrainage",
+            platform_rules: "Règles de la Plateforme", rule1: "Pas d'outils automatisés – bannissement permanent", rule2: "Âge minimum 18 ans pour les retraits",
+            rule3: "Retrait nécessite $0.500 de solde + 3 références", rule4: "Frais de service de 3%", rule5: "Chaque lien: rester 10 secondes → déverrouillage automatique", rule6: "Navigateur Chrome obligatoire pour les tâches de lien",
+            link_challenge: "Défi 3 Liens", chrome_required: "⚠️ Ouvrir avec Chrome", link_warning: "Restez 10 secondes sur chaque lien.",
+            claim_reward: "Réclamer $0.003", cooldown_note: "Refroidissement 40s", video_challenge: "Défi 3 Vidéos",
+            video_warning: "Regardez chaque publicité entièrement.", video_note: "Adsgram → Monetag → Giga, refroidissement 40s",
+            one_time_rewards: "Récompenses Telegram Unique", available_balance: "Solde Disponible",
+            withdraw_requirements: "Conditions de Retrait (Toutes doivent être remplies)", min_balance: "Solde Minimum: $0.500", min_refs: "Références Minimum: 3",
+            amount: "Montant", fee: "Frais (3%)", you_receive: "Vous Recevez", request_withdrawal: "Demander un Retrait", withdrawal_history: "Historique des Retraits",
+            invite_friends: "Invitez des Amis, Gagnez $0.05 Chacun", referral_desc: "Partagez votre lien unique. Vous et votre ami recevez $0.05 de bonus instantanément!",
+            copy_link: "Copier le Lien", share_telegram: "Partager sur Telegram", your_referrals: "Vos Références",
+            support: "Support", withdraw_conditions: "Conditions de Retrait", task_details: "Détails des Tâches", additional_rules: "Règles Supplémentaires",
+            rule7: "Pas de comptes multiples", rule8: "L'utilisation de VPN/proxy peut entraîner un bannissement", rule9: "Toutes les tâches doivent être faites manuellement", rule10: "Le support répond sous 48 heures"
+        }
     };
-    function applyTranslations() { /* implemented but not critical for functionality */ }
+    
+    let currentLang = localStorage.getItem('selectedLanguage') || 'en';
+    function applyTranslations() {
+        const t = translations[currentLang] || translations.en;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if(t[key]) el.innerText = t[key];
+        });
+        const langNames = { en: 'English', hi: 'हिन्दी', bn: 'বাংলা', es: 'Español', ar: 'العربية', fr: 'Français' };
+        document.getElementById('currentLangLabel').innerText = langNames[currentLang] || 'English';
+        
+        // Update dynamic texts (buttons that are not data-i18n)
+        const claimLink = document.getElementById('claimLinkRewardBtn');
+        if(claimLink) claimLink.innerText = t.claim_reward;
+        const claimVideo = document.getElementById('claimVideoRewardBtn');
+        if(claimVideo) claimVideo.innerText = t.claim_reward;
+        const withdrawBtn = document.getElementById('submitWithdrawBtn');
+        if(withdrawBtn) withdrawBtn.innerText = t.request_withdrawal;
+    }
+    
     function loadLanguageOptions() {
         const langs = [
-            { code: 'en', name: 'English' },
-            { code: 'hi', name: 'हिन्दी' },
-            { code: 'bn', name: 'বাংলা' }
+            { code: 'en', name: 'English' }, { code: 'hi', name: 'हिन्दी (Hindi)' }, { code: 'bn', name: 'বাংলা (Bangla)' },
+            { code: 'es', name: 'Español (Spanish)' }, { code: 'ar', name: 'العربية (Arabic)' }, { code: 'fr', name: 'Français (French)' }
         ];
         const container = document.getElementById('langOptionsList');
         container.innerHTML = '';
@@ -1139,8 +1252,29 @@
             });
         });
     }
-    loadLanguageOptions();
-    applyTranslations();
+    
+    // Add data-i18n attributes to static elements
+    document.querySelectorAll('[data-i18n-auto]').forEach(el => {});
+    function addI18nAttributes() {
+        const mapping = {
+            '.app-title': 'app_title',
+            '#navHome span': 'home', '#navTasks span': 'tasks', '#navCashout span': 'cashout', '#navReferral span': 'referral', '#navInfo span': 'info',
+            '.balance-card div:first-child': 'your_balance', '.stat-card:nth-child(1) .stat-label': 'referrals', '.stat-card:nth-child(2) .stat-label': 'total_earned', '.stat-card:nth-child(3) .stat-label': 'ref_bonus',
+            '.rules-box h4': 'platform_rules', '#linkTaskCard .task-header .task-title': 'link_challenge', '#videoTaskCard .task-header .task-title': 'video_challenge',
+            '.one-time-task h4': 'one_time_rewards', '#cashoutSection .balance-card div:first-child': 'available_balance',
+            '.requirement-list h4': 'withdraw_requirements', '#reqSerial1 div:last-child': 'min_balance', '#reqSerial2 div:last-child': 'min_refs',
+            '.fee-breakdown span:first-child': 'amount', '.fee-breakdown span:first-child+span': 'fee', '.fee-breakdown span:first-child+span+span': 'you_receive',
+            '#submitWithdrawBtn': 'request_withdrawal', '.withdrawal-history-section h4': 'withdrawal_history',
+            '.referral-professional h3': 'invite_friends', '.referral-professional p': 'referral_desc', '#copyLinkBtn span': 'copy_link', '#shareTelegramBtn span': 'share_telegram',
+            '#referralSection h4': 'your_referrals', '#infoSection .info-card:first-child h4': 'support',
+            '#infoSection .info-card:nth-child(2) h4': 'withdraw_conditions', '#infoSection .info-card:nth-child(3) h4': 'task_details',
+            '#infoSection .info-card:last-child h4': 'additional_rules'
+        };
+        for(const selector in mapping) {
+            const el = document.querySelector(selector);
+            if(el && !el.hasAttribute('data-i18n')) el.setAttribute('data-i18n', mapping[selector]);
+        }
+    }
     
     // ==================== NAVIGATION ====================
     function switchSection(id) {
@@ -1175,23 +1309,26 @@
     document.addEventListener('click', (e)=>{ if(!e.target.closest('.lang-selector')) document.getElementById('langMenu').classList.remove('active'); });
     document.addEventListener('click',(e)=>{ if(!e.target.closest('#profileBtn')&&!e.target.closest('#userMenu')) document.getElementById('userMenu').classList.remove('active'); });
     
-    // ==================== LOADING ANIMATION & START ====================
+    // ==================== LOADING ANIMATION & INIT ====================
     const loadingFill = document.getElementById('loadingFill');
     const loadingStepText = document.getElementById('loadingStep');
     let progress = 0;
-    const steps = ['Initializing system...', 'Loading advertisements...', 'Connecting to account...', 'Loading user data...', 'Ready to earn!'];
+    const stepsArr = ['Initializing system...', 'Loading advertisements...', 'Connecting to account...', 'Loading user data...', 'Ready to earn!'];
     async function animateLoading() {
-        for(let i=0; i<steps.length; i++) {
+        for(let i=0; i<stepsArr.length; i++) {
             progress = (i+1) * 20;
             loadingFill.style.width = progress + '%';
-            loadingStepText.innerText = steps[i];
+            loadingStepText.innerText = stepsArr[i];
             await new Promise(r => setTimeout(r, 700));
         }
         await new Promise(r => setTimeout(r, 400));
         document.getElementById('loadingScreen').classList.add('hidden');
         document.getElementById('mainApp').style.display = 'block';
         await initUser();
+        addI18nAttributes();
+        applyTranslations();
     }
+    loadLanguageOptions();
     animateLoading();
 </script>
 </body>
