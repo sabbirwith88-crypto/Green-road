@@ -6,7 +6,7 @@
     <title>Earn For Earn – High Value Tasks</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Telegram WebApp SDK (for auto username) -->
+    <!-- Telegram WebApp SDK (auto username) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Firebase (Realtime DB) -->
@@ -17,7 +17,7 @@
     <script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
     <!-- Giga Pub SDK -->
     <script src="https://ad.gigapub.tech/script?id=6432"></script>
-    <!-- Adsgram SDK -->
+    <!-- Adsgram SDK with updated blockId int-24179 -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     
     <style>
@@ -44,6 +44,7 @@
             --warning: #fdcb6e;
             --gold: #f9ca24;
             --orange: #e17055;
+            --risk: #e74c3c;
         }
         
         body {
@@ -231,8 +232,8 @@
             justify-content: center;
         }
         .step-btn {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 60px;
             background: #222;
             border: 1px solid #333;
@@ -241,12 +242,12 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: 0.2s;
-            gap: 4px;
+            gap: 6px;
         }
-        .step-btn i { font-size: 1.2rem; }
+        .step-btn i { font-size: 1.3rem; }
         .step-btn.completed { background: var(--success); border-color: var(--success); }
         .step-btn.locked { opacity: 0.3; cursor: not-allowed; }
         .step-btn.active-step { border: 2px solid var(--warning); box-shadow: 0 0 8px var(--warning); background: #2a2a2a; }
@@ -272,11 +273,21 @@
             font-size: 0.9rem;
         }
         .warning-text {
-            background: rgba(253,203,110,0.1);
+            background: rgba(231,76,60,0.15);
             padding: 12px;
             border-radius: 24px;
             margin-bottom: 15px;
             font-size: 0.85rem;
+            color: var(--risk);
+            border-left: 3px solid var(--risk);
+        }
+        .info-note {
+            background: rgba(253,203,110,0.1);
+            padding: 10px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--warning);
         }
         
         .withdraw-details {
@@ -316,6 +327,22 @@
             margin-top: 20px;
             border: 1px solid var(--border);
         }
+        .rules-box h4 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .rule-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
         .referral-professional {
             background: linear-gradient(145deg, #141414, #0c0c0c);
             border-radius: 32px;
@@ -425,7 +452,7 @@
             color: var(--text-secondary);
         }
         @media (max-width: 480px) {
-            .step-btn { width: 60px; height: 60px; }
+            .step-btn { width: 70px; height: 70px; font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -463,7 +490,8 @@
                     <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Minimum age 18 for withdrawals</div>
                     <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Withdraw requires $2.000 balance + 3 referrals</div>
                     <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> 3% service fee applies</div>
-                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Each task step must be completed in sequence</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Each link step: stay 10 seconds → auto-unlock next</div>
+                    <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Fake completions = account suspension</div>
                 </div>
                 <div id="homeStatusMessage" class="status-message" style="display: none;"></div>
             </div>
@@ -480,13 +508,14 @@
                         <span class="task-reward">$0.003</span>
                     </div>
                     <div class="warning-text">
-                        ⏱️ Each link: stay for 10 seconds → auto-complete when you return.
-                        Complete all 3 links to claim reward.
+                        <i class="fas fa-exclamation-triangle"></i> Your account may be at risk if you do not watch the full 10 seconds on each link!
+                        Stay on the link page for exactly 10 seconds to unlock the next step.
                     </div>
                     <div class="steps-container" id="linkStepsContainer"></div>
                     <div id="linkCooldownArea"></div>
                     <button id="claimLinkRewardBtn" class="claim-btn" style="display: none;">Claim $0.003 Reward</button>
                     <div id="linkProgress" class="cooldown-timer"></div>
+                    <div class="info-note"><i class="fas fa-info-circle"></i> After claiming reward, 40s cooldown applies.</div>
                 </div>
                 
                 <!-- Task 2: 3-Video Ads Challenge -->
@@ -496,13 +525,13 @@
                         <span class="task-reward">$0.003</span>
                     </div>
                     <div class="warning-text">
-                        📺 Watch each rewarded ad completely. Adsgram → Monetag → Giga.
-                        After each ad, the next step unlocks.
+                        <i class="fas fa-exclamation-triangle"></i> Watch each rewarded ad completely. Skipping or closing early will fail the step.
                     </div>
                     <div class="steps-container" id="videoStepsContainer"></div>
                     <div id="videoCooldownArea"></div>
                     <button id="claimVideoRewardBtn" class="claim-btn" style="display: none;">Claim $0.003 Reward</button>
                     <div id="videoProgress" class="cooldown-timer"></div>
+                    <div class="info-note"><i class="fas fa-info-circle"></i> Ads: Adsgram → Monetag → Giga. Cooldown 40s after claim.</div>
                 </div>
                 
                 <!-- One-time Telegram Tasks -->
@@ -548,12 +577,25 @@
                 <div style="margin-top: 25px;"><h4>Your Referrals</h4><div id="referralsList"></div></div>
             </div>
             
-            <!-- Info Section -->
+            <!-- Info Section (with platform rules) -->
             <div id="infoSection" class="content-section">
                 <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
-                <div class="info-card"><h4><i class="fas fa-headset"></i> Support</h4><p>Telegram: @earnforearnsupport<br>Email: earnforearnsuportteam@gmail.com<br>Business: earnforearnbusinessteam@gmail.com</p></div>
-                <div class="info-card"><h4><i class="fas fa-chart-line"></i> Withdrawal Conditions</h4><p>• Minimum balance $2.000<br>• Minimum 3 referrals<br>• 3% service fee<br>• Processing within 7 days after approval</p></div>
-                <div class="info-card"><h4><i class="fas fa-tasks"></i> Task Details</h4><p>• 3-Link Challenge: 10 seconds per link → auto-complete<br>• 3-Video Ads: Adsgram → Monetag → Giga<br>• Cooldown: 40 seconds after claiming each reward</p></div>
+                <div class="info-card">
+                    <h4><i class="fas fa-headset"></i> Support</h4>
+                    <p>Telegram: @earnforearnsupport<br>Email: earnforearnsuportteam@gmail.com<br>Business: earnforearnbusinessteam@gmail.com</p>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fas fa-chart-line"></i> Withdrawal Conditions</h4>
+                    <p>• Minimum balance $2.000<br>• Minimum 3 referrals<br>• 3% service fee<br>• Processing within 7 days after approval</p>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fas fa-tasks"></i> Task Details</h4>
+                    <p>• 3-Link Challenge: stay 10 seconds per link → auto-unlock next<br>• 3-Video Ads: Adsgram → Monetag → Giga (full watch required)<br>• Cooldown: 40 seconds after claiming each reward</p>
+                </div>
+                <div class="info-card">
+                    <h4><i class="fas fa-gavel"></i> Platform Rules</h4>
+                    <p>✓ No cheating or automated tools – permanent ban<br>✓ Minimum age 18 for withdrawals<br>✓ Fake completions lead to account suspension<br>✓ One account per person<br>✓ Following the 10-second rule is mandatory for link tasks</p>
+                </div>
             </div>
         </div>
         
@@ -570,17 +612,17 @@
 <!-- Modals -->
 <div class="modal" id="timerModal">
     <div class="modal-content">
-        <h3>⏳ Stay on the Link</h3>
+        <h3>⏳ Stay on Link Page</h3>
         <div id="timerCountdown" style="font-size: 3rem; margin: 20px;">10</div>
-        <p>Remain on the page for 10 seconds.</p>
+        <p>Do not close or leave this window. After 10 seconds, return to app to auto-unlock next step.</p>
         <button class="modal-btn" id="cancelTimerBtn">Cancel Task</button>
     </div>
 </div>
 <div class="modal" id="tryAgainModal">
     <div class="modal-content">
-        <i class="fas fa-exclamation-circle" style="font-size: 2.5rem; color: var(--error);"></i>
-        <h3>Verification Failed</h3>
-        <p>You returned before completing 10 seconds. Please try again.</p>
+        <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; color: var(--error);"></i>
+        <h3>Account Risk Warning</h3>
+        <p>You returned before completing 10 seconds. Your account may be flagged for unusual activity. Please try again and stay for the full duration.</p>
         <button class="modal-btn" id="tryAgainRetryBtn" style="background: var(--purple);">Try Again</button>
         <button class="modal-btn" id="tryAgainCancelBtn">Cancel</button>
     </div>
@@ -617,9 +659,8 @@
     
     let currentUser = username;
     let userData = null;
-    let linkStepsDone = 0, videoStepsDone = 0; // 0,1,2,3 (3 steps)
+    let linkStepsDone = 0, videoStepsDone = 0; // 0-3
     let pendingLinkStep = null, linkStartTime = 0;
-    let pendingVideoStep = null;
     
     function showSpinner(show) { document.getElementById('spinner').style.display = show ? 'flex' : 'none'; }
     function showModal(modal) { modal.classList.add('active'); }
@@ -689,7 +730,7 @@
         displayHistory();
     }
     
-    // ========== 3-STEP LINK TASK ==========
+    // ========== 3-STEP LINK TASK with 10-second auto-unlock ==========
     function renderLinkTaskUI() {
         const cooldown = Math.max(0, (userData.linkTask?.cooldownUntil||0)-Date.now());
         const canStart = cooldown<=0;
@@ -740,7 +781,7 @@
                     clearInterval(interval);
                     hideModal(modal);
                     document.removeEventListener('visibilitychange', onVisibility);
-                    showTryAgain(step, 'link');
+                    showRiskTryAgain(step);
                 }
                 pendingLinkStep = null;
             }
@@ -751,17 +792,14 @@
             hideModal(modal);
             document.removeEventListener('visibilitychange', onVisibility);
             pendingLinkStep = null;
+            showStatus('Task cancelled. Your account activity has been logged.', 'error');
         };
     }
     
-    function showTryAgain(step, type) {
+    function showRiskTryAgain(step) {
         const modal = document.getElementById('tryAgainModal');
         showModal(modal);
-        document.getElementById('tryAgainRetryBtn').onclick = () => {
-            hideModal(modal);
-            if(type === 'link') startLinkStep(step);
-            else startVideoAd(step);
-        };
+        document.getElementById('tryAgainRetryBtn').onclick = () => { hideModal(modal); startLinkStep(step); };
         document.getElementById('tryAgainCancelBtn').onclick = () => hideModal(modal);
     }
     
@@ -770,7 +808,7 @@
         await updateUser({ linkTask: { steps: ns, cooldownUntil: userData.linkTask?.cooldownUntil||0 } });
         linkStepsDone = ns;
         refreshUI();
-        showStatus(`Link step ${step} completed!`, 'success');
+        showStatus(`Link step ${step} completed! Next step unlocked.`, 'success');
     }
     
     async function claimLinkReward() {
@@ -786,7 +824,7 @@
         refreshUI();
     }
     
-    // ========== 3-STEP VIDEO ADS (Adsgram → Monetag → Giga) ==========
+    // ========== 3-STEP VIDEO ADS (Adsgram blockId int-24179) ==========
     const videoAdTypes = { 1: 'adsgram', 2: 'monetag', 3: 'giga' };
     
     function renderVideoTaskUI() {
@@ -822,7 +860,7 @@
             let completed = false;
             if(adType === 'adsgram') {
                 if(window.Adsgram) {
-                    const controller = window.Adsgram.init({ blockId: "int-28543" });
+                    const controller = window.Adsgram.init({ blockId: "int-24179" }); // Updated blockId
                     if(controller) { await controller.show(); completed = true; }
                     else showStatus("Adsgram init failed", "error");
                 } else showStatus("Adsgram SDK not loaded", "error");
