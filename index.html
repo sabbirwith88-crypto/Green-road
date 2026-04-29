@@ -849,6 +849,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
+    // Telegram user
     let webApp = window.Telegram?.WebApp;
     if(webApp) webApp.expand();
     let tgUser = webApp?.initDataUnsafe?.user;
@@ -878,12 +879,18 @@
         'adsgram', 'monetag', 'adexora', 'monetag_inapp', 'onclicka'
     ];
     
+    // OnClicka SDK initialization
     let onclickaShowFn = null;
-    if(window.initCdTma) {
-        window.initCdTma({ id: '438680' }).then(show => { onclickaShowFn = show; }).catch(e => console.warn("OnClicka init failed", e));
+    if(typeof window.initCdTma === 'function') {
+        window.initCdTma({ id: '438680' }).then(show => {
+            onclickaShowFn = show;
+            console.log("OnClicka SDK ready");
+        }).catch(e => console.warn("OnClicka init failed:", e));
+    } else {
+        console.warn("initCdTma not available");
     }
     
-    // Complete translations for all languages
+    // ==================== COMPLETE TRANSLATIONS ====================
     const baseEn = {
         loading_initializing: "Initializing system...", loading_ads: "Loading advertisements...", loading_auth: "Connecting to account...", loading_data: "Loading user data...", loading_ready: "Ready to earn!",
         your_balance: "Your Balance", usd_precision: "USD | 3 decimal precision", referrals: "Referrals", total_earned: "Total Earned", ref_bonus: "Ref Bonus",
@@ -923,7 +930,7 @@
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if(t[key]) {
-                if(el.tagName === 'INPUT' && el.getAttribute('type') !== 'text' && el.getAttribute('type') !== 'number') {
+                if(el.tagName === 'INPUT' && (el.getAttribute('type') === 'text' || el.getAttribute('type') === 'number' || el.getAttribute('type') === 'email')) {
                     el.setAttribute('placeholder', t[key]);
                 } else {
                     el.innerText = t[key];
@@ -938,7 +945,6 @@
         if(claimVideo && t.claim_reward) claimVideo.innerText = t.claim_reward;
         const withdrawBtn = document.getElementById('submitWithdrawBtn');
         if(withdrawBtn && t.request_withdrawal) withdrawBtn.innerText = t.request_withdrawal;
-        // update dynamic note
         const videoNoteSpan = document.querySelector('.task-card:last-child .info-note span');
         if(videoNoteSpan && t.video_note) videoNoteSpan.innerText = t.video_note;
     }
@@ -958,7 +964,7 @@
                 currentLang = lang.code;
                 localStorage.setItem('selectedLanguage', currentLang);
                 applyTranslations();
-                refreshUI(); // refresh dynamic UI to apply language changes
+                refreshUI();
                 document.getElementById('langMenu').classList.remove('active');
             };
             container.appendChild(div);
@@ -1048,6 +1054,7 @@
             userData = data;
             linkStepsDone = userData.linkTask?.steps || 0;
             videoStepsDone = userData.videoTask?.steps || 0;
+            // Show referral modal only once if not already applied
             if(!userData.referralBonusApplied) {
                 document.getElementById('referralCodeModal').style.display = 'flex';
             } else {
@@ -1060,7 +1067,7 @@
         }
     }
     
-    function proceedToApp() {
+    async function proceedToApp() {
         document.getElementById('referralCodeModal').style.display = 'none';
         refreshUI();
         db.ref(`users/${telegramId}`).on('value', snap => {
@@ -1212,6 +1219,7 @@
         refreshUI();
     }
     
+    // FIXED VIDEO TASK: Proper step unlocking and ad handling
     function renderVideoTaskUI() {
         const cooldown = Math.max(0, (userData.videoTask?.cooldownUntil||0) - Date.now());
         const canStart = cooldown <= 0;
@@ -1230,10 +1238,19 @@
         document.querySelectorAll('#videoStepsContainer .step-btn').forEach(btn=>{
             btn.onclick = async()=>{
                 let step = parseInt(btn.dataset.videostep);
-                if(videoStepsDone >= step) return;
-                if(videoStepsDone+1 !== step){ showStatus('Watch previous ad first', 'error'); return; }
-                if(cooldown>0){ showStatus('Cooldown active', 'error'); return; }
-                startVideoAd(step);
+                if(videoStepsDone >= step) {
+                    showStatus('This ad already completed', 'error');
+                    return;
+                }
+                if(videoStepsDone+1 !== step){
+                    showStatus('Complete previous ad first', 'error');
+                    return;
+                }
+                if(cooldown>0){
+                    showStatus('Cooldown active, wait before next ad', 'error');
+                    return;
+                }
+                await startVideoAd(step);
             };
         });
         if(claimBtn) claimBtn.onclick = () => claimVideoReward();
@@ -1247,18 +1264,24 @@
             if(adType === 'adsgram') {
                 const ctrl = window.Adsgram?.init({ blockId: "int-28543" });
                 if(ctrl) { await ctrl.show(); completed = true; }
+                else throw new Error("Adsgram not ready");
             } else if(adType === 'monetag') {
                 if(window.show_10541383) { await window.show_10541383(); completed = true; }
+                else throw new Error("Monetag not ready");
             } else if(adType === 'adexora') {
                 if(window.showAdexora) { await window.showAdexora(); completed = true; }
+                else throw new Error("Adexora not ready");
             } else if(adType === 'monetag_inapp') {
                 if(window.show_10541383) {
+                    // In-app interstitial call
                     await window.show_10541383({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
                     completed = true;
-                }
+                } else throw new Error("Monetag in-app not ready");
             } else if(adType === 'onclicka') {
-                if(onclickaShowFn) { await onclickaShowFn(); completed = true; }
-                else { throw new Error("OnClicka ad not ready"); }
+                if(onclickaShowFn) { 
+                    await onclickaShowFn(); 
+                    completed = true;
+                } else throw new Error("OnClicka not initialized");
             }
             showSpinner(false);
             if(completed) {
@@ -1266,12 +1289,13 @@
                 await updateUser({ videoTask: { steps: newSteps, cooldownUntil: userData.videoTask?.cooldownUntil||0 } });
                 videoStepsDone = newSteps;
                 refreshUI();
-                showStatus(`Ad ${step} (${adType}) completed!`, 'success');
+                showStatus(`Ad ${step} (${adType}) completed! +0.011 after all 10`, 'success');
             } else {
                 showStatus(`Ad ${step} failed. Please retry.`, 'error');
             }
         } catch(err) {
             showSpinner(false);
+            console.error("Ad error:", err);
             showStatus(`Ad error: ${err.message || 'unknown'}`, 'error');
         }
     }
@@ -1415,6 +1439,7 @@
         else if(id==='infoSection') document.getElementById('navInfo').classList.add('active');
     }
     
+    // Event listeners
     document.getElementById('navHome').onclick = ()=>switchSection('homeSection');
     document.getElementById('navTasks').onclick = ()=>{ switchSection('tasksSection'); renderLinkTaskUI(); renderVideoTaskUI(); renderTelegramTasks(); };
     document.getElementById('navCashout').onclick = ()=>{ switchSection('cashoutSection'); displayWithdrawalHistory(); updateWithdrawalRequirements(); updateWithdrawCalc(); };
@@ -1437,12 +1462,34 @@
     document.addEventListener('click', (e)=>{ if(!e.target.closest('.lang-selector')) document.getElementById('langMenu').classList.remove('active'); });
     document.addEventListener('click',(e)=>{ if(!e.target.closest('#profileBtn')&&!e.target.closest('#userMenu')) document.getElementById('userMenu').classList.remove('active'); });
     
-    document.getElementById('submitReferralCodeBtn').onclick = async() => { const code = document.getElementById('referralCodeInput').value.trim().toUpperCase(); if(code) await applyReferralBonus(code); proceedToApp(); };
-    document.getElementById('skipReferralCodeBtn').onclick = () => proceedToApp();
+    // Referral modal: submit or skip
+    document.getElementById('submitReferralCodeBtn').onclick = async() => { 
+        const code = document.getElementById('referralCodeInput').value.trim().toUpperCase(); 
+        if(code) {
+            const success = await applyReferralBonus(code);
+            if(success) showStatus('Referral bonus added! +$0.01', 'success');
+            else showStatus('Invalid referral code', 'error');
+        }
+        // Mark as done so modal never appears again
+        if(!userData.referralBonusApplied) {
+            await updateUser({ referralBonusApplied: true });
+            userData.referralBonusApplied = true;
+        }
+        proceedToApp();
+    };
+    document.getElementById('skipReferralCodeBtn').onclick = async() => {
+        // Skip: still mark as applied so modal doesn't reappear
+        if(!userData.referralBonusApplied) {
+            await updateUser({ referralBonusApplied: true });
+            userData.referralBonusApplied = true;
+        }
+        proceedToApp();
+    };
     document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawCalc);
     document.getElementById('submitWithdrawBtn').addEventListener('click', submitWithdrawal);
     document.getElementById('closeSuccessModal').addEventListener('click', () => hideModal(document.getElementById('withdrawSuccessModal')));
     
+    // Loading animation
     const loadingFill = document.getElementById('loadingFill');
     const loadingStepText = document.getElementById('loadingStep');
     const loadSteps = ['loading_initializing', 'loading_ads', 'loading_auth', 'loading_data', 'loading_ready'];
