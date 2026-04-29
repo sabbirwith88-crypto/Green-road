@@ -13,11 +13,11 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
-    <!-- Monetag Rewarded Interstitial -->
+    <!-- Monetag Rewarded Interstitial (zone 10541383) -->
     <script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
-    <!-- Adsgram SDK -->
+    <!-- Adsgram SDK (blockId int-28543) -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    <!-- Adexora SDK -->
+    <!-- Adexora SDK (id 1963) -->
     <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
     
     <style>
@@ -45,610 +45,112 @@
             --gold: #f9ca24;
         }
         
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        .app-container {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            min-height: 100vh;
-            background: radial-gradient(circle at 10% 20%, #0f0f0f, #000);
-            position: relative;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-        
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg-primary);
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(20px);
-        }
+        body { background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+        .app-container { width: 100%; max-width: 500px; margin: 0 auto; min-height: 100vh; background: radial-gradient(circle at 10% 20%, #0f0f0f, #000); position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        .loading-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-primary); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px); }
         .loading-screen.hidden { display: none; }
-        .loading-logo {
-            width: 100px;
-            height: 100px;
-            border-radius: 30px;
-            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(108,92,231,0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(108,92,231,0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(108,92,231,0); }
-        }
+        .loading-logo { width: 100px; height: 100px; border-radius: 30px; background: linear-gradient(135deg, var(--purple), var(--purple-dark)); display: flex; align-items: center; justify-content: center; margin-bottom: 30px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(108,92,231,0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(108,92,231,0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(108,92,231,0); } }
         .loading-logo i { font-size: 3rem; color: white; }
         .loading-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; background: linear-gradient(45deg, var(--purple), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .loading-progress { width: 250px; height: 4px; background: #333; border-radius: 4px; margin: 20px 0; overflow: hidden; }
         .loading-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); transition: width 0.3s; }
         .loading-steps { margin-top: 20px; text-align: center; color: var(--text-secondary); font-size: 0.9rem; }
         
-        .header {
-            background: rgba(18,18,18,0.95);
-            backdrop-filter: blur(15px);
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .app-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--purple), var(--blue));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .header { background: rgba(18,18,18,0.95); backdrop-filter: blur(15px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .app-title { font-size: 1.3rem; font-weight: 700; background: linear-gradient(45deg, var(--purple), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .header-right { display: flex; align-items: center; gap: 12px; }
         .lang-selector { position: relative; }
-        .lang-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 60px;
-            padding: 6px 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-        }
-        .lang-menu {
-            position: absolute;
-            top: 40px;
-            right: 0;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            width: 220px;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-            z-index: 200;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
+        .lang-btn { background: var(--bg-card); border: 1px solid var(--border); border-radius: 60px; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; }
+        .lang-menu { position: absolute; top: 40px; right: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; width: 220px; max-height: 300px; overflow-y: auto; display: none; z-index: 200; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .lang-menu.active { display: block; }
         .lang-search { padding: 10px; border-bottom: 1px solid var(--border); }
-        .lang-search input {
-            width: 100%;
-            padding: 8px;
-            background: #000;
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            color: white;
-            font-size: 0.8rem;
-        }
+        .lang-search input { width: 100%; padding: 8px; background: #000; border: 1px solid var(--border); border-radius: 40px; color: white; font-size: 0.8rem; }
         .lang-option { padding: 10px 15px; cursor: pointer; transition: 0.2s; }
         .lang-option:hover { background: rgba(255,255,255,0.05); }
-        .user-profile {
-            width: 40px;
-            height: 40px;
-            border-radius: 60px;
-            background: var(--bg-elevated);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            cursor: pointer;
-            border: 1px solid var(--border);
-        }
-        
-        .user-menu {
-            position: absolute;
-            top: 60px;
-            right: 15px;
-            background: rgba(30,30,30,0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 12px;
-            min-width: 220px;
-            border: 1px solid rgba(108,92,231,0.3);
-            display: none;
-            z-index: 150;
-        }
+        .user-profile { width: 40px; height: 40px; border-radius: 60px; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: 1px solid var(--border); }
+        .user-menu { position: absolute; top: 60px; right: 15px; background: rgba(30,30,30,0.98); backdrop-filter: blur(20px); border-radius: 24px; padding: 12px; min-width: 220px; border: 1px solid rgba(108,92,231,0.3); display: none; z-index: 150; }
         .user-menu.active { display: block; }
-        .menu-item {
-            padding: 12px 16px;
-            border-radius: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: 0.2s;
-        }
+        .menu-item { padding: 12px 16px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
         .menu-item:hover { background: rgba(255,255,255,0.05); }
         
-        .balance-card {
-            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
-            border-radius: 36px;
-            padding: 28px;
-            margin-bottom: 24px;
-            position: relative;
-            overflow: hidden;
-        }
+        .balance-card { background: linear-gradient(135deg, var(--purple), var(--purple-dark)); border-radius: 36px; padding: 28px; margin-bottom: 24px; position: relative; overflow: hidden; }
         .balance-amount { font-size: 2.8rem; font-weight: 700; margin: 8px 0; }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        .stat-card {
-            background: var(--bg-card);
-            border-radius: 28px;
-            padding: 16px;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+        .stat-card { background: var(--bg-card); border-radius: 28px; padding: 16px; text-align: center; border: 1px solid var(--border); }
         .stat-value { font-size: 1.6rem; font-weight: 700; }
         
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(18,18,18,0.96);
-            backdrop-filter: blur(12px);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 20px;
-            border-top: 1px solid var(--border);
-            max-width: 500px;
-            margin: 0 auto;
-            z-index: 100;
-        }
-        .nav-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.7rem;
-            padding: 8px;
-            flex: 1;
-            border-radius: 20px;
-            cursor: pointer;
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(18,18,18,0.96); backdrop-filter: blur(12px); display: flex; justify-content: space-around; padding: 10px 0 20px; border-top: 1px solid var(--border); max-width: 500px; margin: 0 auto; z-index: 100; }
+        .nav-btn { background: none; border: none; color: var(--text-secondary); display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 0.7rem; padding: 8px; flex: 1; border-radius: 20px; cursor: pointer; }
         .nav-btn i { font-size: 1.4rem; }
         .nav-btn.active { color: white; background: var(--bg-elevated); }
         
-        .content-section {
-            display: none;
-            padding: 18px;
-            padding-bottom: 90px;
-            animation: fade 0.3s;
-        }
+        .content-section { display: none; padding: 18px; padding-bottom: 90px; animation: fade 0.3s; }
         .content-section.active { display: block; }
         @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         
-        .task-card {
-            background: var(--bg-card);
-            border-radius: 32px;
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .task-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-        .task-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        .task-reward {
-            background: var(--gold);
-            padding: 4px 16px;
-            border-radius: 40px;
-            font-weight: 600;
-            color: #000;
-        }
-        .steps-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-            margin: 20px 0;
-            justify-items: center;
-        }
-        .step-btn {
-            width: 100%;
-            max-width: 70px;
-            height: 70px;
-            border-radius: 60px;
-            background: #222;
-            border: 1px solid #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.75rem;
-            cursor: pointer;
-            gap: 6px;
-            transition: all 0.2s;
-        }
+        .task-card { background: var(--bg-card); border-radius: 32px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--border); transition: transform 0.2s, box-shadow 0.2s; }
+        .task-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .task-reward { background: var(--gold); padding: 4px 16px; border-radius: 40px; font-weight: 600; color: #000; }
+        .steps-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 20px 0; justify-items: center; }
+        .step-btn { width: 100%; max-width: 70px; height: 70px; border-radius: 60px; background: #222; border: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem; cursor: pointer; gap: 6px; transition: all 0.2s; }
         .step-btn i { font-size: 1.2rem; }
         .step-btn.completed { background: var(--success); border-color: var(--success); }
         .step-btn.locked { opacity: 0.3; cursor: not-allowed; }
         .step-btn.active-step { border: 2px solid var(--warning); box-shadow: 0 0 8px var(--warning); background: #2a2a2a; }
         
-        .claim-btn {
-            background: linear-gradient(90deg, var(--gold), #e6b422);
-            color: #000;
-            font-weight: bold;
-            padding: 14px;
-            border-radius: 60px;
-            width: 100%;
-            border: none;
-            margin-top: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 1rem;
-        }
-        .claim-btn:hover {
-            transform: scale(0.98);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .claim-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .cooldown-timer, .break-timer {
-            background: #1a1a1a;
-            border-radius: 60px;
-            padding: 10px;
-            text-align: center;
-            margin: 12px 0;
-            font-size: 0.9rem;
-        }
-        .break-timer {
-            background: rgba(253,203,110,0.2);
-            color: var(--warning);
-            border-left: 3px solid var(--warning);
-        }
-        .chrome-required {
-            background: rgba(9,132,227,0.2);
-            padding: 12px;
-            border-radius: 24px;
-            margin-bottom: 15px;
-            font-size: 0.85rem;
-            color: var(--blue);
-            border-left: 3px solid var(--blue);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .warning-text {
-            background: rgba(231,76,60,0.15);
-            padding: 12px;
-            border-radius: 24px;
-            margin-bottom: 15px;
-            font-size: 0.85rem;
-            color: #e74c3c;
-            border-left: 3px solid #e74c3c;
-        }
-        .info-note {
-            background: rgba(253,203,110,0.1);
-            padding: 10px;
-            border-radius: 20px;
-            margin-top: 10px;
-            font-size: 0.8rem;
-            color: var(--warning);
-        }
+        .claim-btn { background: linear-gradient(90deg, var(--gold), #e6b422); color: #000; font-weight: bold; padding: 14px; border-radius: 60px; width: 100%; border: none; margin-top: 16px; cursor: pointer; transition: all 0.2s; font-size: 1rem; }
+        .claim-btn:hover { transform: scale(0.98); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .claim-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .cooldown-timer, .break-timer { background: #1a1a1a; border-radius: 60px; padding: 10px; text-align: center; margin: 12px 0; font-size: 0.9rem; }
+        .break-timer { background: rgba(253,203,110,0.2); color: var(--warning); border-left: 3px solid var(--warning); }
+        .chrome-required { background: rgba(9,132,227,0.2); padding: 12px; border-radius: 24px; margin-bottom: 15px; font-size: 0.85rem; color: var(--blue); border-left: 3px solid var(--blue); display: flex; gap: 10px; align-items: center; }
+        .warning-text { background: rgba(231,76,60,0.15); padding: 12px; border-radius: 24px; margin-bottom: 15px; font-size: 0.85rem; color: #e74c3c; border-left: 3px solid #e74c3c; }
+        .info-note { background: rgba(253,203,110,0.1); padding: 10px; border-radius: 20px; margin-top: 10px; font-size: 0.8rem; color: var(--warning); }
         
-        .requirement-list {
-            background: var(--bg-elevated);
-            border-radius: 28px;
-            padding: 20px;
-            margin: 15px 0;
-        }
-        .requirement-item-serial {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-        }
+        .requirement-list { background: var(--bg-elevated); border-radius: 28px; padding: 20px; margin: 15px 0; }
+        .requirement-item-serial { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .requirement-item-serial:last-child { border-bottom: none; }
         .req-check { width: 28px; text-align: center; }
-        .fee-breakdown {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .form-input {
-            width: 100%;
-            padding: 14px 18px;
-            background: #000;
-            border: 1px solid var(--border);
-            border-radius: 60px;
-            color: white;
-            margin: 10px 0;
-            transition: 0.2s;
-        }
-        .form-input:focus {
-            border-color: var(--purple);
-            outline: none;
-        }
-        .rules-box {
-            background: var(--bg-card);
-            border-radius: 28px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 1px solid var(--border);
-        }
-        .rules-box h4 {
-            margin-bottom: 16px;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .rule-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
+        .fee-breakdown { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .form-input { width: 100%; padding: 14px 18px; background: #000; border: 1px solid var(--border); border-radius: 60px; color: white; margin: 10px 0; transition: 0.2s; }
+        .form-input:focus { border-color: var(--purple); outline: none; }
+        .rules-box { background: var(--bg-card); border-radius: 28px; padding: 20px; margin-top: 20px; border: 1px solid var(--border); }
+        .rules-box h4 { margin-bottom: 16px; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .rule-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; color: var(--text-secondary); font-size: 0.9rem; }
         
-        .withdraw-btn {
-            background: linear-gradient(90deg, var(--purple), var(--blue));
-            color: white;
-            font-weight: bold;
-            padding: 16px;
-            border-radius: 60px;
-            width: 100%;
-            border: none;
-            margin-top: 20px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: all 0.2s;
-        }
-        .withdraw-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(108,92,231,0.4);
-        }
-        .withdraw-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .referral-professional {
-            background: linear-gradient(145deg, #141414, #0c0c0c);
-            border-radius: 32px;
-            padding: 28px;
-            text-align: center;
-        }
-        .referral-code-display {
-            background: #000;
-            padding: 14px;
-            border-radius: 60px;
-            margin: 20px 0;
-            word-break: break-all;
-            font-size: 0.85rem;
-            font-family: monospace;
-        }
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-        .btn-primary {
-            background: var(--purple);
-            padding: 12px 20px;
-            border-radius: 60px;
-            border: none;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-primary:hover {
-            opacity: 0.9;
-            transform: scale(0.98);
-        }
-        .friend-card {
-            background: var(--bg-elevated);
-            border-radius: 24px;
-            padding: 16px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .status-message {
-            padding: 12px 16px;
-            border-radius: 60px;
-            margin: 10px 0;
-            font-size: 0.85rem;
-            text-align: center;
-        }
-        .status-success {
-            background: rgba(0,184,148,0.15);
-            color: var(--success);
-            border-left: 3px solid var(--success);
-        }
-        .status-error {
-            background: rgba(214,48,49,0.15);
-            color: var(--error);
-            border-left: 3px solid var(--error);
-        }
-        .info-card {
-            background: var(--bg-card);
-            border-radius: 28px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border);
-        }
-        .info-card .support-link {
-            color: var(--blue);
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top:0; left:0; right:0; bottom:0;
-            background: rgba(0,0,0,0.95);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
-        }
+        .withdraw-btn { background: linear-gradient(90deg, var(--purple), var(--blue)); color: white; font-weight: bold; padding: 16px; border-radius: 60px; width: 100%; border: none; margin-top: 20px; cursor: pointer; font-size: 1.1rem; transition: all 0.2s; }
+        .withdraw-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(108,92,231,0.4); }
+        .withdraw-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .referral-professional { background: linear-gradient(145deg, #141414, #0c0c0c); border-radius: 32px; padding: 28px; text-align: center; }
+        .referral-code-display { background: #000; padding: 14px; border-radius: 60px; margin: 20px 0; word-break: break-all; font-size: 0.85rem; font-family: monospace; }
+        .btn-group { display: flex; gap: 12px; justify-content: center; }
+        .btn-primary { background: var(--purple); padding: 12px 20px; border-radius: 60px; border: none; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { opacity: 0.9; transform: scale(0.98); }
+        .friend-card { background: var(--bg-elevated); border-radius: 24px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .status-message { padding: 12px 16px; border-radius: 60px; margin: 10px 0; font-size: 0.85rem; text-align: center; }
+        .status-success { background: rgba(0,184,148,0.15); color: var(--success); border-left: 3px solid var(--success); }
+        .status-error { background: rgba(214,48,49,0.15); color: var(--error); border-left: 3px solid var(--error); }
+        .info-card { background: var(--bg-card); border-radius: 28px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); }
+        .info-card .support-link { color: var(--blue); text-decoration: none; cursor: pointer; }
+        .modal { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .modal.active { display: flex; }
-        .modal-content {
-            background: var(--bg-card);
-            border-radius: 48px;
-            padding: 32px;
-            width: 90%;
-            max-width: 340px;
-            text-align: center;
-        }
-        .modal-btn {
-            padding: 12px 20px;
-            border-radius: 60px;
-            margin: 8px;
-            background: #333;
-            border: none;
-            color: white;
-            cursor: pointer;
-        }
-        .loading-spinner {
-            position: fixed;
-            top:0; left:0; right:0; bottom:0;
-            background: #000000cc;
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            color: var(--text-secondary);
-        }
-        .withdrawal-history-card {
-            background: var(--bg-elevated);
-            border-radius: 24px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--purple);
-        }
-        .history-status {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
+        .modal-content { background: var(--bg-card); border-radius: 48px; padding: 32px; width: 90%; max-width: 340px; text-align: center; }
+        .modal-btn { padding: 12px 20px; border-radius: 60px; margin: 8px; background: #333; border: none; color: white; cursor: pointer; }
+        .loading-spinner { position: fixed; top:0; left:0; right:0; bottom:0; background: #000000cc; z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        .back-button { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 20px; color: var(--text-secondary); }
+        .withdrawal-history-card { background: var(--bg-elevated); border-radius: 24px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--purple); }
+        .history-status { display: inline-block; padding: 4px 12px; border-radius: 40px; font-size: 0.7rem; font-weight: bold; }
         .status-pending { background: #f39c12; color: black; }
         .status-approved { background: #00b894; color: white; }
         .status-rejected { background: #e74c3c; color: white; }
-        .withdraw-id {
-            font-family: monospace;
-            background: #00000055;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-        }
-        .referral-code-modal {
-            position: fixed;
-            top:0; left:0; right:0; bottom:0;
-            background: rgba(0,0,0,0.96);
-            backdrop-filter: blur(20px);
-            z-index: 2500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .referral-code-card {
-            background: var(--bg-card);
-            border-radius: 48px;
-            padding: 32px;
-            width: 100%;
-            max-width: 360px;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-        .referral-code-card input {
-            width: 100%;
-            padding: 14px;
-            background: #000;
-            border: 1px solid var(--border);
-            border-radius: 60px;
-            color: white;
-            margin: 20px 0;
-            font-size: 1rem;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-        .skip-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            margin-top: 10px;
-        }
-        @media (max-width: 480px) {
-            .step-btn { width: 100%; max-width: 60px; height: 65px; font-size: 0.7rem; }
-            .steps-container { gap: 8px; }
-            .lang-btn span { display: none; }
-        }
+        .withdraw-id { font-family: monospace; background: #00000055; padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; }
+        .referral-code-modal { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 2500; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .referral-code-card { background: var(--bg-card); border-radius: 48px; padding: 32px; width: 100%; max-width: 360px; text-align: center; border: 1px solid var(--border); }
+        .referral-code-card input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); border-radius: 60px; color: white; margin: 20px 0; font-size: 1rem; text-align: center; letter-spacing: 2px; }
+        .skip-btn { background: transparent; border: 1px solid var(--border); margin-top: 10px; }
+        @media (max-width: 480px) { .step-btn { width: 100%; max-width: 60px; height: 65px; font-size: 0.7rem; } .steps-container { gap: 8px; } .lang-btn span { display: none; } }
     </style>
 </head>
 <body>
@@ -710,7 +212,7 @@
             <div class="back-button" id="tasksBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Back to Home</span></div>
             <h3 style="margin-bottom:20px;" data-i18n="high_value_tasks">High Value Tasks</h3>
             
-            <!-- 10‑Link Challenge -->
+            <!-- 10‑Link Challenge (Pure Links) -->
             <div class="task-card">
                 <div class="task-header"><span><i class="fas fa-link"></i> <span data-i18n="link_challenge">10‑Link Challenge</span></span><span class="task-reward">$0.011</span></div>
                 <div class="chrome-required"><i class="fab fa-chrome"></i> <span data-i18n="chrome_required">⚠️ MUST open with Chrome browser. Stay 10 seconds on each link.</span></div>
@@ -723,17 +225,17 @@
                 <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="cooldown_note">After claiming: 40s cooldown. After every 5 claims: 8 min break. Reward: $0.011</span></div>
             </div>
             
-            <!-- 10‑Step Challenge (Ads + Links) -->
+            <!-- 10‑Step Mixed Challenge (Ads + Links) -->
             <div class="task-card">
-                <div class="task-header"><span><i class="fas fa-tasks"></i> <span data-i18n="video_challenge">10‑Step Challenge</span></span><span class="task-reward">$0.011</span></div>
-                <div class="chrome-required"><i class="fab fa-chrome"></i> <span data-i18n="video_chrome">⚠️ Link steps (4,5,9,10) require Chrome browser and 10 seconds stay.</span></div>
-                <div class="warning-text"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="video_warning">Complete each step (ad or link) in order. For link steps, stay 10 seconds on the page.</span></div>
-                <div class="steps-container" id="videoStepsContainer"></div>
-                <div id="videoCooldownArea"></div>
-                <div id="videoBreakArea"></div>
-                <button id="claimVideoRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim $0.011 Reward</button>
-                <div id="videoProgress" class="cooldown-timer"></div>
-                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="video_note">10 steps: ads + links (stay 10s). After claiming: 40s cooldown. After 5 claims: 8 min break. Reward $0.011</span></div>
+                <div class="task-header"><span><i class="fas fa-tasks"></i> <span data-i18n="mixed_challenge">10‑Step Challenge (Ads + Links)</span></span><span class="task-reward">$0.011</span></div>
+                <div class="chrome-required"><i class="fab fa-chrome"></i> <span data-i18n="mixed_chrome">⚠️ Link steps (4,5,9,10) require Chrome browser and 10 seconds stay.</span></div>
+                <div class="warning-text"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="mixed_warning">Complete each step (ad or link) in order. Link steps require 10 seconds on the page.</span></div>
+                <div class="steps-container" id="mixedStepsContainer"></div>
+                <div id="mixedCooldownArea"></div>
+                <div id="mixedBreakArea"></div>
+                <button id="claimMixedRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim $0.011 Reward</button>
+                <div id="mixedProgress" class="cooldown-timer"></div>
+                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="mixed_note">10 steps: ads + links (stay 10s on links). After claiming: 40s cooldown. After 5 claims: 8 min break. Reward $0.011</span></div>
             </div>
             
             <div style="margin:20px 0 10px;"><h4 data-i18n="one_time_rewards">One‑Time Telegram Rewards</h4></div>
@@ -795,50 +297,21 @@
     </div>
 </div>
 
-<!-- First-time Referral Code Modal -->
+<!-- Referral Code Modal -->
 <div id="referralCodeModal" class="referral-code-modal" style="display: none;">
-    <div class="referral-code-card">
-        <i class="fas fa-gift" style="font-size: 3rem; color: var(--gold); margin-bottom: 15px;"></i>
-        <h2 style="margin-bottom: 10px;">Welcome to Earn For Earn!</h2>
-        <p style="margin-bottom: 15px;">Enter a referral code (if you have one) to get a $0.01 bonus. You can also skip.</p>
-        <input type="text" id="referralCodeInput" placeholder="Enter referral code" maxlength="20" autocomplete="off">
-        <button id="submitReferralCodeBtn" class="claim-btn" style="background: var(--purple);">Claim Bonus</button>
-        <button id="skipReferralCodeBtn" class="claim-btn skip-btn" style="background: transparent; color: var(--text-secondary);">Skip for now</button>
-    </div>
+    <div class="referral-code-card"><i class="fas fa-gift" style="font-size: 3rem; color: var(--gold); margin-bottom: 15px;"></i><h2 style="margin-bottom: 10px;">Welcome to Earn For Earn!</h2><p style="margin-bottom: 15px;">Enter a referral code (if you have one) to get a $0.01 bonus.</p><input type="text" id="referralCodeInput" placeholder="Enter referral code" maxlength="20" autocomplete="off"><button id="submitReferralCodeBtn" class="claim-btn" style="background: var(--purple);">Claim Bonus</button><button id="skipReferralCodeBtn" class="claim-btn skip-btn" style="background: transparent; color: var(--text-secondary);">Skip for now</button></div>
 </div>
 
-<!-- Success Modal for Withdrawal -->
-<div class="modal" id="withdrawSuccessModal">
-    <div class="modal-content">
-        <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success); margin-bottom: 15px;"></i>
-        <h3>Withdrawal Request Submitted!</h3>
-        <div id="withdrawSuccessDetails" style="margin: 15px 0; text-align: left; background: #00000033; padding: 12px; border-radius: 24px;"></div>
-        <button class="modal-btn" id="closeSuccessModal" style="background: var(--purple);">OK</button>
-    </div>
-</div>
+<!-- Withdrawal Success Modal -->
+<div class="modal" id="withdrawSuccessModal"><div class="modal-content"><i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success); margin-bottom: 15px;"></i><h3>Withdrawal Request Submitted!</h3><div id="withdrawSuccessDetails" style="margin: 15px 0; text-align: left; background: #00000033; padding: 12px; border-radius: 24px;"></div><button class="modal-btn" id="closeSuccessModal" style="background: var(--purple);">OK</button></div></div>
 
 <!-- Timer & Try Again Modals -->
-<div class="modal" id="timerModal">
-    <div class="modal-content">
-        <h3 data-i18n="stay_on_link">⏳ Stay on Link Page</h3>
-        <div id="timerCountdown" style="font-size:3rem; margin:20px;">10</div>
-        <p data-i18n="timer_instruction">Do not close this window. After 10 seconds, return to app to auto‑unlock next step.</p>
-        <button class="modal-btn" id="cancelTimerBtn" data-i18n="cancel_task">Cancel Task</button>
-    </div>
-</div>
-<div class="modal" id="tryAgainModal">
-    <div class="modal-content">
-        <i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:#e74c3c;"></i>
-        <h3 data-i18n="risk_warning_title">⚠️ Account Risk Warning</h3>
-        <p data-i18n="risk_warning_text">You returned before 10 seconds. Please stay on the link for the full duration.</p>
-        <button class="modal-btn" id="tryAgainRetryBtn" style="background:var(--purple);" data-i18n="try_again">Try Again</button>
-        <button class="modal-btn" id="tryAgainCancelBtn" data-i18n="cancel">Cancel</button>
-    </div>
-</div>
+<div class="modal" id="timerModal"><div class="modal-content"><h3 data-i18n="stay_on_link">⏳ Stay on Link Page</h3><div id="timerCountdown" style="font-size:3rem; margin:20px;">10</div><p data-i18n="timer_instruction">Do not close this window. After 10 seconds, return to app to auto‑unlock next step.</p><button class="modal-btn" id="cancelTimerBtn" data-i18n="cancel_task">Cancel Task</button></div></div>
+<div class="modal" id="tryAgainModal"><div class="modal-content"><i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:#e74c3c;"></i><h3 data-i18n="risk_warning_title">⚠️ Account Risk Warning</h3><p data-i18n="risk_warning_text">You returned before 10 seconds. Please stay on the link for the full duration.</p><button class="modal-btn" id="tryAgainRetryBtn" style="background:var(--purple);" data-i18n="try_again">Try Again</button><button class="modal-btn" id="tryAgainCancelBtn" data-i18n="cancel">Cancel</button></div></div>
 <div class="loading-spinner" id="spinner"><div style="border:3px solid #333; border-top:3px solid var(--purple); width:45px; height:45px; border-radius:50%; animation: spin 1s linear infinite;"></div><p style="margin-top:15px;" data-i18n="loading_ad">Loading ad...</p></div>
 
 <script>
-    // ==================== FIREBASE CONFIG ====================
+    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM",
         authDomain: "earn-for-earn-55d3e.firebaseapp.com",
@@ -851,17 +324,17 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
-    // ==================== TELEGRAM USER ====================
+    // Telegram User
     let webApp = window.Telegram?.WebApp;
     if(webApp) webApp.expand();
     let tgUser = webApp?.initDataUnsafe?.user;
     let telegramId = tgUser?.id ? tgUser.id.toString() : null;
-    let telegramUsername = tgUser?.username || tgUser?.first_name || (telegramId ? "user_" + telegramId : "guest_" + Date.now());
-    if(!telegramId) { telegramId = "guest_" + Date.now(); telegramUsername = "guest_" + Date.now(); }
+    let telegramUsername = tgUser?.username || tgUser?.first_name || (telegramId ? "user_"+telegramId : "guest_"+Date.now());
+    if(!telegramId) { telegramId = "guest_"+Date.now(); telegramUsername = "guest_"+Date.now(); }
     
     // ==================== GLOBALS ====================
     let userData = null;
-    let linkStepsDone = 0, videoStepsDone = 0;
+    let linkStepsDone = 0, mixedStepsDone = 0;
     let pendingStep = null, linkStartTime = 0, linkInterval = null;
     
     const LINK_URLS = [
@@ -877,11 +350,11 @@
         "https://narilyhukelpfulin.com?hTTVD=1246757"
     ];
     
-    // Step types: 10 steps, positions 4,5,9,10 are links (1-indexed, so indices 3,4,8,9)
-    const videoStepsType = ['ad', 'ad', 'ad', 'link', 'link', 'ad', 'ad', 'ad', 'link', 'link'];
+    // Mixed challenge: 10 steps, steps 4,5,9,10 are links (1-indexed -> indices 3,4,8,9)
+    const mixedStepsType = ['ad', 'ad', 'ad', 'link', 'link', 'ad', 'ad', 'ad', 'link', 'link'];
     const adNetworks = ['adsgram', 'monetag', 'adexora'];
     
-    // ==================== COMPLETE MULTILINGUAL TRANSLATIONS ====================
+    // ==================== FULL MULTILINGUAL TRANSLATIONS (6 LANGUAGES) ====================
     const translations = {
         en: {
             loading_initializing: "Initializing system...", loading_ads: "Loading advertisements...", loading_auth: "Connecting to account...", loading_data: "Loading user data...", loading_ready: "Ready to earn!",
@@ -890,7 +363,7 @@
             rule5: "Each link step: stay 10 seconds → auto-unlock next", rule6: "Chrome browser mandatory for link tasks", rule_break: "After 5 completions of a task, 8 minute break applies",
             back_home: "Back to Home", high_value_tasks: "High Value Tasks", link_challenge: "10‑Link Challenge", chrome_required: "⚠️ MUST open with Chrome browser. Stay 10 seconds on each link.",
             link_warning: "Stay on each link for exactly 10 seconds to unlock next step.", claim_reward: "Claim $0.011 Reward", cooldown_note: "After claiming: 40s cooldown. After every 5 claims: 8 min break. Reward: $0.011",
-            video_challenge: "10‑Step Challenge", video_chrome: "⚠️ Link steps (4,5,9,10) require Chrome browser and 10 seconds stay.", video_warning: "Complete each step (ad or link) in order. For link steps, stay 10 seconds on the page.", video_note: "10 steps: ads + links (stay 10s). After claiming: 40s cooldown. After 5 claims: 8 min break. Reward $0.011",
+            mixed_challenge: "10‑Step Challenge (Ads + Links)", mixed_chrome: "⚠️ Link steps (4,5,9,10) require Chrome browser and 10 seconds stay.", mixed_warning: "Complete each step (ad or link) in order. Link steps require 10 seconds on the page.", mixed_note: "10 steps: ads + links (stay 10s on links). After claiming: 40s cooldown. After 5 claims: 8 min break. Reward $0.011",
             one_time_rewards: "One‑Time Telegram Rewards", available_balance: "Available Balance", withdraw_requirements: "Withdrawal Requirements (All must be met)",
             min_balance_label: "Minimum Balance:", min_balance_value: "$0.500", min_refs_label: "Minimum Referrals:", min_refs_value: "3 active referrals",
             amount: "Amount", fee: "Fee (3%)", you_receive: "You Receive", request_withdrawal: "Request Withdrawal", withdrawal_history: "Withdrawal History",
@@ -912,7 +385,7 @@
             rule5: "प्रत्येक लिंक: 10 सेकंड रुकें → अगला अनलॉक", rule6: "लिंक कार्यों के लिए Chrome अनिवार्य", rule_break: "एक कार्य के 5 पूर्ण होने पर, 8 मिनट का ब्रेक लागू होता है",
             back_home: "होम वापस", high_value_tasks: "उच्च मूल्य कार्य", link_challenge: "10-लिंक चैलेंज", chrome_required: "⚠️ Chrome ब्राउज़र से खोलें। प्रत्येक लिंक पर 10 सेकंड रुकें।",
             link_warning: "अगला चरण अनलॉक करने के लिए प्रत्येक लिंक पर ठीक 10 सेकंड रुकें।", claim_reward: "$0.011 दावा करें", cooldown_note: "दावे के बाद: 40 सेकंड कूलडाउन। प्रत्येक 5 दावों के बाद: 8 मिनट ब्रेक। पुरस्कार: $0.011",
-            video_challenge: "10-चरण चैलेंज", video_chrome: "⚠️ लिंक चरण (4,5,9,10) के लिए Chrome ब्राउज़र और 10 सेकंड रुकना आवश्यक है।", video_warning: "प्रत्येक चरण (विज्ञापन या लिंक) क्रम से पूरा करें। लिंक चरणों के लिए, पृष्ठ पर 10 सेकंड रुकें।", video_note: "10 चरण: विज्ञापन + लिंक (10 सेकंड रुकें)। दावे के बाद: 40 सेकंड कूलडाउन। 5 दावों के बाद: 8 मिनट ब्रेक। पुरस्कार $0.011",
+            mixed_challenge: "10-चरण चैलेंज (विज्ञापन + लिंक)", mixed_chrome: "⚠️ लिंक चरण (4,5,9,10) के लिए Chrome ब्राउज़र और 10 सेकंड रुकना आवश्यक है।", mixed_warning: "प्रत्येक चरण (विज्ञापन या लिंक) क्रम से पूरा करें। लिंक चरणों के लिए, पृष्ठ पर 10 सेकंड रुकें।", mixed_note: "10 चरण: विज्ञापन + लिंक (लिंक पर 10 सेकंड रुकें)। दावे के बाद: 40 सेकंड कूलडाउन। 5 दावों के बाद: 8 मिनट ब्रेक। पुरस्कार $0.011",
             one_time_rewards: "एक बार के टेलीग्राम इनाम", available_balance: "उपलब्ध बैलेंस", withdraw_requirements: "निकासी आवश्यकताएँ (सभी पूरी करें)",
             min_balance_label: "न्यूनतम बैलेंस:", min_balance_value: "$0.500", min_refs_label: "न्यूनतम रेफरल:", min_refs_value: "3 सक्रिय रेफरल",
             amount: "राशि", fee: "शुल्क (3%)", you_receive: "आपको मिलेगा", request_withdrawal: "निकासी का अनुरोध करें", withdrawal_history: "निकासी इतिहास",
@@ -934,7 +407,7 @@
             rule5: "প্রতি লিংকে ১০ সেকেন্ড থাকুন → পরবর্তী আনলক", rule6: "লিংক টাস্কের জন্য Chrome প্রয়োজন", rule_break: "একটি কাজের ৫টি সম্পূর্ণ করার পর, ৮ মিনিটের বিরতি প্রযোজ্য",
             back_home: "হোমে ফিরুন", high_value_tasks: "উচ্চ মানের টাস্ক", link_challenge: "১০-লিংক চ্যালেঞ্জ", chrome_required: "⚠️ Chrome ব্রাউজারে খুলুন। প্রতিটি লিংকে ১০ সেকেন্ড থাকুন।",
             link_warning: "পরবর্তী ধাপ আনলক করতে প্রতিটি লিংকে ঠিক ১০ সেকেন্ড থাকুন।", claim_reward: "$০.০১১ দাবি করুন", cooldown_note: "দাবির পরে: ৪০ সেকেন্ড কুলডাউন। প্রতি ৫ দাবির পরে: ৮ মিনিট বিরতি। পুরস্কার: $০.০১১",
-            video_challenge: "১০-পদক্ষেপ চ্যালেঞ্জ", video_chrome: "⚠️ লিংক ধাপ (৪,৫,৯,১০) এর জন্য Chrome ব্রাউজার এবং ১০ সেকেন্ড থাকা প্রয়োজন।", video_warning: "প্রতিটি ধাপ (বিজ্ঞাপন বা লিংক) ক্রমান্বয়ে সম্পন্ন করুন। লিংক ধাপের জন্য, পৃষ্ঠায় ১০ সেকেন্ড থাকুন।", video_note: "১০ ধাপ: বিজ্ঞাপন + লিংক (১০ সেকেন্ড থাকুন)। দাবির পরে: ৪০ সেকেন্ড কুলডাউন। ৫ দাবির পরে: ৮ মিনিট বিরতি। পুরস্কার $০.০১১",
+            mixed_challenge: "১০-পদক্ষেপ চ্যালেঞ্জ (বিজ্ঞাপন + লিংক)", mixed_chrome: "⚠️ লিংক ধাপ (৪,৫,৯,১০) এর জন্য Chrome ব্রাউজার এবং ১০ সেকেন্ড থাকা প্রয়োজন।", mixed_warning: "প্রতিটি ধাপ (বিজ্ঞাপন বা লিংক) ক্রমান্বয়ে সম্পন্ন করুন। লিংক ধাপের জন্য, পৃষ্ঠায় ১০ সেকেন্ড থাকুন।", mixed_note: "১০ ধাপ: বিজ্ঞাপন + লিংক (লিংকে ১০ সেকেন্ড থাকুন)। দাবির পরে: ৪০ সেকেন্ড কুলডাউন। ৫ দাবির পরে: ৮ মিনিট বিরতি। পুরস্কার $০.০১১",
             one_time_rewards: "একবারের টেলিগ্রাম রিওয়ার্ড", available_balance: "উপলব্ধ ব্যালেন্স", withdraw_requirements: "টাকা তোলার শর্ত (সব পূরণ করুন)",
             min_balance_label: "ন্যূনতম ব্যালেন্স:", min_balance_value: "$0.৫০০", min_refs_label: "ন্যূনতম রেফারেল:", min_refs_value: "৩ সক্রিয় রেফারেল",
             amount: "পরিমাণ", fee: "ফি (৩%)", you_receive: "আপনি পাবেন", request_withdrawal: "উত্তোলনের অনুরোধ করুন", withdrawal_history: "উত্তোলনের ইতিহাস",
@@ -956,7 +429,7 @@
             rule5: "Cada enlace: permanezca 10 segundos → desbloqueo automático", rule6: "Navegador Chrome obligatorio para tareas de enlace", rule_break: "Después de 5 finalizaciones de una tarea, se aplica un descanso de 8 minutos",
             back_home: "Volver al Inicio", high_value_tasks: "Tareas de Alto Valor", link_challenge: "Desafío de 10 Enlaces", chrome_required: "⚠️ ABRIR con Chrome. Permanezca 10 segundos en cada enlace.",
             link_warning: "Permanezca exactamente 10 segundos en cada enlace para desbloquear el siguiente paso.", claim_reward: "Reclamar $0.011", cooldown_note: "Después de reclamar: 40s de enfriamiento. Cada 5 reclamos: descanso de 8 min. Recompensa: $0.011",
-            video_challenge: "Desafío de 10 Pasos", video_chrome: "⚠️ Los pasos de enlace (4,5,9,10) requieren el navegador Chrome y permanecer 10 segundos.", video_warning: "Complete cada paso (anuncio o enlace) en orden. Para los pasos de enlace, permanezca 10 segundos en la página.", video_note: "10 pasos: anuncios + enlaces (permanezca 10s). Después de reclamar: 40s de enfriamiento. Cada 5 reclamos: descanso de 8 min. Recompensa $0.011",
+            mixed_challenge: "Desafío de 10 Pasos (Anuncios + Enlaces)", mixed_chrome: "⚠️ Los pasos de enlace (4,5,9,10) requieren el navegador Chrome y permanecer 10 segundos.", mixed_warning: "Complete cada paso (anuncio o enlace) en orden. Para los pasos de enlace, permanezca 10 segundos en la página.", mixed_note: "10 pasos: anuncios + enlaces (permanezca 10s en enlaces). Después de reclamar: 40s de enfriamiento. Cada 5 reclamos: descanso de 8 min. Recompensa $0.011",
             one_time_rewards: "Recompensas Únicas de Telegram", available_balance: "Saldo Disponible", withdraw_requirements: "Requisitos de Retiro (Todos deben cumplirse)",
             min_balance_label: "Saldo Mínimo:", min_balance_value: "$0.500", min_refs_label: "Referidos Mínimos:", min_refs_value: "3 referidos activos",
             amount: "Monto", fee: "Tarifa (3%)", you_receive: "Usted Recibe", request_withdrawal: "Solicitar Retiro", withdrawal_history: "Historial de Retiros",
@@ -978,7 +451,7 @@
             rule5: "كل رابط: ابق 10 ثوانٍ → فتح تلقائي", rule6: "متصفح Chrome إلزامي لمهام الروابط", rule_break: "بعد 5 إكمالات لمهمة، يتم تطبيق استراحة لمدة 8 دقائق",
             back_home: "العودة للرئيسية", high_value_tasks: "مهام عالية القيمة", link_challenge: "تحدي 10 روابط", chrome_required: "⚠️ افتح مع Chrome. ابق 10 ثوانٍ على كل رابط.",
             link_warning: "ابق على كل رابط لمدة 10 ثوانٍ بالضبط لفتح الخطوة التالية.", claim_reward: "استلم $0.011", cooldown_note: "بعد المطالبة: 40 ثانية تهدئة. بعد كل 5 مطالبات: استراحة 8 دقائق. المكافأة: $0.011",
-            video_challenge: "تحدي 10 خطوات", video_chrome: "⚠️ خطوات الروابط (4،5،9،10) تتطلب متصفح Chrome والبقاء 10 ثوانٍ.", video_warning: "أكمل كل خطوة (إعلان أو رابط) بالترتيب. بالنسبة لخطوات الروابط، ابق 10 ثوانٍ على الصفحة.", video_note: "10 خطوات: إعلانات + روابط (ابق 10 ثوانٍ). بعد المطالبة: 40 ثانية تهدئة. بعد 5 مطالبات: استراحة 8 دقائق. المكافأة $0.011",
+            mixed_challenge: "تحدي 10 خطوات (إعلانات + روابط)", mixed_chrome: "⚠️ خطوات الروابط (4،5،9،10) تتطلب متصفح Chrome والبقاء 10 ثوانٍ.", mixed_warning: "أكمل كل خطوة (إعلان أو رابط) بالترتيب. بالنسبة لخطوات الروابط، ابق 10 ثوانٍ على الصفحة.", mixed_note: "10 خطوات: إعلانات + روابط (ابق 10 ثوانٍ على الروابط). بعد المطالبة: 40 ثانية تهدئة. بعد 5 مطالبات: استراحة 8 دقائق. المكافأة $0.011",
             one_time_rewards: "مكافآت تليغرام لمرة واحدة", available_balance: "الرصيد المتاح", withdraw_requirements: "متطلبات السحب (يجب تحقيق الكل)",
             min_balance_label: "الحد الأدنى للرصيد:", min_balance_value: "$0.500", min_refs_label: "الحد الأدنى للإحالات:", min_refs_value: "3 إحالات نشطة",
             amount: "المبلغ", fee: "الرسوم (3%)", you_receive: "ستستلم", request_withdrawal: "طلب سحب", withdrawal_history: "سجل السحوبات",
@@ -1000,7 +473,7 @@
             rule5: "Chaque lien: rester 10 secondes → déverrouillage automatique", rule6: "Navigateur Chrome obligatoire pour les tâches de lien", rule_break: "Après 5 achèvements d'une tâche, une pause de 8 minutes s'applique",
             back_home: "Retour à l'Accueil", high_value_tasks: "Tâches à Haute Valeur", link_challenge: "Défi 10 Liens", chrome_required: "⚠️ OUVREZ avec Chrome. Restez 10 secondes sur chaque lien.",
             link_warning: "Restez exactement 10 secondes sur chaque lien pour débloquer l'étape suivante.", claim_reward: "Réclamer $0.011", cooldown_note: "Après réclamation: 40s de refroidissement. Toutes les 5 réclamations: pause de 8 min. Récompense: $0.011",
-            video_challenge: "Défi 10 Étapes", video_chrome: "⚠️ Les étapes de lien (4,5,9,10) nécessitent le navigateur Chrome et 10 secondes d'attente.", video_warning: "Complétez chaque étape (publicité ou lien) dans l'ordre. Pour les étapes de lien, restez 10 secondes sur la page.", video_note: "10 étapes: publicités + liens (rester 10s). Après réclamation: 40s de refroidissement. Toutes les 5 réclamations: pause de 8 min. Récompense $0.011",
+            mixed_challenge: "Défi 10 Étapes (Publicités + Liens)", mixed_chrome: "⚠️ Les étapes de lien (4,5,9,10) nécessitent le navigateur Chrome et 10 secondes d'attente.", mixed_warning: "Complétez chaque étape (publicité ou lien) dans l'ordre. Pour les étapes de lien, restez 10 secondes sur la page.", mixed_note: "10 étapes: publicités + liens (rester 10s sur les liens). Après réclamation: 40s de refroidissement. Toutes les 5 réclamations: pause de 8 min. Récompense $0.011",
             one_time_rewards: "Récompenses Telegram Unique", available_balance: "Solde Disponible", withdraw_requirements: "Conditions de Retrait (Toutes doivent être remplies)",
             min_balance_label: "Solde Minimum:", min_balance_value: "$0.500", min_refs_label: "Références Minimum:", min_refs_value: "3 références actives",
             amount: "Montant", fee: "Frais (3%)", you_receive: "Vous Recevez", request_withdrawal: "Demander un Retrait", withdrawal_history: "Historique des Retraits",
@@ -1035,8 +508,8 @@
         document.getElementById('currentLangLabel').innerText = langNames[currentLang] || 'English';
         const claimLink = document.getElementById('claimLinkRewardBtn');
         if(claimLink && t.claim_reward) claimLink.innerText = t.claim_reward;
-        const claimVideo = document.getElementById('claimVideoRewardBtn');
-        if(claimVideo && t.claim_reward) claimVideo.innerText = t.claim_reward;
+        const claimMixed = document.getElementById('claimMixedRewardBtn');
+        if(claimMixed && t.claim_reward) claimMixed.innerText = t.claim_reward;
         const withdrawBtn = document.getElementById('submitWithdrawBtn');
         if(withdrawBtn && t.request_withdrawal) withdrawBtn.innerText = t.request_withdrawal;
     }
@@ -1127,28 +600,20 @@
             firstTime = true;
             const refCode = telegramUsername.slice(0,5).toUpperCase() + Math.random().toString(36).substr(2,5).toUpperCase();
             const newUser = {
-                username: telegramUsername,
-                telegramId: telegramId,
-                balance: 0,
-                totalEarned: 0,
-                referralBonus: 0,
-                referrals: [],
-                referralCode: refCode,
-                referralBonusApplied: false,
+                username: telegramUsername, telegramId, balance: 0, totalEarned: 0, referralBonus: 0, referrals: [], referralCode: refCode, referralBonusApplied: false,
                 createdAt: Date.now(),
                 linkTask: { steps: 0, completionsCount: 0, cooldownUntil: 0, breakUntil: 0 },
-                videoTask: { steps: 0, completionsCount: 0, cooldownUntil: 0, breakUntil: 0 },
-                oneTimeTasks: { telegramUpdate: false, telegramProof: false },
-                withdrawalHistory: []
+                mixedTask: { steps: 0, completionsCount: 0, cooldownUntil: 0, breakUntil: 0 },
+                oneTimeTasks: { telegramUpdate: false, telegramProof: false }, withdrawalHistory: []
             };
             await db.ref(`users/${telegramId}`).set(newUser);
             data = newUser;
         }
         if(!data.linkTask) data.linkTask = { steps:0, completionsCount:0, cooldownUntil:0, breakUntil:0 };
-        if(!data.videoTask) data.videoTask = { steps:0, completionsCount:0, cooldownUntil:0, breakUntil:0 };
+        if(!data.mixedTask) data.mixedTask = { steps:0, completionsCount:0, cooldownUntil:0, breakUntil:0 };
         userData = data;
-        linkStepsDone = userData.linkTask?.steps || 0;
-        videoStepsDone = userData.videoTask?.steps || 0;
+        linkStepsDone = userData.linkTask.steps;
+        mixedStepsDone = userData.mixedTask.steps;
         if(firstTime && !userData.referralBonusApplied) {
             document.getElementById('referralCodeModal').style.display = 'flex';
         } else {
@@ -1163,15 +628,15 @@
             if(snap.exists()) {
                 userData = snap.val();
                 if(!userData.linkTask) userData.linkTask = { steps:0, completionsCount:0, cooldownUntil:0, breakUntil:0 };
-                if(!userData.videoTask) userData.videoTask = { steps:0, completionsCount:0, cooldownUntil:0, breakUntil:0 };
+                if(!userData.mixedTask) userData.mixedTask = { steps:0, completionsCount:0, cooldownUntil:0, breakUntil:0 };
                 linkStepsDone = userData.linkTask.steps;
-                videoStepsDone = userData.videoTask.steps;
+                mixedStepsDone = userData.mixedTask.steps;
                 refreshUI();
             }
         });
     }
     
-    function startCountdown(elementId, endTime, prefix) {
+    function startCountdown(elementId, endTime, prefix, isBreak = false) {
         const element = document.getElementById(elementId);
         if(!element) return;
         const update = () => {
@@ -1183,7 +648,7 @@
             const seconds = Math.ceil(remaining/1000);
             const minutes = Math.floor(seconds/60);
             const secs = seconds % 60;
-            element.innerHTML = `<div class="${prefix === 'Break' ? 'break-timer' : 'cooldown-timer'}">${prefix}: ${minutes>0?minutes+'m ':''}${secs}s</div>`;
+            element.innerHTML = `<div class="${isBreak ? 'break-timer' : 'cooldown-timer'}">${prefix}: ${minutes>0?minutes+'m ':''}${secs}s</div>`;
             setTimeout(update, 500);
         };
         update();
@@ -1201,7 +666,7 @@
         document.getElementById('referralCodeDisplay').innerHTML = userData.referralCode || '';
         
         renderLinkTaskUI();
-        renderVideoTaskUI();
+        renderMixedTaskUI();
         renderTelegramTasks();
         renderReferralsList();
         updateWithdrawalRequirements();
@@ -1209,7 +674,7 @@
         displayWithdrawalHistory();
     }
     
-    // ==================== LINK TASK ====================
+    // ==================== 10-LINK CHALLENGE ====================
     function renderLinkTaskUI() {
         const task = userData.linkTask;
         const cooldownEnd = task.cooldownUntil || 0;
@@ -1246,7 +711,7 @@
         
         if(inCooldown) startCountdown('linkCooldownArea', cooldownEnd, 'Cooldown');
         else document.getElementById('linkCooldownArea').innerHTML = '';
-        if(inBreak) startCountdown('linkBreakArea', breakEnd, 'Break');
+        if(inBreak) startCountdown('linkBreakArea', breakEnd, 'Break', true);
         else document.getElementById('linkBreakArea').innerHTML = '';
     }
     
@@ -1318,28 +783,20 @@
         const reward = 0.011;
         const newCompletions = (task.completionsCount || 0) + 1;
         let newBreakUntil = task.breakUntil;
-        if(newCompletions % 5 === 0) {
-            newBreakUntil = Date.now() + 8 * 60 * 1000;
-        }
+        if(newCompletions % 5 === 0) newBreakUntil = Date.now() + 8 * 60 * 1000;
         const newBal = (userData.balance||0) + reward;
         await updateUser({
-            balance: newBal,
-            totalEarned: (userData.totalEarned||0) + reward,
-            linkTask: {
-                steps: 0,
-                completionsCount: newCompletions,
-                cooldownUntil: Date.now() + 40000,
-                breakUntil: newBreakUntil
-            }
+            balance: newBal, totalEarned: (userData.totalEarned||0) + reward,
+            linkTask: { steps: 0, completionsCount: newCompletions, cooldownUntil: Date.now() + 40000, breakUntil: newBreakUntil }
         });
         linkStepsDone = 0;
         showStatus(`Reward claimed! +$${reward.toFixed(3)} ${newCompletions%5===0?'8 min break activated.':''}`, 'success');
         refreshUI();
     }
     
-    // ==================== VIDEO TASK (10-STEP) ====================
-    function renderVideoTaskUI() {
-        const task = userData.videoTask;
+    // ==================== MIXED 10-STEP CHALLENGE (ADS + LINKS) ====================
+    function renderMixedTaskUI() {
+        const task = userData.mixedTask;
         const cooldownEnd = task.cooldownUntil || 0;
         const breakEnd = task.breakUntil || 0;
         const inBreak = breakEnd > Date.now();
@@ -1349,40 +806,40 @@
         let html = '';
         for(let i=1;i<=10;i++) {
             let cls = 'step-btn';
-            if(videoStepsDone >= i) cls += ' completed';
-            else if(videoStepsDone+1 === i && canStart) cls += ' active-step';
+            if(mixedStepsDone >= i) cls += ' completed';
+            else if(mixedStepsDone+1 === i && canStart) cls += ' active-step';
             else cls += ' locked';
-            let icon = videoStepsType[i-1] === 'link' ? 'fa-link' : 'fa-play-circle';
-            html += `<div class="${cls}" data-videostep="${i}"><i class="fas ${icon}"></i><span>${i}</span></div>`;
+            let icon = mixedStepsType[i-1] === 'link' ? 'fa-link' : 'fa-play-circle';
+            html += `<div class="${cls}" data-mixedstep="${i}"><i class="fas ${icon}"></i><span>${i}</span></div>`;
         }
-        document.getElementById('videoStepsContainer').innerHTML = html;
-        const claimBtn = document.getElementById('claimVideoRewardBtn');
-        const canClaim = (videoStepsDone >= 10) && !inBreak && (cooldownEnd <= Date.now());
+        document.getElementById('mixedStepsContainer').innerHTML = html;
+        const claimBtn = document.getElementById('claimMixedRewardBtn');
+        const canClaim = (mixedStepsDone >= 10) && !inBreak && (cooldownEnd <= Date.now());
         claimBtn.style.display = canClaim ? 'block' : 'none';
-        document.getElementById('videoProgress').innerHTML = `${videoStepsDone}/10 steps | Completions: ${task.completionsCount||0}`;
+        document.getElementById('mixedProgress').innerHTML = `${mixedStepsDone}/10 steps | Completions: ${task.completionsCount||0}`;
         
-        document.querySelectorAll('#videoStepsContainer .step-btn').forEach(btn=>{
+        document.querySelectorAll('#mixedStepsContainer .step-btn').forEach(btn=>{
             btn.onclick = async()=>{
-                let step = parseInt(btn.dataset.videostep);
-                if(videoStepsDone >= step) return;
-                if(videoStepsDone+1 !== step){ showStatus('Complete previous steps first', 'error'); return; }
+                let step = parseInt(btn.dataset.mixedstep);
+                if(mixedStepsDone >= step) return;
+                if(mixedStepsDone+1 !== step){ showStatus('Complete previous steps first', 'error'); return; }
                 if(inBreak){ showStatus(`Break active for ${Math.ceil((breakEnd-Date.now())/60000)} min`, 'error'); return; }
                 if(inCooldown){ showStatus('Cooldown active', 'error'); return; }
-                startVideoStep(step);
+                startMixedStep(step);
             };
         });
-        if(claimBtn) claimBtn.onclick = () => claimVideoReward();
+        if(claimBtn) claimBtn.onclick = () => claimMixedReward();
         
-        if(inCooldown) startCountdown('videoCooldownArea', cooldownEnd, 'Cooldown');
-        else document.getElementById('videoCooldownArea').innerHTML = '';
-        if(inBreak) startCountdown('videoBreakArea', breakEnd, 'Break');
-        else document.getElementById('videoBreakArea').innerHTML = '';
+        if(inCooldown) startCountdown('mixedCooldownArea', cooldownEnd, 'Cooldown');
+        else document.getElementById('mixedCooldownArea').innerHTML = '';
+        if(inBreak) startCountdown('mixedBreakArea', breakEnd, 'Break', true);
+        else document.getElementById('mixedBreakArea').innerHTML = '';
     }
     
-    async function startVideoStep(step) {
-        const stepType = videoStepsType[step-1];
+    async function startMixedStep(step) {
+        const stepType = mixedStepsType[step-1];
         if(stepType === 'link') {
-            pendingStep = { type: 'video', step: step };
+            pendingStep = { type: 'mixed', step: step };
             const modal = document.getElementById('timerModal');
             const timerDisp = document.getElementById('timerCountdown');
             let sec = 10;
@@ -1394,18 +851,18 @@
             window.open(link, '_blank');
             linkStartTime = Date.now();
             const onVisibility = () => {
-                if (!document.hidden && pendingStep && pendingStep.type === 'video' && pendingStep.step === step) {
+                if (!document.hidden && pendingStep && pendingStep.type === 'mixed' && pendingStep.step === step) {
                     const elapsed = (Date.now() - linkStartTime) / 1000;
                     if (elapsed >= 10) {
                         if(linkInterval) clearInterval(linkInterval);
                         hideModal(modal);
                         document.removeEventListener('visibilitychange', onVisibility);
-                        completeVideoStep(step);
+                        completeMixedStep(step);
                     } else {
                         if(linkInterval) clearInterval(linkInterval);
                         hideModal(modal);
                         document.removeEventListener('visibilitychange', onVisibility);
-                        showRiskWarning(() => startVideoStep(step));
+                        showRiskWarning(() => startMixedStep(step));
                     }
                     pendingStep = null;
                 }
@@ -1425,62 +882,59 @@
                 const adType = adNetworks[adIndex];
                 let completed = false;
                 if(adType === 'adsgram') {
-                    const ctrl = window.Adsgram?.init({ blockId: "int-28543" });
-                    if(ctrl) { await ctrl.show(); completed = true; }
+                    if(window.Adsgram) {
+                        const ctrl = window.Adsgram.init({ blockId: "int-28543" });
+                        if(ctrl) { await ctrl.show(); completed = true; }
+                    } else { console.warn("Adsgram not ready"); }
                 } else if(adType === 'monetag') {
                     if(window.show_10541383) { await window.show_10541383(); completed = true; }
+                    else { console.warn("Monetag not ready"); }
                 } else if(adType === 'adexora') {
                     if(window.showAdexora) { await window.showAdexora(); completed = true; }
+                    else { console.warn("Adexora not ready"); }
                 }
                 showSpinner(false);
                 if(completed) {
-                    completeVideoStep(step);
+                    completeMixedStep(step);
                 } else {
                     showStatus(`Step ${step} failed. Please retry.`, 'error');
                 }
             } catch(err) {
                 showSpinner(false);
-                showStatus(`Step error: ${err.message || 'unknown'}`, 'error');
+                console.error("Ad error:", err);
+                showStatus(`Ad error. Please try again.`, 'error');
             }
         }
     }
     
-    async function completeVideoStep(step) {
-        const ns = videoStepsDone + 1;
-        await updateUser({ videoTask: { ...userData.videoTask, steps: ns } });
-        videoStepsDone = ns;
+    async function completeMixedStep(step) {
+        const ns = mixedStepsDone + 1;
+        await updateUser({ mixedTask: { ...userData.mixedTask, steps: ns } });
+        mixedStepsDone = ns;
         refreshUI();
         showStatus(`Step ${step} completed!`, 'success');
     }
     
-    async function claimVideoReward() {
-        const task = userData.videoTask;
-        if(videoStepsDone < 10) return showStatus('Complete all 10 steps first', 'error');
+    async function claimMixedReward() {
+        const task = userData.mixedTask;
+        if(mixedStepsDone < 10) return showStatus('Complete all 10 steps first', 'error');
         if(task.breakUntil > Date.now()) return showStatus('Break active', 'error');
         if(task.cooldownUntil > Date.now()) return showStatus('Cooldown active', 'error');
         const reward = 0.011;
         const newCompletions = (task.completionsCount || 0) + 1;
         let newBreakUntil = task.breakUntil;
-        if(newCompletions % 5 === 0) {
-            newBreakUntil = Date.now() + 8 * 60 * 1000;
-        }
+        if(newCompletions % 5 === 0) newBreakUntil = Date.now() + 8 * 60 * 1000;
         const newBal = (userData.balance||0) + reward;
         await updateUser({
-            balance: newBal,
-            totalEarned: (userData.totalEarned||0) + reward,
-            videoTask: {
-                steps: 0,
-                completionsCount: newCompletions,
-                cooldownUntil: Date.now() + 40000,
-                breakUntil: newBreakUntil
-            }
+            balance: newBal, totalEarned: (userData.totalEarned||0) + reward,
+            mixedTask: { steps: 0, completionsCount: newCompletions, cooldownUntil: Date.now() + 40000, breakUntil: newBreakUntil }
         });
-        videoStepsDone = 0;
+        mixedStepsDone = 0;
         showStatus(`Reward claimed! +$${reward.toFixed(3)} ${newCompletions%5===0?'8 min break activated.':''}`, 'success');
         refreshUI();
     }
     
-    // ==================== OTHER UI (unchanged from original, but with translations applied) ====================
+    // ==================== OTHER UI FUNCTIONS ====================
     const tgTasks = [
         {id:'telegramUpdate', title:'Join Update Channel', reward:0.003, link:'https://t.me/earnforearnupdate', key:'telegramUpdate'},
         {id:'telegramProof', title:'Join Payment Proof Channel', reward:0.003, link:'https://t.me/earnforearnpaymentproof', key:'telegramProof'}
@@ -1554,23 +1008,12 @@
         if((userData.referrals||[]).length < 3) return showStatus('Need 3 referrals', 'error');
         const fee = amt * 0.03;
         const net = amt - fee;
-        const wid = { 
-            id: Date.now(), 
-            withdrawId: 'WD-' + Date.now().toString().slice(-8) + Math.floor(Math.random()*1000),
-            amount: amt, fee, netAmount: net, method: 'Binance', account: acc,
-            status: 'pending', date: Date.now() 
-        };
+        const wid = { id: Date.now(), withdrawId: 'WD-' + Date.now().toString().slice(-8) + Math.floor(Math.random()*1000), amount: amt, fee, netAmount: net, method: 'Binance', account: acc, status: 'pending', date: Date.now() };
         const newBal = (userData.balance||0) - amt;
         const history = [...(userData.withdrawalHistory||[]), wid];
         await updateUser({ balance: newBal, withdrawalHistory: history });
         const detailsDiv = document.getElementById('withdrawSuccessDetails');
-        detailsDiv.innerHTML = `
-            <div><strong>Withdrawal ID:</strong> ${wid.withdrawId}</div>
-            <div><strong>Amount:</strong> $${amt.toFixed(3)}</div>
-            <div><strong>Fee (3%):</strong> $${fee.toFixed(3)}</div>
-            <div><strong>Net:</strong> $${net.toFixed(3)}</div>
-            <div><strong>Binance:</strong> ${acc}</div>
-        `;
+        detailsDiv.innerHTML = `<div><strong>Withdrawal ID:</strong> ${wid.withdrawId}</div><div><strong>Amount:</strong> $${amt.toFixed(3)}</div><div><strong>Fee (3%):</strong> $${fee.toFixed(3)}</div><div><strong>Net:</strong> $${net.toFixed(3)}</div><div><strong>Binance:</strong> ${acc}</div>`;
         showModal(document.getElementById('withdrawSuccessModal'));
         document.getElementById('binanceAccount').value = '';
         document.getElementById('withdrawAmount').value = '';
@@ -1582,19 +1025,7 @@
         const container = document.getElementById('historyList');
         if(!container) return;
         if(hist.length === 0) { container.innerHTML = '<div class="task-card">No withdrawal requests</div>'; return; }
-        container.innerHTML = hist.slice().reverse().map(w => `
-            <div class="withdrawal-history-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span class="withdraw-id"><i class="fas fa-receipt"></i> ${w.withdrawId}</span>
-                    <span class="history-status status-${w.status}">${w.status.toUpperCase()}</span>
-                </div>
-                <div><strong>Amount:</strong> $${w.amount.toFixed(3)}</div>
-                <div><strong>Fee:</strong> $${w.fee.toFixed(3)}</div>
-                <div><strong>Net:</strong> $${w.netAmount.toFixed(3)}</div>
-                <div><strong>Account:</strong> ${w.account}</div>
-                <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:8px;">${new Date(w.date).toLocaleString()}</div>
-            </div>
-        `).join('');
+        container.innerHTML = hist.slice().reverse().map(w => `<div class="withdrawal-history-card"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><span class="withdraw-id"><i class="fas fa-receipt"></i> ${w.withdrawId}</span><span class="history-status status-${w.status}">${w.status.toUpperCase()}</span></div><div><strong>Amount:</strong> $${w.amount.toFixed(3)}</div><div><strong>Fee:</strong> $${w.fee.toFixed(3)}</div><div><strong>Net:</strong> $${w.netAmount.toFixed(3)}</div><div><strong>Account:</strong> ${w.account}</div><div style="font-size:0.7rem; color:var(--text-secondary); margin-top:8px;">${new Date(w.date).toLocaleString()}</div></div>`).join('');
     }
     
     function switchSection(id) {
@@ -1609,7 +1040,7 @@
     }
     
     document.getElementById('navHome').onclick = ()=>switchSection('homeSection');
-    document.getElementById('navTasks').onclick = ()=>{ switchSection('tasksSection'); renderLinkTaskUI(); renderVideoTaskUI(); renderTelegramTasks(); };
+    document.getElementById('navTasks').onclick = ()=>{ switchSection('tasksSection'); renderLinkTaskUI(); renderMixedTaskUI(); renderTelegramTasks(); };
     document.getElementById('navCashout').onclick = ()=>{ switchSection('cashoutSection'); displayWithdrawalHistory(); updateWithdrawalRequirements(); updateWithdrawCalc(); };
     document.getElementById('navReferral').onclick = ()=>switchSection('referralSection');
     document.getElementById('navInfo').onclick = ()=>switchSection('infoSection');
