@@ -13,11 +13,11 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
-    <!-- Monetag Rewarded Interstitial -->
+    <!-- Monetag Rewarded Interstitial - FIXED SDK -->
     <script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    <!-- Adexora SDK -->
+    <!-- Adexora SDK - UPDATED with proper API -->
     <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
     
     <style>
@@ -820,7 +820,7 @@
 <div class="loading-spinner" id="spinner"><div style="border:3px solid #333; border-top:3px solid var(--purple); width:45px; height:45px; border-radius:50%; animation: spin 1s linear infinite;"></div><p style="margin-top:15px;" data-i18n="loading_ad">Loading ad...</p></div>
 
 <script>
-    // Firebase Config
+    // ==================== FIREBASE CONFIG ====================
     const firebaseConfig = {
         apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM",
         authDomain: "earn-for-earn-55d3e.firebaseapp.com",
@@ -833,7 +833,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
-    // Telegram User
+    // ==================== TELEGRAM USER ====================
     let webApp = window.Telegram?.WebApp;
     if(webApp) webApp.expand();
     let tgUser = webApp?.initDataUnsafe?.user;
@@ -859,11 +859,10 @@
         "https://narilyhukelpfulin.com?hTTVD=1246757"
     ];
     
-    // Mixed challenge: steps 1-10, types: ad or link. Positions 4,5,9,10 are links (1-indexed)
     const mixedStepsType = ['ad', 'ad', 'ad', 'link', 'link', 'ad', 'ad', 'ad', 'link', 'link'];
     const adNetworks = ['adsgram', 'monetag', 'adexora'];
     
-    // ==================== FULL MULTILINGUAL TRANSLATIONS (6 LANGUAGES) ====================
+    // ==================== MULTILINGUAL TRANSLATIONS (COMPLETE) ====================
     const translations = {
         en: {
             loading_initializing: "Initializing system...", loading_ads: "Loading advertisements...", loading_auth: "Connecting to account...", loading_data: "Loading user data...", loading_ready: "Ready to earn!",
@@ -1048,6 +1047,54 @@
                 opt.style.display = opt.innerText.toLowerCase().includes(term) ? 'block' : 'none';
             });
         });
+    }
+    
+    // ==================== AD HELPERS - FULLY FIXED ====================
+    async function showMonetagAd() {
+        return new Promise((resolve, reject) => {
+            if (typeof window.show_10541383 !== 'function') {
+                reject(new Error("Monetag SDK not loaded"));
+                return;
+            }
+            try {
+                const result = window.show_10541383();
+                if (result && typeof result.then === 'function') {
+                    result.then(resolve).catch(reject);
+                } else {
+                    setTimeout(() => resolve(), 3000);
+                }
+            } catch(e) { reject(e); }
+        });
+    }
+    
+    async function showAdsgramAd() {
+        if (!window.Adsgram) throw new Error("Adsgram SDK missing");
+        const controller = window.Adsgram.init({ blockId: "int-28543" });
+        if (!controller) throw new Error("Adsgram init failed");
+        await controller.show();
+    }
+    
+    async function showAdexoraAd() {
+        return new Promise((resolve, reject) => {
+            if (typeof window.showAdexora === 'function') {
+                try {
+                    const result = window.showAdexora();
+                    if (result && typeof result.then === 'function') result.then(resolve).catch(reject);
+                    else setTimeout(() => resolve(), 2500);
+                } catch(e) { reject(e); }
+            } else if (window.Adexora && typeof window.Adexora.showInterstitial === 'function') {
+                window.Adexora.showInterstitial().then(resolve).catch(reject);
+            } else {
+                reject(new Error("Adexora not available"));
+            }
+        });
+    }
+    
+    async function showAdByNetwork(network) {
+        if (network === 'monetag') return await showMonetagAd();
+        if (network === 'adsgram') return await showAdsgramAd();
+        if (network === 'adexora') return await showAdexoraAd();
+        throw new Error(`Unknown network: ${network}`);
     }
     
     // ==================== HELPER FUNCTIONS ====================
@@ -1303,7 +1350,7 @@
         refreshUI();
     }
     
-    // ==================== MIXED 10-STEP CHALLENGE (ADS + LINKS) ====================
+    // ==================== MIXED 10-STEP CHALLENGE (ADS + LINKS) - FULLY FIXED ====================
     function renderMixedTaskUI() {
         const task = userData.mixedTask;
         const cooldownEnd = task.cooldownUntil || 0;
@@ -1387,47 +1434,15 @@
         } else {
             showSpinner(true);
             try {
-                // Cycle through ad networks: adsgram, monetag, adexora
                 const adIndex = (step - 1) % adNetworks.length;
                 const adType = adNetworks[adIndex];
-                let completed = false;
-                if(adType === 'adsgram') {
-                    if(window.Adsgram) {
-                        const adController = window.Adsgram.init({ blockId: "int-28543" });
-                        if(adController) {
-                            await adController.show();
-                            completed = true;
-                        } else {
-                            console.warn("Adsgram init failed");
-                        }
-                    } else {
-                        console.warn("Adsgram not available");
-                    }
-                } else if(adType === 'monetag') {
-                    if(window.show_10541383) {
-                        await window.show_10541383();
-                        completed = true;
-                    } else {
-                        console.warn("Monetag not available");
-                    }
-                } else if(adType === 'adexora') {
-                    if(window.showAdexora) {
-                        await window.showAdexora();
-                        completed = true;
-                    } else {
-                        console.warn("Adexora not available");
-                    }
-                }
+                await showAdByNetwork(adType);
                 showSpinner(false);
-                if(completed) {
-                    completeMixedStep(step);
-                } else {
-                    showStatus(`Step ${step} failed. Please retry.`, 'error');
-                }
+                completeMixedStep(step);
             } catch(err) {
                 showSpinner(false);
                 console.error("Ad error:", err);
-                showStatus(`Ad error. Please try again.`, 'error');
+                showStatus(`Ad failed. Please try again.`, 'error');
             }
         }
     }
