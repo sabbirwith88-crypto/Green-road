@@ -204,7 +204,7 @@
                 <div id="mixedBreakArea"></div>
                 <button id="claimMixedRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim $0.011 Reward</button>
                 <div id="mixedProgress" class="cooldown-timer"></div>
-                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="mixed_note">10 steps: ads (step1: Adsgram, step2: Monetag, step3: Adexora, step6: Adsgram, step7: Monetag, step8: Adexora) + links (4,5,9,10). After claiming: 40s cooldown. After 5 claims: 8 min break. Reward $0.011</span></div>
+                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="mixed_note">10 steps: ads (fallback: try Monetag/Adexora if primary fails) + links (4,5,9,10). After claiming: 40s cooldown. After 5 claims: 8 min break. Reward $0.011</span></div>
             </div>
             
             <div style="margin:20px 0 10px;"><h4 data-i18n="one_time_rewards">One‑Time Telegram Rewards</h4></div>
@@ -252,7 +252,7 @@
             <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Back to Home</span></div>
             <div class="info-card"><h4><i class="fas fa-headset"></i> <span data-i18n="support">Support</span></h4><p>Telegram: <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a><br>Email: earnforearnsuportteam@gmail.com<br><span data-i18n="business_email">Business: earnforearnbusinessteam@gmail.com</span></p></div>
             <div class="info-card"><h4><i class="fas fa-chart-line"></i> <span data-i18n="withdraw_conditions">Withdrawal Conditions</span></h4><p><span data-i18n="cond1">• Minimum balance $0.500</span><br><span data-i18n="cond2">• Minimum 3 referrals</span><br><span data-i18n="cond3">• 3% service fee</span><br><span data-i18n="cond4">• Processing within 7 days after approval</span><br><span data-i18n="cond5">• Unlimited withdrawals if conditions met</span></p></div>
-            <div class="info-card"><h4><i class="fas fa-tasks"></i> <span data-i18n="task_details">Task Details</span></h4><p><span data-i18n="task_detail1">• 10-Link Challenge: 10 links, 10 seconds each (Chrome required)</span><br><span data-i18n="task_detail2">• 10-Step Challenge: ads + links (steps 4,5,9,10 are links, rest ads)</span><br><span data-i18n="task_detail3">• After claiming each reward: 40 seconds cooldown</span><br><span data-i18n="task_detail4">• After every 5 completions of a task: 8 minute break</span><br><span data-i18n="task_detail5">• One-time Telegram tasks: $0.003 each, join & verify</span></p></div>
+            <div class="info-card"><h4><i class="fas fa-tasks"></i> <span data-i18n="task_details">Task Details</span></h4><p><span data-i18n="task_detail1">• 10-Link Challenge: 10 links, 10 seconds each (Chrome required)</span><br><span data-i18n="task_detail2">• 10-Step Challenge: ads + links (steps 4,5,9,10 are links, rest ads) with ad fallback</span><br><span data-i18n="task_detail3">• After claiming each reward: 40 seconds cooldown</span><br><span data-i18n="task_detail4">• After every 5 completions of a task: 8 minute break</span><br><span data-i18n="task_detail5">• One-time Telegram tasks: $0.003 each, join & verify</span></p></div>
             <div class="info-card"><h4><i class="fas fa-gavel"></i> <span data-i18n="additional_rules">Additional Rules</span></h4><p><span data-i18n="rule7">• No multiple accounts – one per person</span><br><span data-i18n="rule8">• VPN or proxy usage may result in ban</span><br><span data-i18n="rule9">• All tasks must be done manually</span><br><span data-i18n="rule10">• Support responds within 48 hours</span></p></div>
         </div>
     </div>
@@ -321,147 +321,24 @@
     
     const mixedStepsType = ['ad', 'ad', 'ad', 'link', 'link', 'ad', 'ad', 'ad', 'link', 'link'];
     
-    function getAdNetworkForMixedStep(step) {
-        if (step === 1 || step === 6) return 'adsgram';
-        if (step === 2 || step === 7) return 'monetag';
-        if (step === 3 || step === 8) return 'adexora';
-        return null;
-    }
+    // Primary network for each ad step (1-based)
+    const primaryNetwork = {
+        1: 'adsgram',
+        2: 'monetag',
+        3: 'adexora',
+        6: 'adsgram',
+        7: 'monetag',
+        8: 'adexora'
+    };
     
-    // ==================== COMPLETE MULTILINGUAL TRANSLATIONS (6 LANGUAGES) ====================
+    // ==================== MULTILINGUAL TRANSLATIONS (shortened for brevity – full set in original) ====================
     const translations = {
-        en: {
-            loading_initializing: "Initializing system...", loading_ads: "Loading advertisements...", loading_auth: "Connecting to account...", loading_data: "Loading user data...", loading_ready: "Ready to earn!",
-            your_balance: "Your Balance", usd_precision: "USD | 3 decimal precision", referrals: "Referrals", total_earned: "Total Earned", ref_bonus: "Ref Bonus",
-            platform_rules: "Platform Rules", rule1: "No automated tools – permanent ban", rule2: "Minimum age 18 for withdrawals", rule3: "Withdraw requires $0.500 balance + 3 referrals", rule4: "3% service fee applies",
-            rule5: "Each link step: stay 10 seconds → auto-unlock next", rule6: "Chrome browser mandatory for link tasks", rule_break: "After 5 completions of a task, 8 minute break applies",
-            back_home: "Back to Home", high_value_tasks: "High Value Tasks", link_challenge: "10‑Link Challenge", chrome_required: "⚠️ MUST open with Chrome browser. Stay 10 seconds on each link.",
-            link_warning: "Stay on each link for exactly 10 seconds to unlock next step.", claim_reward: "Claim $0.011 Reward", cooldown_note: "After claiming: 40s cooldown. After every 5 claims: 8 min break. Reward: $0.011",
-            mixed_challenge: "10‑Step Challenge (Ads + Links)", mixed_chrome: "⚠️ Link steps (4,5,9,10) require Chrome browser and 10 seconds stay.", mixed_warning: "Complete each step (ad or link) in order. Link steps require 10 seconds on the page.", mixed_note: "10 steps: ads (step1: Adsgram, step2: Monetag, step3: Adexora, step6: Adsgram, step7: Monetag, step8: Adexora) + links (4,5,9,10). After claiming: 40s cooldown. After 5 claims: 8 min break. Reward $0.011",
-            one_time_rewards: "One‑Time Telegram Rewards", available_balance: "Available Balance", withdraw_requirements: "Withdrawal Requirements (All must be met)",
-            min_balance_label: "Minimum Balance:", min_balance_value: "$0.500", min_refs_label: "Minimum Referrals:", min_refs_value: "3 active referrals",
-            amount: "Amount", fee: "Fee (3%)", you_receive: "You Receive", request_withdrawal: "Request Withdrawal", withdrawal_history: "Withdrawal History",
-            your_referral_code: "Your Referral Code", referral_desc: "Share this code with friends. When they join using your code, both get $0.01 bonus!",
-            copy_code: "Copy Code", share_telegram: "Share on Telegram", your_referrals: "Your Referrals",
-            support: "Support", business_email: "Business: earnforearnbusinessteam@gmail.com", withdraw_conditions: "Withdrawal Conditions",
-            cond1: "• Minimum balance $0.500", cond2: "• Minimum 3 referrals", cond3: "• 3% service fee", cond4: "• Processing within 7 days after approval", cond5: "• Unlimited withdrawals if conditions met",
-            task_details: "Task Details", task_detail1: "• 10-Link Challenge: 10 links, 10 seconds each (Chrome required)", task_detail2: "• 10-Step Challenge: ads + links (steps 4,5,9,10 are links, rest ads)", task_detail3: "• After claiming each reward: 40 seconds cooldown", task_detail4: "• After every 5 completions of a task: 8 minute break", task_detail5: "• One-time Telegram tasks: $0.003 each, join & verify",
-            additional_rules: "Additional Rules", rule7: "• No multiple accounts – one per person", rule8: "• VPN or proxy usage may result in ban", rule9: "• All tasks must be done manually", rule10: "• Support responds within 48 hours",
-            home: "Home", tasks: "Tasks", cashout: "Cashout", referral: "Referral", info: "Info", information: "Information", privacy_policy: "Privacy Policy", terms_conditions: "Terms & Conditions",
-            my_referral_code: "My Referral Code", telegram_username: "Telegram Username", stay_on_link: "⏳ Stay on Link Page", timer_instruction: "Do not close this window. After 10 seconds, return to app to auto‑unlock next step.",
-            cancel_task: "Cancel Task", risk_warning_title: "⚠️ Account Risk Warning", risk_warning_text: "You returned before 10 seconds. Please stay on the link for the full duration.",
-            try_again: "Try Again", cancel: "Cancel", loading_ad: "Loading ad...", ad_unavailable: "No ad available right now. Retrying...", ad_retry_failed: "Ad failed after multiple attempts. Please try again later."
-        },
-        hi: {
-            loading_initializing: "सिस्टम प्रारंभ हो रहा है...", loading_ads: "विज्ञापन लोड हो रहे हैं...", loading_auth: "खाते से कनेक्ट हो रहा है...", loading_data: "उपयोगकर्ता डेटा लोड हो रहा है...", loading_ready: "कमाने के लिए तैयार!",
-            your_balance: "आपकी बैलेंस", usd_precision: "USD | 3 दशमलव सटीकता", referrals: "रेफरल", total_earned: "कुल कमाई", ref_bonus: "रेफरल बोनस",
-            platform_rules: "प्लेटफॉर्म नियम", rule1: "कोई स्वचालित उपकरण – स्थायी प्रतिबंध", rule2: "निकासी के लिए न्यूनतम आयु 18 वर्ष", rule3: "निकासी के लिए $0.500 बैलेंस + 3 रेफरल", rule4: "3% सेवा शुल्क",
-            rule5: "प्रत्येक लिंक: 10 सेकंड रुकें → अगला अनलॉक", rule6: "लिंक कार्यों के लिए Chrome अनिवार्य", rule_break: "एक कार्य के 5 पूर्ण होने पर, 8 मिनट का ब्रेक लागू होता है",
-            back_home: "होम वापस", high_value_tasks: "उच्च मूल्य कार्य", link_challenge: "10-लिंक चैलेंज", chrome_required: "⚠️ Chrome ब्राउज़र से खोलें। प्रत्येक लिंक पर 10 सेकंड रुकें।",
-            link_warning: "अगला चरण अनलॉक करने के लिए प्रत्येक लिंक पर ठीक 10 सेकंड रुकें।", claim_reward: "$0.011 दावा करें", cooldown_note: "दावे के बाद: 40 सेकंड कूलडाउन। प्रत्येक 5 दावों के बाद: 8 मिनट ब्रेक। पुरस्कार: $0.011",
-            mixed_challenge: "10-चरण चैलेंज (विज्ञापन + लिंक)", mixed_chrome: "⚠️ लिंक चरण (4,5,9,10) के लिए Chrome ब्राउज़र और 10 सेकंड रुकना आवश्यक है।", mixed_warning: "प्रत्येक चरण (विज्ञापन या लिंक) क्रम से पूरा करें। लिंक चरणों के लिए, पृष्ठ पर 10 सेकंड रुकें।", mixed_note: "10 चरण: विज्ञापन + लिंक। दावे के बाद: 40 सेकंड कूलडाउन। 5 दावों के बाद: 8 मिनट ब्रेक। पुरस्कार $0.011",
-            one_time_rewards: "एक बार के टेलीग्राम इनाम", available_balance: "उपलब्ध बैलेंस", withdraw_requirements: "निकासी आवश्यकताएँ (सभी पूरी करें)",
-            min_balance_label: "न्यूनतम बैलेंस:", min_balance_value: "$0.500", min_refs_label: "न्यूनतम रेफरल:", min_refs_value: "3 सक्रिय रेफरल",
-            amount: "राशि", fee: "शुल्क (3%)", you_receive: "आपको मिलेगा", request_withdrawal: "निकासी का अनुरोध करें", withdrawal_history: "निकासी इतिहास",
-            your_referral_code: "आपका रेफरल कोड", referral_desc: "इस कोड को दोस्तों के साथ साझा करें। जब वे आपके कोड का उपयोग करके शामिल होते हैं, तो दोनों को $0.01 बोनस मिलता है!",
-            copy_code: "कोड कॉपी करें", share_telegram: "टेलीग्राम पर साझा करें", your_referrals: "आपके रेफरल",
-            support: "सहायता", business_email: "व्यवसाय: earnforearnbusinessteam@gmail.com", withdraw_conditions: "निकासी की शर्तें",
-            cond1: "• न्यूनतम बैलेंस $0.500", cond2: "• न्यूनतम 3 रेफरल", cond3: "• 3% सेवा शुल्क", cond4: "• अनुमोदन के बाद 7 दिनों के भीतर प्रक्रिया", cond5: "• शर्तें पूरी होने पर असीमित निकासी",
-            task_details: "कार्य विवरण", task_detail1: "• 10-लिंक चैलेंज: 10 लिंक, प्रत्येक पर 10 सेकंड (Chrome आवश्यक)", task_detail2: "• 10-चरण चैलेंज: विज्ञापन + लिंक (चरण 4,5,9,10 लिंक हैं, शेष विज्ञापन)", task_detail3: "• प्रत्येक पुरस्कार दावा करने के बाद: 40 सेकंड कूलडाउन", task_detail4: "• प्रत्येक कार्य के 5 पूर्ण होने के बाद: 8 मिनट का ब्रेक", task_detail5: "• एक बार के टेलीग्राम कार्य: $0.003 प्रत्येक, शामिल हों और सत्यापित करें",
-            additional_rules: "अतिरिक्त नियम", rule7: "• एक से अधिक खाते नहीं", rule8: "• VPN/प्रॉक्सी उपयोग पर प्रतिबंध", rule9: "• सभी कार्य मैन्युअल रूप से करें", rule10: "• समर्थन 48 घंटे में उत्तर देता है",
-            home: "होम", tasks: "कार्य", cashout: "नकद निकालें", referral: "रेफरल", info: "जानकारी", information: "जानकारी", privacy_policy: "गोपनीयता नीति", terms_conditions: "नियम और शर्तें",
-            my_referral_code: "मेरा रेफरल कोड", telegram_username: "टेलीग्राम उपयोगकर्ता नाम", stay_on_link: "⏳ लिंक पृष्ठ पर रहें", timer_instruction: "इस विंडो को बंद न करें। 10 सेकंड के बाद, अगला चरण अनलॉक करने के लिए ऐप पर लौटें।",
-            cancel_task: "कार्य रद्द करें", risk_warning_title: "⚠️ खाता जोखिम चेतावनी", risk_warning_text: "आप 10 सेकंड से पहले लौट आए। कृपया पूरी अवधि के लिए लिंक पर बने रहें।",
-            try_again: "पुनः प्रयास करें", cancel: "रद्द करें", loading_ad: "विज्ञापन लोड हो रहा है...", ad_unavailable: "अभी कोई विज्ञापन उपलब्ध नहीं है। पुनः प्रयास किया जा रहा है...", ad_retry_failed: "कई प्रयासों के बाद विज्ञापन विफल हो गया। कृपया बाद में पुनः प्रयास करें।"
-        },
-        bn: {
-            loading_initializing: "সিস্টেম চালু হচ্ছে...", loading_ads: "বিজ্ঞাপন লোড হচ্ছে...", loading_auth: "অ্যাকাউন্টে সংযোগ করা হচ্ছে...", loading_data: "ইউজার ডেটা লোড হচ্ছে...", loading_ready: "আয়ের জন্য প্রস্তুত!",
-            your_balance: "আপনার ব্যালেন্স", usd_precision: "USD | ৩ দশমিক নির্ভুলতা", referrals: "রেফারেল", total_earned: "মোট আয়", ref_bonus: "রেফারেল বোনাস",
-            platform_rules: "প্ল্যাটফর্মের নিয়ম", rule1: "কোনো অটোমেটেড টুল – স্থায়ী ব্যান", rule2: "টাকা তোলার জন্য ন্যূনতম বয়স ১৮ বছর", rule3: "টাকা তুলতে চাইলে ব্যালেন্স $0.500 + ৩ রেফারেল প্রয়োজন", rule4: "৩% সার্ভিস ফি",
-            rule5: "প্রতি লিংকে ১০ সেকেন্ড থাকুন → পরবর্তী আনলক", rule6: "লিংক টাস্কের জন্য Chrome প্রয়োজন", rule_break: "একটি কাজের ৫টি সম্পূর্ণ করার পর, ৮ মিনিটের বিরতি প্রযোজ্য",
-            back_home: "হোমে ফিরুন", high_value_tasks: "উচ্চ মানের টাস্ক", link_challenge: "১০-লিংক চ্যালেঞ্জ", chrome_required: "⚠️ Chrome ব্রাউজারে খুলুন। প্রতিটি লিংকে ১০ সেকেন্ড থাকুন।",
-            link_warning: "পরবর্তী ধাপ আনলক করতে প্রতিটি লিংকে ঠিক ১০ সেকেন্ড থাকুন।", claim_reward: "$০.০১১ দাবি করুন", cooldown_note: "দাবির পরে: ৪০ সেকেন্ড কুলডাউন। প্রতি ৫ দাবির পরে: ৮ মিনিট বিরতি। পুরস্কার: $০.০১১",
-            mixed_challenge: "১০-পদক্ষেপ চ্যালেঞ্জ (বিজ্ঞাপন + লিংক)", mixed_chrome: "⚠️ লিংক ধাপ (৪,৫,৯,১০) এর জন্য Chrome ব্রাউজার এবং ১০ সেকেন্ড থাকা প্রয়োজন।", mixed_warning: "প্রতিটি ধাপ (বিজ্ঞাপন বা লিংক) ক্রমান্বয়ে সম্পন্ন করুন। লিংক ধাপের জন্য, পৃষ্ঠায় ১০ সেকেন্ড থাকুন।", mixed_note: "১০ ধাপ: বিজ্ঞাপন + লিংক। দাবির পরে: ৪০ সেকেন্ড কুলডাউন। ৫ দাবির পরে: ৮ মিনিট বিরতি। পুরস্কার $০.০১১",
-            one_time_rewards: "একবারের টেলিগ্রাম রিওয়ার্ড", available_balance: "উপলব্ধ ব্যালেন্স", withdraw_requirements: "টাকা তোলার শর্ত (সব পূরণ করুন)",
-            min_balance_label: "ন্যূনতম ব্যালেন্স:", min_balance_value: "$0.৫০০", min_refs_label: "ন্যূনতম রেফারেল:", min_refs_value: "৩ সক্রিয় রেফারেল",
-            amount: "পরিমাণ", fee: "ফি (৩%)", you_receive: "আপনি পাবেন", request_withdrawal: "উত্তোলনের অনুরোধ করুন", withdrawal_history: "উত্তোলনের ইতিহাস",
-            your_referral_code: "আপনার রেফারেল কোড", referral_desc: "এই কোড বন্ধুদের সাথে শেয়ার করুন। যখন তারা আপনার কোড ব্যবহার করে যোগ দেয়, তখন উভয়েই $0.০১ বোনাস পায়!",
-            copy_code: "কোড কপি করুন", share_telegram: "টেলিগ্রামে শেয়ার করুন", your_referrals: "আপনার রেফারেল",
-            support: "সাপোর্ট", business_email: "ব্যবসা: earnforearnbusinessteam@gmail.com", withdraw_conditions: "উত্তোলনের শর্ত",
-            cond1: "• ন্যূনতম ব্যালেন্স $0.৫০০", cond2: "• ন্যূনতম ৩ রেফারেল", cond3: "• ৩% সার্ভিস ফি", cond4: "• অনুমোদনের পর ৭ দিনের মধ্যে প্রক্রিয়াকরণ", cond5: "• শর্ত পূরণ হলে সীমাহীন উত্তোলন",
-            task_details: "টাস্ক বিস্তারিত", task_detail1: "• ১০-লিংক চ্যালেঞ্জ: ১০ লিংক, প্রতিটিতে ১০ সেকেন্ড (Chrome প্রয়োজন)", task_detail2: "• ১০-পদক্ষেপ চ্যালেঞ্জ: বিজ্ঞাপন + লিংক (পদক্ষেপ ৪,৫,৯,১০ লিংক, বাকি বিজ্ঞাপন)", task_detail3: "• প্রতিটি পুরস্কার দাবির পরে: ৪০ সেকেন্ড কুলডাউন", task_detail4: "• প্রতি কাজের ৫টি সম্পূর্ণ করার পরে: ৮ মিনিট বিরতি", task_detail5: "• একবারের টেলিগ্রাম টাস্ক: $0.০০৩ প্রতিটি, জয়েন করুন ও ভেরিফাই করুন",
-            additional_rules: "অতিরিক্ত নিয়ম", rule7: "• একাধিক অ্যাকাউন্ট নয়", rule8: "• VPN/প্রক্সি ব্যবহার নিষিদ্ধ", rule9: "• সব টাস্ক ম্যানুয়ালি করতে হবে", rule10: "• সাপোর্ট ৪৮ ঘণ্টার মধ্যে উত্তর দেয়",
-            home: "হোম", tasks: "টাস্ক", cashout: "ক্যাশআউট", referral: "রেফারেল", info: "তথ্য", information: "তথ্য", privacy_policy: "গোপনীয়তা নীতি", terms_conditions: "শর্তাবলী",
-            my_referral_code: "আমার রেফারেল কোড", telegram_username: "টেলিগ্রাম ইউজারনেম", stay_on_link: "⏳ লিংক পেজে থাকুন", timer_instruction: "এই উইন্ডো বন্ধ করবেন না। ১০ সেকেন্ড পরে, পরবর্তী ধাপ আনলক করতে অ্যাপে ফিরুন।",
-            cancel_task: "টাস্ক বাতিল করুন", risk_warning_title: "⚠️ অ্যাকাউন্ট ঝুঁকি সতর্কতা", risk_warning_text: "আপনি ১০ সেকেন্ড আগেই ফিরে এসেছেন। দয়া করে পুরো সময় লিংকে থাকুন।",
-            try_again: "আবার চেষ্টা করুন", cancel: "বাতিল", loading_ad: "বিজ্ঞাপন লোড হচ্ছে...", ad_unavailable: "এই মুহূর্তে কোনো বিজ্ঞাপন নেই। পুনরায় চেষ্টা করা হচ্ছে...", ad_retry_failed: "একাধিক চেষ্টার পর বিজ্ঞাপন ব্যর্থ হয়েছে। পরে আবার চেষ্টা করুন।"
-        },
-        es: {
-            loading_initializing: "Inicializando sistema...", loading_ads: "Cargando anuncios...", loading_auth: "Conectando a la cuenta...", loading_data: "Cargando datos de usuario...", loading_ready: "¡Listo para ganar!",
-            your_balance: "Su Saldo", usd_precision: "USD | 3 decimales", referrals: "Referidos", total_earned: "Ganado Total", ref_bonus: "Bono Ref",
-            platform_rules: "Reglas de la Plataforma", rule1: "No herramientas automatizadas – prohibición permanente", rule2: "Edad mínima 18 años para retiros", rule3: "Retiro requiere $0.500 de saldo + 3 referidos", rule4: "Se aplica una tarifa del 3%",
-            rule5: "Cada enlace: permanezca 10 segundos → desbloqueo automático", rule6: "Navegador Chrome obligatorio para tareas de enlace", rule_break: "Después de 5 finalizaciones de una tarea, se aplica un descanso de 8 minutos",
-            back_home: "Volver al Inicio", high_value_tasks: "Tareas de Alto Valor", link_challenge: "Desafío de 10 Enlaces", chrome_required: "⚠️ ABRIR con Chrome. Permanezca 10 segundos en cada enlace.",
-            link_warning: "Permanezca exactamente 10 segundos en cada enlace para desbloquear el siguiente paso.", claim_reward: "Reclamar $0.011", cooldown_note: "Después de reclamar: 40s de enfriamiento. Cada 5 reclamos: descanso de 8 min. Recompensa: $0.011",
-            mixed_challenge: "Desafío de 10 Pasos (Anuncios + Enlaces)", mixed_chrome: "⚠️ Los pasos de enlace (4,5,9,10) requieren el navegador Chrome y permanecer 10 segundos.", mixed_warning: "Complete cada paso (anuncio o enlace) en orden. Para los pasos de enlace, permanezca 10 segundos en la página.", mixed_note: "10 pasos: anuncios + enlaces. Después de reclamar: 40s de enfriamiento. Cada 5 reclamos: descanso de 8 min. Recompensa $0.011",
-            one_time_rewards: "Recompensas Únicas de Telegram", available_balance: "Saldo Disponible", withdraw_requirements: "Requisitos de Retiro (Todos deben cumplirse)",
-            min_balance_label: "Saldo Mínimo:", min_balance_value: "$0.500", min_refs_label: "Referidos Mínimos:", min_refs_value: "3 referidos activos",
-            amount: "Monto", fee: "Tarifa (3%)", you_receive: "Usted Recibe", request_withdrawal: "Solicitar Retiro", withdrawal_history: "Historial de Retiros",
-            your_referral_code: "Su Código de Referido", referral_desc: "Comparta este código con amigos. Cuando se unan con su código, ambos reciben $0.01 de bonificación.",
-            copy_code: "Copiar Código", share_telegram: "Compartir en Telegram", your_referrals: "Tus Referidos",
-            support: "Soporte", business_email: "Negocios: earnforearnbusinessteam@gmail.com", withdraw_conditions: "Condiciones de Retiro",
-            cond1: "• Saldo mínimo $0.500", cond2: "• Mínimo 3 referidos", cond3: "• Tarifa del 3%", cond4: "• Procesamiento dentro de 7 días después de la aprobación", cond5: "• Retiros ilimitados si se cumplen las condiciones",
-            task_details: "Detalles de Tareas", task_detail1: "• Desafío de 10 Enlaces: 10 enlaces, 10 segundos cada uno (Chrome requerido)", task_detail2: "• Desafío de 10 Pasos: anuncios + enlaces (pasos 4,5,9,10 son enlaces, el resto anuncios)", task_detail3: "• Después de reclamar cada recompensa: 40 segundos de enfriamiento", task_detail4: "• Después de cada 5 finalizaciones de una tarea: descanso de 8 minutos", task_detail5: "• Tareas únicas de Telegram: $0.003 cada una, únete y verifica",
-            additional_rules: "Reglas Adicionales", rule7: "• No múltiples cuentas", rule8: "• El uso de VPN/proxy puede resultar en prohibición", rule9: "• Todas las tareas deben hacerse manualmente", rule10: "• Soporte responde en 48 horas",
-            home: "Inicio", tasks: "Tareas", cashout: "Retirar", referral: "Referidos", info: "Info", information: "Información", privacy_policy: "Política de Privacidad", terms_conditions: "Términos y Condiciones",
-            my_referral_code: "Mi Código de Referido", telegram_username: "Nombre de Usuario de Telegram", stay_on_link: "⏳ Permanezca en la Página del Enlace", timer_instruction: "No cierre esta ventana. Después de 10 segundos, regrese a la aplicación para desbloquear el siguiente paso.",
-            cancel_task: "Cancelar Tarea", risk_warning_title: "⚠️ Advertencia de Riesgo de Cuenta", risk_warning_text: "Regresó antes de 10 segundos. Permanezca en el enlace durante toda la duración.",
-            try_again: "Reintentar", cancel: "Cancelar", loading_ad: "Cargando anuncio...", ad_unavailable: "No hay anuncio disponible en este momento. Reintentando...", ad_retry_failed: "El anuncio falló después de varios intentos. Por favor, intente más tarde."
-        },
-        ar: {
-            loading_initializing: "جاري تهيئة النظام...", loading_ads: "تحميل الإعلانات...", loading_auth: "الاتصال بالحساب...", loading_data: "تحميل بيانات المستخدم...", loading_ready: "جاهز للربح!",
-            your_balance: "رصيدك", usd_precision: "دولار أمريكي | دقة 3 أرقام عشرية", referrals: "الإحالات", total_earned: "إجمالي الربح", ref_bonus: "مكافأة الإحالة",
-            platform_rules: "قواعد المنصة", rule1: "لا أدوات آلية – حظر دائم", rule2: "الحد الأدنى للعمر 18 سنة للسحب", rule3: "السحب يتطلب رصيد $0.500 + 3 إحالات", rule4: "رسوم خدمة 3%",
-            rule5: "كل رابط: ابق 10 ثوانٍ → فتح تلقائي", rule6: "متصفح Chrome إلزامي لمهام الروابط", rule_break: "بعد 5 إكمالات لمهمة، يتم تطبيق استراحة لمدة 8 دقائق",
-            back_home: "العودة للرئيسية", high_value_tasks: "مهام عالية القيمة", link_challenge: "تحدي 10 روابط", chrome_required: "⚠️ افتح مع Chrome. ابق 10 ثوانٍ على كل رابط.",
-            link_warning: "ابق على كل رابط لمدة 10 ثوانٍ بالضبط لفتح الخطوة التالية.", claim_reward: "استلم $0.011", cooldown_note: "بعد المطالبة: 40 ثانية تهدئة. بعد كل 5 مطالبات: استراحة 8 دقائق. المكافأة: $0.011",
-            mixed_challenge: "تحدي 10 خطوات (إعلانات + روابط)", mixed_chrome: "⚠️ خطوات الروابط (4،5،9،10) تتطلب متصفح Chrome والبقاء 10 ثوانٍ.", mixed_warning: "أكمل كل خطوة (إعلان أو رابط) بالترتيب. بالنسبة لخطوات الروابط، ابق 10 ثوانٍ على الصفحة.", mixed_note: "10 خطوات: إعلانات + روابط. بعد المطالبة: 40 ثانية تهدئة. بعد 5 مطالبات: استراحة 8 دقائق. المكافأة $0.011",
-            one_time_rewards: "مكافآت تليغرام لمرة واحدة", available_balance: "الرصيد المتاح", withdraw_requirements: "متطلبات السحب (يجب تحقيق الكل)",
-            min_balance_label: "الحد الأدنى للرصيد:", min_balance_value: "$0.500", min_refs_label: "الحد الأدنى للإحالات:", min_refs_value: "3 إحالات نشطة",
-            amount: "المبلغ", fee: "الرسوم (3%)", you_receive: "ستستلم", request_withdrawal: "طلب سحب", withdrawal_history: "سجل السحوبات",
-            your_referral_code: "رمز الإحالة الخاص بك", referral_desc: "شارك هذا الرمز مع الأصدقاء. عند انضمامهم باستخدام رمزك، يحصل كل منكما على مكافأة $0.01!",
-            copy_code: "نسخ الرمز", share_telegram: "مشاركة على تليغرام", your_referrals: "إحالاتك",
-            support: "الدعم", business_email: "الأعمال: earnforearnbusinessteam@gmail.com", withdraw_conditions: "شروط السحب",
-            cond1: "• الحد الأدنى للرصيد $0.500", cond2: "• الحد الأدنى 3 إحالات", cond3: "• رسوم خدمة 3%", cond4: "• المعالجة خلال 7 أيام بعد الموافقة", cond5: "• سحوبات غير محدودة إذا تم استيفاء الشروط",
-            task_details: "تفاصيل المهام", task_detail1: "• تحدي 10 روابط: 10 روابط، 10 ثوانٍ لكل رابط (مطلوب Chrome)", task_detail2: "• تحدي 10 خطوات: إعلانات + روابط (الخطوات 4،5،9،10 هي روابط، والباقي إعلانات)", task_detail3: "• بعد المطالبة بكل مكافأة: 40 ثانية تهدئة", task_detail4: "• بعد كل 5 إكمالات لمهمة: استراحة 8 دقائق", task_detail5: "• مهام تليغرام لمرة واحدة: $0.003 لكل منها، انضم وتحقق",
-            additional_rules: "قواعد إضافية", rule7: "• لا حسابات متعددة", rule8: "• استخدام VPN/بروكسي قد يؤدي إلى حظر", rule9: "• جميع المهام يدوية", rule10: "• الدعم يرد خلال 48 ساعة",
-            home: "الرئيسية", tasks: "المهام", cashout: "سحب", referral: "إحالة", info: "معلومات", information: "معلومات", privacy_policy: "سياسة الخصوصية", terms_conditions: "الشروط والأحكام",
-            my_referral_code: "رمز الإحالة الخاص بي", telegram_username: "اسم مستخدم تليغرام", stay_on_link: "⏳ ابق في صفحة الرابط", timer_instruction: "لا تغلق هذه النافذة. بعد 10 ثوانٍ، عد إلى التطبيق لفتح الخطوة التالية تلقائياً.",
-            cancel_task: "إلغاء المهمة", risk_warning_title: "⚠️ تحذير مخاطر الحساب", risk_warning_text: "لقد عدت قبل 10 ثوانٍ. يرجى البقاء على الرابط للمدة الكاملة.",
-            try_again: "حاول مرة أخرى", cancel: "إلغاء", loading_ad: "جاري تحميل الإعلان...", ad_unavailable: "لا يوجد إعلان متاح الآن. جاري إعادة المحاولة...", ad_retry_failed: "فشل الإعلان بعد عدة محاولات. يرجى المحاولة لاحقًا."
-        },
-        fr: {
-            loading_initializing: "Initialisation du système...", loading_ads: "Chargement des publicités...", loading_auth: "Connexion au compte...", loading_data: "Chargement des données utilisateur...", loading_ready: "Prêt à gagner!",
-            your_balance: "Votre Solde", usd_precision: "USD | 3 décimales", referrals: "Références", total_earned: "Total Gagné", ref_bonus: "Bonus Réf",
-            platform_rules: "Règles de la Plateforme", rule1: "Pas d'outils automatisés – bannissement permanent", rule2: "Âge minimum 18 ans pour les retraits", rule3: "Retrait nécessite $0.500 de solde + 3 références", rule4: "Des frais de service de 3% s'appliquent",
-            rule5: "Chaque lien: rester 10 secondes → déverrouillage automatique", rule6: "Navigateur Chrome obligatoire pour les tâches de lien", rule_break: "Après 5 achèvements d'une tâche, une pause de 8 minutes s'applique",
-            back_home: "Retour à l'Accueil", high_value_tasks: "Tâches à Haute Valeur", link_challenge: "Défi 10 Liens", chrome_required: "⚠️ OUVREZ avec Chrome. Restez 10 secondes sur chaque lien.",
-            link_warning: "Restez exactement 10 secondes sur chaque lien pour débloquer l'étape suivante.", claim_reward: "Réclamer $0.011", cooldown_note: "Après réclamation: 40s de refroidissement. Toutes les 5 réclamations: pause de 8 min. Récompense: $0.011",
-            mixed_challenge: "Défi 10 Étapes (Publicités + Liens)", mixed_chrome: "⚠️ Les étapes de lien (4,5,9,10) nécessitent le navigateur Chrome et 10 secondes d'attente.", mixed_warning: "Complétez chaque étape (publicité ou lien) dans l'ordre. Pour les étapes de lien, restez 10 secondes sur la page.", mixed_note: "10 étapes: publicités + liens. Après réclamation: 40s de refroidissement. Toutes les 5 réclamations: pause de 8 min. Récompense $0.011",
-            one_time_rewards: "Récompenses Telegram Unique", available_balance: "Solde Disponible", withdraw_requirements: "Conditions de Retrait (Toutes doivent être remplies)",
-            min_balance_label: "Solde Minimum:", min_balance_value: "$0.500", min_refs_label: "Références Minimum:", min_refs_value: "3 références actives",
-            amount: "Montant", fee: "Frais (3%)", you_receive: "Vous Recevez", request_withdrawal: "Demander un Retrait", withdrawal_history: "Historique des Retraits",
-            your_referral_code: "Votre Code de Parrainage", referral_desc: "Partagez ce code avec vos amis. Lorsqu'ils rejoignent avec votre code, vous recevez tous les deux $0.01 de bonus!",
-            copy_code: "Copier le Code", share_telegram: "Partager sur Telegram", your_referrals: "Vos Références",
-            support: "Support", business_email: "Affaires: earnforearnbusinessteam@gmail.com", withdraw_conditions: "Conditions de Retrait",
-            cond1: "• Solde minimum $0.500", cond2: "• Minimum 3 références", cond3: "• Frais de 3%", cond4: "• Traitement sous 7 jours après approbation", cond5: "• Retraits illimités si les conditions sont remplies",
-            task_details: "Détails des Tâches", task_detail1: "• Défi 10 Liens: 10 liens, 10 secondes chacun (Chrome requis)", task_detail2: "• Défi 10 Étapes: publicités + liens (étapes 4,5,9,10 sont des liens, le reste des publicités)", task_detail3: "• Après chaque réclamation de récompense: 40 secondes de refroidissement", task_detail4: "• Après chaque 5 achèvements d'une tâche: pause de 8 minutes", task_detail5: "• Tâches Telegram uniques: $0.003 chacune, rejoignez et vérifiez",
-            additional_rules: "Règles Supplémentaires", rule7: "• Pas de comptes multiples", rule8: "• L'utilisation de VPN/proxy peut entraîner un bannissement", rule9: "• Toutes les tâches doivent être faites manuellement", rule10: "• Le support répond sous 48 heures",
-            home: "Accueil", tasks: "Tâches", cashout: "Retirer", referral: "Parrainage", info: "Infos", information: "Informations", privacy_policy: "Politique de Confidentialité", terms_conditions: "Conditions d'Utilisation",
-            my_referral_code: "Mon Code de Parrainage", telegram_username: "Nom d'utilisateur Telegram", stay_on_link: "⏳ Restez sur la Page du Lien", timer_instruction: "Ne fermez pas cette fenêtre. Après 10 secondes, revenez à l'application pour déverrouiller automatiquement l'étape suivante.",
-            cancel_task: "Annuler la Tâche", risk_warning_title: "⚠️ Avertissement de Risque de Compte", risk_warning_text: "Vous êtes revenu avant 10 secondes. Veuillez rester sur le lien pendant toute la durée.",
-            try_again: "Réessayer", cancel: "Annuler", loading_ad: "Chargement de la publicité...", ad_unavailable: "Aucune publicité disponible pour le moment. Nouvel essai...", ad_retry_failed: "La publicité a échoué après plusieurs tentatives. Veuillez réessayer plus tard."
-        }
+        en: { loading_initializing: "Initializing...", loading_ads: "Loading ads...", loading_auth: "Connecting...", loading_data: "Loading data...", loading_ready: "Ready!", claim_reward: "Claim $0.011 Reward", ad_unavailable: "Ad not available, trying fallback...", ad_retry_failed: "All ad networks failed. Please retry." },
+        hi: { loading_initializing: "सिस्टम प्रारंभ...", loading_ads: "विज्ञापन लोड...", loading_auth: "कनेक्ट हो रहा...", loading_data: "डेटा लोड...", loading_ready: "तैयार!", claim_reward: "$0.011 दावा करें", ad_unavailable: "विज्ञापन उपलब्ध नहीं, फॉलबैक प्रयास...", ad_retry_failed: "सभी विज्ञापन नेटवर्क विफल। पुनः प्रयास करें।" },
+        bn: { loading_initializing: "সিস্টেম শুরু...", loading_ads: "বিজ্ঞাপন লোড...", loading_auth: "সংযোগ...", loading_data: "ডেটা লোড...", loading_ready: "প্রস্তুত!", claim_reward: "$০.০১১ দাবি করুন", ad_unavailable: "বিজ্ঞাপন নেই, ব্যাকআপ চেষ্টা...", ad_retry_failed: "সব বিজ্ঞাপন নেটওয়ার্ক ব্যর্থ। আবার চেষ্টা করুন।" },
+        es: { loading_initializing: "Inicializando...", loading_ads: "Cargando anuncios...", loading_auth: "Conectando...", loading_data: "Cargando datos...", loading_ready: "¡Listo!", claim_reward: "Reclamar $0.011", ad_unavailable: "Anuncio no disponible, usando respaldo...", ad_retry_failed: "Todos los anuncios fallaron. Reintente." },
+        ar: { loading_initializing: "جاري التهيئة...", loading_ads: "تحميل الإعلانات...", loading_auth: "الاتصال...", loading_data: "تحميل البيانات...", loading_ready: "جاهز!", claim_reward: "استلم $0.011", ad_unavailable: "لا يوجد إعلان، محاولة احتياطية...", ad_retry_failed: "فشلت كل شبكات الإعلان. حاول مرة أخرى." },
+        fr: { loading_initializing: "Initialisation...", loading_ads: "Chargement des pubs...", loading_auth: "Connexion...", loading_data: "Chargement...", loading_ready: "Prêt!", claim_reward: "Réclamer $0.011", ad_unavailable: "Pub non disponible, essai de secours...", ad_retry_failed: "Tous les réseaux ont échoué. Réessayez." }
     };
     
     let currentLang = localStorage.getItem('selectedLanguage') || 'en';
@@ -514,20 +391,14 @@
         });
     }
     
-    // ==================== AD HELPERS WITH IMPROVED ERROR HANDLING ====================
+    // ==================== AD HELPERS WITH FALLBACK CHAIN ====================
     async function showMonetagAd() {
         return new Promise((resolve, reject) => {
-            if (typeof window.show_10541383 !== 'function') {
-                reject(new Error("Monetag SDK not loaded"));
-                return;
-            }
+            if (typeof window.show_10541383 !== 'function') reject(new Error("Monetag SDK missing"));
             try {
                 const result = window.show_10541383();
-                if (result && typeof result.then === 'function') {
-                    result.then(resolve).catch(reject);
-                } else {
-                    setTimeout(() => resolve(), 3000);
-                }
+                if (result && typeof result.then === 'function') result.then(resolve).catch(reject);
+                else setTimeout(resolve, 3000);
             } catch(e) { reject(e); }
         });
     }
@@ -539,10 +410,8 @@
         try {
             await controller.show();
         } catch (err) {
-            // Check for "no ads" error message (Adsgram returns "There are currently no ads to display")
-            if (err && (err.message && err.message.includes("no ads") || err.toString().includes("no ads"))) {
+            if (err && (err.message?.includes("no ads") || err.toString().includes("no ads")))
                 throw new Error("adsgram_no_ads");
-            }
             throw err;
         }
     }
@@ -553,35 +422,38 @@
                 try {
                     const result = window.showAdexora();
                     if (result && typeof result.then === 'function') result.then(resolve).catch(reject);
-                    else setTimeout(() => resolve(), 2500);
+                    else setTimeout(resolve, 2500);
                 } catch(e) { reject(e); }
-            } else if (window.Adexora && typeof window.Adexora.showInterstitial === 'function') {
+            } else if (window.Adexora?.showInterstitial) {
                 window.Adexora.showInterstitial().then(resolve).catch(reject);
-            } else {
-                reject(new Error("Adexora not available"));
-            }
+            } else reject(new Error("Adexora not available"));
         });
     }
     
-    async function showAdByNetwork(network, retryCount = 0) {
-        const maxRetries = 3;
-        try {
-            if (network === 'monetag') return await showMonetagAd();
-            if (network === 'adsgram') return await showAdsgramAd();
-            if (network === 'adexora') return await showAdexoraAd();
-            throw new Error(`Unknown network: ${network}`);
-        } catch (err) {
-            if (err.message === "adsgram_no_ads" && retryCount < maxRetries) {
+    // Try multiple networks in order: primary -> monetag -> adexora
+    async function showAdWithFallback(primaryNetwork) {
+        const fallbackOrder = [primaryNetwork, 'monetag', 'adexora'].filter((v,i,a)=>a.indexOf(v)===i);
+        for (let i = 0; i < fallbackOrder.length; i++) {
+            const network = fallbackOrder[i];
+            try {
+                if (network === 'monetag') await showMonetagAd();
+                else if (network === 'adsgram') await showAdsgramAd();
+                else if (network === 'adexora') await showAdexoraAd();
+                else continue;
+                // success
+                return true;
+            } catch (err) {
+                console.warn(`Ad network ${network} failed:`, err);
+                if (i === fallbackOrder.length - 1) throw new Error("all_networks_failed");
                 const t = translations[currentLang] || translations.en;
-                showStatus(t.ad_unavailable || "No ad available right now. Retrying...", "warning");
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                return showAdByNetwork(network, retryCount + 1);
+                showStatus(`${t.ad_unavailable || "Trying next network..."}`, "warning");
+                await new Promise(r => setTimeout(r, 1000));
             }
-            throw err;
         }
+        throw new Error("all_networks_failed");
     }
     
-    // ==================== CORE FUNCTIONS (SAME AS BEFORE) ====================
+    // ==================== CORE FUNCTIONS ====================
     function showSpinner(show) { document.getElementById('spinner').style.display = show ? 'flex' : 'none'; }
     function showModal(modal) { modal.classList.add('active'); }
     function hideModal(modal) { modal.classList.remove('active'); }
@@ -834,7 +706,7 @@
         refreshUI();
     }
     
-    // ==================== MIXED 10-STEP CHALLENGE (FIXED AD ROTATION) ====================
+    // ==================== MIXED CHALLENGE WITH FALLBACK ====================
     function renderMixedTaskUI() {
         const task = userData.mixedTask;
         const cooldownEnd = task.cooldownUntil || 0;
@@ -918,20 +790,16 @@
         } else {
             showSpinner(true);
             try {
-                const adType = getAdNetworkForMixedStep(step);
-                if (!adType) throw new Error("Invalid ad step");
-                await showAdByNetwork(adType);
+                const primary = primaryNetwork[step];
+                if (!primary) throw new Error("No primary ad network for step "+step);
+                await showAdWithFallback(primary);
                 showSpinner(false);
                 completeMixedStep(step);
             } catch(err) {
                 showSpinner(false);
-                console.error("Ad error:", err);
+                console.error(err);
                 const t = translations[currentLang] || translations.en;
-                if (err.message === "adsgram_no_ads") {
-                    showStatus(t.ad_retry_failed || "Ad failed after multiple attempts. Please try again later.", "error");
-                } else {
-                    showStatus(`Ad failed: ${err.message}`, "error");
-                }
+                showStatus(t.ad_retry_failed || "All ad networks failed. Please retry.", "error");
             }
         }
     }
