@@ -15,10 +15,10 @@
     
     <!-- Monetag Rewarded Interstitial -->
     <script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
-    <!-- Giga Pub SDK -->
-    <script src="https://ad.gigapub.tech/script?id=6432"></script>
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <!-- Adexora SDK -->
+    <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
     
     <style>
         * {
@@ -62,7 +62,6 @@
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
         
-        /* Loading Screen */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -100,7 +99,6 @@
         .loading-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); transition: width 0.3s; }
         .loading-steps { margin-top: 20px; text-align: center; color: var(--text-secondary); font-size: 0.9rem; }
         
-        /* Header */
         .header {
             background: rgba(18,18,18,0.95);
             backdrop-filter: blur(15px);
@@ -275,6 +273,11 @@
             padding: 24px;
             margin-bottom: 24px;
             border: 1px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
         .task-header {
             display: flex;
@@ -290,15 +293,16 @@
             color: #000;
         }
         .steps-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
             margin: 20px 0;
-            justify-content: center;
+            justify-items: center;
         }
         .step-btn {
-            width: 80px;
-            height: 80px;
+            width: 100%;
+            max-width: 70px;
+            height: 70px;
             border-radius: 60px;
             background: #222;
             border: 1px solid #333;
@@ -307,17 +311,18 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             cursor: pointer;
             gap: 6px;
+            transition: all 0.2s;
         }
-        .step-btn i { font-size: 1.3rem; }
+        .step-btn i { font-size: 1.2rem; }
         .step-btn.completed { background: var(--success); border-color: var(--success); }
         .step-btn.locked { opacity: 0.3; cursor: not-allowed; }
         .step-btn.active-step { border: 2px solid var(--warning); box-shadow: 0 0 8px var(--warning); background: #2a2a2a; }
         
         .claim-btn {
-            background: var(--gold);
+            background: linear-gradient(90deg, var(--gold), #e6b422);
             color: #000;
             font-weight: bold;
             padding: 14px;
@@ -326,15 +331,30 @@
             border: none;
             margin-top: 16px;
             cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
         }
-        .cooldown-timer {
+        .claim-btn:hover {
+            transform: scale(0.98);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .claim-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .cooldown-timer, .break-timer {
             background: #1a1a1a;
             border-radius: 60px;
             padding: 10px;
             text-align: center;
             margin: 12px 0;
-            color: var(--warning);
             font-size: 0.9rem;
+        }
+        .break-timer {
+            background: rgba(253,203,110,0.2);
+            color: var(--warning);
+            border-left: 3px solid var(--warning);
         }
         .chrome-required {
             background: rgba(9,132,227,0.2);
@@ -395,6 +415,11 @@
             border-radius: 60px;
             color: white;
             margin: 10px 0;
+            transition: 0.2s;
+        }
+        .form-input:focus {
+            border-color: var(--purple);
+            outline: none;
         }
         .rules-box {
             background: var(--bg-card);
@@ -419,13 +444,34 @@
             font-size: 0.9rem;
         }
         
+        .withdraw-btn {
+            background: linear-gradient(90deg, var(--purple), var(--blue));
+            color: white;
+            font-weight: bold;
+            padding: 16px;
+            border-radius: 60px;
+            width: 100%;
+            border: none;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+        .withdraw-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(108,92,231,0.4);
+        }
+        .withdraw-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
         .referral-professional {
             background: linear-gradient(145deg, #141414, #0c0c0c);
             border-radius: 32px;
             padding: 28px;
             text-align: center;
         }
-        .referral-link-box {
+        .referral-code-display {
             background: #000;
             padding: 14px;
             border-radius: 60px;
@@ -447,6 +493,11 @@
             color: white;
             font-weight: 600;
             cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: scale(0.98);
         }
         .friend-card {
             background: var(--bg-elevated);
@@ -532,8 +583,70 @@
             margin-bottom: 20px;
             color: var(--text-secondary);
         }
+        .withdrawal-history-card {
+            background: var(--bg-elevated);
+            border-radius: 24px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--purple);
+        }
+        .history-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .status-pending { background: #f39c12; color: black; }
+        .status-approved { background: #00b894; color: white; }
+        .status-rejected { background: #e74c3c; color: white; }
+        .withdraw-id {
+            font-family: monospace;
+            background: #00000055;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+        .referral-code-modal {
+            position: fixed;
+            top:0; left:0; right:0; bottom:0;
+            background: rgba(0,0,0,0.96);
+            backdrop-filter: blur(20px);
+            z-index: 2500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .referral-code-card {
+            background: var(--bg-card);
+            border-radius: 48px;
+            padding: 32px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .referral-code-card input {
+            width: 100%;
+            padding: 14px;
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 60px;
+            color: white;
+            margin: 20px 0;
+            font-size: 1rem;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        .skip-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            margin-top: 10px;
+        }
         @media (max-width: 480px) {
-            .step-btn { width: 70px; height: 70px; font-size: 0.75rem; }
+            .step-btn { width: 100%; max-width: 60px; height: 65px; font-size: 0.7rem; }
+            .steps-container { gap: 8px; }
             .lang-btn span { display: none; }
         }
     </style>
@@ -562,14 +675,13 @@
     </div>
     <div class="user-menu" id="userMenu">
         <div class="menu-item"><i class="fab fa-telegram"></i> <span id="menuUsername" data-i18n="telegram_username">Telegram Username</span></div>
-        <div class="menu-item" id="menuReferral"><i class="fas fa-link"></i> <span data-i18n="my_referral_link">My Referral Link</span></div>
+        <div class="menu-item" id="menuReferralCode"><i class="fas fa-qrcode"></i> <span data-i18n="my_referral_code">My Referral Code</span></div>
         <div class="menu-item" id="menuInfo"><i class="fas fa-info-circle"></i> <span data-i18n="information">Information</span></div>
         <div class="menu-item" id="menuPrivacy"><i class="fas fa-shield-alt"></i> <span data-i18n="privacy_policy">Privacy Policy</span></div>
         <div class="menu-item" id="menuTerms"><i class="fas fa-file-contract"></i> <span data-i18n="terms_conditions">Terms & Conditions</span></div>
     </div>
     
     <div class="main-content">
-        <!-- Home Section -->
         <div id="homeSection" class="content-section active">
             <div class="balance-card">
                 <div data-i18n="your_balance">Your Balance</div>
@@ -589,97 +701,87 @@
                 <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule4">3% service fee applies</span></div>
                 <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule5">Each link step: stay 10 seconds → auto-unlock next</span></div>
                 <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule6">Chrome browser mandatory for link tasks</span></div>
+                <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule_break">After 5 completions of a task, 8 minute break applies</span></div>
             </div>
             <div id="homeStatusMessage" class="status-message" style="display: none;"></div>
         </div>
         
-        <!-- Tasks Section -->
         <div id="tasksSection" class="content-section">
             <div class="back-button" id="tasksBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Back to Home</span></div>
             <h3 style="margin-bottom:20px;" data-i18n="high_value_tasks">High Value Tasks</h3>
             
-            <!-- 3‑Link Challenge -->
+            <!-- 10‑Link Challenge -->
             <div class="task-card">
-                <div class="task-header"><span><i class="fas fa-link"></i> <span data-i18n="link_challenge">3‑Link Challenge</span></span><span class="task-reward">$0.003</span></div>
-                <div class="chrome-required"><i class="fab fa-chrome"></i> <span data-i18n="chrome_required">⚠️ MUST open with Chrome browser. Tasks will NOT complete if opened with other browsers.</span></div>
+                <div class="task-header"><span><i class="fas fa-link"></i> <span data-i18n="link_challenge">10‑Link Challenge</span></span><span class="task-reward">$0.011</span></div>
+                <div class="chrome-required"><i class="fab fa-chrome"></i> <span data-i18n="chrome_required">⚠️ MUST open with Chrome browser. Stay 10 seconds on each link.</span></div>
                 <div class="warning-text"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="link_warning">Stay on each link for exactly 10 seconds to unlock next step.</span></div>
                 <div class="steps-container" id="linkStepsContainer"></div>
                 <div id="linkCooldownArea"></div>
-                <button id="claimLinkRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim $0.003 Reward</button>
+                <div id="linkBreakArea"></div>
+                <button id="claimLinkRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim $0.011 Reward</button>
                 <div id="linkProgress" class="cooldown-timer"></div>
-                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="cooldown_note">After claiming reward, 40s cooldown applies.</span></div>
+                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="cooldown_note">After claiming: 40s cooldown. After every 5 claims: 8 min break. Reward: $0.011</span></div>
             </div>
             
-            <!-- 3‑Video Ads Challenge -->
+            <!-- 10‑Step Challenge (Ads + Links) -->
             <div class="task-card">
-                <div class="task-header"><span><i class="fas fa-video"></i> <span data-i18n="video_challenge">3‑Video Ads Challenge</span></span><span class="task-reward">$0.003</span></div>
-                <div class="warning-text"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="video_warning">Watch each rewarded ad completely. Skipping or closing early will fail the step.</span></div>
+                <div class="task-header"><span><i class="fas fa-tasks"></i> <span data-i18n="video_challenge">10‑Step Challenge</span></span><span class="task-reward">$0.011</span></div>
+                <div class="chrome-required"><i class="fab fa-chrome"></i> <span data-i18n="video_chrome">⚠️ Link steps (4,5,9,10) require Chrome browser and 10 seconds stay.</span></div>
+                <div class="warning-text"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="video_warning">Complete each step (ad or link) in order. For link steps, stay 10 seconds on the page.</span></div>
                 <div class="steps-container" id="videoStepsContainer"></div>
                 <div id="videoCooldownArea"></div>
-                <button id="claimVideoRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim $0.003 Reward</button>
+                <div id="videoBreakArea"></div>
+                <button id="claimVideoRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim $0.011 Reward</button>
                 <div id="videoProgress" class="cooldown-timer"></div>
-                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="video_note">Ads: Adsgram → Monetag → Giga. Cooldown 40s after claim.</span></div>
+                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="video_note">10 steps: ads + links (stay 10s). After claiming: 40s cooldown. After 5 claims: 8 min break. Reward $0.011</span></div>
             </div>
             
             <div style="margin:20px 0 10px;"><h4 data-i18n="one_time_rewards">One‑Time Telegram Rewards</h4></div>
             <div id="telegramTasksArea"></div>
         </div>
         
-        <!-- Cashout Section -->
         <div id="cashoutSection" class="content-section">
             <div class="back-button" id="cashoutBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Back to Home</span></div>
             <div class="balance-card" style="background: linear-gradient(135deg, #1a2a3a, #0f1720);">
                 <div data-i18n="available_balance">Available Balance</div>
                 <div class="balance-amount" id="withdrawBalance">0.000</div>
             </div>
-            
             <div class="requirement-list">
-                <h4 style="margin-bottom: 12px;"><i class="fas fa-clipboard-list"></i> <span data-i18n="withdraw_requirements">Withdrawal Requirements (All must be met)</span></h4>
-                <div class="requirement-item-serial" id="reqSerial1">
-                    <div class="req-check" id="reqCheck1"><i class="fas fa-circle" style="color:#555;"></i></div>
-                    <div><strong data-i18n="min_balance_label">Minimum Balance:</strong> <span data-i18n="min_balance_value">$0.500</span></div>
-                </div>
-                <div class="requirement-item-serial" id="reqSerial2">
-                    <div class="req-check" id="reqCheck2"><i class="fas fa-circle" style="color:#555;"></i></div>
-                    <div><strong data-i18n="min_refs_label">Minimum Referrals:</strong> <span data-i18n="min_refs_value">3 active referrals</span></div>
-                </div>
+                <h4><i class="fas fa-clipboard-list"></i> <span data-i18n="withdraw_requirements">Withdrawal Requirements (All must be met)</span></h4>
+                <div class="requirement-item-serial" id="reqSerial1"><div class="req-check" id="reqCheck1"><i class="fas fa-circle" style="color:#555;"></i></div><div><strong data-i18n="min_balance_label">Minimum Balance:</strong> <span data-i18n="min_balance_value">$0.500</span></div></div>
+                <div class="requirement-item-serial" id="reqSerial2"><div class="req-check" id="reqCheck2"><i class="fas fa-circle" style="color:#555;"></i></div><div><strong data-i18n="min_refs_label">Minimum Referrals:</strong> <span data-i18n="min_refs_value">3 active referrals</span></div></div>
             </div>
-            
             <div class="withdraw-details" style="background:var(--bg-card); border-radius:28px; padding:20px; margin-bottom:16px;">
                 <div class="fee-breakdown"><span data-i18n="amount">Amount</span><span id="wdAmount">$0.00</span></div>
                 <div class="fee-breakdown"><span data-i18n="fee">Fee (3%)</span><span id="wdFee">$0.00</span></div>
                 <div class="fee-breakdown"><span data-i18n="you_receive">You Receive</span><span id="wdNet">$0.00</span></div>
             </div>
-            
             <input type="text" id="binanceAccount" class="form-input" placeholder="Binance Email / UID">
             <input type="number" id="withdrawAmount" step="0.001" min="0.5" class="form-input" placeholder="Amount ($)">
-            <button id="submitWithdrawBtn" class="claim-btn" style="background:var(--purple);" data-i18n="request_withdrawal">Request Withdrawal</button>
-            
+            <button id="submitWithdrawBtn" class="withdraw-btn" data-i18n="request_withdrawal">Request Withdrawal</button>
             <div style="margin-top:30px;"><h4 data-i18n="withdrawal_history">Withdrawal History</h4><div id="historyList"></div></div>
         </div>
         
-        <!-- Referral Section -->
         <div id="referralSection" class="content-section">
             <div class="back-button" id="referralBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Back to Home</span></div>
             <div class="referral-professional">
                 <i class="fas fa-user-plus" style="font-size:2.5rem; color:var(--purple);"></i>
-                <h3 style="margin:15px 0;" data-i18n="invite_friends">Invite Friends, Earn $0.05 Each</h3>
-                <p data-i18n="referral_desc">Share your unique link. Both you and your friend get $0.05 bonus instantly!</p>
-                <div class="referral-link-box" id="referralLinkDisplay"></div>
+                <h3 style="margin:15px 0;" data-i18n="your_referral_code">Your Referral Code</h3>
+                <p data-i18n="referral_desc">Share this code with friends. When they join using your code, both get $0.01 bonus!</p>
+                <div class="referral-code-display" id="referralCodeDisplay"></div>
                 <div class="btn-group">
-                    <button class="btn-primary" id="copyLinkBtn"><i class="fas fa-copy"></i> <span data-i18n="copy_link">Copy Link</span></button>
-                    <button class="btn-primary" id="shareTelegramBtn" style="background:#0088cc;"><i class="fab fa-telegram"></i> <span data-i18n="share_telegram">Share on Telegram</span></button>
+                    <button class="btn-primary" id="copyReferralCodeBtn"><i class="fas fa-copy"></i> <span data-i18n="copy_code">Copy Code</span></button>
+                    <button class="btn-primary" id="shareTelegramCodeBtn" style="background:#0088cc;"><i class="fab fa-telegram"></i> <span data-i18n="share_telegram">Share on Telegram</span></button>
                 </div>
             </div>
             <div style="margin-top:25px;"><h4 data-i18n="your_referrals">Your Referrals</h4><div id="referralsList"></div></div>
         </div>
         
-        <!-- Information Section -->
         <div id="infoSection" class="content-section">
             <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Back to Home</span></div>
             <div class="info-card"><h4><i class="fas fa-headset"></i> <span data-i18n="support">Support</span></h4><p>Telegram: <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a><br>Email: earnforearnsuportteam@gmail.com<br><span data-i18n="business_email">Business: earnforearnbusinessteam@gmail.com</span></p></div>
             <div class="info-card"><h4><i class="fas fa-chart-line"></i> <span data-i18n="withdraw_conditions">Withdrawal Conditions</span></h4><p><span data-i18n="cond1">• Minimum balance $0.500</span><br><span data-i18n="cond2">• Minimum 3 referrals</span><br><span data-i18n="cond3">• 3% service fee</span><br><span data-i18n="cond4">• Processing within 7 days after approval</span><br><span data-i18n="cond5">• Unlimited withdrawals if conditions met</span></p></div>
-            <div class="info-card"><h4><i class="fas fa-tasks"></i> <span data-i18n="task_details">Task Details</span></h4><p><span data-i18n="task_detail1">• 3-Link Challenge: stay 10 seconds per link → auto-unlock next (Chrome required)</span><br><span data-i18n="task_detail2">• 3-Video Ads: Adsgram → Monetag → Giga (full watch required)</span><br><span data-i18n="task_detail3">• Cooldown: 40 seconds after claiming each reward</span><br><span data-i18n="task_detail4">• One-time Telegram tasks: $0.003 each, join & verify</span></p></div>
+            <div class="info-card"><h4><i class="fas fa-tasks"></i> <span data-i18n="task_details">Task Details</span></h4><p><span data-i18n="task_detail1">• 10-Link Challenge: 10 links, 10 seconds each (Chrome required)</span><br><span data-i18n="task_detail2">• 10-Step Challenge: ads + links (steps 4,5,9,10 are links, rest ads)</span><br><span data-i18n="task_detail3">• After claiming each reward: 40 seconds cooldown</span><br><span data-i18n="task_detail4">• After every 5 completions of a task: 8 minute break</span><br><span data-i18n="task_detail5">• One-time Telegram tasks: $0.003 each, join & verify</span></p></div>
             <div class="info-card"><h4><i class="fas fa-gavel"></i> <span data-i18n="additional_rules">Additional Rules</span></h4><p><span data-i18n="rule7">• No multiple accounts – one per person</span><br><span data-i18n="rule8">• VPN or proxy usage may result in ban</span><br><span data-i18n="rule9">• All tasks must be done manually</span><br><span data-i18n="rule10">• Support responds within 48 hours</span></p></div>
         </div>
     </div>
@@ -693,7 +795,29 @@
     </div>
 </div>
 
-<!-- Modals -->
+<!-- First-time Referral Code Modal -->
+<div id="referralCodeModal" class="referral-code-modal" style="display: none;">
+    <div class="referral-code-card">
+        <i class="fas fa-gift" style="font-size: 3rem; color: var(--gold); margin-bottom: 15px;"></i>
+        <h2 style="margin-bottom: 10px;">Welcome to Earn For Earn!</h2>
+        <p style="margin-bottom: 15px;">Enter a referral code (if you have one) to get a $0.01 bonus. You can also skip.</p>
+        <input type="text" id="referralCodeInput" placeholder="Enter referral code" maxlength="20" autocomplete="off">
+        <button id="submitReferralCodeBtn" class="claim-btn" style="background: var(--purple);">Claim Bonus</button>
+        <button id="skipReferralCodeBtn" class="claim-btn skip-btn" style="background: transparent; color: var(--text-secondary);">Skip for now</button>
+    </div>
+</div>
+
+<!-- Success Modal for Withdrawal -->
+<div class="modal" id="withdrawSuccessModal">
+    <div class="modal-content">
+        <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success); margin-bottom: 15px;"></i>
+        <h3>Withdrawal Request Submitted!</h3>
+        <div id="withdrawSuccessDetails" style="margin: 15px 0; text-align: left; background: #00000033; padding: 12px; border-radius: 24px;"></div>
+        <button class="modal-btn" id="closeSuccessModal" style="background: var(--purple);">OK</button>
+    </div>
+</div>
+
+<!-- Timer & Try Again Modals -->
 <div class="modal" id="timerModal">
     <div class="modal-content">
         <h3 data-i18n="stay_on_link">⏳ Stay on Link Page</h3>
@@ -727,150 +851,167 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
-    // ==================== TELEGRAM WEBAPP AUTO DETECTION ====================
+    // ==================== TELEGRAM USER ====================
     let webApp = window.Telegram?.WebApp;
     if(webApp) webApp.expand();
     let tgUser = webApp?.initDataUnsafe?.user;
     let telegramId = tgUser?.id ? tgUser.id.toString() : null;
     let telegramUsername = tgUser?.username || tgUser?.first_name || (telegramId ? "user_" + telegramId : "guest_" + Date.now());
-    if(!telegramId) {
-        telegramId = "guest_" + Date.now();
-        telegramUsername = "guest_" + Date.now();
-    }
+    if(!telegramId) { telegramId = "guest_" + Date.now(); telegramUsername = "guest_" + Date.now(); }
     
-    // ==================== GLOBAL VARIABLES ====================
+    // ==================== GLOBALS ====================
     let userData = null;
     let linkStepsDone = 0, videoStepsDone = 0;
-    let pendingLinkStep = null, linkStartTime = 0, linkInterval = null;
+    let pendingStep = null, linkStartTime = 0, linkInterval = null;
     
     const LINK_URLS = [
         "https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d",
         "https://omg10.com/4/10686606",
-        "https://link.gigapub.tech/l/9jfxp27o6m"
+        "https://narilyhukelpfulin.com?hTTVD=1246757",
+        "https://earnforearnlinksads.vercel.app/",
+        "https://earnforearnlinksads2.vercel.app/",
+        "https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d",
+        "https://omg10.com/4/10686606",
+        "https://earnforearnlinksads2.vercel.app/",
+        "https://earnforearnlinksads.vercel.app/",
+        "https://narilyhukelpfulin.com?hTTVD=1246757"
     ];
     
-    // ==================== MULTILINGUAL SYSTEM (6 languages, all texts covered) ====================
+    // Step types: 10 steps, positions 4,5,9,10 are links (1-indexed, so indices 3,4,8,9)
+    const videoStepsType = ['ad', 'ad', 'ad', 'link', 'link', 'ad', 'ad', 'ad', 'link', 'link'];
+    const adNetworks = ['adsgram', 'monetag', 'adexora'];
+    
+    // ==================== COMPLETE MULTILINGUAL TRANSLATIONS ====================
     const translations = {
         en: {
             loading_initializing: "Initializing system...", loading_ads: "Loading advertisements...", loading_auth: "Connecting to account...", loading_data: "Loading user data...", loading_ready: "Ready to earn!",
             your_balance: "Your Balance", usd_precision: "USD | 3 decimal precision", referrals: "Referrals", total_earned: "Total Earned", ref_bonus: "Ref Bonus",
             platform_rules: "Platform Rules", rule1: "No automated tools – permanent ban", rule2: "Minimum age 18 for withdrawals", rule3: "Withdraw requires $0.500 balance + 3 referrals", rule4: "3% service fee applies",
-            rule5: "Each link step: stay 10 seconds → auto-unlock next", rule6: "Chrome browser mandatory for link tasks",
-            back_home: "Back to Home", high_value_tasks: "High Value Tasks", link_challenge: "3‑Link Challenge", chrome_required: "⚠️ MUST open with Chrome browser. Tasks will NOT complete if opened with other browsers.",
-            link_warning: "Stay on each link for exactly 10 seconds to unlock next step.", claim_reward: "Claim $0.003 Reward", cooldown_note: "After claiming reward, 40s cooldown applies.",
-            video_challenge: "3‑Video Ads Challenge", video_warning: "Watch each rewarded ad completely. Skipping or closing early will fail the step.", video_note: "Ads: Adsgram → Monetag → Giga. Cooldown 40s after claim.",
+            rule5: "Each link step: stay 10 seconds → auto-unlock next", rule6: "Chrome browser mandatory for link tasks", rule_break: "After 5 completions of a task, 8 minute break applies",
+            back_home: "Back to Home", high_value_tasks: "High Value Tasks", link_challenge: "10‑Link Challenge", chrome_required: "⚠️ MUST open with Chrome browser. Stay 10 seconds on each link.",
+            link_warning: "Stay on each link for exactly 10 seconds to unlock next step.", claim_reward: "Claim $0.011 Reward", cooldown_note: "After claiming: 40s cooldown. After every 5 claims: 8 min break. Reward: $0.011",
+            video_challenge: "10‑Step Challenge", video_chrome: "⚠️ Link steps (4,5,9,10) require Chrome browser and 10 seconds stay.", video_warning: "Complete each step (ad or link) in order. For link steps, stay 10 seconds on the page.", video_note: "10 steps: ads + links (stay 10s). After claiming: 40s cooldown. After 5 claims: 8 min break. Reward $0.011",
             one_time_rewards: "One‑Time Telegram Rewards", available_balance: "Available Balance", withdraw_requirements: "Withdrawal Requirements (All must be met)",
             min_balance_label: "Minimum Balance:", min_balance_value: "$0.500", min_refs_label: "Minimum Referrals:", min_refs_value: "3 active referrals",
             amount: "Amount", fee: "Fee (3%)", you_receive: "You Receive", request_withdrawal: "Request Withdrawal", withdrawal_history: "Withdrawal History",
-            invite_friends: "Invite Friends, Earn $0.05 Each", referral_desc: "Share your unique link. Both you and your friend get $0.05 bonus instantly!",
-            copy_link: "Copy Link", share_telegram: "Share on Telegram", your_referrals: "Your Referrals",
+            your_referral_code: "Your Referral Code", referral_desc: "Share this code with friends. When they join using your code, both get $0.01 bonus!",
+            copy_code: "Copy Code", share_telegram: "Share on Telegram", your_referrals: "Your Referrals",
             support: "Support", business_email: "Business: earnforearnbusinessteam@gmail.com", withdraw_conditions: "Withdrawal Conditions",
             cond1: "• Minimum balance $0.500", cond2: "• Minimum 3 referrals", cond3: "• 3% service fee", cond4: "• Processing within 7 days after approval", cond5: "• Unlimited withdrawals if conditions met",
-            task_details: "Task Details", task_detail1: "• 3-Link Challenge: stay 10 seconds per link → auto-unlock next (Chrome required)", task_detail2: "• 3-Video Ads: Adsgram → Monetag → Giga (full watch required)",
-            task_detail3: "• Cooldown: 40 seconds after claiming each reward", task_detail4: "• One-time Telegram tasks: $0.003 each, join & verify",
+            task_details: "Task Details", task_detail1: "• 10-Link Challenge: 10 links, 10 seconds each (Chrome required)", task_detail2: "• 10-Step Challenge: ads + links (steps 4,5,9,10 are links, rest ads)", task_detail3: "• After claiming each reward: 40 seconds cooldown", task_detail4: "• After every 5 completions of a task: 8 minute break", task_detail5: "• One-time Telegram tasks: $0.003 each, join & verify",
             additional_rules: "Additional Rules", rule7: "• No multiple accounts – one per person", rule8: "• VPN or proxy usage may result in ban", rule9: "• All tasks must be done manually", rule10: "• Support responds within 48 hours",
-            home: "Home", tasks: "Tasks", cashout: "Cashout", referral: "Referral", info: "Info", information: "Information", privacy_policy: "Privacy Policy", terms_conditions: "Terms & Conditions", my_referral_link: "My Referral Link",
-            telegram_username: "Telegram Username", stay_on_link: "⏳ Stay on Link Page", timer_instruction: "Do not close this window. After 10 seconds, return to app to auto‑unlock next step.",
+            home: "Home", tasks: "Tasks", cashout: "Cashout", referral: "Referral", info: "Info", information: "Information", privacy_policy: "Privacy Policy", terms_conditions: "Terms & Conditions",
+            my_referral_code: "My Referral Code", telegram_username: "Telegram Username", stay_on_link: "⏳ Stay on Link Page", timer_instruction: "Do not close this window. After 10 seconds, return to app to auto‑unlock next step.",
             cancel_task: "Cancel Task", risk_warning_title: "⚠️ Account Risk Warning", risk_warning_text: "You returned before 10 seconds. Please stay on the link for the full duration.",
             try_again: "Try Again", cancel: "Cancel", loading_ad: "Loading ad..."
         },
-        hi: { loading_initializing: "सिस्टम प्रारंभ हो रहा है...", your_balance: "आपकी बैलेंस", referrals: "रेफरल", total_earned: "कुल कमाई", ref_bonus: "रेफरल बोनस",
+        hi: {
+            loading_initializing: "सिस्टम प्रारंभ हो रहा है...", loading_ads: "विज्ञापन लोड हो रहे हैं...", loading_auth: "खाते से कनेक्ट हो रहा है...", loading_data: "उपयोगकर्ता डेटा लोड हो रहा है...", loading_ready: "कमाने के लिए तैयार!",
+            your_balance: "आपकी बैलेंस", usd_precision: "USD | 3 दशमलव सटीकता", referrals: "रेफरल", total_earned: "कुल कमाई", ref_bonus: "रेफरल बोनस",
             platform_rules: "प्लेटफॉर्म नियम", rule1: "कोई स्वचालित उपकरण – स्थायी प्रतिबंध", rule2: "निकासी के लिए न्यूनतम आयु 18 वर्ष", rule3: "निकासी के लिए $0.500 बैलेंस + 3 रेफरल", rule4: "3% सेवा शुल्क",
-            rule5: "प्रत्येक लिंक: 10 सेकंड रुकें → अगला अनलॉक", rule6: "लिंक कार्यों के लिए Chrome अनिवार्य",
-            back_home: "होम वापस", high_value_tasks: "उच्च मूल्य कार्य", link_challenge: "3-लिंक चैलेंज", chrome_required: "⚠️ Chrome ब्राउज़र से खोलें। अन्य ब्राउज़र से काम पूरा नहीं होगा।",
-            link_warning: "प्रत्येक लिंक पर पूरे 10 सेकंड रुकें।", claim_reward: "$0.003 दावा करें", cooldown_note: "40 सेकंड का कूलडाउन",
-            video_challenge: "3-वीडियो विज्ञापन चैलेंज", video_warning: "प्रत्येक विज्ञापन पूरा देखें।", video_note: "Adsgram → Monetag → Giga, 40s कूलडाउन",
+            rule5: "प्रत्येक लिंक: 10 सेकंड रुकें → अगला अनलॉक", rule6: "लिंक कार्यों के लिए Chrome अनिवार्य", rule_break: "एक कार्य के 5 पूर्ण होने पर, 8 मिनट का ब्रेक लागू होता है",
+            back_home: "होम वापस", high_value_tasks: "उच्च मूल्य कार्य", link_challenge: "10-लिंक चैलेंज", chrome_required: "⚠️ Chrome ब्राउज़र से खोलें। प्रत्येक लिंक पर 10 सेकंड रुकें।",
+            link_warning: "अगला चरण अनलॉक करने के लिए प्रत्येक लिंक पर ठीक 10 सेकंड रुकें।", claim_reward: "$0.011 दावा करें", cooldown_note: "दावे के बाद: 40 सेकंड कूलडाउन। प्रत्येक 5 दावों के बाद: 8 मिनट ब्रेक। पुरस्कार: $0.011",
+            video_challenge: "10-चरण चैलेंज", video_chrome: "⚠️ लिंक चरण (4,5,9,10) के लिए Chrome ब्राउज़र और 10 सेकंड रुकना आवश्यक है।", video_warning: "प्रत्येक चरण (विज्ञापन या लिंक) क्रम से पूरा करें। लिंक चरणों के लिए, पृष्ठ पर 10 सेकंड रुकें।", video_note: "10 चरण: विज्ञापन + लिंक (10 सेकंड रुकें)। दावे के बाद: 40 सेकंड कूलडाउन। 5 दावों के बाद: 8 मिनट ब्रेक। पुरस्कार $0.011",
             one_time_rewards: "एक बार के टेलीग्राम इनाम", available_balance: "उपलब्ध बैलेंस", withdraw_requirements: "निकासी आवश्यकताएँ (सभी पूरी करें)",
             min_balance_label: "न्यूनतम बैलेंस:", min_balance_value: "$0.500", min_refs_label: "न्यूनतम रेफरल:", min_refs_value: "3 सक्रिय रेफरल",
             amount: "राशि", fee: "शुल्क (3%)", you_receive: "आपको मिलेगा", request_withdrawal: "निकासी का अनुरोध करें", withdrawal_history: "निकासी इतिहास",
-            invite_friends: "दोस्तों को आमंत्रित करें, $0.05 कमाएं", referral_desc: "अपना अनोखा लिंक साझा करें। आपको और आपके मित्र दोनों को $0.05 बोनस मिलेगा!",
-            copy_link: "लिंक कॉपी करें", share_telegram: "टेलीग्राम पर साझा करें", your_referrals: "आपके रेफरल",
-            support: "सहायता", withdraw_conditions: "निकासी की शर्तें", cond1: "• न्यूनतम बैलेंस $0.500", cond2: "• न्यूनतम 3 रेफरल", cond3: "• 3% सेवा शुल्क", cond4: "• अनुमोदन के बाद 7 दिनों के भीतर प्रक्रिया", cond5: "• शर्तें पूरी होने पर असीमित निकासी",
-            task_details: "कार्य विवरण", task_detail1: "• 3-लिंक चैलेंज: प्रति लिंक 10 सेकंड रुकें → अगला अनलॉक (Chrome अनिवार्य)", task_detail2: "• 3-वीडियो विज्ञापन: Adsgram → Monetag → Giga (पूरा देखना अनिवार्य)",
-            task_detail3: "• कूलडाउन: प्रत्येक रिवॉर्ड दावा करने के बाद 40 सेकंड", task_detail4: "• एक बार के टेलीग्राम कार्य: $0.003 प्रत्येक, ज्वाइन करें और सत्यापित करें",
+            your_referral_code: "आपका रेफरल कोड", referral_desc: "इस कोड को दोस्तों के साथ साझा करें। जब वे आपके कोड का उपयोग करके शामिल होते हैं, तो दोनों को $0.01 बोनस मिलता है!",
+            copy_code: "कोड कॉपी करें", share_telegram: "टेलीग्राम पर साझा करें", your_referrals: "आपके रेफरल",
+            support: "सहायता", business_email: "व्यवसाय: earnforearnbusinessteam@gmail.com", withdraw_conditions: "निकासी की शर्तें",
+            cond1: "• न्यूनतम बैलेंस $0.500", cond2: "• न्यूनतम 3 रेफरल", cond3: "• 3% सेवा शुल्क", cond4: "• अनुमोदन के बाद 7 दिनों के भीतर प्रक्रिया", cond5: "• शर्तें पूरी होने पर असीमित निकासी",
+            task_details: "कार्य विवरण", task_detail1: "• 10-लिंक चैलेंज: 10 लिंक, प्रत्येक पर 10 सेकंड (Chrome आवश्यक)", task_detail2: "• 10-चरण चैलेंज: विज्ञापन + लिंक (चरण 4,5,9,10 लिंक हैं, शेष विज्ञापन)", task_detail3: "• प्रत्येक पुरस्कार दावा करने के बाद: 40 सेकंड कूलडाउन", task_detail4: "• प्रत्येक कार्य के 5 पूर्ण होने के बाद: 8 मिनट का ब्रेक", task_detail5: "• एक बार के टेलीग्राम कार्य: $0.003 प्रत्येक, शामिल हों और सत्यापित करें",
             additional_rules: "अतिरिक्त नियम", rule7: "• एक से अधिक खाते नहीं", rule8: "• VPN/प्रॉक्सी उपयोग पर प्रतिबंध", rule9: "• सभी कार्य मैन्युअल रूप से करें", rule10: "• समर्थन 48 घंटे में उत्तर देता है",
-            home: "होम", tasks: "कार्य", cashout: "नकद निकालें", referral: "रेफरल", info: "जानकारी", information: "जानकारी", privacy_policy: "गोपनीयता नीति", terms_conditions: "नियम और शर्तें", my_referral_link: "मेरा रेफरल लिंक",
-            telegram_username: "टेलीग्राम उपयोगकर्ता नाम", stay_on_link: "⏳ लिंक पृष्ठ पर रहें", timer_instruction: "इस विंडो को बंद न करें। 10 सेकंड के बाद, अगला चरण अनलॉक करने के लिए ऐप पर लौटें।",
+            home: "होम", tasks: "कार्य", cashout: "नकद निकालें", referral: "रेफरल", info: "जानकारी", information: "जानकारी", privacy_policy: "गोपनीयता नीति", terms_conditions: "नियम और शर्तें",
+            my_referral_code: "मेरा रेफरल कोड", telegram_username: "टेलीग्राम उपयोगकर्ता नाम", stay_on_link: "⏳ लिंक पृष्ठ पर रहें", timer_instruction: "इस विंडो को बंद न करें। 10 सेकंड के बाद, अगला चरण अनलॉक करने के लिए ऐप पर लौटें।",
             cancel_task: "कार्य रद्द करें", risk_warning_title: "⚠️ खाता जोखिम चेतावनी", risk_warning_text: "आप 10 सेकंड से पहले लौट आए। कृपया पूरी अवधि के लिए लिंक पर बने रहें।",
             try_again: "पुनः प्रयास करें", cancel: "रद्द करें", loading_ad: "विज्ञापन लोड हो रहा है..."
         },
-        bn: { loading_initializing: "সিস্টেম চালু হচ্ছে...", your_balance: "আপনার ব্যালেন্স", referrals: "রেফারেল", total_earned: "মোট আয়", ref_bonus: "রেফারেল বোনাস",
+        bn: {
+            loading_initializing: "সিস্টেম চালু হচ্ছে...", loading_ads: "বিজ্ঞাপন লোড হচ্ছে...", loading_auth: "অ্যাকাউন্টে সংযোগ করা হচ্ছে...", loading_data: "ইউজার ডেটা লোড হচ্ছে...", loading_ready: "আয়ের জন্য প্রস্তুত!",
+            your_balance: "আপনার ব্যালেন্স", usd_precision: "USD | ৩ দশমিক নির্ভুলতা", referrals: "রেফারেল", total_earned: "মোট আয়", ref_bonus: "রেফারেল বোনাস",
             platform_rules: "প্ল্যাটফর্মের নিয়ম", rule1: "কোনো অটোমেটেড টুল – স্থায়ী ব্যান", rule2: "টাকা তোলার জন্য ন্যূনতম বয়স ১৮ বছর", rule3: "টাকা তুলতে চাইলে ব্যালেন্স $0.500 + ৩ রেফারেল প্রয়োজন", rule4: "৩% সার্ভিস ফি",
-            rule5: "প্রতি লিংকে ১০ সেকেন্ড থাকুন → পরবর্তী আনলক", rule6: "লিংক টাস্কের জন্য Chrome প্রয়োজন",
-            back_home: "হোমে ফিরুন", high_value_tasks: "উচ্চ মানের টাস্ক", link_challenge: "৩-লিংক চ্যালেঞ্জ", chrome_required: "⚠️ Chrome ব্রাউজারে খুলুন। অন্যথায় টাস্ক কমপ্লিট হবে না।",
-            link_warning: "প্রতি লিংকে পুরো ১০ সেকেন্ড থাকুন।", claim_reward: "$0.০০৩ দাবি করুন", cooldown_note: "৪০ সেকেন্ড কুলডাউন",
-            video_challenge: "৩-ভিডিও বিজ্ঞাপন চ্যালেঞ্জ", video_warning: "সম্পূর্ণ বিজ্ঞাপন দেখুন।", video_note: "Adsgram → Monetag → Giga, ৪০সে কুলডাউন",
+            rule5: "প্রতি লিংকে ১০ সেকেন্ড থাকুন → পরবর্তী আনলক", rule6: "লিংক টাস্কের জন্য Chrome প্রয়োজন", rule_break: "একটি কাজের ৫টি সম্পূর্ণ করার পর, ৮ মিনিটের বিরতি প্রযোজ্য",
+            back_home: "হোমে ফিরুন", high_value_tasks: "উচ্চ মানের টাস্ক", link_challenge: "১০-লিংক চ্যালেঞ্জ", chrome_required: "⚠️ Chrome ব্রাউজারে খুলুন। প্রতিটি লিংকে ১০ সেকেন্ড থাকুন।",
+            link_warning: "পরবর্তী ধাপ আনলক করতে প্রতিটি লিংকে ঠিক ১০ সেকেন্ড থাকুন।", claim_reward: "$০.০১১ দাবি করুন", cooldown_note: "দাবির পরে: ৪০ সেকেন্ড কুলডাউন। প্রতি ৫ দাবির পরে: ৮ মিনিট বিরতি। পুরস্কার: $০.০১১",
+            video_challenge: "১০-পদক্ষেপ চ্যালেঞ্জ", video_chrome: "⚠️ লিংক ধাপ (৪,৫,৯,১০) এর জন্য Chrome ব্রাউজার এবং ১০ সেকেন্ড থাকা প্রয়োজন।", video_warning: "প্রতিটি ধাপ (বিজ্ঞাপন বা লিংক) ক্রমান্বয়ে সম্পন্ন করুন। লিংক ধাপের জন্য, পৃষ্ঠায় ১০ সেকেন্ড থাকুন।", video_note: "১০ ধাপ: বিজ্ঞাপন + লিংক (১০ সেকেন্ড থাকুন)। দাবির পরে: ৪০ সেকেন্ড কুলডাউন। ৫ দাবির পরে: ৮ মিনিট বিরতি। পুরস্কার $০.০১১",
             one_time_rewards: "একবারের টেলিগ্রাম রিওয়ার্ড", available_balance: "উপলব্ধ ব্যালেন্স", withdraw_requirements: "টাকা তোলার শর্ত (সব পূরণ করুন)",
             min_balance_label: "ন্যূনতম ব্যালেন্স:", min_balance_value: "$0.৫০০", min_refs_label: "ন্যূনতম রেফারেল:", min_refs_value: "৩ সক্রিয় রেফারেল",
             amount: "পরিমাণ", fee: "ফি (৩%)", you_receive: "আপনি পাবেন", request_withdrawal: "উত্তোলনের অনুরোধ করুন", withdrawal_history: "উত্তোলনের ইতিহাস",
-            invite_friends: "বন্ধুদের আমন্ত্রণ জানান, $0.০৫ আয় করুন", referral_desc: "আপনার লিংক শেয়ার করুন। আপনারা উভয়েই $0.০৫ বোনাস পাবেন!",
-            copy_link: "লিংক কপি করুন", share_telegram: "টেলিগ্রামে শেয়ার করুন", your_referrals: "আপনার রেফারেল",
-            support: "সাপোর্ট", withdraw_conditions: "উত্তোলনের শর্ত", cond1: "• ন্যূনতম ব্যালেন্স $0.৫০০", cond2: "• ন্যূনতম ৩ রেফারেল", cond3: "• ৩% সার্ভিস ফি", cond4: "• অনুমোদনের পর ৭ দিনের মধ্যে প্রক্রিয়াকরণ", cond5: "• শর্ত পূরণ হলে সীমাহীন উত্তোলন",
-            task_details: "টাস্ক বিস্তারিত", task_detail1: "• ৩-লিংক চ্যালেঞ্জ: প্রতি লিংকে ১০ সেকেন্ড থাকুন → পরবর্তী আনলক (Chrome প্রয়োজন)", task_detail2: "• ৩-ভিডিও বিজ্ঞাপন: Adsgram → Monetag → Giga (পূর্ণ দেখা আবশ্যক)",
-            task_detail3: "• কুলডাউন: প্রতি রিওয়ার্ড দাবির পর ৪০ সেকেন্ড", task_detail4: "• একবারের টেলিগ্রাম টাস্ক: $0.০০৩ প্রতিটি, জয়েন করুন ও ভেরিফাই করুন",
+            your_referral_code: "আপনার রেফারেল কোড", referral_desc: "এই কোড বন্ধুদের সাথে শেয়ার করুন। যখন তারা আপনার কোড ব্যবহার করে যোগ দেয়, তখন উভয়েই $0.০১ বোনাস পায়!",
+            copy_code: "কোড কপি করুন", share_telegram: "টেলিগ্রামে শেয়ার করুন", your_referrals: "আপনার রেফারেল",
+            support: "সাপোর্ট", business_email: "ব্যবসা: earnforearnbusinessteam@gmail.com", withdraw_conditions: "উত্তোলনের শর্ত",
+            cond1: "• ন্যূনতম ব্যালেন্স $0.৫০০", cond2: "• ন্যূনতম ৩ রেফারেল", cond3: "• ৩% সার্ভিস ফি", cond4: "• অনুমোদনের পর ৭ দিনের মধ্যে প্রক্রিয়াকরণ", cond5: "• শর্ত পূরণ হলে সীমাহীন উত্তোলন",
+            task_details: "টাস্ক বিস্তারিত", task_detail1: "• ১০-লিংক চ্যালেঞ্জ: ১০ লিংক, প্রতিটিতে ১০ সেকেন্ড (Chrome প্রয়োজন)", task_detail2: "• ১০-পদক্ষেপ চ্যালেঞ্জ: বিজ্ঞাপন + লিংক (পদক্ষেপ ৪,৫,৯,১০ লিংক, বাকি বিজ্ঞাপন)", task_detail3: "• প্রতিটি পুরস্কার দাবির পরে: ৪০ সেকেন্ড কুলডাউন", task_detail4: "• প্রতি কাজের ৫টি সম্পূর্ণ করার পরে: ৮ মিনিট বিরতি", task_detail5: "• একবারের টেলিগ্রাম টাস্ক: $0.০০৩ প্রতিটি, জয়েন করুন ও ভেরিফাই করুন",
             additional_rules: "অতিরিক্ত নিয়ম", rule7: "• একাধিক অ্যাকাউন্ট নয়", rule8: "• VPN/প্রক্সি ব্যবহার নিষিদ্ধ", rule9: "• সব টাস্ক ম্যানুয়ালি করতে হবে", rule10: "• সাপোর্ট ৪৮ ঘণ্টার মধ্যে উত্তর দেয়",
-            home: "হোম", tasks: "টাস্ক", cashout: "ক্যাশআউট", referral: "রেফারেল", info: "তথ্য", information: "তথ্য", privacy_policy: "গোপনীয়তা নীতি", terms_conditions: "শর্তাবলী", my_referral_link: "আমার রেফারেল লিংক",
-            telegram_username: "টেলিগ্রাম ইউজারনেম", stay_on_link: "⏳ লিংক পেজে থাকুন", timer_instruction: "এই উইন্ডো বন্ধ করবেন না। ১০ সেকেন্ড পরে, পরবর্তী ধাপ আনলক করতে অ্যাপে ফিরুন।",
+            home: "হোম", tasks: "টাস্ক", cashout: "ক্যাশআউট", referral: "রেফারেল", info: "তথ্য", information: "তথ্য", privacy_policy: "গোপনীয়তা নীতি", terms_conditions: "শর্তাবলী",
+            my_referral_code: "আমার রেফারেল কোড", telegram_username: "টেলিগ্রাম ইউজারনেম", stay_on_link: "⏳ লিংক পেজে থাকুন", timer_instruction: "এই উইন্ডো বন্ধ করবেন না। ১০ সেকেন্ড পরে, পরবর্তী ধাপ আনলক করতে অ্যাপে ফিরুন।",
             cancel_task: "টাস্ক বাতিল করুন", risk_warning_title: "⚠️ অ্যাকাউন্ট ঝুঁকি সতর্কতা", risk_warning_text: "আপনি ১০ সেকেন্ড আগেই ফিরে এসেছেন। দয়া করে পুরো সময় লিংকে থাকুন।",
             try_again: "আবার চেষ্টা করুন", cancel: "বাতিল", loading_ad: "বিজ্ঞাপন লোড হচ্ছে..."
         },
-        es: { loading_initializing: "Inicializando sistema...", your_balance: "Su Saldo", referrals: "Referidos", total_earned: "Ganado Total", ref_bonus: "Bono Ref",
+        es: {
+            loading_initializing: "Inicializando sistema...", loading_ads: "Cargando anuncios...", loading_auth: "Conectando a la cuenta...", loading_data: "Cargando datos de usuario...", loading_ready: "¡Listo para ganar!",
+            your_balance: "Su Saldo", usd_precision: "USD | 3 decimales", referrals: "Referidos", total_earned: "Ganado Total", ref_bonus: "Bono Ref",
             platform_rules: "Reglas de la Plataforma", rule1: "No herramientas automatizadas – prohibición permanente", rule2: "Edad mínima 18 años para retiros", rule3: "Retiro requiere $0.500 de saldo + 3 referidos", rule4: "Se aplica una tarifa del 3%",
-            rule5: "Cada enlace: permanezca 10 segundos → desbloqueo automático", rule6: "Navegador Chrome obligatorio para tareas de enlace",
-            back_home: "Volver al Inicio", high_value_tasks: "Tareas de Alto Valor", link_challenge: "Desafío de 3 Enlaces", chrome_required: "⚠️ ABRIR con Chrome. Las tareas NO se completarán si se abren con otros navegadores.",
-            link_warning: "Permanezca 10 segundos en cada enlace.", claim_reward: "Reclamar $0.003", cooldown_note: "Enfriamiento de 40s",
-            video_challenge: "Desafío de 3 Anuncios", video_warning: "Vea cada anuncio completo.", video_note: "Adsgram → Monetag → Giga, enfriamiento 40s",
+            rule5: "Cada enlace: permanezca 10 segundos → desbloqueo automático", rule6: "Navegador Chrome obligatorio para tareas de enlace", rule_break: "Después de 5 finalizaciones de una tarea, se aplica un descanso de 8 minutos",
+            back_home: "Volver al Inicio", high_value_tasks: "Tareas de Alto Valor", link_challenge: "Desafío de 10 Enlaces", chrome_required: "⚠️ ABRIR con Chrome. Permanezca 10 segundos en cada enlace.",
+            link_warning: "Permanezca exactamente 10 segundos en cada enlace para desbloquear el siguiente paso.", claim_reward: "Reclamar $0.011", cooldown_note: "Después de reclamar: 40s de enfriamiento. Cada 5 reclamos: descanso de 8 min. Recompensa: $0.011",
+            video_challenge: "Desafío de 10 Pasos", video_chrome: "⚠️ Los pasos de enlace (4,5,9,10) requieren el navegador Chrome y permanecer 10 segundos.", video_warning: "Complete cada paso (anuncio o enlace) en orden. Para los pasos de enlace, permanezca 10 segundos en la página.", video_note: "10 pasos: anuncios + enlaces (permanezca 10s). Después de reclamar: 40s de enfriamiento. Cada 5 reclamos: descanso de 8 min. Recompensa $0.011",
             one_time_rewards: "Recompensas Únicas de Telegram", available_balance: "Saldo Disponible", withdraw_requirements: "Requisitos de Retiro (Todos deben cumplirse)",
             min_balance_label: "Saldo Mínimo:", min_balance_value: "$0.500", min_refs_label: "Referidos Mínimos:", min_refs_value: "3 referidos activos",
             amount: "Monto", fee: "Tarifa (3%)", you_receive: "Usted Recibe", request_withdrawal: "Solicitar Retiro", withdrawal_history: "Historial de Retiros",
-            invite_friends: "Invita Amigos, Gana $0.05 Cada Uno", referral_desc: "Comparte tu enlace único. ¡Tú y tu amigo reciben $0.05 de bonificación al instante!",
-            copy_link: "Copiar Enlace", share_telegram: "Compartir en Telegram", your_referrals: "Tus Referidos",
-            support: "Soporte", withdraw_conditions: "Condiciones de Retiro", cond1: "• Saldo mínimo $0.500", cond2: "• Mínimo 3 referidos", cond3: "• Tarifa del 3%", cond4: "• Procesamiento dentro de 7 días después de la aprobación", cond5: "• Retiros ilimitados si se cumplen las condiciones",
-            task_details: "Detalles de Tareas", task_detail1: "• Desafío de 3 Enlaces: permanezca 10 segundos por enlace → desbloqueo automático (Chrome requerido)", task_detail2: "• Desafío de 3 Anuncios: Adsgram → Monetag → Giga (ver completo)",
-            task_detail3: "• Enfriamiento: 40 segundos después de reclamar cada recompensa", task_detail4: "• Tareas únicas de Telegram: $0.003 cada una, únete y verifica",
+            your_referral_code: "Su Código de Referido", referral_desc: "Comparta este código con amigos. Cuando se unan con su código, ambos reciben $0.01 de bonificación.",
+            copy_code: "Copiar Código", share_telegram: "Compartir en Telegram", your_referrals: "Tus Referidos",
+            support: "Soporte", business_email: "Negocios: earnforearnbusinessteam@gmail.com", withdraw_conditions: "Condiciones de Retiro",
+            cond1: "• Saldo mínimo $0.500", cond2: "• Mínimo 3 referidos", cond3: "• Tarifa del 3%", cond4: "• Procesamiento dentro de 7 días después de la aprobación", cond5: "• Retiros ilimitados si se cumplen las condiciones",
+            task_details: "Detalles de Tareas", task_detail1: "• Desafío de 10 Enlaces: 10 enlaces, 10 segundos cada uno (Chrome requerido)", task_detail2: "• Desafío de 10 Pasos: anuncios + enlaces (pasos 4,5,9,10 son enlaces, el resto anuncios)", task_detail3: "• Después de reclamar cada recompensa: 40 segundos de enfriamiento", task_detail4: "• Después de cada 5 finalizaciones de una tarea: descanso de 8 minutos", task_detail5: "• Tareas únicas de Telegram: $0.003 cada una, únete y verifica",
             additional_rules: "Reglas Adicionales", rule7: "• No múltiples cuentas", rule8: "• El uso de VPN/proxy puede resultar en prohibición", rule9: "• Todas las tareas deben hacerse manualmente", rule10: "• Soporte responde en 48 horas",
-            home: "Inicio", tasks: "Tareas", cashout: "Retirar", referral: "Referidos", info: "Info", information: "Información", privacy_policy: "Política de Privacidad", terms_conditions: "Términos y Condiciones", my_referral_link: "Mi Enlace de Referido",
-            telegram_username: "Nombre de Usuario de Telegram", stay_on_link: "⏳ Permanezca en la Página del Enlace", timer_instruction: "No cierre esta ventana. Después de 10 segundos, regrese a la aplicación para desbloquear el siguiente paso.",
+            home: "Inicio", tasks: "Tareas", cashout: "Retirar", referral: "Referidos", info: "Info", information: "Información", privacy_policy: "Política de Privacidad", terms_conditions: "Términos y Condiciones",
+            my_referral_code: "Mi Código de Referido", telegram_username: "Nombre de Usuario de Telegram", stay_on_link: "⏳ Permanezca en la Página del Enlace", timer_instruction: "No cierre esta ventana. Después de 10 segundos, regrese a la aplicación para desbloquear el siguiente paso.",
             cancel_task: "Cancelar Tarea", risk_warning_title: "⚠️ Advertencia de Riesgo de Cuenta", risk_warning_text: "Regresó antes de 10 segundos. Permanezca en el enlace durante toda la duración.",
             try_again: "Reintentar", cancel: "Cancelar", loading_ad: "Cargando anuncio..."
         },
-        ar: { loading_initializing: "جاري تهيئة النظام...", your_balance: "رصيدك", referrals: "الإحالات", total_earned: "إجمالي الربح", ref_bonus: "مكافأة الإحالة",
+        ar: {
+            loading_initializing: "جاري تهيئة النظام...", loading_ads: "تحميل الإعلانات...", loading_auth: "الاتصال بالحساب...", loading_data: "تحميل بيانات المستخدم...", loading_ready: "جاهز للربح!",
+            your_balance: "رصيدك", usd_precision: "دولار أمريكي | دقة 3 أرقام عشرية", referrals: "الإحالات", total_earned: "إجمالي الربح", ref_bonus: "مكافأة الإحالة",
             platform_rules: "قواعد المنصة", rule1: "لا أدوات آلية – حظر دائم", rule2: "الحد الأدنى للعمر 18 سنة للسحب", rule3: "السحب يتطلب رصيد $0.500 + 3 إحالات", rule4: "رسوم خدمة 3%",
-            rule5: "كل رابط: ابق 10 ثوانٍ → فتح تلقائي", rule6: "متصفح Chrome إلزامي لمهام الروابط",
-            back_home: "العودة للرئيسية", high_value_tasks: "مهام عالية القيمة", link_challenge: "تحدي 3 روابط", chrome_required: "⚠️ افتح مع Chrome. لن تكتمل المهام إذا تم فتحها بمتصفحات أخرى.",
-            link_warning: "ابق على كل رابط لمدة 10 ثوانٍ بالضبط.", claim_reward: "استلم $0.003", cooldown_note: "تهدئة 40 ثانية",
-            video_challenge: "تحدي 3 إعلانات", video_warning: "شاهد كل إعلان بالكامل.", video_note: "Adsgram → Monetag → Giga، تهدئة 40 ثانية",
+            rule5: "كل رابط: ابق 10 ثوانٍ → فتح تلقائي", rule6: "متصفح Chrome إلزامي لمهام الروابط", rule_break: "بعد 5 إكمالات لمهمة، يتم تطبيق استراحة لمدة 8 دقائق",
+            back_home: "العودة للرئيسية", high_value_tasks: "مهام عالية القيمة", link_challenge: "تحدي 10 روابط", chrome_required: "⚠️ افتح مع Chrome. ابق 10 ثوانٍ على كل رابط.",
+            link_warning: "ابق على كل رابط لمدة 10 ثوانٍ بالضبط لفتح الخطوة التالية.", claim_reward: "استلم $0.011", cooldown_note: "بعد المطالبة: 40 ثانية تهدئة. بعد كل 5 مطالبات: استراحة 8 دقائق. المكافأة: $0.011",
+            video_challenge: "تحدي 10 خطوات", video_chrome: "⚠️ خطوات الروابط (4،5،9،10) تتطلب متصفح Chrome والبقاء 10 ثوانٍ.", video_warning: "أكمل كل خطوة (إعلان أو رابط) بالترتيب. بالنسبة لخطوات الروابط، ابق 10 ثوانٍ على الصفحة.", video_note: "10 خطوات: إعلانات + روابط (ابق 10 ثوانٍ). بعد المطالبة: 40 ثانية تهدئة. بعد 5 مطالبات: استراحة 8 دقائق. المكافأة $0.011",
             one_time_rewards: "مكافآت تليغرام لمرة واحدة", available_balance: "الرصيد المتاح", withdraw_requirements: "متطلبات السحب (يجب تحقيق الكل)",
             min_balance_label: "الحد الأدنى للرصيد:", min_balance_value: "$0.500", min_refs_label: "الحد الأدنى للإحالات:", min_refs_value: "3 إحالات نشطة",
             amount: "المبلغ", fee: "الرسوم (3%)", you_receive: "ستستلم", request_withdrawal: "طلب سحب", withdrawal_history: "سجل السحوبات",
-            invite_friends: "ادعُ أصدقاءك, اربح $0.05 لكل منهم", referral_desc: "شارك رابطك الفريد. كلاكما تحصل على مكافأة $0.05 فوراً!",
-            copy_link: "نسخ الرابط", share_telegram: "مشاركة على تليغرام", your_referrals: "إحالاتك",
-            support: "الدعم", withdraw_conditions: "شروط السحب", cond1: "• الحد الأدنى للرصيد $0.500", cond2: "• الحد الأدنى 3 إحالات", cond3: "• رسوم خدمة 3%", cond4: "• المعالجة خلال 7 أيام بعد الموافقة", cond5: "• سحوبات غير محدودة إذا تم استيفاء الشروط",
-            task_details: "تفاصيل المهام", task_detail1: "• تحدي 3 روابط: ابق 10 ثوانٍ لكل رابط → فتح تلقائي (Chrome مطلوب)", task_detail2: "• تحدي 3 إعلانات: Adsgram → Monetag → Giga (مشاهدة كاملة)",
-            task_detail3: "• التهدئة: 40 ثانية بعد استلام كل مكافأة", task_detail4: "• مهام تليغرام لمرة واحدة: $0.003 لكل منها، انضم وتحقق",
+            your_referral_code: "رمز الإحالة الخاص بك", referral_desc: "شارك هذا الرمز مع الأصدقاء. عند انضمامهم باستخدام رمزك، يحصل كل منكما على مكافأة $0.01!",
+            copy_code: "نسخ الرمز", share_telegram: "مشاركة على تليغرام", your_referrals: "إحالاتك",
+            support: "الدعم", business_email: "الأعمال: earnforearnbusinessteam@gmail.com", withdraw_conditions: "شروط السحب",
+            cond1: "• الحد الأدنى للرصيد $0.500", cond2: "• الحد الأدنى 3 إحالات", cond3: "• رسوم خدمة 3%", cond4: "• المعالجة خلال 7 أيام بعد الموافقة", cond5: "• سحوبات غير محدودة إذا تم استيفاء الشروط",
+            task_details: "تفاصيل المهام", task_detail1: "• تحدي 10 روابط: 10 روابط، 10 ثوانٍ لكل رابط (مطلوب Chrome)", task_detail2: "• تحدي 10 خطوات: إعلانات + روابط (الخطوات 4،5،9،10 هي روابط، والباقي إعلانات)", task_detail3: "• بعد المطالبة بكل مكافأة: 40 ثانية تهدئة", task_detail4: "• بعد كل 5 إكمالات لمهمة: استراحة 8 دقائق", task_detail5: "• مهام تليغرام لمرة واحدة: $0.003 لكل منها، انضم وتحقق",
             additional_rules: "قواعد إضافية", rule7: "• لا حسابات متعددة", rule8: "• استخدام VPN/بروكسي قد يؤدي إلى حظر", rule9: "• جميع المهام يدوية", rule10: "• الدعم يرد خلال 48 ساعة",
-            home: "الرئيسية", tasks: "المهام", cashout: "سحب", referral: "إحالة", info: "معلومات", information: "معلومات", privacy_policy: "سياسة الخصوصية", terms_conditions: "الشروط والأحكام", my_referral_link: "رابط الإحالة الخاص بي",
-            telegram_username: "اسم مستخدم تليغرام", stay_on_link: "⏳ ابق في صفحة الرابط", timer_instruction: "لا تغلق هذه النافذة. بعد 10 ثوانٍ، عد إلى التطبيق لفتح الخطوة التالية تلقائياً.",
+            home: "الرئيسية", tasks: "المهام", cashout: "سحب", referral: "إحالة", info: "معلومات", information: "معلومات", privacy_policy: "سياسة الخصوصية", terms_conditions: "الشروط والأحكام",
+            my_referral_code: "رمز الإحالة الخاص بي", telegram_username: "اسم مستخدم تليغرام", stay_on_link: "⏳ ابق في صفحة الرابط", timer_instruction: "لا تغلق هذه النافذة. بعد 10 ثوانٍ، عد إلى التطبيق لفتح الخطوة التالية تلقائياً.",
             cancel_task: "إلغاء المهمة", risk_warning_title: "⚠️ تحذير مخاطر الحساب", risk_warning_text: "لقد عدت قبل 10 ثوانٍ. يرجى البقاء على الرابط للمدة الكاملة.",
             try_again: "حاول مرة أخرى", cancel: "إلغاء", loading_ad: "جاري تحميل الإعلان..."
         },
-        fr: { loading_initializing: "Initialisation du système...", your_balance: "Votre Solde", referrals: "Références", total_earned: "Total Gagné", ref_bonus: "Bonus Réf",
+        fr: {
+            loading_initializing: "Initialisation du système...", loading_ads: "Chargement des publicités...", loading_auth: "Connexion au compte...", loading_data: "Chargement des données utilisateur...", loading_ready: "Prêt à gagner!",
+            your_balance: "Votre Solde", usd_precision: "USD | 3 décimales", referrals: "Références", total_earned: "Total Gagné", ref_bonus: "Bonus Réf",
             platform_rules: "Règles de la Plateforme", rule1: "Pas d'outils automatisés – bannissement permanent", rule2: "Âge minimum 18 ans pour les retraits", rule3: "Retrait nécessite $0.500 de solde + 3 références", rule4: "Des frais de service de 3% s'appliquent",
-            rule5: "Chaque lien: rester 10 secondes → déverrouillage automatique", rule6: "Navigateur Chrome obligatoire pour les tâches de lien",
-            back_home: "Retour à l'Accueil", high_value_tasks: "Tâches à Haute Valeur", link_challenge: "Défi 3 Liens", chrome_required: "⚠️ OUVREZ avec Chrome. Les tâches ne seront PAS terminées si elles sont ouvertes avec d'autres navigateurs.",
-            link_warning: "Restez 10 secondes sur chaque lien.", claim_reward: "Réclamer $0.003", cooldown_note: "Refroidissement 40s",
-            video_challenge: "Défi 3 Vidéos", video_warning: "Regardez chaque publicité entièrement.", video_note: "Adsgram → Monetag → Giga, refroidissement 40s",
+            rule5: "Chaque lien: rester 10 secondes → déverrouillage automatique", rule6: "Navigateur Chrome obligatoire pour les tâches de lien", rule_break: "Après 5 achèvements d'une tâche, une pause de 8 minutes s'applique",
+            back_home: "Retour à l'Accueil", high_value_tasks: "Tâches à Haute Valeur", link_challenge: "Défi 10 Liens", chrome_required: "⚠️ OUVREZ avec Chrome. Restez 10 secondes sur chaque lien.",
+            link_warning: "Restez exactement 10 secondes sur chaque lien pour débloquer l'étape suivante.", claim_reward: "Réclamer $0.011", cooldown_note: "Après réclamation: 40s de refroidissement. Toutes les 5 réclamations: pause de 8 min. Récompense: $0.011",
+            video_challenge: "Défi 10 Étapes", video_chrome: "⚠️ Les étapes de lien (4,5,9,10) nécessitent le navigateur Chrome et 10 secondes d'attente.", video_warning: "Complétez chaque étape (publicité ou lien) dans l'ordre. Pour les étapes de lien, restez 10 secondes sur la page.", video_note: "10 étapes: publicités + liens (rester 10s). Après réclamation: 40s de refroidissement. Toutes les 5 réclamations: pause de 8 min. Récompense $0.011",
             one_time_rewards: "Récompenses Telegram Unique", available_balance: "Solde Disponible", withdraw_requirements: "Conditions de Retrait (Toutes doivent être remplies)",
             min_balance_label: "Solde Minimum:", min_balance_value: "$0.500", min_refs_label: "Références Minimum:", min_refs_value: "3 références actives",
             amount: "Montant", fee: "Frais (3%)", you_receive: "Vous Recevez", request_withdrawal: "Demander un Retrait", withdrawal_history: "Historique des Retraits",
-            invite_friends: "Invitez des Amis, Gagnez $0.05 Chacun", referral_desc: "Partagez votre lien unique. Vous et votre ami recevez $0.05 de bonus instantanément!",
-            copy_link: "Copier le Lien", share_telegram: "Partager sur Telegram", your_referrals: "Vos Références",
-            support: "Support", withdraw_conditions: "Conditions de Retrait", cond1: "• Solde minimum $0.500", cond2: "• Minimum 3 références", cond3: "• Frais de 3%", cond4: "• Traitement sous 7 jours après approbation", cond5: "• Retraits illimités si les conditions sont remplies",
-            task_details: "Détails des Tâches", task_detail1: "• Défi 3 Liens: rester 10 secondes par lien → déverrouillage automatique (Chrome requis)", task_detail2: "• Défi 3 Vidéos: Adsgram → Monetag → Giga (visionnage complet requis)",
-            task_detail3: "• Refroidissement: 40 secondes après chaque réclamation", task_detail4: "• Tâches Telegram uniques: $0.003 chacune, rejoignez et vérifiez",
+            your_referral_code: "Votre Code de Parrainage", referral_desc: "Partagez ce code avec vos amis. Lorsqu'ils rejoignent avec votre code, vous recevez tous les deux $0.01 de bonus!",
+            copy_code: "Copier le Code", share_telegram: "Partager sur Telegram", your_referrals: "Vos Références",
+            support: "Support", business_email: "Affaires: earnforearnbusinessteam@gmail.com", withdraw_conditions: "Conditions de Retrait",
+            cond1: "• Solde minimum $0.500", cond2: "• Minimum 3 références", cond3: "• Frais de 3%", cond4: "• Traitement sous 7 jours après approbation", cond5: "• Retraits illimités si les conditions sont remplies",
+            task_details: "Détails des Tâches", task_detail1: "• Défi 10 Liens: 10 liens, 10 secondes chacun (Chrome requis)", task_detail2: "• Défi 10 Étapes: publicités + liens (étapes 4,5,9,10 sont des liens, le reste des publicités)", task_detail3: "• Après chaque réclamation de récompense: 40 secondes de refroidissement", task_detail4: "• Après chaque 5 achèvements d'une tâche: pause de 8 minutes", task_detail5: "• Tâches Telegram uniques: $0.003 chacune, rejoignez et vérifiez",
             additional_rules: "Règles Supplémentaires", rule7: "• Pas de comptes multiples", rule8: "• L'utilisation de VPN/proxy peut entraîner un bannissement", rule9: "• Toutes les tâches doivent être faites manuellement", rule10: "• Le support répond sous 48 heures",
-            home: "Accueil", tasks: "Tâches", cashout: "Retirer", referral: "Parrainage", info: "Infos", information: "Informations", privacy_policy: "Politique de Confidentialité", terms_conditions: "Conditions d'Utilisation", my_referral_link: "Mon Lien de Parrainage",
-            telegram_username: "Nom d'utilisateur Telegram", stay_on_link: "⏳ Restez sur la Page du Lien", timer_instruction: "Ne fermez pas cette fenêtre. Après 10 secondes, revenez à l'application pour déverrouiller automatiquement l'étape suivante.",
+            home: "Accueil", tasks: "Tâches", cashout: "Retirer", referral: "Parrainage", info: "Infos", information: "Informations", privacy_policy: "Politique de Confidentialité", terms_conditions: "Conditions d'Utilisation",
+            my_referral_code: "Mon Code de Parrainage", telegram_username: "Nom d'utilisateur Telegram", stay_on_link: "⏳ Restez sur la Page du Lien", timer_instruction: "Ne fermez pas cette fenêtre. Après 10 secondes, revenez à l'application pour déverrouiller automatiquement l'étape suivante.",
             cancel_task: "Annuler la Tâche", risk_warning_title: "⚠️ Avertissement de Risque de Compte", risk_warning_text: "Vous êtes revenu avant 10 secondes. Veuillez rester sur le lien pendant toute la durée.",
             try_again: "Réessayer", cancel: "Annuler", loading_ad: "Chargement de la publicité..."
         }
@@ -883,32 +1024,21 @@
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if(t[key]) {
-                // For input placeholders, use setAttribute
-                if(el.tagName === 'INPUT' && el.getAttribute('type') !== 'text') {
+                if(el.tagName === 'INPUT' && el.getAttribute('type') !== 'text' && el.getAttribute('type') !== 'number') {
                     el.setAttribute('placeholder', t[key]);
                 } else {
                     el.innerText = t[key];
                 }
             }
         });
-        // Update placeholder for binance input
-        const binanceInput = document.getElementById('binanceAccount');
-        if(binanceInput && t.binance_placeholder) binanceInput.placeholder = t.binance_placeholder;
-        else if(binanceInput) binanceInput.placeholder = "Binance Email / UID";
-        
-        const withdrawAmountInput = document.getElementById('withdrawAmount');
-        if(withdrawAmountInput && t.amount_placeholder) withdrawAmountInput.placeholder = t.amount_placeholder;
-        else if(withdrawAmountInput) withdrawAmountInput.placeholder = "Amount ($)";
-        
         const langNames = { en: 'English', hi: 'हिन्दी', bn: 'বাংলা', es: 'Español', ar: 'العربية', fr: 'Français' };
         document.getElementById('currentLangLabel').innerText = langNames[currentLang] || 'English';
-        
-        // Update loading step if visible
-        const loadingStep = document.getElementById('loadingStep');
-        if(loadingStep && loadingStep.getAttribute('data-i18n')) {
-            const key = loadingStep.getAttribute('data-i18n');
-            if(t[key]) loadingStep.innerText = t[key];
-        }
+        const claimLink = document.getElementById('claimLinkRewardBtn');
+        if(claimLink && t.claim_reward) claimLink.innerText = t.claim_reward;
+        const claimVideo = document.getElementById('claimVideoRewardBtn');
+        if(claimVideo && t.claim_reward) claimVideo.innerText = t.claim_reward;
+        const withdrawBtn = document.getElementById('submitWithdrawBtn');
+        if(withdrawBtn && t.request_withdrawal) withdrawBtn.innerText = t.request_withdrawal;
     }
     
     function loadLanguageOptions() {
@@ -927,8 +1057,6 @@
                 localStorage.setItem('selectedLanguage', currentLang);
                 applyTranslations();
                 document.getElementById('langMenu').classList.remove('active');
-                // Also update any dynamic UI elements that might not have data-i18n
-                updateDynamicUI();
             };
             container.appendChild(div);
         });
@@ -940,23 +1068,7 @@
         });
     }
     
-    function updateDynamicUI() {
-        // Update any buttons that were dynamically set after translation
-        const claimLink = document.getElementById('claimLinkRewardBtn');
-        if(claimLink && claimLink.getAttribute('data-i18n') === 'claim_reward') {
-            claimLink.innerText = (translations[currentLang] || translations.en).claim_reward;
-        }
-        const claimVideo = document.getElementById('claimVideoRewardBtn');
-        if(claimVideo && claimVideo.getAttribute('data-i18n') === 'claim_reward') {
-            claimVideo.innerText = (translations[currentLang] || translations.en).claim_reward;
-        }
-        const withdrawBtn = document.getElementById('submitWithdrawBtn');
-        if(withdrawBtn && withdrawBtn.getAttribute('data-i18n') === 'request_withdrawal') {
-            withdrawBtn.innerText = (translations[currentLang] || translations.en).request_withdrawal;
-        }
-    }
-    
-    // ==================== FIREBASE USER FUNCTIONS ====================
+    // ==================== HELPER FUNCTIONS ====================
     function showSpinner(show) { document.getElementById('spinner').style.display = show ? 'flex' : 'none'; }
     function showModal(modal) { modal.classList.add('active'); }
     function hideModal(modal) { modal.classList.remove('active'); }
@@ -979,9 +1091,40 @@
         try { return (await db.ref(`users/${telegramId}`).once('value')).val(); } catch(e){ return null; }
     }
     
+    async function applyReferralBonus(referralCode) {
+        const snapshot = await db.ref('users').orderByChild('referralCode').equalTo(referralCode).once('value');
+        if(!snapshot.exists()) return false;
+        const referrerId = Object.keys(snapshot.val())[0];
+        if(referrerId === telegramId) return false;
+        const referrerData = snapshot.val()[referrerId];
+        const bonus = 0.01;
+        const updatedRefs = [...(referrerData.referrals||[]), { username: telegramUsername, id: telegramId, date: Date.now(), bonus }];
+        await db.ref(`users/${referrerId}`).update({
+            referrals: updatedRefs,
+            referralBonus: (referrerData.referralBonus||0) + bonus,
+            balance: (referrerData.balance||0) + bonus,
+            totalEarned: (referrerData.totalEarned||0) + bonus
+        });
+        await db.ref(`users/${telegramId}`).update({
+            balance: (userData.balance||0) + bonus,
+            totalEarned: (userData.totalEarned||0) + bonus,
+            referralBonus: (userData.referralBonus||0) + bonus,
+            referralUsed: referralCode,
+            referralBonusApplied: true
+        });
+        userData.balance += bonus;
+        userData.totalEarned += bonus;
+        userData.referralBonus += bonus;
+        userData.referralBonusApplied = true;
+        refreshUI();
+        return true;
+    }
+    
     async function initUser() {
         let data = await fetchUserData();
+        let firstTime = false;
         if(!data) {
+            firstTime = true;
             const refCode = telegramUsername.slice(0,5).toUpperCase() + Math.random().toString(36).substr(2,5).toUpperCase();
             const newUser = {
                 username: telegramUsername,
@@ -991,56 +1134,59 @@
                 referralBonus: 0,
                 referrals: [],
                 referralCode: refCode,
+                referralBonusApplied: false,
                 createdAt: Date.now(),
-                linkTask: { steps: 0, cooldownUntil: 0 },
-                videoTask: { steps: 0, cooldownUntil: 0 },
+                linkTask: { steps: 0, completionsCount: 0, cooldownUntil: 0, breakUntil: 0 },
+                videoTask: { steps: 0, completionsCount: 0, cooldownUntil: 0, breakUntil: 0 },
                 oneTimeTasks: { telegramUpdate: false, telegramProof: false },
                 withdrawalHistory: []
             };
             await db.ref(`users/${telegramId}`).set(newUser);
             data = newUser;
-            
-            // Check referral from URL parameter 'start'
-            const urlParams = new URLSearchParams(window.location.search);
-            const startRef = urlParams.get('start');
-            if(startRef) {
-                const snapshot = await db.ref('users').orderByChild('referralCode').equalTo(startRef).once('value');
-                if(snapshot.exists()) {
-                    const referrerId = Object.keys(snapshot.val())[0];
-                    if(referrerId !== telegramId) {
-                        const referrerData = snapshot.val()[referrerId];
-                        const bonus = 0.05;
-                        const updatedRefs = [...(referrerData.referrals||[]), { username: telegramUsername, id: telegramId, date: Date.now(), bonus }];
-                        await db.ref(`users/${referrerId}`).update({
-                            referrals: updatedRefs,
-                            referralBonus: (referrerData.referralBonus||0) + bonus,
-                            balance: (referrerData.balance||0) + bonus,
-                            totalEarned: (referrerData.totalEarned||0) + bonus
-                        });
-                        await db.ref(`users/${telegramId}`).update({
-                            balance: bonus,
-                            totalEarned: bonus,
-                            referralBonus: bonus
-                        });
-                        data.balance = bonus;
-                        data.totalEarned = bonus;
-                        data.referralBonus = bonus;
-                    }
-                }
-            }
         }
+        if(!data.linkTask) data.linkTask = { steps:0, completionsCount:0, cooldownUntil:0, breakUntil:0 };
+        if(!data.videoTask) data.videoTask = { steps:0, completionsCount:0, cooldownUntil:0, breakUntil:0 };
         userData = data;
         linkStepsDone = userData.linkTask?.steps || 0;
         videoStepsDone = userData.videoTask?.steps || 0;
+        if(firstTime && !userData.referralBonusApplied) {
+            document.getElementById('referralCodeModal').style.display = 'flex';
+        } else {
+            proceedToApp();
+        }
+    }
+    
+    function proceedToApp() {
+        document.getElementById('referralCodeModal').style.display = 'none';
         refreshUI();
         db.ref(`users/${telegramId}`).on('value', snap => {
             if(snap.exists()) {
                 userData = snap.val();
-                linkStepsDone = userData.linkTask?.steps || 0;
-                videoStepsDone = userData.videoTask?.steps || 0;
+                if(!userData.linkTask) userData.linkTask = { steps:0, completionsCount:0, cooldownUntil:0, breakUntil:0 };
+                if(!userData.videoTask) userData.videoTask = { steps:0, completionsCount:0, cooldownUntil:0, breakUntil:0 };
+                linkStepsDone = userData.linkTask.steps;
+                videoStepsDone = userData.videoTask.steps;
                 refreshUI();
             }
         });
+    }
+    
+    function startCountdown(elementId, endTime, prefix) {
+        const element = document.getElementById(elementId);
+        if(!element) return;
+        const update = () => {
+            const remaining = Math.max(0, endTime - Date.now());
+            if(remaining <= 0) {
+                element.innerHTML = '';
+                return;
+            }
+            const seconds = Math.ceil(remaining/1000);
+            const minutes = Math.floor(seconds/60);
+            const secs = seconds % 60;
+            element.innerHTML = `<div class="${prefix === 'Break' ? 'break-timer' : 'cooldown-timer'}">${prefix}: ${minutes>0?minutes+'m ':''}${secs}s</div>`;
+            setTimeout(update, 500);
+        };
+        update();
     }
     
     function refreshUI() {
@@ -1052,7 +1198,8 @@
         document.getElementById('withdrawBalance').innerText = (userData.balance||0).toFixed(3);
         document.getElementById('userInitial').innerText = telegramUsername.charAt(0).toUpperCase();
         document.getElementById('menuUsername').innerText = telegramUsername;
-        document.getElementById('referralLinkDisplay').innerHTML = `https://t.me/earnforearn_bot?start=${userData.referralCode}`;
+        document.getElementById('referralCodeDisplay').innerHTML = userData.referralCode || '';
+        
         renderLinkTaskUI();
         renderVideoTaskUI();
         renderTelegramTasks();
@@ -1064,29 +1211,47 @@
     
     // ==================== LINK TASK ====================
     function renderLinkTaskUI() {
-        const cooldown = Math.max(0, (userData.linkTask?.cooldownUntil||0) - Date.now());
-        const canStart = cooldown <= 0;
+        const task = userData.linkTask;
+        const cooldownEnd = task.cooldownUntil || 0;
+        const breakEnd = task.breakUntil || 0;
+        const inBreak = breakEnd > Date.now();
+        const inCooldown = cooldownEnd > Date.now();
+        const canStart = !inBreak && !inCooldown;
+        
         let html = '';
-        for(let i=1;i<=3;i++) {
+        for(let i=1;i<=10;i++) {
             let cls = 'step-btn';
             if(linkStepsDone >= i) cls += ' completed';
             else if(linkStepsDone+1 === i && canStart) cls += ' active-step';
-            else if(!canStart) cls += ' locked';
-            html += `<div class="${cls}" data-linkstep="${i}"><i class="fas ${i===1?'fa-arrow-right':i===2?'fa-arrow-right':'fa-flag-checkered'}"></i><span>${i}</span></div>`;
+            else cls += ' locked';
+            html += `<div class="${cls}" data-linkstep="${i}"><i class="fas fa-link"></i><span>${i}</span></div>`;
         }
         document.getElementById('linkStepsContainer').innerHTML = html;
-        document.getElementById('linkCooldownArea').innerHTML = cooldown>0 ? `<div class="cooldown-timer">${Math.ceil(cooldown/1000)}s</div>` : '';
         const claimBtn = document.getElementById('claimLinkRewardBtn');
-        if(linkStepsDone >= 3 && cooldown<=0) claimBtn.style.display='block'; else claimBtn.style.display='none';
-        document.getElementById('linkProgress').innerHTML = `${linkStepsDone}/3 links`;
+        const canClaim = (linkStepsDone >= 10) && !inBreak && (cooldownEnd <= Date.now());
+        claimBtn.style.display = canClaim ? 'block' : 'none';
+        document.getElementById('linkProgress').innerHTML = `${linkStepsDone}/10 links | Completions: ${task.completionsCount||0}`;
+        
         document.querySelectorAll('#linkStepsContainer .step-btn').forEach(btn=>{
-            btn.onclick = async()=>{ let step = parseInt(btn.dataset.linkstep); if(linkStepsDone >= step) return; if(linkStepsDone+1 !== step){ showStatus('Complete previous steps first', 'error'); return; } if(cooldown>0){ showStatus('Cooldown active', 'error'); return; } startLinkStep(step); };
+            btn.onclick = async()=>{
+                let step = parseInt(btn.dataset.linkstep);
+                if(linkStepsDone >= step) return;
+                if(linkStepsDone+1 !== step){ showStatus('Complete previous steps first', 'error'); return; }
+                if(inBreak){ showStatus(`Break active for ${Math.ceil((breakEnd-Date.now())/60000)} min`, 'error'); return; }
+                if(inCooldown){ showStatus('Cooldown active', 'error'); return; }
+                startLinkStep(step);
+            };
         });
         if(claimBtn) claimBtn.onclick = () => claimLinkReward();
+        
+        if(inCooldown) startCountdown('linkCooldownArea', cooldownEnd, 'Cooldown');
+        else document.getElementById('linkCooldownArea').innerHTML = '';
+        if(inBreak) startCountdown('linkBreakArea', breakEnd, 'Break');
+        else document.getElementById('linkBreakArea').innerHTML = '';
     }
     
     async function startLinkStep(step) {
-        pendingLinkStep = step;
+        pendingStep = { type: 'link', step: step };
         const modal = document.getElementById('timerModal');
         const timerDisp = document.getElementById('timerCountdown');
         let sec = 10;
@@ -1098,7 +1263,7 @@
         window.open(link, '_blank');
         linkStartTime = Date.now();
         const onVisibility = () => {
-            if (!document.hidden && pendingLinkStep === step) {
+            if (!document.hidden && pendingStep && pendingStep.type === 'link' && pendingStep.step === step) {
                 const elapsed = (Date.now() - linkStartTime) / 1000;
                 if (elapsed >= 10) {
                     if(linkInterval) clearInterval(linkInterval);
@@ -1109,9 +1274,9 @@
                     if(linkInterval) clearInterval(linkInterval);
                     hideModal(modal);
                     document.removeEventListener('visibilitychange', onVisibility);
-                    showRiskWarning(step);
+                    showRiskWarning(() => startLinkStep(step));
                 }
-                pendingLinkStep = null;
+                pendingStep = null;
             }
         };
         document.addEventListener('visibilitychange', onVisibility);
@@ -1119,12 +1284,12 @@
             if(linkInterval) clearInterval(linkInterval);
             hideModal(modal);
             document.removeEventListener('visibilitychange', onVisibility);
-            pendingLinkStep = null;
+            pendingStep = null;
             showStatus('Task cancelled.', 'error');
         };
     }
     
-    function showRiskWarning(step) {
+    function showRiskWarning(retryCallback) {
         const modal = document.getElementById('tryAgainModal');
         showModal(modal);
         const retryBtn = document.getElementById('tryAgainRetryBtn');
@@ -1133,91 +1298,189 @@
         const newCancel = cancelBtn.cloneNode(true);
         retryBtn.parentNode.replaceChild(newRetry, retryBtn);
         cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
-        newRetry.onclick = () => { hideModal(modal); startLinkStep(step); };
+        newRetry.onclick = () => { hideModal(modal); retryCallback(); };
         newCancel.onclick = () => hideModal(modal);
     }
     
     async function completeLinkStep(step) {
         const ns = linkStepsDone + 1;
-        await updateUser({ linkTask: { steps: ns, cooldownUntil: userData.linkTask?.cooldownUntil||0 } });
+        await updateUser({ linkTask: { ...userData.linkTask, steps: ns } });
         linkStepsDone = ns;
         refreshUI();
         showStatus(`Link step ${step} completed!`, 'success');
     }
     
     async function claimLinkReward() {
-        if(linkStepsDone < 3) return showStatus('Complete all 3 links first', 'error');
-        const cooldown = (userData.linkTask?.cooldownUntil||0) - Date.now();
-        if(cooldown>0) return showStatus('Cooldown active', 'error');
-        const reward = 0.003;
+        const task = userData.linkTask;
+        if(linkStepsDone < 10) return showStatus('Complete all 10 links first', 'error');
+        if(task.breakUntil > Date.now()) return showStatus('Break active', 'error');
+        if(task.cooldownUntil > Date.now()) return showStatus('Cooldown active', 'error');
+        const reward = 0.011;
+        const newCompletions = (task.completionsCount || 0) + 1;
+        let newBreakUntil = task.breakUntil;
+        if(newCompletions % 5 === 0) {
+            newBreakUntil = Date.now() + 8 * 60 * 1000;
+        }
         const newBal = (userData.balance||0) + reward;
-        await updateUser({ balance: newBal, totalEarned: (userData.totalEarned||0)+reward, linkTask: { steps: 0, cooldownUntil: Date.now() + 40000 } });
+        await updateUser({
+            balance: newBal,
+            totalEarned: (userData.totalEarned||0) + reward,
+            linkTask: {
+                steps: 0,
+                completionsCount: newCompletions,
+                cooldownUntil: Date.now() + 40000,
+                breakUntil: newBreakUntil
+            }
+        });
         linkStepsDone = 0;
-        showStatus(`Reward claimed! +$${reward.toFixed(3)}`, 'success');
+        showStatus(`Reward claimed! +$${reward.toFixed(3)} ${newCompletions%5===0?'8 min break activated.':''}`, 'success');
         refreshUI();
     }
     
-    // ==================== VIDEO ADS ====================
-    const videoAdTypes = { 1: 'adsgram', 2: 'monetag', 3: 'giga' };
+    // ==================== VIDEO TASK (10-STEP) ====================
     function renderVideoTaskUI() {
-        const cooldown = Math.max(0, (userData.videoTask?.cooldownUntil||0) - Date.now());
-        const canStart = cooldown <= 0;
+        const task = userData.videoTask;
+        const cooldownEnd = task.cooldownUntil || 0;
+        const breakEnd = task.breakUntil || 0;
+        const inBreak = breakEnd > Date.now();
+        const inCooldown = cooldownEnd > Date.now();
+        const canStart = !inBreak && !inCooldown;
+        
         let html = '';
-        for(let i=1;i<=3;i++) {
+        for(let i=1;i<=10;i++) {
             let cls = 'step-btn';
             if(videoStepsDone >= i) cls += ' completed';
             else if(videoStepsDone+1 === i && canStart) cls += ' active-step';
-            else if(!canStart) cls += ' locked';
-            html += `<div class="${cls}" data-videostep="${i}"><i class="fas ${i===1?'fa-ad':i===2?'fa-play-circle':'fa-trophy'}"></i><span>${i}</span></div>`;
+            else cls += ' locked';
+            let icon = videoStepsType[i-1] === 'link' ? 'fa-link' : 'fa-play-circle';
+            html += `<div class="${cls}" data-videostep="${i}"><i class="fas ${icon}"></i><span>${i}</span></div>`;
         }
         document.getElementById('videoStepsContainer').innerHTML = html;
-        document.getElementById('videoCooldownArea').innerHTML = cooldown>0 ? `<div class="cooldown-timer">${Math.ceil(cooldown/1000)}s</div>` : '';
         const claimBtn = document.getElementById('claimVideoRewardBtn');
-        if(videoStepsDone >= 3 && cooldown<=0) claimBtn.style.display='block'; else claimBtn.style.display='none';
-        document.getElementById('videoProgress').innerHTML = `${videoStepsDone}/3 ads`;
+        const canClaim = (videoStepsDone >= 10) && !inBreak && (cooldownEnd <= Date.now());
+        claimBtn.style.display = canClaim ? 'block' : 'none';
+        document.getElementById('videoProgress').innerHTML = `${videoStepsDone}/10 steps | Completions: ${task.completionsCount||0}`;
+        
         document.querySelectorAll('#videoStepsContainer .step-btn').forEach(btn=>{
-            btn.onclick = async()=>{ let step = parseInt(btn.dataset.videostep); if(videoStepsDone >= step) return; if(videoStepsDone+1 !== step){ showStatus('Watch previous ad first', 'error'); return; } if(cooldown>0){ showStatus('Cooldown active', 'error'); return; } startVideoAd(step); };
+            btn.onclick = async()=>{
+                let step = parseInt(btn.dataset.videostep);
+                if(videoStepsDone >= step) return;
+                if(videoStepsDone+1 !== step){ showStatus('Complete previous steps first', 'error'); return; }
+                if(inBreak){ showStatus(`Break active for ${Math.ceil((breakEnd-Date.now())/60000)} min`, 'error'); return; }
+                if(inCooldown){ showStatus('Cooldown active', 'error'); return; }
+                startVideoStep(step);
+            };
         });
         if(claimBtn) claimBtn.onclick = () => claimVideoReward();
+        
+        if(inCooldown) startCountdown('videoCooldownArea', cooldownEnd, 'Cooldown');
+        else document.getElementById('videoCooldownArea').innerHTML = '';
+        if(inBreak) startCountdown('videoBreakArea', breakEnd, 'Break');
+        else document.getElementById('videoBreakArea').innerHTML = '';
     }
     
-    async function startVideoAd(step) {
-        const adType = videoAdTypes[step];
-        showSpinner(true);
-        try {
-            let completed = false;
-            if(adType === 'adsgram') {
-                const ctrl = window.Adsgram?.init({ blockId: "int-24179" });
-                if(ctrl) { await ctrl.show(); completed = true; }
-            } else if(adType === 'monetag') {
-                if(window.show_10541383) { await window.show_10541383(); completed = true; }
-            } else if(adType === 'giga') {
-                if(window.showGiga) { await window.showGiga(); completed = true; }
+    async function startVideoStep(step) {
+        const stepType = videoStepsType[step-1];
+        if(stepType === 'link') {
+            pendingStep = { type: 'video', step: step };
+            const modal = document.getElementById('timerModal');
+            const timerDisp = document.getElementById('timerCountdown');
+            let sec = 10;
+            timerDisp.innerText = sec;
+            if(linkInterval) clearInterval(linkInterval);
+            linkInterval = setInterval(() => { sec--; timerDisp.innerText = sec; if(sec <= 0) clearInterval(linkInterval); }, 1000);
+            showModal(modal);
+            const link = LINK_URLS[step-1];
+            window.open(link, '_blank');
+            linkStartTime = Date.now();
+            const onVisibility = () => {
+                if (!document.hidden && pendingStep && pendingStep.type === 'video' && pendingStep.step === step) {
+                    const elapsed = (Date.now() - linkStartTime) / 1000;
+                    if (elapsed >= 10) {
+                        if(linkInterval) clearInterval(linkInterval);
+                        hideModal(modal);
+                        document.removeEventListener('visibilitychange', onVisibility);
+                        completeVideoStep(step);
+                    } else {
+                        if(linkInterval) clearInterval(linkInterval);
+                        hideModal(modal);
+                        document.removeEventListener('visibilitychange', onVisibility);
+                        showRiskWarning(() => startVideoStep(step));
+                    }
+                    pendingStep = null;
+                }
+            };
+            document.addEventListener('visibilitychange', onVisibility);
+            document.getElementById('cancelTimerBtn').onclick = () => {
+                if(linkInterval) clearInterval(linkInterval);
+                hideModal(modal);
+                document.removeEventListener('visibilitychange', onVisibility);
+                pendingStep = null;
+                showStatus('Task cancelled.', 'error');
+            };
+        } else {
+            showSpinner(true);
+            try {
+                const adIndex = (step - 1) % adNetworks.length;
+                const adType = adNetworks[adIndex];
+                let completed = false;
+                if(adType === 'adsgram') {
+                    const ctrl = window.Adsgram?.init({ blockId: "int-28543" });
+                    if(ctrl) { await ctrl.show(); completed = true; }
+                } else if(adType === 'monetag') {
+                    if(window.show_10541383) { await window.show_10541383(); completed = true; }
+                } else if(adType === 'adexora') {
+                    if(window.showAdexora) { await window.showAdexora(); completed = true; }
+                }
+                showSpinner(false);
+                if(completed) {
+                    completeVideoStep(step);
+                } else {
+                    showStatus(`Step ${step} failed. Please retry.`, 'error');
+                }
+            } catch(err) {
+                showSpinner(false);
+                showStatus(`Step error: ${err.message || 'unknown'}`, 'error');
             }
-            showSpinner(false);
-            if(completed) {
-                const newSteps = videoStepsDone + 1;
-                await updateUser({ videoTask: { steps: newSteps, cooldownUntil: userData.videoTask?.cooldownUntil||0 } });
-                videoStepsDone = newSteps;
-                refreshUI();
-                showStatus(`Ad ${step} completed!`, 'success');
-            } else showStatus(`Ad ${step} failed. Try again.`, 'error');
-        } catch(err) { showSpinner(false); showStatus(`Ad error: ${err.message}`, 'error'); }
+        }
+    }
+    
+    async function completeVideoStep(step) {
+        const ns = videoStepsDone + 1;
+        await updateUser({ videoTask: { ...userData.videoTask, steps: ns } });
+        videoStepsDone = ns;
+        refreshUI();
+        showStatus(`Step ${step} completed!`, 'success');
     }
     
     async function claimVideoReward() {
-        if(videoStepsDone < 3) return showStatus('Watch all 3 ads first', 'error');
-        const cooldown = (userData.videoTask?.cooldownUntil||0) - Date.now();
-        if(cooldown>0) return showStatus('Cooldown active', 'error');
-        const reward = 0.003;
+        const task = userData.videoTask;
+        if(videoStepsDone < 10) return showStatus('Complete all 10 steps first', 'error');
+        if(task.breakUntil > Date.now()) return showStatus('Break active', 'error');
+        if(task.cooldownUntil > Date.now()) return showStatus('Cooldown active', 'error');
+        const reward = 0.011;
+        const newCompletions = (task.completionsCount || 0) + 1;
+        let newBreakUntil = task.breakUntil;
+        if(newCompletions % 5 === 0) {
+            newBreakUntil = Date.now() + 8 * 60 * 1000;
+        }
         const newBal = (userData.balance||0) + reward;
-        await updateUser({ balance: newBal, totalEarned: (userData.totalEarned||0)+reward, videoTask: { steps: 0, cooldownUntil: Date.now() + 40000 } });
+        await updateUser({
+            balance: newBal,
+            totalEarned: (userData.totalEarned||0) + reward,
+            videoTask: {
+                steps: 0,
+                completionsCount: newCompletions,
+                cooldownUntil: Date.now() + 40000,
+                breakUntil: newBreakUntil
+            }
+        });
         videoStepsDone = 0;
-        showStatus(`Video reward claimed! +$${reward.toFixed(3)}`, 'success');
+        showStatus(`Reward claimed! +$${reward.toFixed(3)} ${newCompletions%5===0?'8 min break activated.':''}`, 'success');
         refreshUI();
     }
     
-    // ==================== TELEGRAM ONE-TIME TASKS ====================
+    // ==================== OTHER UI (unchanged from original, but with translations applied) ====================
     const tgTasks = [
         {id:'telegramUpdate', title:'Join Update Channel', reward:0.003, link:'https://t.me/earnforearnupdate', key:'telegramUpdate'},
         {id:'telegramProof', title:'Join Payment Proof Channel', reward:0.003, link:'https://t.me/earnforearnpaymentproof', key:'telegramProof'}
@@ -1230,7 +1493,6 @@
         tgTasks.forEach(t=>{
             if(comp[t.key]) return;
             const div = document.createElement('div');
-            div.className = 'one-time-task';
             div.style.display = 'flex'; div.style.justifyContent = 'space-between'; div.style.alignItems = 'center';
             div.style.background = 'var(--bg-elevated)'; div.style.borderRadius = '24px'; div.style.padding = '16px'; div.style.marginTop = '12px';
             div.innerHTML = `<div><strong>${t.title}</strong><br>+$${t.reward.toFixed(3)}</div><button class="tg-verify" style="background:#0088cc; border:none; padding:8px 16px; border-radius:40px; color:white; cursor:pointer;" data-link="${t.link}" data-key="${t.key}" data-reward="${t.reward}">Join & Verify</button>`;
@@ -1253,7 +1515,6 @@
         });
     }
     
-    // ==================== REFERRALS & WITHDRAWAL ====================
     function renderReferralsList() {
         const refs = userData?.referrals || [];
         const container = document.getElementById('referralsList');
@@ -1283,7 +1544,6 @@
         document.getElementById('wdFee').innerText = `$${fee.toFixed(3)}`;
         document.getElementById('wdNet').innerText = `$${net.toFixed(3)}`;
     }
-    document.getElementById('withdrawAmount')?.addEventListener('input', updateWithdrawCalc);
     
     async function submitWithdrawal() {
         const amt = parseFloat(document.getElementById('withdrawAmount').value);
@@ -1294,26 +1554,49 @@
         if((userData.referrals||[]).length < 3) return showStatus('Need 3 referrals', 'error');
         const fee = amt * 0.03;
         const net = amt - fee;
-        const wid = { id: Date.now(), amount: amt, fee, netAmount: net, method: 'Binance', details: acc, status: 'pending', date: Date.now() };
+        const wid = { 
+            id: Date.now(), 
+            withdrawId: 'WD-' + Date.now().toString().slice(-8) + Math.floor(Math.random()*1000),
+            amount: amt, fee, netAmount: net, method: 'Binance', account: acc,
+            status: 'pending', date: Date.now() 
+        };
         const newBal = (userData.balance||0) - amt;
         const history = [...(userData.withdrawalHistory||[]), wid];
         await updateUser({ balance: newBal, withdrawalHistory: history });
-        showStatus(`Withdrawal request submitted! Net: $${net.toFixed(3)}`, 'success');
+        const detailsDiv = document.getElementById('withdrawSuccessDetails');
+        detailsDiv.innerHTML = `
+            <div><strong>Withdrawal ID:</strong> ${wid.withdrawId}</div>
+            <div><strong>Amount:</strong> $${amt.toFixed(3)}</div>
+            <div><strong>Fee (3%):</strong> $${fee.toFixed(3)}</div>
+            <div><strong>Net:</strong> $${net.toFixed(3)}</div>
+            <div><strong>Binance:</strong> ${acc}</div>
+        `;
+        showModal(document.getElementById('withdrawSuccessModal'));
         document.getElementById('binanceAccount').value = '';
         document.getElementById('withdrawAmount').value = '';
         refreshUI();
     }
-    document.getElementById('submitWithdrawBtn')?.addEventListener('click', submitWithdrawal);
     
     function displayWithdrawalHistory() {
         const hist = userData?.withdrawalHistory || [];
         const container = document.getElementById('historyList');
         if(!container) return;
         if(hist.length === 0) { container.innerHTML = '<div class="task-card">No withdrawal requests</div>'; return; }
-        container.innerHTML = hist.slice().reverse().map(w => `<div class="task-card" style="margin:8px 0; padding:14px;"><small>${new Date(w.date).toLocaleString()}</small><br>Amount: $${w.amount.toFixed(3)} → Net: $${w.netAmount.toFixed(3)}<br>Status: ${w.status}</div>`).join('');
+        container.innerHTML = hist.slice().reverse().map(w => `
+            <div class="withdrawal-history-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span class="withdraw-id"><i class="fas fa-receipt"></i> ${w.withdrawId}</span>
+                    <span class="history-status status-${w.status}">${w.status.toUpperCase()}</span>
+                </div>
+                <div><strong>Amount:</strong> $${w.amount.toFixed(3)}</div>
+                <div><strong>Fee:</strong> $${w.fee.toFixed(3)}</div>
+                <div><strong>Net:</strong> $${w.netAmount.toFixed(3)}</div>
+                <div><strong>Account:</strong> ${w.account}</div>
+                <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:8px;">${new Date(w.date).toLocaleString()}</div>
+            </div>
+        `).join('');
     }
     
-    // ==================== NAVIGATION ====================
     function switchSection(id) {
         document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
@@ -1324,6 +1607,7 @@
         else if(id==='referralSection') document.getElementById('navReferral').classList.add('active');
         else if(id==='infoSection') document.getElementById('navInfo').classList.add('active');
     }
+    
     document.getElementById('navHome').onclick = ()=>switchSection('homeSection');
     document.getElementById('navTasks').onclick = ()=>{ switchSection('tasksSection'); renderLinkTaskUI(); renderVideoTaskUI(); renderTelegramTasks(); };
     document.getElementById('navCashout').onclick = ()=>{ switchSection('cashoutSection'); displayWithdrawalHistory(); updateWithdrawalRequirements(); updateWithdrawCalc(); };
@@ -1334,9 +1618,9 @@
     document.getElementById('referralBackBtn').onclick = ()=>switchSection('homeSection');
     document.getElementById('infoBackBtn').onclick = ()=>switchSection('homeSection');
     
-    document.getElementById('copyLinkBtn').onclick = ()=>{ const link=`https://t.me/earnforearn_bot?start=${userData.referralCode}`; navigator.clipboard.writeText(link); showStatus('Referral link copied!', 'success'); };
-    document.getElementById('shareTelegramBtn').onclick = ()=>{ const link=`https://t.me/earnforearn_bot?start=${userData.referralCode}`; window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Join%20Earn%20For%20Earn%20and%20earn%20real%20USD!`,'_blank'); };
-    document.getElementById('menuReferral').onclick = ()=>{ const link=`https://t.me/earnforearn_bot?start=${userData.referralCode}`; navigator.clipboard.writeText(link); showStatus('Link copied', 'success'); };
+    document.getElementById('copyReferralCodeBtn').onclick = ()=>{ navigator.clipboard.writeText(userData.referralCode); showStatus('Referral code copied!', 'success'); };
+    document.getElementById('shareTelegramCodeBtn').onclick = ()=>{ const text = `Join Earn For Earn using my referral code: ${userData.referralCode}`; window.open(`https://t.me/share/url?url=${encodeURIComponent(text)}`,'_blank'); };
+    document.getElementById('menuReferralCode').onclick = ()=>{ navigator.clipboard.writeText(userData.referralCode); showStatus('Code copied', 'success'); };
     document.getElementById('profileBtn').onclick = ()=>document.getElementById('userMenu').classList.toggle('active');
     document.getElementById('menuPrivacy').onclick = ()=>window.open('https://earn-for-earn-privacy-police.vercel.app/','_blank');
     document.getElementById('menuTerms').onclick = ()=>window.open('https://earn-for-earn-terms-condition.vercel.app/','_blank');
@@ -1346,28 +1630,30 @@
     document.addEventListener('click', (e)=>{ if(!e.target.closest('.lang-selector')) document.getElementById('langMenu').classList.remove('active'); });
     document.addEventListener('click',(e)=>{ if(!e.target.closest('#profileBtn')&&!e.target.closest('#userMenu')) document.getElementById('userMenu').classList.remove('active'); });
     
-    // ==================== LOADING ANIMATION & INIT ====================
+    document.getElementById('submitReferralCodeBtn').onclick = async() => { const code = document.getElementById('referralCodeInput').value.trim().toUpperCase(); if(code) await applyReferralBonus(code); proceedToApp(); };
+    document.getElementById('skipReferralCodeBtn').onclick = () => proceedToApp();
+    document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawCalc);
+    document.getElementById('submitWithdrawBtn').addEventListener('click', submitWithdrawal);
+    document.getElementById('closeSuccessModal').addEventListener('click', () => hideModal(document.getElementById('withdrawSuccessModal')));
+    
     const loadingFill = document.getElementById('loadingFill');
     const loadingStepText = document.getElementById('loadingStep');
-    let progress = 0;
-    const stepsArr = ['loading_initializing', 'loading_ads', 'loading_auth', 'loading_data', 'loading_ready'];
+    const loadSteps = ['loading_initializing', 'loading_ads', 'loading_auth', 'loading_data', 'loading_ready'];
     async function animateLoading() {
         const t = translations[currentLang] || translations.en;
-        for(let i=0; i<stepsArr.length; i++) {
-            progress = (i+1) * 20;
-            loadingFill.style.width = progress + '%';
-            if(t[stepsArr[i]]) loadingStepText.innerText = t[stepsArr[i]];
-            else loadingStepText.innerText = stepsArr[i];
+        for(let i=0; i<loadSteps.length; i++) {
+            loadingFill.style.width = ((i+1)*20) + '%';
+            loadingStepText.innerText = t[loadSteps[i]] || loadSteps[i];
             await new Promise(r => setTimeout(r, 700));
         }
         await new Promise(r => setTimeout(r, 400));
         document.getElementById('loadingScreen').classList.add('hidden');
         document.getElementById('mainApp').style.display = 'block';
         await initUser();
-        applyTranslations();
-        updateDynamicUI();
     }
+    
     loadLanguageOptions();
+    applyTranslations();
     animateLoading();
 </script>
 </body>
