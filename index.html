@@ -21,7 +21,6 @@
     <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
     
     <style>
-        /* Same CSS as before - kept minimal for brevity, but fully functional */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         :root { --bg-primary: #0a0a0a; --bg-secondary: #121212; --bg-card: #1e1e1e; --bg-elevated: #2a2a2a; --text-primary: #ffffff; --text-secondary: #b0b0b0; --border: #2c2c2c; --purple: #6c5ce7; --purple-dark: #5b4bc4; --blue: #0984e3; --success: #00b894; --error: #d63031; --warning: #fdcb6e; --gold: #f9ca24; }
         body { background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
@@ -195,7 +194,7 @@
                 <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="cooldown_note">After claiming: 40s cooldown. After every 5 claims: 8 min break. Reward: $0.011</span></div>
             </div>
             
-            <!-- 10‑Step Mixed Challenge (Ads + Links) with fixed rotation -->
+            <!-- 10‑Step Mixed Challenge (Ads + Links) -->
             <div class="task-card">
                 <div class="task-header"><span><i class="fas fa-tasks"></i> <span data-i18n="mixed_challenge">10‑Step Challenge (Ads + Links)</span></span><span class="task-reward">$0.011</span></div>
                 <div class="chrome-required"><i class="fab fa-chrome"></i> <span data-i18n="mixed_chrome">⚠️ Link steps (4,5,9,10) require Chrome browser and 10 seconds stay.</span></div>
@@ -351,7 +350,7 @@
             home: "Home", tasks: "Tasks", cashout: "Cashout", referral: "Referral", info: "Info", information: "Information", privacy_policy: "Privacy Policy", terms_conditions: "Terms & Conditions",
             my_referral_code: "My Referral Code", telegram_username: "Telegram Username", stay_on_link: "⏳ Stay on Link Page", timer_instruction: "Do not close this window. After 10 seconds, return to app to auto‑unlock next step.",
             cancel_task: "Cancel Task", risk_warning_title: "⚠️ Account Risk Warning", risk_warning_text: "You returned before 10 seconds. Please stay on the link for the full duration.",
-            try_again: "Try Again", cancel: "Cancel", loading_ad: "Loading ad..."
+            try_again: "Try Again", cancel: "Cancel", loading_ad: "Loading ad...", ad_unavailable: "No ad available right now. Retrying...", ad_retry_failed: "Ad failed after multiple attempts. Please try again later."
         },
         hi: {
             loading_initializing: "सिस्टम प्रारंभ हो रहा है...", loading_ads: "विज्ञापन लोड हो रहे हैं...", loading_auth: "खाते से कनेक्ट हो रहा है...", loading_data: "उपयोगकर्ता डेटा लोड हो रहा है...", loading_ready: "कमाने के लिए तैयार!",
@@ -360,7 +359,7 @@
             rule5: "प्रत्येक लिंक: 10 सेकंड रुकें → अगला अनलॉक", rule6: "लिंक कार्यों के लिए Chrome अनिवार्य", rule_break: "एक कार्य के 5 पूर्ण होने पर, 8 मिनट का ब्रेक लागू होता है",
             back_home: "होम वापस", high_value_tasks: "उच्च मूल्य कार्य", link_challenge: "10-लिंक चैलेंज", chrome_required: "⚠️ Chrome ब्राउज़र से खोलें। प्रत्येक लिंक पर 10 सेकंड रुकें।",
             link_warning: "अगला चरण अनलॉक करने के लिए प्रत्येक लिंक पर ठीक 10 सेकंड रुकें।", claim_reward: "$0.011 दावा करें", cooldown_note: "दावे के बाद: 40 सेकंड कूलडाउन। प्रत्येक 5 दावों के बाद: 8 मिनट ब्रेक। पुरस्कार: $0.011",
-            mixed_challenge: "10-चरण चैलेंज (विज्ञापन + लिंक)", mixed_chrome: "⚠️ लिंक चरण (4,5,9,10) के लिए Chrome ब्राउज़र और 10 सेकंड रुकना आवश्यक है।", mixed_warning: "प्रत्येक चरण (विज्ञापन या लिंक) क्रम से पूरा करें। लिंक चरणों के लिए, पृष्ठ पर 10 सेकंड रुकें।", mixed_note: "10 चरण: विज्ञापन + लिंक (लिंक पर 10 सेकंड रुकें)। दावे के बाद: 40 सेकंड कूलडाउन। 5 दावों के बाद: 8 मिनट ब्रेक। पुरस्कार $0.011",
+            mixed_challenge: "10-चरण चैलेंज (विज्ञापन + लिंक)", mixed_chrome: "⚠️ लिंक चरण (4,5,9,10) के लिए Chrome ब्राउज़र और 10 सेकंड रुकना आवश्यक है।", mixed_warning: "प्रत्येक चरण (विज्ञापन या लिंक) क्रम से पूरा करें। लिंक चरणों के लिए, पृष्ठ पर 10 सेकंड रुकें।", mixed_note: "10 चरण: विज्ञापन + लिंक। दावे के बाद: 40 सेकंड कूलडाउन। 5 दावों के बाद: 8 मिनट ब्रेक। पुरस्कार $0.011",
             one_time_rewards: "एक बार के टेलीग्राम इनाम", available_balance: "उपलब्ध बैलेंस", withdraw_requirements: "निकासी आवश्यकताएँ (सभी पूरी करें)",
             min_balance_label: "न्यूनतम बैलेंस:", min_balance_value: "$0.500", min_refs_label: "न्यूनतम रेफरल:", min_refs_value: "3 सक्रिय रेफरल",
             amount: "राशि", fee: "शुल्क (3%)", you_receive: "आपको मिलेगा", request_withdrawal: "निकासी का अनुरोध करें", withdrawal_history: "निकासी इतिहास",
@@ -373,7 +372,7 @@
             home: "होम", tasks: "कार्य", cashout: "नकद निकालें", referral: "रेफरल", info: "जानकारी", information: "जानकारी", privacy_policy: "गोपनीयता नीति", terms_conditions: "नियम और शर्तें",
             my_referral_code: "मेरा रेफरल कोड", telegram_username: "टेलीग्राम उपयोगकर्ता नाम", stay_on_link: "⏳ लिंक पृष्ठ पर रहें", timer_instruction: "इस विंडो को बंद न करें। 10 सेकंड के बाद, अगला चरण अनलॉक करने के लिए ऐप पर लौटें।",
             cancel_task: "कार्य रद्द करें", risk_warning_title: "⚠️ खाता जोखिम चेतावनी", risk_warning_text: "आप 10 सेकंड से पहले लौट आए। कृपया पूरी अवधि के लिए लिंक पर बने रहें।",
-            try_again: "पुनः प्रयास करें", cancel: "रद्द करें", loading_ad: "विज्ञापन लोड हो रहा है..."
+            try_again: "पुनः प्रयास करें", cancel: "रद्द करें", loading_ad: "विज्ञापन लोड हो रहा है...", ad_unavailable: "अभी कोई विज्ञापन उपलब्ध नहीं है। पुनः प्रयास किया जा रहा है...", ad_retry_failed: "कई प्रयासों के बाद विज्ञापन विफल हो गया। कृपया बाद में पुनः प्रयास करें।"
         },
         bn: {
             loading_initializing: "সিস্টেম চালু হচ্ছে...", loading_ads: "বিজ্ঞাপন লোড হচ্ছে...", loading_auth: "অ্যাকাউন্টে সংযোগ করা হচ্ছে...", loading_data: "ইউজার ডেটা লোড হচ্ছে...", loading_ready: "আয়ের জন্য প্রস্তুত!",
@@ -382,7 +381,7 @@
             rule5: "প্রতি লিংকে ১০ সেকেন্ড থাকুন → পরবর্তী আনলক", rule6: "লিংক টাস্কের জন্য Chrome প্রয়োজন", rule_break: "একটি কাজের ৫টি সম্পূর্ণ করার পর, ৮ মিনিটের বিরতি প্রযোজ্য",
             back_home: "হোমে ফিরুন", high_value_tasks: "উচ্চ মানের টাস্ক", link_challenge: "১০-লিংক চ্যালেঞ্জ", chrome_required: "⚠️ Chrome ব্রাউজারে খুলুন। প্রতিটি লিংকে ১০ সেকেন্ড থাকুন।",
             link_warning: "পরবর্তী ধাপ আনলক করতে প্রতিটি লিংকে ঠিক ১০ সেকেন্ড থাকুন।", claim_reward: "$০.০১১ দাবি করুন", cooldown_note: "দাবির পরে: ৪০ সেকেন্ড কুলডাউন। প্রতি ৫ দাবির পরে: ৮ মিনিট বিরতি। পুরস্কার: $০.০১১",
-            mixed_challenge: "১০-পদক্ষেপ চ্যালেঞ্জ (বিজ্ঞাপন + লিংক)", mixed_chrome: "⚠️ লিংক ধাপ (৪,৫,৯,১০) এর জন্য Chrome ব্রাউজার এবং ১০ সেকেন্ড থাকা প্রয়োজন।", mixed_warning: "প্রতিটি ধাপ (বিজ্ঞাপন বা লিংক) ক্রমান্বয়ে সম্পন্ন করুন। লিংক ধাপের জন্য, পৃষ্ঠায় ১০ সেকেন্ড থাকুন।", mixed_note: "১০ ধাপ: বিজ্ঞাপন + লিংক (লিংকে ১০ সেকেন্ড থাকুন)। দাবির পরে: ৪০ সেকেন্ড কুলডাউন। ৫ দাবির পরে: ৮ মিনিট বিরতি। পুরস্কার $০.০১১",
+            mixed_challenge: "১০-পদক্ষেপ চ্যালেঞ্জ (বিজ্ঞাপন + লিংক)", mixed_chrome: "⚠️ লিংক ধাপ (৪,৫,৯,১০) এর জন্য Chrome ব্রাউজার এবং ১০ সেকেন্ড থাকা প্রয়োজন।", mixed_warning: "প্রতিটি ধাপ (বিজ্ঞাপন বা লিংক) ক্রমান্বয়ে সম্পন্ন করুন। লিংক ধাপের জন্য, পৃষ্ঠায় ১০ সেকেন্ড থাকুন।", mixed_note: "১০ ধাপ: বিজ্ঞাপন + লিংক। দাবির পরে: ৪০ সেকেন্ড কুলডাউন। ৫ দাবির পরে: ৮ মিনিট বিরতি। পুরস্কার $০.০১১",
             one_time_rewards: "একবারের টেলিগ্রাম রিওয়ার্ড", available_balance: "উপলব্ধ ব্যালেন্স", withdraw_requirements: "টাকা তোলার শর্ত (সব পূরণ করুন)",
             min_balance_label: "ন্যূনতম ব্যালেন্স:", min_balance_value: "$0.৫০০", min_refs_label: "ন্যূনতম রেফারেল:", min_refs_value: "৩ সক্রিয় রেফারেল",
             amount: "পরিমাণ", fee: "ফি (৩%)", you_receive: "আপনি পাবেন", request_withdrawal: "উত্তোলনের অনুরোধ করুন", withdrawal_history: "উত্তোলনের ইতিহাস",
@@ -395,7 +394,7 @@
             home: "হোম", tasks: "টাস্ক", cashout: "ক্যাশআউট", referral: "রেফারেল", info: "তথ্য", information: "তথ্য", privacy_policy: "গোপনীয়তা নীতি", terms_conditions: "শর্তাবলী",
             my_referral_code: "আমার রেফারেল কোড", telegram_username: "টেলিগ্রাম ইউজারনেম", stay_on_link: "⏳ লিংক পেজে থাকুন", timer_instruction: "এই উইন্ডো বন্ধ করবেন না। ১০ সেকেন্ড পরে, পরবর্তী ধাপ আনলক করতে অ্যাপে ফিরুন।",
             cancel_task: "টাস্ক বাতিল করুন", risk_warning_title: "⚠️ অ্যাকাউন্ট ঝুঁকি সতর্কতা", risk_warning_text: "আপনি ১০ সেকেন্ড আগেই ফিরে এসেছেন। দয়া করে পুরো সময় লিংকে থাকুন।",
-            try_again: "আবার চেষ্টা করুন", cancel: "বাতিল", loading_ad: "বিজ্ঞাপন লোড হচ্ছে..."
+            try_again: "আবার চেষ্টা করুন", cancel: "বাতিল", loading_ad: "বিজ্ঞাপন লোড হচ্ছে...", ad_unavailable: "এই মুহূর্তে কোনো বিজ্ঞাপন নেই। পুনরায় চেষ্টা করা হচ্ছে...", ad_retry_failed: "একাধিক চেষ্টার পর বিজ্ঞাপন ব্যর্থ হয়েছে। পরে আবার চেষ্টা করুন।"
         },
         es: {
             loading_initializing: "Inicializando sistema...", loading_ads: "Cargando anuncios...", loading_auth: "Conectando a la cuenta...", loading_data: "Cargando datos de usuario...", loading_ready: "¡Listo para ganar!",
@@ -404,7 +403,7 @@
             rule5: "Cada enlace: permanezca 10 segundos → desbloqueo automático", rule6: "Navegador Chrome obligatorio para tareas de enlace", rule_break: "Después de 5 finalizaciones de una tarea, se aplica un descanso de 8 minutos",
             back_home: "Volver al Inicio", high_value_tasks: "Tareas de Alto Valor", link_challenge: "Desafío de 10 Enlaces", chrome_required: "⚠️ ABRIR con Chrome. Permanezca 10 segundos en cada enlace.",
             link_warning: "Permanezca exactamente 10 segundos en cada enlace para desbloquear el siguiente paso.", claim_reward: "Reclamar $0.011", cooldown_note: "Después de reclamar: 40s de enfriamiento. Cada 5 reclamos: descanso de 8 min. Recompensa: $0.011",
-            mixed_challenge: "Desafío de 10 Pasos (Anuncios + Enlaces)", mixed_chrome: "⚠️ Los pasos de enlace (4,5,9,10) requieren el navegador Chrome y permanecer 10 segundos.", mixed_warning: "Complete cada paso (anuncio o enlace) en orden. Para los pasos de enlace, permanezca 10 segundos en la página.", mixed_note: "10 pasos: anuncios + enlaces (permanezca 10s en enlaces). Después de reclamar: 40s de enfriamiento. Cada 5 reclamos: descanso de 8 min. Recompensa $0.011",
+            mixed_challenge: "Desafío de 10 Pasos (Anuncios + Enlaces)", mixed_chrome: "⚠️ Los pasos de enlace (4,5,9,10) requieren el navegador Chrome y permanecer 10 segundos.", mixed_warning: "Complete cada paso (anuncio o enlace) en orden. Para los pasos de enlace, permanezca 10 segundos en la página.", mixed_note: "10 pasos: anuncios + enlaces. Después de reclamar: 40s de enfriamiento. Cada 5 reclamos: descanso de 8 min. Recompensa $0.011",
             one_time_rewards: "Recompensas Únicas de Telegram", available_balance: "Saldo Disponible", withdraw_requirements: "Requisitos de Retiro (Todos deben cumplirse)",
             min_balance_label: "Saldo Mínimo:", min_balance_value: "$0.500", min_refs_label: "Referidos Mínimos:", min_refs_value: "3 referidos activos",
             amount: "Monto", fee: "Tarifa (3%)", you_receive: "Usted Recibe", request_withdrawal: "Solicitar Retiro", withdrawal_history: "Historial de Retiros",
@@ -417,7 +416,7 @@
             home: "Inicio", tasks: "Tareas", cashout: "Retirar", referral: "Referidos", info: "Info", information: "Información", privacy_policy: "Política de Privacidad", terms_conditions: "Términos y Condiciones",
             my_referral_code: "Mi Código de Referido", telegram_username: "Nombre de Usuario de Telegram", stay_on_link: "⏳ Permanezca en la Página del Enlace", timer_instruction: "No cierre esta ventana. Después de 10 segundos, regrese a la aplicación para desbloquear el siguiente paso.",
             cancel_task: "Cancelar Tarea", risk_warning_title: "⚠️ Advertencia de Riesgo de Cuenta", risk_warning_text: "Regresó antes de 10 segundos. Permanezca en el enlace durante toda la duración.",
-            try_again: "Reintentar", cancel: "Cancelar", loading_ad: "Cargando anuncio..."
+            try_again: "Reintentar", cancel: "Cancelar", loading_ad: "Cargando anuncio...", ad_unavailable: "No hay anuncio disponible en este momento. Reintentando...", ad_retry_failed: "El anuncio falló después de varios intentos. Por favor, intente más tarde."
         },
         ar: {
             loading_initializing: "جاري تهيئة النظام...", loading_ads: "تحميل الإعلانات...", loading_auth: "الاتصال بالحساب...", loading_data: "تحميل بيانات المستخدم...", loading_ready: "جاهز للربح!",
@@ -426,7 +425,7 @@
             rule5: "كل رابط: ابق 10 ثوانٍ → فتح تلقائي", rule6: "متصفح Chrome إلزامي لمهام الروابط", rule_break: "بعد 5 إكمالات لمهمة، يتم تطبيق استراحة لمدة 8 دقائق",
             back_home: "العودة للرئيسية", high_value_tasks: "مهام عالية القيمة", link_challenge: "تحدي 10 روابط", chrome_required: "⚠️ افتح مع Chrome. ابق 10 ثوانٍ على كل رابط.",
             link_warning: "ابق على كل رابط لمدة 10 ثوانٍ بالضبط لفتح الخطوة التالية.", claim_reward: "استلم $0.011", cooldown_note: "بعد المطالبة: 40 ثانية تهدئة. بعد كل 5 مطالبات: استراحة 8 دقائق. المكافأة: $0.011",
-            mixed_challenge: "تحدي 10 خطوات (إعلانات + روابط)", mixed_chrome: "⚠️ خطوات الروابط (4،5،9،10) تتطلب متصفح Chrome والبقاء 10 ثوانٍ.", mixed_warning: "أكمل كل خطوة (إعلان أو رابط) بالترتيب. بالنسبة لخطوات الروابط، ابق 10 ثوانٍ على الصفحة.", mixed_note: "10 خطوات: إعلانات + روابط (ابق 10 ثوانٍ على الروابط). بعد المطالبة: 40 ثانية تهدئة. بعد 5 مطالبات: استراحة 8 دقائق. المكافأة $0.011",
+            mixed_challenge: "تحدي 10 خطوات (إعلانات + روابط)", mixed_chrome: "⚠️ خطوات الروابط (4،5،9،10) تتطلب متصفح Chrome والبقاء 10 ثوانٍ.", mixed_warning: "أكمل كل خطوة (إعلان أو رابط) بالترتيب. بالنسبة لخطوات الروابط، ابق 10 ثوانٍ على الصفحة.", mixed_note: "10 خطوات: إعلانات + روابط. بعد المطالبة: 40 ثانية تهدئة. بعد 5 مطالبات: استراحة 8 دقائق. المكافأة $0.011",
             one_time_rewards: "مكافآت تليغرام لمرة واحدة", available_balance: "الرصيد المتاح", withdraw_requirements: "متطلبات السحب (يجب تحقيق الكل)",
             min_balance_label: "الحد الأدنى للرصيد:", min_balance_value: "$0.500", min_refs_label: "الحد الأدنى للإحالات:", min_refs_value: "3 إحالات نشطة",
             amount: "المبلغ", fee: "الرسوم (3%)", you_receive: "ستستلم", request_withdrawal: "طلب سحب", withdrawal_history: "سجل السحوبات",
@@ -439,7 +438,7 @@
             home: "الرئيسية", tasks: "المهام", cashout: "سحب", referral: "إحالة", info: "معلومات", information: "معلومات", privacy_policy: "سياسة الخصوصية", terms_conditions: "الشروط والأحكام",
             my_referral_code: "رمز الإحالة الخاص بي", telegram_username: "اسم مستخدم تليغرام", stay_on_link: "⏳ ابق في صفحة الرابط", timer_instruction: "لا تغلق هذه النافذة. بعد 10 ثوانٍ، عد إلى التطبيق لفتح الخطوة التالية تلقائياً.",
             cancel_task: "إلغاء المهمة", risk_warning_title: "⚠️ تحذير مخاطر الحساب", risk_warning_text: "لقد عدت قبل 10 ثوانٍ. يرجى البقاء على الرابط للمدة الكاملة.",
-            try_again: "حاول مرة أخرى", cancel: "إلغاء", loading_ad: "جاري تحميل الإعلان..."
+            try_again: "حاول مرة أخرى", cancel: "إلغاء", loading_ad: "جاري تحميل الإعلان...", ad_unavailable: "لا يوجد إعلان متاح الآن. جاري إعادة المحاولة...", ad_retry_failed: "فشل الإعلان بعد عدة محاولات. يرجى المحاولة لاحقًا."
         },
         fr: {
             loading_initializing: "Initialisation du système...", loading_ads: "Chargement des publicités...", loading_auth: "Connexion au compte...", loading_data: "Chargement des données utilisateur...", loading_ready: "Prêt à gagner!",
@@ -448,7 +447,7 @@
             rule5: "Chaque lien: rester 10 secondes → déverrouillage automatique", rule6: "Navigateur Chrome obligatoire pour les tâches de lien", rule_break: "Après 5 achèvements d'une tâche, une pause de 8 minutes s'applique",
             back_home: "Retour à l'Accueil", high_value_tasks: "Tâches à Haute Valeur", link_challenge: "Défi 10 Liens", chrome_required: "⚠️ OUVREZ avec Chrome. Restez 10 secondes sur chaque lien.",
             link_warning: "Restez exactement 10 secondes sur chaque lien pour débloquer l'étape suivante.", claim_reward: "Réclamer $0.011", cooldown_note: "Après réclamation: 40s de refroidissement. Toutes les 5 réclamations: pause de 8 min. Récompense: $0.011",
-            mixed_challenge: "Défi 10 Étapes (Publicités + Liens)", mixed_chrome: "⚠️ Les étapes de lien (4,5,9,10) nécessitent le navigateur Chrome et 10 secondes d'attente.", mixed_warning: "Complétez chaque étape (publicité ou lien) dans l'ordre. Pour les étapes de lien, restez 10 secondes sur la page.", mixed_note: "10 étapes: publicités + liens (rester 10s sur les liens). Après réclamation: 40s de refroidissement. Toutes les 5 réclamations: pause de 8 min. Récompense $0.011",
+            mixed_challenge: "Défi 10 Étapes (Publicités + Liens)", mixed_chrome: "⚠️ Les étapes de lien (4,5,9,10) nécessitent le navigateur Chrome et 10 secondes d'attente.", mixed_warning: "Complétez chaque étape (publicité ou lien) dans l'ordre. Pour les étapes de lien, restez 10 secondes sur la page.", mixed_note: "10 étapes: publicités + liens. Après réclamation: 40s de refroidissement. Toutes les 5 réclamations: pause de 8 min. Récompense $0.011",
             one_time_rewards: "Récompenses Telegram Unique", available_balance: "Solde Disponible", withdraw_requirements: "Conditions de Retrait (Toutes doivent être remplies)",
             min_balance_label: "Solde Minimum:", min_balance_value: "$0.500", min_refs_label: "Références Minimum:", min_refs_value: "3 références actives",
             amount: "Montant", fee: "Frais (3%)", you_receive: "Vous Recevez", request_withdrawal: "Demander un Retrait", withdrawal_history: "Historique des Retraits",
@@ -461,7 +460,7 @@
             home: "Accueil", tasks: "Tâches", cashout: "Retirer", referral: "Parrainage", info: "Infos", information: "Informations", privacy_policy: "Politique de Confidentialité", terms_conditions: "Conditions d'Utilisation",
             my_referral_code: "Mon Code de Parrainage", telegram_username: "Nom d'utilisateur Telegram", stay_on_link: "⏳ Restez sur la Page du Lien", timer_instruction: "Ne fermez pas cette fenêtre. Après 10 secondes, revenez à l'application pour déverrouiller automatiquement l'étape suivante.",
             cancel_task: "Annuler la Tâche", risk_warning_title: "⚠️ Avertissement de Risque de Compte", risk_warning_text: "Vous êtes revenu avant 10 secondes. Veuillez rester sur le lien pendant toute la durée.",
-            try_again: "Réessayer", cancel: "Annuler", loading_ad: "Chargement de la publicité..."
+            try_again: "Réessayer", cancel: "Annuler", loading_ad: "Chargement de la publicité...", ad_unavailable: "Aucune publicité disponible pour le moment. Nouvel essai...", ad_retry_failed: "La publicité a échoué après plusieurs tentatives. Veuillez réessayer plus tard."
         }
     };
     
@@ -515,7 +514,7 @@
         });
     }
     
-    // ==================== AD HELPERS ====================
+    // ==================== AD HELPERS WITH IMPROVED ERROR HANDLING ====================
     async function showMonetagAd() {
         return new Promise((resolve, reject) => {
             if (typeof window.show_10541383 !== 'function') {
@@ -537,7 +536,15 @@
         if (!window.Adsgram) throw new Error("Adsgram SDK missing");
         const controller = window.Adsgram.init({ blockId: "int-28543" });
         if (!controller) throw new Error("Adsgram init failed");
-        await controller.show();
+        try {
+            await controller.show();
+        } catch (err) {
+            // Check for "no ads" error message (Adsgram returns "There are currently no ads to display")
+            if (err && (err.message && err.message.includes("no ads") || err.toString().includes("no ads"))) {
+                throw new Error("adsgram_no_ads");
+            }
+            throw err;
+        }
     }
     
     async function showAdexoraAd() {
@@ -556,11 +563,22 @@
         });
     }
     
-    async function showAdByNetwork(network) {
-        if (network === 'monetag') return await showMonetagAd();
-        if (network === 'adsgram') return await showAdsgramAd();
-        if (network === 'adexora') return await showAdexoraAd();
-        throw new Error(`Unknown network: ${network}`);
+    async function showAdByNetwork(network, retryCount = 0) {
+        const maxRetries = 3;
+        try {
+            if (network === 'monetag') return await showMonetagAd();
+            if (network === 'adsgram') return await showAdsgramAd();
+            if (network === 'adexora') return await showAdexoraAd();
+            throw new Error(`Unknown network: ${network}`);
+        } catch (err) {
+            if (err.message === "adsgram_no_ads" && retryCount < maxRetries) {
+                const t = translations[currentLang] || translations.en;
+                showStatus(t.ad_unavailable || "No ad available right now. Retrying...", "warning");
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                return showAdByNetwork(network, retryCount + 1);
+            }
+            throw err;
+        }
     }
     
     // ==================== CORE FUNCTIONS (SAME AS BEFORE) ====================
@@ -908,7 +926,12 @@
             } catch(err) {
                 showSpinner(false);
                 console.error("Ad error:", err);
-                showStatus(`Ad failed. Please try again.`, 'error');
+                const t = translations[currentLang] || translations.en;
+                if (err.message === "adsgram_no_ads") {
+                    showStatus(t.ad_retry_failed || "Ad failed after multiple attempts. Please try again later.", "error");
+                } else {
+                    showStatus(`Ad failed: ${err.message}`, "error");
+                }
             }
         }
     }
