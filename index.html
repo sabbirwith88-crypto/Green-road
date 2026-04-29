@@ -322,7 +322,7 @@
             transition: all 0.2s;
         }
         .step-btn i { font-size: 1.2rem; }
-        .step-btn.completed { background: var(--success); border-color: var(--success); }
+        .step-btn.completed { background: var(--success); border-color: var(--success); color: white; }
         .step-btn.locked { opacity: 0.3; cursor: not-allowed; }
         .step-btn.active-step { border: 2px solid var(--warning); box-shadow: 0 0 8px var(--warning); background: #2a2a2a; }
         
@@ -728,7 +728,7 @@
                 <div id="videoCooldownArea"></div>
                 <button id="claimVideoRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim $0.011 Reward</button>
                 <div id="videoProgress" class="cooldown-timer"></div>
-                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="video_note">🔥 10-Ad Sequence: 1.Adsgram 2.Monetag Reward 3.Adexora 4.Monetag In‑App 5.OnClicka Reward (repeat 6-10). Cooldown 40s after claim. Reward $0.011</span></div>
+                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="video_note">🔥 10-Ad Sequence: 1.Adsgram 2.Monetag 3.Adexora 4.Monetag In‑App 5.OnClicka (repeat 6-10). Cooldown 40s after claim.</span></div>
             </div>
             
             <div style="margin:20px 0 10px;"><h4 data-i18n="one_time_rewards">One‑Time Telegram Rewards</h4></div>
@@ -782,7 +782,7 @@
             <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Back to Home</span></div>
             <div class="info-card"><h4><i class="fas fa-headset"></i> <span data-i18n="support">Support</span></h4><p>Telegram: <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a><br>Email: earnforearnsuportteam@gmail.com<br><span data-i18n="business_email">Business: earnforearnbusinessteam@gmail.com</span></p></div>
             <div class="info-card"><h4><i class="fas fa-chart-line"></i> <span data-i18n="withdraw_conditions">Withdrawal Conditions</span></h4><p><span data-i18n="cond1">• Minimum balance $0.500</span><br><span data-i18n="cond2">• Minimum 3 referrals</span><br><span data-i18n="cond3">• 3% service fee</span><br><span data-i18n="cond4">• Processing within 7 days after approval</span><br><span data-i18n="cond5">• Unlimited withdrawals if conditions met</span></p></div>
-            <div class="info-card"><h4><i class="fas fa-tasks"></i> <span data-i18n="task_details">Task Details</span></h4><p><span data-i18n="task_detail1">• 10-Link Challenge: stay 10 seconds per link → auto-unlock next (Chrome required)</span><br><span data-i18n="task_detail2">• 10-Video Ads: New sequence (Adsgram, Monetag Reward, Adexora, Monetag In-App, OnClicka) – repeat twice</span><br><span data-i18n="task_detail3">• Cooldown: 40 seconds after claiming each reward</span><br><span data-i18n="task_detail4">• One-time Telegram tasks: $0.003 each, join & verify</span></p></div>
+            <div class="info-card"><h4><i class="fas fa-tasks"></i> <span data-i18n="task_details">Task Details</span></h4><p><span data-i18n="task_detail1">• 10-Link Challenge: stay 10 seconds per link → auto-unlock next (Chrome required)</span><br><span data-i18n="task_detail2">• 10-Video Ads: Adsgram, Monetag, Adexora, Monetag In-App, OnClicka (repeat twice)</span><br><span data-i18n="task_detail3">• Cooldown: 40 seconds after claiming each reward</span><br><span data-i18n="task_detail4">• One-time Telegram tasks: $0.003 each, join & verify</span></p></div>
             <div class="info-card"><h4><i class="fas fa-gavel"></i> <span data-i18n="additional_rules">Additional Rules</span></h4><p><span data-i18n="rule7">• No multiple accounts – one per person</span><br><span data-i18n="rule8">• VPN or proxy usage may result in ban</span><br><span data-i18n="rule9">• All tasks must be done manually</span><br><span data-i18n="rule10">• Support responds within 48 hours</span></p></div>
         </div>
     </div>
@@ -879,15 +879,12 @@
         'adsgram', 'monetag', 'adexora', 'monetag_inapp', 'onclicka'
     ];
     
-    // OnClicka SDK initialization
     let onclickaShowFn = null;
     if(typeof window.initCdTma === 'function') {
         window.initCdTma({ id: '438680' }).then(show => {
             onclickaShowFn = show;
             console.log("OnClicka SDK ready");
         }).catch(e => console.warn("OnClicka init failed:", e));
-    } else {
-        console.warn("initCdTma not available");
     }
     
     // ==================== COMPLETE TRANSLATIONS ====================
@@ -898,7 +895,7 @@
         rule5: "Each link step: stay 10 seconds → auto-unlock next", rule6: "Chrome browser mandatory for link tasks",
         back_home: "Back to Home", high_value_tasks: "High Value Tasks", link_challenge: "10‑Link Challenge", chrome_required: "⚠️ MUST open with Chrome browser. Tasks will NOT complete if opened with other browsers.",
         link_warning: "Stay on each link for exactly 10 seconds to unlock next step.", claim_reward: "Claim $0.011 Reward", cooldown_note: "After claiming reward, 40s cooldown applies. Reward: $0.011",
-        video_challenge: "10‑Video Ads Challenge", video_warning: "Watch each rewarded ad completely. If an ad fails, you can retry.", video_note: "🔥 10-Ad Sequence: 1.Adsgram 2.Monetag Reward 3.Adexora 4.Monetag In‑App 5.OnClicka Reward (repeat 6-10). Cooldown 40s after claim. Reward $0.011",
+        video_challenge: "10‑Video Ads Challenge", video_warning: "Watch each rewarded ad completely. If an ad fails, you can retry.", video_note: "🔥 10-Ad Sequence: 1.Adsgram 2.Monetag 3.Adexora 4.Monetag In‑App 5.OnClicka (repeat 6-10). Cooldown 40s after claim.",
         one_time_rewards: "One‑Time Telegram Rewards", available_balance: "Available Balance", withdraw_requirements: "Withdrawal Requirements (All must be met)",
         min_balance_label: "Minimum Balance:", min_balance_value: "$0.500", min_refs_label: "Minimum Referrals:", min_refs_value: "3 active referrals",
         amount: "Amount", fee: "Fee (3%)", you_receive: "You Receive", request_withdrawal: "Request Withdrawal", withdrawal_history: "Withdrawal History",
@@ -906,7 +903,7 @@
         copy_code: "Copy Code", share_telegram: "Share on Telegram", your_referrals: "Your Referrals",
         support: "Support", business_email: "Business: earnforearnbusinessteam@gmail.com", withdraw_conditions: "Withdrawal Conditions",
         cond1: "• Minimum balance $0.500", cond2: "• Minimum 3 referrals", cond3: "• 3% service fee", cond4: "• Processing within 7 days after approval", cond5: "• Unlimited withdrawals if conditions met",
-        task_details: "Task Details", task_detail1: "• 10-Link Challenge: stay 10 seconds per link → auto-unlock next (Chrome required)", task_detail2: "• 10-Video Ads: Adsgram, Monetag Reward, Adexora, Monetag In-App, OnClicka (repeat)", task_detail3: "• Cooldown: 40 seconds after claiming each reward", task_detail4: "• One-time Telegram tasks: $0.003 each, join & verify",
+        task_details: "Task Details", task_detail1: "• 10-Link Challenge: stay 10 seconds per link → auto-unlock next (Chrome required)", task_detail2: "• 10-Video Ads: Adsgram, Monetag, Adexora, Monetag In-App, OnClicka (repeat twice)", task_detail3: "• Cooldown: 40 seconds after claiming each reward", task_detail4: "• One-time Telegram tasks: $0.003 each, join & verify",
         additional_rules: "Additional Rules", rule7: "• No multiple accounts – one per person", rule8: "• VPN or proxy usage may result in ban", rule9: "• All tasks must be done manually", rule10: "• Support responds within 48 hours",
         home: "Home", tasks: "Tasks", cashout: "Cashout", referral: "Referral", info: "Info", information: "Information", privacy_policy: "Privacy Policy", terms_conditions: "Terms & Conditions",
         my_referral_code: "My Referral Code", telegram_username: "Telegram Username", stay_on_link: "⏳ Stay on Link Page", timer_instruction: "Do not close this window. After 10 seconds, return to app to auto‑unlock next step.",
@@ -916,11 +913,11 @@
     
     const translations = {
         en: baseEn,
-        hi: { ...baseEn, video_note: "🔥 10-विज्ञापन क्रम: 1.Adsgram 2.Monetag रिवॉर्ड 3.Adexora 4.Monetag In‑App 5.OnClicka (6-10 तक दोहराएँ). 40s कूलडाउन. इनाम $0.011" },
-        bn: { ...baseEn, video_note: "🔥 ১০-ভিডিও ক্রম: 1.Adsgram 2.Monetag রেওয়ার্ড 3.Adexora 4.Monetag In‑App 5.OnClicka (পুনরাবৃত্তি 6-10). কুলডাউন ৪০সে. পুরস্কার $০.০১১" },
-        es: { ...baseEn, video_note: "🔥 Secuencia 10 anuncios: 1.Adsgram 2.Monetag Recompensa 3.Adexora 4.Monetag In-App 5.OnClicka (repetir 6-10). Enfriamiento 40s. Recompensa $0.011" },
-        ar: { ...baseEn, video_note: "🔥 تسلسل 10 إعلانات: 1.Adsgram 2.Monetag مكافأة 3.Adexora 4.Monetag داخل التطبيق 5.OnClicka (تكرار 6-10). تبريد 40 ثانية. المكافأة $0.011" },
-        fr: { ...baseEn, video_note: "🔥 Séquence 10 pubs: 1.Adsgram 2.Monetag Récompense 3.Adexora 4.Monetag In-App 5.OnClicka (répéter 6-10). Refroidissement 40s. Récompense $0.011" }
+        hi: { ...baseEn, video_note: "🔥 10-विज्ञापन क्रम: 1.Adsgram 2.Monetag 3.Adexora 4.Monetag In‑App 5.OnClicka (6-10 तक दोहराएँ). 40s कूलडाउन." },
+        bn: { ...baseEn, video_note: "🔥 ১০-ভিডিও ক্রম: 1.Adsgram 2.Monetag 3.Adexora 4.Monetag In‑App 5.OnClicka (পুনরাবৃত্তি 6-10). কুলডাউন ৪০সে." },
+        es: { ...baseEn, video_note: "🔥 Secuencia 10 anuncios: 1.Adsgram 2.Monetag 3.Adexora 4.Monetag In-App 5.OnClicka (repetir 6-10). Enfriamiento 40s." },
+        ar: { ...baseEn, video_note: "🔥 تسلسل 10 إعلانات: 1.Adsgram 2.Monetag 3.Adexora 4.Monetag داخل التطبيق 5.OnClicka (تكرار 6-10). تبريد 40 ثانية." },
+        fr: { ...baseEn, video_note: "🔥 Séquence 10 pubs: 1.Adsgram 2.Monetag 3.Adexora 4.Monetag In-App 5.OnClicka (répéter 6-10). Refroidissement 40s." }
     };
     
     let currentLang = localStorage.getItem('selectedLanguage') || 'en';
@@ -932,7 +929,9 @@
             if(t[key]) {
                 if(el.tagName === 'INPUT' && (el.getAttribute('type') === 'text' || el.getAttribute('type') === 'number' || el.getAttribute('type') === 'email')) {
                     el.setAttribute('placeholder', t[key]);
-                } else {
+                } else if(el.tagName === 'BUTTON' && key === 'claim_reward') {
+                    el.innerText = t[key];
+                } else if(el.tagName !== 'INPUT') {
                     el.innerText = t[key];
                 }
             }
@@ -1054,7 +1053,6 @@
             userData = data;
             linkStepsDone = userData.linkTask?.steps || 0;
             videoStepsDone = userData.videoTask?.steps || 0;
-            // Show referral modal only once if not already applied
             if(!userData.referralBonusApplied) {
                 document.getElementById('referralCodeModal').style.display = 'flex';
             } else {
@@ -1219,7 +1217,7 @@
         refreshUI();
     }
     
-    // FIXED VIDEO TASK: Proper step unlocking and ad handling
+    // FIXED VIDEO TASK: improved ad error handling with retry
     function renderVideoTaskUI() {
         const cooldown = Math.max(0, (userData.videoTask?.cooldownUntil||0) - Date.now());
         const canStart = cooldown <= 0;
@@ -1238,10 +1236,7 @@
         document.querySelectorAll('#videoStepsContainer .step-btn').forEach(btn=>{
             btn.onclick = async()=>{
                 let step = parseInt(btn.dataset.videostep);
-                if(videoStepsDone >= step) {
-                    showStatus('This ad already completed', 'error');
-                    return;
-                }
+                if(videoStepsDone >= step) return;
                 if(videoStepsDone+1 !== step){
                     showStatus('Complete previous ad first', 'error');
                     return;
@@ -1262,18 +1257,31 @@
         try {
             let completed = false;
             if(adType === 'adsgram') {
-                const ctrl = window.Adsgram?.init({ blockId: "int-24179" });
-                if(ctrl) { await ctrl.show(); completed = true; }
-                else throw new Error("Adsgram not ready");
+                try {
+                    const ctrl = window.Adsgram?.init({ blockId: "int-28543" });
+                    if(ctrl) {
+                        await ctrl.show();
+                        completed = true;
+                    } else throw new Error("Adsgram not initialized");
+                } catch(e) {
+                    console.warn("Adsgram error:", e);
+                    // Show user-friendly message but allow retry
+                    showSpinner(false);
+                    showStatus(`Adsgram ad failed (${e.message || 'no inventory'}). Please retry.`, 'error');
+                    return;
+                }
             } else if(adType === 'monetag') {
-                if(window.show_10541383) { await window.show_10541383(); completed = true; }
-                else throw new Error("Monetag not ready");
+                if(window.show_10541383) {
+                    await window.show_10541383();
+                    completed = true;
+                } else throw new Error("Monetag not ready");
             } else if(adType === 'adexora') {
-                if(window.showAdexora) { await window.showAdexora(); completed = true; }
-                else throw new Error("Adexora not ready");
+                if(window.showAdexora) {
+                    await window.showAdexora();
+                    completed = true;
+                } else throw new Error("Adexora not ready");
             } else if(adType === 'monetag_inapp') {
                 if(window.show_10541383) {
-                    // In-app interstitial call
                     await window.show_10541383({ type: 'inApp', inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false } });
                     completed = true;
                 } else throw new Error("Monetag in-app not ready");
@@ -1296,7 +1304,7 @@
         } catch(err) {
             showSpinner(false);
             console.error("Ad error:", err);
-            showStatus(`Ad error: ${err.message || 'unknown'}`, 'error');
+            showStatus(`Ad error: ${err.message || 'unknown'}. Tap again to retry.`, 'error');
         }
     }
     
@@ -1462,7 +1470,7 @@
     document.addEventListener('click', (e)=>{ if(!e.target.closest('.lang-selector')) document.getElementById('langMenu').classList.remove('active'); });
     document.addEventListener('click',(e)=>{ if(!e.target.closest('#profileBtn')&&!e.target.closest('#userMenu')) document.getElementById('userMenu').classList.remove('active'); });
     
-    // Referral modal: submit or skip
+    // Referral modal: submit or skip (ONLY ONCE)
     document.getElementById('submitReferralCodeBtn').onclick = async() => { 
         const code = document.getElementById('referralCodeInput').value.trim().toUpperCase(); 
         if(code) {
@@ -1470,7 +1478,6 @@
             if(success) showStatus('Referral bonus added! +$0.01', 'success');
             else showStatus('Invalid referral code', 'error');
         }
-        // Mark as done so modal never appears again
         if(!userData.referralBonusApplied) {
             await updateUser({ referralBonusApplied: true });
             userData.referralBonusApplied = true;
@@ -1478,7 +1485,6 @@
         proceedToApp();
     };
     document.getElementById('skipReferralCodeBtn').onclick = async() => {
-        // Skip: still mark as applied so modal doesn't reappear
         if(!userData.referralBonusApplied) {
             await updateUser({ referralBonusApplied: true });
             userData.referralBonusApplied = true;
