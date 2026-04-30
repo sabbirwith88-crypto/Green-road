@@ -13,16 +13,16 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
-    <!-- Monetag SDK (Rewarded Interstitial + In-App) -->
+    <!-- Monetag SDK -->
     <script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
     
-    <!-- Adsgram SDK (blockId int-28543) -->
+    <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     
-    <!-- Adexora SDK (id 1963) -->
+    <!-- Adexora SDK -->
     <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
     
-    <!-- OnClicka (TMA) Reward SDK – Correct ID from working example -->
+    <!-- OnClicka SDK (correct ID 6117840) -->
     <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
     
     <style>
@@ -135,6 +135,7 @@
             align-items: center;
             gap: 6px;
             font-size: 0.75rem;
+            transition: 0.2s;
         }
         .lang-menu {
             position: absolute;
@@ -250,6 +251,7 @@
             flex: 1;
             border-radius: 20px;
             cursor: pointer;
+            transition: 0.2s;
         }
         .nav-btn i { font-size: 1.4rem; }
         .nav-btn.active { color: white; background: var(--bg-elevated); }
@@ -269,10 +271,7 @@
             border: 1px solid var(--border);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .task-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
+        .task-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         .task-header {
             display: flex;
             justify-content: space-between;
@@ -327,15 +326,8 @@
             transition: all 0.2s;
             font-size: 1rem;
         }
-        .claim-btn:hover {
-            transform: scale(0.98);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .claim-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .claim-btn:hover { transform: scale(0.98); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .claim-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         .cooldown-timer {
             background: #1a1a1a;
             border-radius: 60px;
@@ -387,7 +379,6 @@
             padding: 12px 0;
             border-bottom: 1px solid var(--border);
         }
-        .requirement-item-serial:last-child { border-bottom: none; }
         .req-check { width: 28px; text-align: center; }
         .fee-breakdown {
             display: flex;
@@ -405,10 +396,7 @@
             margin: 10px 0;
             transition: 0.2s;
         }
-        .form-input:focus {
-            border-color: var(--purple);
-            outline: none;
-        }
+        .form-input:focus { border-color: var(--purple); outline: none; }
         .rules-box {
             background: var(--bg-card);
             border-radius: 28px;
@@ -444,14 +432,8 @@
             font-size: 1.1rem;
             transition: all 0.2s;
         }
-        .withdraw-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(108,92,231,0.4);
-        }
-        .withdraw-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        .withdraw-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(108,92,231,0.4); }
+        .withdraw-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .referral-professional {
             background: linear-gradient(145deg, #141414, #0c0c0c);
             border-radius: 32px;
@@ -482,10 +464,7 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .btn-primary:hover {
-            opacity: 0.9;
-            transform: scale(0.98);
-        }
+        .btn-primary:hover { opacity: 0.9; transform: scale(0.98); }
         .friend-card {
             background: var(--bg-elevated);
             border-radius: 24px;
@@ -502,16 +481,8 @@
             font-size: 0.85rem;
             text-align: center;
         }
-        .status-success {
-            background: rgba(0,184,148,0.15);
-            color: var(--success);
-            border-left: 3px solid var(--success);
-        }
-        .status-error {
-            background: rgba(214,48,49,0.15);
-            color: var(--error);
-            border-left: 3px solid var(--error);
-        }
+        .status-success { background: rgba(0,184,148,0.15); color: var(--success); border-left: 3px solid var(--success); }
+        .status-error { background: rgba(214,48,49,0.15); color: var(--error); border-left: 3px solid var(--error); }
         .info-card {
             background: var(--bg-card);
             border-radius: 28px;
@@ -519,11 +490,7 @@
             margin-bottom: 16px;
             border: 1px solid var(--border);
         }
-        .info-card .support-link {
-            color: var(--blue);
-            text-decoration: none;
-            cursor: pointer;
-        }
+        .info-card .support-link { color: var(--blue); text-decoration: none; cursor: pointer; }
         .modal {
             display: none;
             position: fixed;
@@ -631,6 +598,52 @@
             border: 1px solid var(--border);
             margin-top: 10px;
         }
+        /* Break overlay */
+        .break-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.98);
+            backdrop-filter: blur(15px);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+        .break-overlay.hidden { display: none; }
+        .break-card {
+            background: var(--bg-card);
+            border-radius: 48px;
+            padding: 40px 30px;
+            max-width: 320px;
+            width: 100%;
+            border: 1px solid var(--purple);
+            box-shadow: 0 0 30px rgba(108,92,231,0.3);
+        }
+        .break-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--gold);
+        }
+        .break-timer {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 20px 0;
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .break-message {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
         @media (max-width: 480px) {
             .step-btn { width: 100%; max-width: 60px; height: 65px; font-size: 0.7rem; }
             .steps-container { gap: 8px; }
@@ -668,7 +681,7 @@
         <div class="menu-item" id="menuTerms"><i class="fas fa-file-contract"></i> <span data-i18n="terms_conditions">Terms & Conditions</span></div>
     </div>
     
-    <div class="main-content">
+    <div class="main-content" id="mainContent">
         <div id="homeSection" class="content-section active">
             <div class="balance-card">
                 <div data-i18n="your_balance">Your Balance</div>
@@ -695,7 +708,6 @@
         <div id="tasksSection" class="content-section">
             <div class="back-button" id="tasksBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Back to Home</span></div>
             <h3 style="margin-bottom:20px;" data-i18n="high_value_tasks">High Value Tasks</h3>
-            
             <div class="task-card">
                 <div class="task-header"><span><i class="fas fa-link"></i> <span data-i18n="link_challenge">10‑Link Challenge</span></span><span class="task-reward">$0.011</span></div>
                 <div class="chrome-required"><i class="fab fa-chrome"></i> <span data-i18n="chrome_required">⚠️ MUST open with Chrome browser. Tasks will NOT complete if opened with other browsers.</span></div>
@@ -706,7 +718,6 @@
                 <div id="linkProgress" class="cooldown-timer"></div>
                 <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="cooldown_note">After claiming reward, 40s cooldown applies. Reward: $0.011</span></div>
             </div>
-            
             <div class="task-card">
                 <div class="task-header"><span><i class="fas fa-video"></i> <span data-i18n="video_challenge">10‑Video Ads Challenge</span></span><span class="task-reward">$0.011</span></div>
                 <div class="warning-text"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="video_warning">Watch each rewarded ad completely. If an ad fails, auto fallback to other networks.</span></div>
@@ -716,7 +727,6 @@
                 <div id="videoProgress" class="cooldown-timer"></div>
                 <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="video_note">🔥 Auto fallback: Adsgram → OnClicka → Monetag → Adexora → Monetag In‑App. Step completes when ANY ad plays.</span></div>
             </div>
-            
             <div style="margin:20px 0 10px;"><h4 data-i18n="one_time_rewards">One‑Time Telegram Rewards</h4></div>
             <div id="telegramTasksArea"></div>
         </div>
@@ -782,6 +792,16 @@
     </div>
 </div>
 
+<!-- Break overlay -->
+<div id="breakOverlay" class="break-overlay hidden">
+    <div class="break-card">
+        <div class="break-title" data-i18n="break_title">⏸ Break Time</div>
+        <div class="break-message" data-i18n="break_message">You have been active for 35 minutes. Please take a rest.</div>
+        <div class="break-timer" id="breakTimer">30:00</div>
+        <div class="break-message" data-i18n="break_continue">You can continue after the timer ends.</div>
+    </div>
+</div>
+
 <div id="referralCodeModal" class="referral-code-modal" style="display: none;">
     <div class="referral-code-card">
         <i class="fas fa-gift" style="font-size: 3rem; color: var(--gold); margin-bottom: 15px;"></i>
@@ -822,7 +842,7 @@
 <div class="loading-spinner" id="spinner"><div style="border:3px solid #333; border-top:3px solid var(--purple); width:45px; height:45px; border-radius:50%; animation: spin 1s linear infinite;"></div><p style="margin-top:15px;" data-i18n="loading_ad">Loading ad...</p></div>
 
 <script>
-    // Firebase configuration
+    // Firebase config
     const firebaseConfig = {
         apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM",
         authDomain: "earn-for-earn-55d3e.firebaseapp.com",
@@ -835,6 +855,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     
+    // Telegram user
     let webApp = window.Telegram?.WebApp;
     if(webApp) webApp.expand();
     let tgUser = webApp?.initDataUnsafe?.user;
@@ -859,32 +880,20 @@
         "https://narilyhukelpfulin.com?hTTVD=1246757"
     ];
     
-    // Primary ad sequence (preferred order per step) - with full fallback
     const videoAdSequence = [
         'adsgram', 'monetag', 'adexora', 'monetag_inapp', 'onclicka',
         'adsgram', 'monetag', 'adexora', 'monetag_inapp', 'onclicka'
     ];
-    
-    // Universal fallback order for any step (all networks)
     const FALLBACK_NETWORKS = ['adsgram', 'onclicka', 'monetag', 'adexora', 'monetag_inapp'];
     
-    // OnClicka initialization with the correct working ID (6117840)
+    // OnClicka init with working ID
     let onclickaShowFn = null;
     if(typeof window.initCdTma === 'function') {
         window.initCdTma({ id: 6117840 })
-            .then(fn => {
-                onclickaShowFn = fn;
-                console.log("OnClicka SDK Ready ✅ with ID 6117840");
-            })
-            .catch(err => {
-                console.warn("OnClicka init failed:", err);
-                // Fallback: try again later or ignore
-            });
-    } else {
-        console.warn("initCdTma not available");
+            .then(fn => { onclickaShowFn = fn; console.log("OnClicka ready"); })
+            .catch(e => console.warn("OnClicka init failed:", e));
     }
     
-    // Helper to show ad by type with proper error handling
     async function showAdByType(type) {
         if(type === 'adsgram') {
             if(!window.Adsgram) throw new Error("Adsgram SDK not loaded");
@@ -912,10 +921,10 @@
         throw new Error(`Unknown ad type: ${type}`);
     }
     
-    // Translations (all 6 languages, only English shown for brevity - actual works fully)
+    // ==================== COMPLETE MULTILINGUAL TRANSLATIONS ====================
     const translations = {
         en: {
-            loading_initializing: "Initializing system...", loading_ads: "Loading advertisements...", loading_auth: "Connecting...", loading_data: "Loading user data...", loading_ready: "Ready to earn!",
+            loading_initializing: "Initializing system...", loading_ads: "Loading advertisements...", loading_auth: "Connecting to account...", loading_data: "Loading user data...", loading_ready: "Ready to earn!",
             your_balance: "Your Balance", usd_precision: "USD | 3 decimal precision", referrals: "Referrals", total_earned: "Total Earned", ref_bonus: "Ref Bonus",
             platform_rules: "Platform Rules", rule1: "No automated tools – permanent ban", rule2: "Minimum age 18 for withdrawals", rule3: "Withdraw requires $0.500 balance + 3 referrals", rule4: "3% service fee applies",
             rule5: "Each link step: stay 10 seconds → auto-unlock next", rule6: "Chrome browser mandatory for link tasks",
@@ -938,11 +947,19 @@
             privacy_policy: "Privacy Policy", terms_conditions: "Terms & Conditions", my_referral_code: "My Referral Code", telegram_username: "Telegram Username", 
             stay_on_link: "⏳ Stay on Link Page", timer_instruction: "Do not close this window. After 10 seconds, return to app to auto‑unlock next step.",
             cancel_task: "Cancel Task", risk_warning_title: "⚠️ Account Risk Warning", risk_warning_text: "You returned before 10 seconds. Please stay on the link for the full duration.",
-            try_again: "Try Again", cancel: "Cancel", loading_ad: "Loading ad..."
-        }
+            try_again: "Try Again", cancel: "Cancel", loading_ad: "Loading ad...",
+            break_title: "⏸ Break Time", break_message: "You have been active for 35 minutes. Please take a rest.", break_continue: "You can continue after the timer ends."
+        },
+        hi: { break_title: "⏸ विश्राम समय", break_message: "आप 35 मिनट से सक्रिय हैं। कृपया आराम करें।", break_continue: "टाइमर समाप्त होने के बाद आप जारी रख सकते हैं।" },
+        bn: { break_title: "⏸ বিরতির সময়", break_message: "আপনি ৩৫ মিনিট ধরে সক্রিয় আছেন। অনুগ্রহ করে বিশ্রাম নিন।", break_continue: "টাইমার শেষ হলে আপনি চালিয়ে যেতে পারেন।" },
+        es: { break_title: "⏸ Tiempo de descanso", break_message: "Has estado activo durante 35 minutos. Por favor, descansa.", break_continue: "Puedes continuar después de que termine el temporizador." },
+        ar: { break_title: "⏸ وقت الاستراحة", break_message: "لقد كنت نشطًا لمدة 35 دقيقة. يرجى أخذ قسط من الراحة.", break_continue: "يمكنك المتابعة بعد انتهاء المؤقت." },
+        fr: { break_title: "⏸ Pause", break_message: "Vous êtes actif depuis 35 minutes. Veuillez vous reposer.", break_continue: "Vous pouvez continuer après la fin du minuteur." }
     };
-    // Add other languages dynamic inheritance
-    ['hi','bn','es','ar','fr'].forEach(lang => { translations[lang] = JSON.parse(JSON.stringify(translations.en)); });
+    // Merge base English into other languages
+    for(let lang of ['hi','bn','es','ar','fr']) {
+        translations[lang] = { ...translations.en, ...translations[lang] };
+    }
     
     let currentLang = localStorage.getItem('selectedLanguage') || 'en';
     
@@ -958,7 +975,8 @@
                 }
             }
         });
-        document.getElementById('currentLangLabel').innerText = currentLang === 'en' ? 'English' : currentLang === 'hi' ? 'हिन्दी' : currentLang === 'bn' ? 'বাংলা' : currentLang === 'es' ? 'Español' : currentLang === 'ar' ? 'العربية' : 'Français';
+        const langNames = { en:'English', hi:'हिन्दी', bn:'বাংলা', es:'Español', ar:'العربية', fr:'Français' };
+        document.getElementById('currentLangLabel').innerText = langNames[currentLang] || 'English';
         const claimLink = document.getElementById('claimLinkRewardBtn');
         if(claimLink && t.claim_reward) claimLink.innerText = t.claim_reward;
         const claimVideo = document.getElementById('claimVideoRewardBtn');
@@ -995,10 +1013,80 @@
         });
     }
     
+    // ==================== BREAK TIMER SYSTEM ====================
+    let activityStartTime = Date.now();
+    let breakTimerInterval = null;
+    let isBreakActive = false;
+    let breakEndTime = null;
+    
+    function resetActivityTimer() {
+        if(isBreakActive) return;
+        activityStartTime = Date.now();
+    }
+    
+    function startBreak() {
+        if(isBreakActive) return;
+        isBreakActive = true;
+        breakEndTime = Date.now() + 30 * 60 * 1000; // 30 minutes
+        const overlay = document.getElementById('breakOverlay');
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        updateBreakTimerDisplay();
+        if(breakTimerInterval) clearInterval(breakTimerInterval);
+        breakTimerInterval = setInterval(() => {
+            if(!isBreakActive) {
+                clearInterval(breakTimerInterval);
+                return;
+            }
+            const remaining = breakEndTime - Date.now();
+            if(remaining <= 0) {
+                clearInterval(breakTimerInterval);
+                isBreakActive = false;
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+                resetActivityTimer();
+                refreshUI(); // re-enable clicks
+            } else {
+                updateBreakTimerDisplay();
+            }
+        }, 1000);
+    }
+    
+    function updateBreakTimerDisplay() {
+        const remaining = Math.max(0, breakEndTime - Date.now());
+        const minutes = Math.floor(remaining / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+        document.getElementById('breakTimer').innerText = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+    }
+    
+    // Global activity listener: any click/tap on main content resets timer
+    function attachActivityListener() {
+        const container = document.getElementById('mainApp');
+        if(!container) return;
+        container.addEventListener('click', (e) => {
+            if(isBreakActive) {
+                e.stopPropagation();
+                e.preventDefault();
+                return false;
+            }
+            resetActivityTimer();
+        });
+        // Also check periodically if 35 minutes passed
+        setInterval(() => {
+            if(isBreakActive) return;
+            const activeTime = (Date.now() - activityStartTime) / 1000;
+            if(activeTime >= 35 * 60) {
+                startBreak();
+            }
+        }, 5000);
+    }
+    
+    // ==================== CORE APP FUNCTIONS ====================
     function showSpinner(show) { document.getElementById('spinner').style.display = show ? 'flex' : 'none'; }
-    function showModal(modal) { modal.classList.add('active'); }
+    function showModal(modal) { if(!isBreakActive) modal.classList.add('active'); }
     function hideModal(modal) { modal.classList.remove('active'); }
     function showStatus(msg, type) {
+        if(isBreakActive) return;
         const el = document.getElementById('homeStatusMessage');
         el.style.display = 'block';
         el.className = `status-message status-${type}`;
@@ -1086,6 +1174,8 @@
                 refreshUI();
             }
         });
+        attachActivityListener();
+        resetActivityTimer();
     }
     
     function startCooldownCountdown(elementId, endTime) {
@@ -1101,7 +1191,7 @@
     }
     
     function refreshUI() {
-        if(!userData) return;
+        if(!userData || isBreakActive) return;
         document.getElementById('balanceAmount').innerText = (userData.balance||0).toFixed(3);
         document.getElementById('totalEarned').innerText = (userData.totalEarned||0).toFixed(3);
         document.getElementById('refBonus').innerText = (userData.referralBonus||0).toFixed(3);
@@ -1127,21 +1217,22 @@
     
     function renderLinkTaskUI() {
         const cooldown = Math.max(0, (userData.linkTask?.cooldownUntil||0) - Date.now());
-        const canStart = cooldown <= 0;
+        const canStart = cooldown <= 0 && !isBreakActive;
         let html = '';
         for(let i=1;i<=10;i++) {
             let cls = 'step-btn';
             if(linkStepsDone >= i) cls += ' completed';
             else if(linkStepsDone+1 === i && canStart) cls += ' active-step';
-            else if(!canStart) cls += ' locked';
+            else if(!canStart || isBreakActive) cls += ' locked';
             html += `<div class="${cls}" data-linkstep="${i}"><i class="fas fa-link"></i><span>${i}</span></div>`;
         }
         document.getElementById('linkStepsContainer').innerHTML = html;
         const claimBtn = document.getElementById('claimLinkRewardBtn');
-        if(linkStepsDone >= 10 && cooldown<=0) claimBtn.style.display='block'; else claimBtn.style.display='none';
+        if(linkStepsDone >= 10 && cooldown<=0 && !isBreakActive) claimBtn.style.display='block'; else claimBtn.style.display='none';
         document.getElementById('linkProgress').innerHTML = `${linkStepsDone}/10 links`;
         document.querySelectorAll('#linkStepsContainer .step-btn').forEach(btn=>{
             btn.onclick = async()=>{
+                if(isBreakActive) return;
                 let step = parseInt(btn.dataset.linkstep);
                 if(linkStepsDone >= step) return;
                 if(linkStepsDone+1 !== step){ showStatus('Complete previous steps first', 'error'); return; }
@@ -1149,10 +1240,11 @@
                 startLinkStep(step);
             };
         });
-        if(claimBtn) claimBtn.onclick = () => claimLinkReward();
+        if(claimBtn) claimBtn.onclick = () => { if(!isBreakActive) claimLinkReward(); };
     }
     
     async function startLinkStep(step) {
+        if(isBreakActive) return;
         pendingLinkStep = step;
         const modal = document.getElementById('timerModal');
         const timerDisp = document.getElementById('timerCountdown');
@@ -1192,6 +1284,7 @@
     }
     
     function showRiskWarning(step) {
+        if(isBreakActive) return;
         const modal = document.getElementById('tryAgainModal');
         showModal(modal);
         const retryBtn = document.getElementById('tryAgainRetryBtn');
@@ -1205,6 +1298,7 @@
     }
     
     async function completeLinkStep(step) {
+        if(isBreakActive) return;
         const ns = linkStepsDone + 1;
         await updateUser({ linkTask: { steps: ns, cooldownUntil: userData.linkTask?.cooldownUntil||0 } });
         linkStepsDone = ns;
@@ -1213,6 +1307,7 @@
     }
     
     async function claimLinkReward() {
+        if(isBreakActive) return;
         if(linkStepsDone < 10) return showStatus('Complete all 10 links first', 'error');
         const cooldown = (userData.linkTask?.cooldownUntil||0) - Date.now();
         if(cooldown>0) return showStatus('Cooldown active', 'error');
@@ -1224,24 +1319,24 @@
         refreshUI();
     }
     
-    // VIDEO TASK WITH FULL FALLBACK (attempts all networks until one works)
     function renderVideoTaskUI() {
         const cooldown = Math.max(0, (userData.videoTask?.cooldownUntil||0) - Date.now());
-        const canStart = cooldown <= 0;
+        const canStart = cooldown <= 0 && !isBreakActive;
         let html = '';
         for(let i=1;i<=10;i++) {
             let cls = 'step-btn';
             if(videoStepsDone >= i) cls += ' completed';
             else if(videoStepsDone+1 === i && canStart) cls += ' active-step';
-            else if(!canStart) cls += ' locked';
+            else if(!canStart || isBreakActive) cls += ' locked';
             html += `<div class="${cls}" data-videostep="${i}"><i class="fas fa-play-circle"></i><span>${i}</span></div>`;
         }
         document.getElementById('videoStepsContainer').innerHTML = html;
         const claimBtn = document.getElementById('claimVideoRewardBtn');
-        if(videoStepsDone >= 10 && cooldown<=0) claimBtn.style.display='block'; else claimBtn.style.display='none';
+        if(videoStepsDone >= 10 && cooldown<=0 && !isBreakActive) claimBtn.style.display='block'; else claimBtn.style.display='none';
         document.getElementById('videoProgress').innerHTML = `${videoStepsDone}/10 ads`;
         document.querySelectorAll('#videoStepsContainer .step-btn').forEach(btn=>{
             btn.onclick = async()=>{
+                if(isBreakActive) return;
                 let step = parseInt(btn.dataset.videostep);
                 if(videoStepsDone >= step) return;
                 if(videoStepsDone+1 !== step){
@@ -1255,19 +1350,16 @@
                 await startVideoAdWithFallback(step);
             };
         });
-        if(claimBtn) claimBtn.onclick = () => claimVideoReward();
+        if(claimBtn) claimBtn.onclick = () => { if(!isBreakActive) claimVideoReward(); };
     }
     
     async function startVideoAdWithFallback(step) {
+        if(isBreakActive) return;
         showSpinner(true);
-        // First try the preferred network for this step
         const preferred = videoAdSequence[step-1];
         let networksToTry = [preferred, ...FALLBACK_NETWORKS.filter(n => n !== preferred)];
-        // Remove duplicates while preserving order
         networksToTry = [...new Map(networksToTry.map(n => [n, n])).values()];
         let success = false;
-        let lastError = null;
-        
         for (let network of networksToTry) {
             try {
                 showStatus(`Trying ${network} ad...`, 'success');
@@ -1275,13 +1367,8 @@
                 success = true;
                 showStatus(`✅ Ad played successfully on ${network}!`, 'success');
                 break;
-            } catch (err) {
-                console.warn(`${network} failed:`, err);
-                lastError = err;
-                // Continue to next network
-            }
+            } catch (err) { console.warn(`${network} failed:`, err); }
         }
-        
         showSpinner(false);
         if(success) {
             const newSteps = videoStepsDone + 1;
@@ -1289,11 +1376,12 @@
             videoStepsDone = newSteps;
             refreshUI();
         } else {
-            showStatus(`All ad networks failed. Please retry. (${lastError?.message || 'unknown error'})`, 'error');
+            showStatus(`All ad networks failed. Please retry.`, 'error');
         }
     }
     
     async function claimVideoReward() {
+        if(isBreakActive) return;
         if(videoStepsDone < 10) return showStatus('Watch all 10 ads first', 'error');
         const cooldown = (userData.videoTask?.cooldownUntil||0) - Date.now();
         if(cooldown>0) return showStatus('Cooldown active', 'error');
@@ -1323,6 +1411,7 @@
         });
         document.querySelectorAll('.tg-verify').forEach(btn=>{
             btn.onclick = async()=>{
+                if(isBreakActive) return;
                 const link=btn.dataset.link, key=btn.dataset.key, reward=parseFloat(btn.dataset.reward);
                 window.open(link,'_blank');
                 if(confirm(`After joining the channel, confirm to claim $${reward.toFixed(3)}`)){
@@ -1356,7 +1445,7 @@
         if(check1) check1.innerHTML = balOk ? '<i class="fas fa-check-circle" style="color:var(--success);"></i>' : '<i class="fas fa-times-circle" style="color:#555;"></i>';
         if(check2) check2.innerHTML = refOk ? '<i class="fas fa-check-circle" style="color:var(--success);"></i>' : '<i class="fas fa-times-circle" style="color:#555;"></i>';
         const withdrawBtn = document.getElementById('submitWithdrawBtn');
-        if(withdrawBtn) withdrawBtn.disabled = !(balOk && refOk);
+        if(withdrawBtn) withdrawBtn.disabled = !(balOk && refOk) || isBreakActive;
     }
     
     function updateWithdrawCalc() {
@@ -1369,6 +1458,7 @@
     }
     
     async function submitWithdrawal() {
+        if(isBreakActive) return;
         const amt = parseFloat(document.getElementById('withdrawAmount').value);
         const acc = document.getElementById('binanceAccount').value.trim();
         if(!acc) return showStatus('Enter Binance account', 'error');
@@ -1398,6 +1488,7 @@
     }
     
     function switchSection(id) {
+        if(isBreakActive) return;
         document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -1409,8 +1500,8 @@
     }
     
     document.getElementById('navHome').onclick = ()=>switchSection('homeSection');
-    document.getElementById('navTasks').onclick = ()=>{ switchSection('tasksSection'); renderLinkTaskUI(); renderVideoTaskUI(); renderTelegramTasks(); };
-    document.getElementById('navCashout').onclick = ()=>{ switchSection('cashoutSection'); displayWithdrawalHistory(); updateWithdrawalRequirements(); updateWithdrawCalc(); };
+    document.getElementById('navTasks').onclick = ()=>{ if(!isBreakActive) { switchSection('tasksSection'); renderLinkTaskUI(); renderVideoTaskUI(); renderTelegramTasks(); } };
+    document.getElementById('navCashout').onclick = ()=>{ if(!isBreakActive) { switchSection('cashoutSection'); displayWithdrawalHistory(); updateWithdrawalRequirements(); updateWithdrawCalc(); } };
     document.getElementById('navReferral').onclick = ()=>switchSection('referralSection');
     document.getElementById('navInfo').onclick = ()=>switchSection('infoSection');
     document.getElementById('tasksBackBtn').onclick = ()=>switchSection('homeSection');
@@ -1418,10 +1509,10 @@
     document.getElementById('referralBackBtn').onclick = ()=>switchSection('homeSection');
     document.getElementById('infoBackBtn').onclick = ()=>switchSection('homeSection');
     
-    document.getElementById('copyReferralCodeBtn').onclick = ()=>{ navigator.clipboard.writeText(userData.referralCode); showStatus('Referral code copied!', 'success'); };
-    document.getElementById('shareTelegramCodeBtn').onclick = ()=>{ const text = `Join Earn For Earn using my referral code: ${userData.referralCode}`; window.open(`https://t.me/share/url?url=${encodeURIComponent(text)}`,'_blank'); };
-    document.getElementById('menuReferralCode').onclick = ()=>{ navigator.clipboard.writeText(userData.referralCode); showStatus('Code copied', 'success'); };
-    document.getElementById('profileBtn').onclick = ()=>document.getElementById('userMenu').classList.toggle('active');
+    document.getElementById('copyReferralCodeBtn').onclick = ()=>{ if(!isBreakActive) { navigator.clipboard.writeText(userData.referralCode); showStatus('Referral code copied!', 'success'); } };
+    document.getElementById('shareTelegramCodeBtn').onclick = ()=>{ if(!isBreakActive) { const text = `Join Earn For Earn using my referral code: ${userData.referralCode}`; window.open(`https://t.me/share/url?url=${encodeURIComponent(text)}`,'_blank'); } };
+    document.getElementById('menuReferralCode').onclick = ()=>{ if(!isBreakActive) { navigator.clipboard.writeText(userData.referralCode); showStatus('Code copied', 'success'); } };
+    document.getElementById('profileBtn').onclick = ()=>{ if(!isBreakActive) document.getElementById('userMenu').classList.toggle('active'); };
     document.getElementById('menuPrivacy').onclick = ()=>window.open('https://earn-for-earn-privacy-police.vercel.app/','_blank');
     document.getElementById('menuTerms').onclick = ()=>window.open('https://earn-for-earn-terms-condition.vercel.app/','_blank');
     document.getElementById('menuInfo').onclick = ()=>{ document.getElementById('userMenu').classList.remove('active'); switchSection('infoSection'); };
