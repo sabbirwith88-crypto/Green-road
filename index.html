@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Earn For Earn – Telegram Mini App</title>
+    <title>Earn For Earn – Pepe Coin Mini App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Firebase -->
+    <!-- Firebase (Realtime DB) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
-    <!-- Monetag SDK (Rewarded) -->
+    <!-- Monetag SDK -->
     <script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
     
-    <!-- Adsgram SDK (blockId int-28543) -->
+    <!-- Adsgram SDK with blockId int-28543 -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     
     <!-- Adexora SDK -->
     <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
     
-    <!-- OnClicka SDK (working ID 6117840) -->
+    <!-- OnClicka SDK -->
     <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
     
     <style>
@@ -211,7 +211,7 @@
             position: relative;
             overflow: hidden;
         }
-        .balance-amount { font-size: 2.8rem; font-weight: 700; margin: 8px 0; }
+        .balance-amount { font-size: 2.8rem; font-weight: 700; margin: 8px 0; word-break: break-word; }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -225,7 +225,7 @@
             text-align: center;
             border: 1px solid var(--border);
         }
-        .stat-value { font-size: 1.6rem; font-weight: 700; }
+        .stat-value { font-size: 1.6rem; font-weight: 700; word-break: break-word; }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -273,7 +273,6 @@
             border: 1px solid var(--border);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .task-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         .task-header {
             display: flex;
             justify-content: space-between;
@@ -600,50 +599,23 @@
             border: 1px solid var(--border);
             margin-top: 10px;
         }
-        .break-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.98);
-            backdrop-filter: blur(15px);
-            z-index: 3000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-            padding: 20px;
-        }
-        .break-overlay.hidden { display: none; }
-        .break-card {
-            background: var(--bg-card);
-            border-radius: 48px;
-            padding: 40px 30px;
-            max-width: 320px;
-            width: 100%;
-            border: 1px solid var(--purple);
-            box-shadow: 0 0 30px rgba(108,92,231,0.3);
-        }
-        .break-title {
-            font-size: 2rem;
-            font-weight: bold;
+        .withdraw-limit-box {
+            background: var(--bg-elevated);
+            border-radius: 28px;
+            padding: 16px;
             margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .withdraw-limit-text {
+            font-size: 0.9rem;
             color: var(--gold);
         }
-        .break-timer {
-            font-size: 3rem;
-            font-weight: 700;
-            margin: 20px 0;
-            background: linear-gradient(135deg, var(--purple), var(--blue));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .break-message {
+        .daily-limit-text {
+            font-size: 0.8rem;
             color: var(--text-secondary);
-            margin-bottom: 20px;
+            margin-top: 8px;
+            text-align: center;
         }
         @media (max-width: 480px) {
             .step-btn { width: 100%; max-width: 60px; height: 65px; font-size: 0.7rem; }
@@ -662,7 +634,7 @@
 
 <div class="app-container" id="mainApp" style="display: none;">
     <div class="header">
-        <div class="app-title">Earn For Earn</div>
+        <div class="app-title">Earn For Earn (PEPE)</div>
         <div class="header-right">
             <div class="lang-selector">
                 <div class="lang-btn" id="langBtn"><i class="fas fa-globe"></i> <span id="currentLangLabel">English</span> <i class="fas fa-chevron-down"></i></div>
@@ -685,21 +657,21 @@
     <div class="main-content" id="mainContent">
         <div id="homeSection" class="content-section active">
             <div class="balance-card">
-                <div data-i18n="your_balance">Your Balance</div>
-                <div class="balance-amount" id="balanceAmount">0.000</div>
-                <div data-i18n="usd_precision">USD | 3 decimal precision</div>
+                <div data-i18n="your_balance">Your Balance (PEPE)</div>
+                <div class="balance-amount" id="balanceAmount">0</div>
+                <div data-i18n="pepe_precision">PEPE | integer precision</div>
             </div>
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-value" id="refCount">0</div><div class="stat-label" data-i18n="referrals">Referrals</div></div>
-                <div class="stat-card"><div class="stat-value" id="totalEarned">0.000</div><div class="stat-label" data-i18n="total_earned">Total Earned</div></div>
-                <div class="stat-card"><div class="stat-value" id="refBonus">0.000</div><div class="stat-label" data-i18n="ref_bonus">Ref Bonus</div></div>
+                <div class="stat-card"><div class="stat-value" id="totalEarned">0</div><div class="stat-label" data-i18n="total_earned">Total Earned (PEPE)</div></div>
+                <div class="stat-card"><div class="stat-value" id="refBonus">0</div><div class="stat-label" data-i18n="ref_bonus">Ref Bonus (PEPE)</div></div>
             </div>
             <div class="rules-box">
                 <h4><i class="fas fa-gavel"></i> <span data-i18n="platform_rules">Platform Rules</span></h4>
                 <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule1">No automated tools – permanent ban</span></div>
                 <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule2">Minimum age 18 for withdrawals</span></div>
-                <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule3">Withdraw requires $0.500 balance + 3 referrals</span></div>
-                <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule4">3% service fee applies</span></div>
+                <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule3">Withdraw requires 260,000 PEPE + 3 referrals</span></div>
+                <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule4">5% service fee applies</span></div>
                 <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule5">Each link step: stay 10 seconds → auto-unlock next</span></div>
                 <div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> <span data-i18n="rule6">Chrome browser mandatory for link tasks</span></div>
             </div>
@@ -710,23 +682,25 @@
             <div class="back-button" id="tasksBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Back to Home</span></div>
             <h3 style="margin-bottom:20px;" data-i18n="high_value_tasks">High Value Tasks</h3>
             <div class="task-card">
-                <div class="task-header"><span><i class="fas fa-link"></i> <span data-i18n="link_challenge">10‑Link Challenge</span></span><span class="task-reward">$0.011</span></div>
+                <div class="task-header"><span><i class="fas fa-link"></i> <span data-i18n="link_challenge">10‑Link Challenge</span></span><span class="task-reward">2,000 PEPE</span></div>
                 <div class="chrome-required"><i class="fab fa-chrome"></i> <span data-i18n="chrome_required">⚠️ MUST open with Chrome browser. Tasks will NOT complete if opened with other browsers.</span></div>
                 <div class="warning-text"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="link_warning">Stay on each link for exactly 10 seconds to unlock next step.</span></div>
                 <div class="steps-container" id="linkStepsContainer"></div>
                 <div id="linkCooldownArea"></div>
-                <button id="claimLinkRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim $0.011 Reward</button>
+                <button id="claimLinkRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim 2,000 PEPE</button>
                 <div id="linkProgress" class="cooldown-timer"></div>
-                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="cooldown_note">After claiming reward, 40s cooldown applies. Reward: $0.011</span></div>
+                <div class="daily-limit-text" id="linkDailyLimitText">Today's claims: 0/15</div>
+                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="cooldown_note">After claiming reward, 40s cooldown applies. Max 15 claims/day. Reward: 2,000 PEPE</span></div>
             </div>
             <div class="task-card">
-                <div class="task-header"><span><i class="fas fa-video"></i> <span data-i18n="video_challenge">10‑Video Ads Challenge</span></span><span class="task-reward">$0.011</span></div>
+                <div class="task-header"><span><i class="fas fa-video"></i> <span data-i18n="video_challenge">10‑Video Ads Challenge</span></span><span class="task-reward">2,000 PEPE</span></div>
                 <div class="warning-text"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="video_warning">Watch each rewarded ad completely. Link step: open and stay 10 seconds.</span></div>
                 <div class="steps-container" id="videoStepsContainer"></div>
                 <div id="videoCooldownArea"></div>
-                <button id="claimVideoRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim $0.011 Reward</button>
+                <button id="claimVideoRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim 2,000 PEPE</button>
                 <div id="videoProgress" class="cooldown-timer"></div>
-                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="video_note">🔥 New Sequence: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → repeat steps 6-10. Cooldown 40s after claim.</span></div>
+                <div class="daily-limit-text" id="videoDailyLimitText">Today's claims: 0/15</div>
+                <div class="info-note"><i class="fas fa-info-circle"></i> <span data-i18n="video_note">🔥 Sequence: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → repeat 6-10. Cooldown 40s after claim. Max 15 claims/day.</span></div>
             </div>
             <div style="margin:20px 0 10px;"><h4 data-i18n="one_time_rewards">One‑Time Telegram Rewards</h4></div>
             <div id="telegramTasksArea"></div>
@@ -735,14 +709,18 @@
         <div id="cashoutSection" class="content-section">
             <div class="back-button" id="cashoutBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Back to Home</span></div>
             <div class="balance-card" style="background: linear-gradient(135deg, #1a2a3a, #0f1720);">
-                <div data-i18n="available_balance">Available Balance</div>
-                <div class="balance-amount" id="withdrawBalance">0.000</div>
+                <div data-i18n="available_balance">Available Balance (PEPE)</div>
+                <div class="balance-amount" id="withdrawBalance">0</div>
+            </div>
+            <div class="withdraw-limit-box" id="withdrawLimitBox">
+                <div class="withdraw-limit-text" data-i18n="withdraw_limit">Withdrawal limit: 2 per month</div>
+                <div class="withdraw-limit-text" id="withdrawRemainingText">Remaining this month: 2</div>
             </div>
             <div class="requirement-list">
                 <h4><i class="fas fa-clipboard-list"></i> <span data-i18n="withdraw_requirements">Withdrawal Requirements (All must be met)</span></h4>
                 <div class="requirement-item-serial" id="reqSerial1">
                     <div class="req-check" id="reqCheck1"><i class="fas fa-circle" style="color:#555;"></i></div>
-                    <div><strong data-i18n="min_balance_label">Minimum Balance:</strong> <span data-i18n="min_balance_value">$0.500</span></div>
+                    <div><strong data-i18n="min_balance_label">Minimum Balance:</strong> <span data-i18n="min_balance_value">260,000 PEPE</span></div>
                 </div>
                 <div class="requirement-item-serial" id="reqSerial2">
                     <div class="req-check" id="reqCheck2"><i class="fas fa-circle" style="color:#555;"></i></div>
@@ -750,12 +728,12 @@
                 </div>
             </div>
             <div class="withdraw-details" style="background:var(--bg-card); border-radius:28px; padding:20px; margin-bottom:16px;">
-                <div class="fee-breakdown"><span data-i18n="amount">Amount</span><span id="wdAmount">$0.00</span></div>
-                <div class="fee-breakdown"><span data-i18n="fee">Fee (3%)</span><span id="wdFee">$0.00</span></div>
-                <div class="fee-breakdown"><span data-i18n="you_receive">You Receive</span><span id="wdNet">$0.00</span></div>
+                <div class="fee-breakdown"><span data-i18n="amount">Amount (PEPE)</span><span id="wdAmount">0</span></div>
+                <div class="fee-breakdown"><span data-i18n="fee">Fee (5%)</span><span id="wdFee">0</span></div>
+                <div class="fee-breakdown"><span data-i18n="you_receive">You Receive (PEPE)</span><span id="wdNet">0</span></div>
             </div>
             <input type="text" id="binanceAccount" class="form-input" placeholder="Binance Email / UID">
-            <input type="number" id="withdrawAmount" step="0.001" min="0.5" class="form-input" placeholder="Amount ($)">
+            <input type="number" id="withdrawAmount" step="1" min="260000" class="form-input" placeholder="Amount (PEPE)">
             <button id="submitWithdrawBtn" class="withdraw-btn" data-i18n="request_withdrawal">Request Withdrawal</button>
             <div style="margin-top:30px;"><h4 data-i18n="withdrawal_history">Withdrawal History</h4><div id="historyList"></div></div>
         </div>
@@ -765,7 +743,7 @@
             <div class="referral-professional">
                 <i class="fas fa-user-plus" style="font-size:2.5rem; color:var(--purple);"></i>
                 <h3 style="margin:15px 0;" data-i18n="your_referral_code">Your Referral Code</h3>
-                <p data-i18n="referral_desc">Share this code with friends. When they join using your code, both get $0.01 bonus!</p>
+                <p data-i18n="referral_desc">Share this code with friends. When they join using your code, both get 10,000 PEPE bonus!</p>
                 <div class="referral-code-display" id="referralCodeDisplay"></div>
                 <div class="btn-group">
                     <button class="btn-primary" id="copyReferralCodeBtn"><i class="fas fa-copy"></i> <span data-i18n="copy_code">Copy Code</span></button>
@@ -778,8 +756,8 @@
         <div id="infoSection" class="content-section">
             <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Back to Home</span></div>
             <div class="info-card"><h4><i class="fas fa-headset"></i> <span data-i18n="support">Support</span></h4><p>Telegram: <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a><br>Email: earnforearnsuportteam@gmail.com<br><span data-i18n="business_email">Business: earnforearnbusinessteam@gmail.com</span></p></div>
-            <div class="info-card"><h4><i class="fas fa-chart-line"></i> <span data-i18n="withdraw_conditions">Withdrawal Conditions</span></h4><p><span data-i18n="cond1">• Minimum balance $0.500</span><br><span data-i18n="cond2">• Minimum 3 referrals</span><br><span data-i18n="cond3">• 3% service fee</span><br><span data-i18n="cond4">• Processing within 7 days after approval</span><br><span data-i18n="cond5">• Unlimited withdrawals if conditions met</span></p></div>
-            <div class="info-card"><h4><i class="fas fa-tasks"></i> <span data-i18n="task_details">Task Details</span></h4><p><span data-i18n="task_detail1">• 10-Link Challenge: stay 10 seconds per link → auto-unlock next (Chrome required)</span><br><span data-i18n="task_detail2">• 10-Video Ads: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → repeat for 6-10</span><br><span data-i18n="task_detail3">• Cooldown: 40 seconds after claiming each reward</span><br><span data-i18n="task_detail4">• One-time Telegram tasks: $0.003 each, join & verify</span></p></div>
+            <div class="info-card"><h4><i class="fas fa-chart-line"></i> <span data-i18n="withdraw_conditions">Withdrawal Conditions</span></h4><p><span data-i18n="cond1">• Minimum balance 260,000 PEPE</span><br><span data-i18n="cond2">• Minimum 3 referrals</span><br><span data-i18n="cond3">• 5% service fee</span><br><span data-i18n="cond4">• Processing within 7 days after approval</span><br><span data-i18n="cond5">• Unlimited withdrawals if conditions met</span></p></div>
+            <div class="info-card"><h4><i class="fas fa-tasks"></i> <span data-i18n="task_details">Task Details</span></h4><p><span data-i18n="task_detail1">• 10-Link Challenge: stay 10 seconds per link → auto-unlock next (Chrome required)</span><br><span data-i18n="task_detail2">• 10-Video Ads: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → repeat 6-10</span><br><span data-i18n="task_detail3">• Cooldown: 40 seconds after claiming each reward</span><br><span data-i18n="task_detail4">• Daily limit: 15 claims per challenge</span><br><span data-i18n="task_detail5">• One-time Telegram tasks: 500 PEPE each, join & verify</span></p></div>
             <div class="info-card"><h4><i class="fas fa-gavel"></i> <span data-i18n="additional_rules">Additional Rules</span></h4><p><span data-i18n="rule7">• No multiple accounts – one per person</span><br><span data-i18n="rule8">• VPN or proxy usage may result in ban</span><br><span data-i18n="rule9">• All tasks must be done manually</span><br><span data-i18n="rule10">• Support responds within 48 hours</span></p></div>
         </div>
     </div>
@@ -793,21 +771,11 @@
     </div>
 </div>
 
-<!-- Break overlay -->
-<div id="breakOverlay" class="break-overlay hidden">
-    <div class="break-card">
-        <div class="break-title" data-i18n="break_title">⏸ Break Time</div>
-        <div class="break-message" data-i18n="break_message">You have been active for 15 minutes. Please take a rest.</div>
-        <div class="break-timer" id="breakTimer">30:00</div>
-        <div class="break-message" data-i18n="break_continue">You can continue after the timer ends.</div>
-    </div>
-</div>
-
 <div id="referralCodeModal" class="referral-code-modal" style="display: none;">
     <div class="referral-code-card">
         <i class="fas fa-gift" style="font-size: 3rem; color: var(--gold); margin-bottom: 15px;"></i>
         <h2 style="margin-bottom: 10px;">Welcome to Earn For Earn!</h2>
-        <p style="margin-bottom: 15px;">Enter a referral code (if you have one) to get a $0.01 bonus. You can also skip.</p>
+        <p style="margin-bottom: 15px;">Enter a referral code (if you have one) to get a 10,000 PEPE bonus. You can also skip.</p>
         <input type="text" id="referralCodeInput" placeholder="Enter referral code" maxlength="20" autocomplete="off">
         <button id="submitReferralCodeBtn" class="claim-btn" style="background: var(--purple);">Claim Bonus</button>
         <button id="skipReferralCodeBtn" class="claim-btn skip-btn" style="background: transparent; color: var(--text-secondary);">Skip for now</button>
@@ -867,9 +835,7 @@
     let userData = null;
     let linkStepsDone = 0, videoStepsDone = 0;
     let pendingLinkStep = null, linkStartTime = 0, linkInterval = null;
-    let pendingVideoLinkStep = null; // for video challenge link steps
-    let videoLinkStartTime = 0;
-    let videoLinkInterval = null;
+    let pendingVideoLinkStep = null, videoLinkStartTime = 0, videoLinkInterval = null;
     
     const LINK_URLS = [
         "https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d",
@@ -883,23 +849,16 @@
         "https://earnforearnlinksads2.vercel.app/",
         "https://narilyhukelpfulin.com?hTTVD=1246757"
     ];
-    
     const VIDEO_LINK_URL = "https://earnforearnlinksads.vercel.app/";
-    
-    // NEW VIDEO AD SEQUENCE: 1=Adsgram,2=Monetag,3=Adexora,4=OnClicka,5=Link, then repeat for 6-10
     const videoAdSequence = [
         'adsgram', 'monetag', 'adexora', 'onclicka', 'link',
         'adsgram', 'monetag', 'adexora', 'onclicka', 'link'
     ];
-    
-    // Fallback for ad networks (does not include 'link')
     const FALLBACK_NETWORKS = ['adsgram', 'onclicka', 'monetag', 'adexora'];
     
     let onclickaShowFn = null;
     if(typeof window.initCdTma === 'function') {
-        window.initCdTma({ id: 6117840 })
-            .then(fn => { onclickaShowFn = fn; console.log("OnClicka ready"); })
-            .catch(e => console.warn("OnClicka init failed:", e));
+        window.initCdTma({ id: 6117840 }).then(fn => { onclickaShowFn = fn; }).catch(e => console.warn(e));
     }
     
     async function showAdByType(type) {
@@ -925,78 +884,225 @@
         throw new Error(`Unknown ad type: ${type}`);
     }
     
-    // ==================== COMPLETE MULTILINGUAL TRANSLATIONS (all 6 languages) ====================
+    // Format number with commas
+    function formatNumber(num) {
+        if (num === undefined || num === null) num = 0;
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+    // Daily limit helpers
+    function resetDailyIfNeeded() {
+        const today = new Date().toDateString();
+        if(!userData) return;
+        if(userData.lastResetDate !== today) {
+            userData.linkDailyCount = 0;
+            userData.videoDailyCount = 0;
+            userData.lastResetDate = today;
+            updateUser({ linkDailyCount: 0, videoDailyCount: 0, lastResetDate: today });
+        }
+    }
+    
+    function getLinkDailyRemaining() {
+        if(!userData) return 15;
+        resetDailyIfNeeded();
+        const used = userData.linkDailyCount || 0;
+        return Math.max(0, 15 - used);
+    }
+    
+    function getVideoDailyRemaining() {
+        if(!userData) return 15;
+        resetDailyIfNeeded();
+        const used = userData.videoDailyCount || 0;
+        return Math.max(0, 15 - used);
+    }
+    
+    function updateDailyLimitUI() {
+        if(!userData) return;
+        const linkUsed = (userData.linkDailyCount || 0);
+        const videoUsed = (userData.videoDailyCount || 0);
+        document.getElementById('linkDailyLimitText').innerHTML = `Today's claims: ${linkUsed}/15 (${15-linkUsed} left)`;
+        document.getElementById('videoDailyLimitText').innerHTML = `Today's claims: ${videoUsed}/15 (${15-videoUsed} left)`;
+        const linkClaimBtn = document.getElementById('claimLinkRewardBtn');
+        const videoClaimBtn = document.getElementById('claimVideoRewardBtn');
+        if(linkClaimBtn) linkClaimBtn.disabled = (linkUsed >= 15);
+        if(videoClaimBtn) videoClaimBtn.disabled = (videoUsed >= 15);
+    }
+    
+    // Withdrawal helpers
+    function getWithdrawalsThisMonth() {
+        if(!userData || !userData.withdrawalHistory) return 0;
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth();
+        let count = 0;
+        for(let w of userData.withdrawalHistory) {
+            const wDate = new Date(w.date);
+            if(wDate.getFullYear() === currentYear && wDate.getMonth() === currentMonth) count++;
+        }
+        return count;
+    }
+    
+    function updateWithdrawLimitDisplay() {
+        const count = getWithdrawalsThisMonth();
+        const remaining = Math.max(0, 2 - count);
+        const remainingElem = document.getElementById('withdrawRemainingText');
+        if(remainingElem) {
+            const t = translations[currentLang] || translations.en;
+            remainingElem.innerText = (t.remaining_withdrawals || "Remaining this month: ") + remaining;
+        }
+        const withdrawBtn = document.getElementById('submitWithdrawBtn');
+        if(withdrawBtn && remaining <= 0) withdrawBtn.disabled = true;
+    }
+    
+    // ==================== TRANSLATIONS FOR ALL 6 LANGUAGES ====================
     const translations = {
         en: {
             loading_initializing: "Initializing system...", loading_ads: "Loading advertisements...", loading_auth: "Connecting to account...", loading_data: "Loading user data...", loading_ready: "Ready to earn!",
-            your_balance: "Your Balance", usd_precision: "USD | 3 decimal precision", referrals: "Referrals", total_earned: "Total Earned", ref_bonus: "Ref Bonus",
-            platform_rules: "Platform Rules", rule1: "No automated tools – permanent ban", rule2: "Minimum age 18 for withdrawals", rule3: "Withdraw requires $0.500 balance + 3 referrals", rule4: "3% service fee applies",
+            your_balance: "Your Balance (PEPE)", pepe_precision: "PEPE | integer precision", referrals: "Referrals", total_earned: "Total Earned (PEPE)", ref_bonus: "Ref Bonus (PEPE)",
+            platform_rules: "Platform Rules", rule1: "No automated tools – permanent ban", rule2: "Minimum age 18 for withdrawals", rule3: "Withdraw requires 260,000 PEPE + 3 referrals", rule4: "5% service fee applies",
             rule5: "Each link step: stay 10 seconds → auto-unlock next", rule6: "Chrome browser mandatory for link tasks",
             back_home: "Back to Home", high_value_tasks: "High Value Tasks", link_challenge: "10‑Link Challenge", chrome_required: "⚠️ MUST open with Chrome browser. Tasks will NOT complete if opened with other browsers.",
-            link_warning: "Stay on each link for exactly 10 seconds to unlock next step.", claim_reward: "Claim $0.011 Reward", cooldown_note: "After claiming reward, 40s cooldown applies. Reward: $0.011",
+            link_warning: "Stay on each link for exactly 10 seconds to unlock next step.", claim_reward: "Claim 2,000 PEPE", cooldown_note: "After claiming reward, 40s cooldown applies. Max 15 claims/day. Reward: 2,000 PEPE",
             video_challenge: "10‑Video Ads Challenge", video_warning: "Watch each rewarded ad completely. Link step: open and stay 10 seconds.", 
-            video_note: "🔥 New Sequence: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → repeat steps 6-10. Cooldown 40s after claim.",
-            one_time_rewards: "One‑Time Telegram Rewards", available_balance: "Available Balance", withdraw_requirements: "Withdrawal Requirements (All must be met)",
-            min_balance_label: "Minimum Balance:", min_balance_value: "$0.500", min_refs_label: "Minimum Referrals:", min_refs_value: "3 active referrals",
-            amount: "Amount", fee: "Fee (3%)", you_receive: "You Receive", request_withdrawal: "Request Withdrawal", withdrawal_history: "Withdrawal History",
-            your_referral_code: "Your Referral Code", referral_desc: "Share this code with friends. When they join using your code, both get $0.01 bonus!",
+            video_note: "🔥 Sequence: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → repeat 6-10. Cooldown 40s after claim. Max 15 claims/day.",
+            one_time_rewards: "One‑Time Telegram Rewards", available_balance: "Available Balance (PEPE)", withdraw_requirements: "Withdrawal Requirements (All must be met)",
+            min_balance_label: "Minimum Balance:", min_balance_value: "260,000 PEPE", min_refs_label: "Minimum Referrals:", min_refs_value: "3 active referrals",
+            amount: "Amount (PEPE)", fee: "Fee (5%)", you_receive: "You Receive (PEPE)", request_withdrawal: "Request Withdrawal", withdrawal_history: "Withdrawal History",
+            your_referral_code: "Your Referral Code", referral_desc: "Share this code with friends. When they join using your code, both get 10,000 PEPE bonus!",
             copy_code: "Copy Code", share_telegram: "Share on Telegram", your_referrals: "Your Referrals",
             support: "Support", business_email: "Business: earnforearnbusinessteam@gmail.com", withdraw_conditions: "Withdrawal Conditions",
-            cond1: "• Minimum balance $0.500", cond2: "• Minimum 3 referrals", cond3: "• 3% service fee", cond4: "• Processing within 7 days after approval", cond5: "• Unlimited withdrawals if conditions met",
+            cond1: "• Minimum balance 260,000 PEPE", cond2: "• Minimum 3 referrals", cond3: "• 5% service fee", cond4: "• Processing within 7 days after approval", cond5: "• Unlimited withdrawals if conditions met",
             task_details: "Task Details", task_detail1: "• 10-Link Challenge: stay 10 seconds per link → auto-unlock next (Chrome required)", 
-            task_detail2: "• 10-Video Ads: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → repeat for 6-10", task_detail3: "• Cooldown: 40 seconds after claiming each reward", 
-            task_detail4: "• One-time Telegram tasks: $0.003 each, join & verify",
+            task_detail2: "• 10-Video Ads: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → repeat 6-10", task_detail3: "• Cooldown: 40 seconds after claiming each reward", task_detail4: "• Daily limit: 15 claims per challenge", task_detail5: "• One-time Telegram tasks: 500 PEPE each, join & verify",
             additional_rules: "Additional Rules", rule7: "• No multiple accounts – one per person", rule8: "• VPN or proxy usage may result in ban", rule9: "• All tasks must be done manually", 
             rule10: "• Support responds within 48 hours", home: "Home", tasks: "Tasks", cashout: "Cashout", referral: "Referral", info: "Info", information: "Information", 
             privacy_policy: "Privacy Policy", terms_conditions: "Terms & Conditions", my_referral_code: "My Referral Code", telegram_username: "Telegram Username", 
             stay_on_link: "⏳ Stay on Link Page", timer_instruction: "Do not close this window. After 10 seconds, return to app to auto‑unlock next step.",
             cancel_task: "Cancel Task", risk_warning_title: "⚠️ Account Risk Warning", risk_warning_text: "You returned before 10 seconds. Please stay on the link for the full duration.",
             try_again: "Try Again", cancel: "Cancel", loading_ad: "Loading ad...",
-            break_title: "⏸ Break Time", break_message: "You have been active for 15 minutes. Please take a rest.", break_continue: "You can continue after the timer ends."
+            withdraw_limit: "Withdrawal limit: 2 per month", remaining_withdrawals: "Remaining this month: "
         },
         hi: {
             loading_initializing: "सिस्टम प्रारंभ हो रहा है...", loading_ads: "विज्ञापन लोड हो रहे हैं...", loading_auth: "खाते से कनेक्ट हो रहा है...", loading_data: "उपयोगकर्ता डेटा लोड हो रहा है...", loading_ready: "कमाने के लिए तैयार!",
-            your_balance: "आपकी बैलेंस", usd_precision: "USD | 3 दशमलव सटीकता", referrals: "रेफरल", total_earned: "कुल कमाई", ref_bonus: "रेफरल बोनस",
-            platform_rules: "प्लेटफॉर्म नियम", rule1: "कोई स्वचालित उपकरण – स्थायी प्रतिबंध", rule2: "निकासी के लिए न्यूनतम आयु 18 वर्ष", rule3: "निकासी के लिए $0.500 बैलेंस + 3 रेफरल", rule4: "3% सेवा शुल्क",
+            your_balance: "आपकी बैलेंस (PEPE)", pepe_precision: "PEPE | पूर्णांक सटीकता", referrals: "रेफरल", total_earned: "कुल कमाई (PEPE)", ref_bonus: "रेफरल बोनस (PEPE)",
+            platform_rules: "प्लेटफॉर्म नियम", rule1: "कोई स्वचालित उपकरण – स्थायी प्रतिबंध", rule2: "निकासी के लिए न्यूनतम आयु 18 वर्ष", rule3: "निकासी के लिए 260,000 PEPE + 3 रेफरल", rule4: "5% सेवा शुल्क",
             rule5: "प्रत्येक लिंक: 10 सेकंड रुकें → अगला अनलॉक", rule6: "लिंक कार्यों के लिए Chrome अनिवार्य",
             back_home: "होम वापस", high_value_tasks: "उच्च मूल्य कार्य", link_challenge: "10-लिंक चैलेंज", chrome_required: "⚠️ Chrome ब्राउज़र से खोलें। अन्य ब्राउज़र से काम पूरा नहीं होगा।",
-            link_warning: "प्रत्येक लिंक पर पूरे 10 सेकंड रुकें।", claim_reward: "$0.011 दावा करें", cooldown_note: "40 सेकंड का कूलडाउन। इनाम: $0.011",
+            link_warning: "प्रत्येक लिंक पर पूरे 10 सेकंड रुकें।", claim_reward: "2,000 PEPE दावा करें", cooldown_note: "दावे के बाद 40 सेकंड कूलडाउन। अधिकतम 15 दावे/दिन। इनाम: 2,000 PEPE",
             video_challenge: "10-वीडियो विज्ञापन चैलेंज", video_warning: "प्रत्येक विज्ञापन पूरा देखें। लिंक चरण: खोलें और 10 सेकंड रुकें।", 
-            video_note: "🔥 नया क्रम: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → 6-10 तक दोहराएँ। दावे के बाद 40 सेकंड कूलडाउन।",
-            one_time_rewards: "एक बार के टेलीग्राम इनाम", available_balance: "उपलब्ध बैलेंस", withdraw_requirements: "निकासी आवश्यकताएँ (सभी पूरी करें)",
-            min_balance_label: "न्यूनतम बैलेंस:", min_balance_value: "$0.500", min_refs_label: "न्यूनतम रेफरल:", min_refs_value: "3 सक्रिय रेफरल",
-            amount: "राशि", fee: "शुल्क (3%)", you_receive: "आपको मिलेगा", request_withdrawal: "निकासी का अनुरोध करें", withdrawal_history: "निकासी इतिहास",
-            your_referral_code: "आपका रेफरल कोड", referral_desc: "यह कोड दोस्तों के साथ साझा करें। कोड का उपयोग करने पर दोनों को $0.01 बोनस मिलता है!",
+            video_note: "🔥 क्रम: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → 6-10 दोहराएँ। दावे के बाद 40 सेकंड कूलडाउन। अधिकतम 15 दावे/दिन।",
+            one_time_rewards: "एक बार के टेलीग्राम इनाम", available_balance: "उपलब्ध बैलेंस (PEPE)", withdraw_requirements: "निकासी आवश्यकताएँ (सभी पूरी करें)",
+            min_balance_label: "न्यूनतम बैलेंस:", min_balance_value: "260,000 PEPE", min_refs_label: "न्यूनतम रेफरल:", min_refs_value: "3 सक्रिय रेफरल",
+            amount: "राशि (PEPE)", fee: "शुल्क (5%)", you_receive: "आपको मिलेगा (PEPE)", request_withdrawal: "निकासी का अनुरोध करें", withdrawal_history: "निकासी इतिहास",
+            your_referral_code: "आपका रेफरल कोड", referral_desc: "यह कोड दोस्तों के साथ साझा करें। कोड का उपयोग करने पर दोनों को 10,000 PEPE बोनस मिलता है!",
             copy_code: "कोड कॉपी करें", share_telegram: "टेलीग्राम पर साझा करें", your_referrals: "आपके रेफरल",
             support: "सहायता", business_email: "व्यवसाय: earnforearnbusinessteam@gmail.com", withdraw_conditions: "निकासी की शर्तें",
-            cond1: "• न्यूनतम बैलेंस $0.500", cond2: "• न्यूनतम 3 रेफरल", cond3: "• 3% सेवा शुल्क", cond4: "• अनुमोदन के बाद 7 दिनों के भीतर प्रक्रिया", cond5: "• शर्तें पूरी होने पर असीमित निकासी",
-            task_details: "कार्य विवरण", task_detail1: "• 10-लिंक चैलेंज: प्रति लिंक 10 सेकंड रुकें → अगला अनलॉक (Chrome अनिवार्य)", task_detail2: "• 10-वीडियो विज्ञापन: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → 6-10 के लिए दोहराएँ", task_detail3: "• कूलडाउन: प्रत्येक रिवॉर्ड दावा करने के बाद 40 सेकंड", task_detail4: "• एक बार के टेलीग्राम कार्य: $0.003 प्रत्येक, ज्वाइन करें और सत्यापित करें",
+            cond1: "• न्यूनतम बैलेंस 260,000 PEPE", cond2: "• न्यूनतम 3 रेफरल", cond3: "• 5% सेवा शुल्क", cond4: "• अनुमोदन के बाद 7 दिनों के भीतर प्रक्रिया", cond5: "• शर्तें पूरी होने पर असीमित निकासी",
+            task_details: "कार्य विवरण", task_detail1: "• 10-लिंक चैलेंज: प्रति लिंक 10 सेकंड रुकें → अगला अनलॉक (Chrome अनिवार्य)", task_detail2: "• 10-वीडियो विज्ञापन: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → 6-10 दोहराएँ", task_detail3: "• कूलडाउन: प्रत्येक रिवॉर्ड दावा करने के बाद 40 सेकंड", task_detail4: "• दैनिक सीमा: प्रति चैलेंज 15 दावे", task_detail5: "• एक बार के टेलीग्राम कार्य: 500 PEPE प्रत्येक, ज्वाइन करें और सत्यापित करें",
             additional_rules: "अतिरिक्त नियम", rule7: "• एक से अधिक खाते नहीं", rule8: "• VPN/प्रॉक्सी उपयोग पर प्रतिबंध", rule9: "• सभी कार्य मैन्युअल रूप से करें", rule10: "• समर्थन 48 घंटे में उत्तर देता है",
             home: "होम", tasks: "कार्य", cashout: "नकद निकालें", referral: "रेफरल", info: "जानकारी", information: "जानकारी", privacy_policy: "गोपनीयता नीति", terms_conditions: "नियम और शर्तें",
             my_referral_code: "मेरा रेफरल कोड", telegram_username: "टेलीग्राम उपयोगकर्ता नाम", stay_on_link: "⏳ लिंक पृष्ठ पर रहें", timer_instruction: "इस विंडो को बंद न करें। 10 सेकंड के बाद, अगला चरण अनलॉक करने के लिए ऐप पर लौटें।",
             cancel_task: "कार्य रद्द करें", risk_warning_title: "⚠️ खाता जोखिम चेतावनी", risk_warning_text: "आप 10 सेकंड से पहले लौट आए। कृपया पूरी अवधि के लिए लिंक पर बने रहें।",
             try_again: "पुनः प्रयास करें", cancel: "रद्द करें", loading_ad: "विज्ञापन लोड हो रहा है...",
-            break_title: "⏸ विश्राम समय", break_message: "आप 15 मिनट से सक्रिय हैं। कृपया आराम करें।", break_continue: "टाइमर समाप्त होने के बाद आप जारी रख सकते हैं।"
+            withdraw_limit: "निकासी सीमा: प्रति माह 2", remaining_withdrawals: "इस माह शेष: "
         },
-        bn: { /* Bengali translations - similar structure, omitted for brevity but fully functional */ },
-        es: { /* Spanish */ },
-        ar: { /* Arabic */ },
-        fr: { /* French */ }
+        bn: {
+            loading_initializing: "সিস্টেম চালু হচ্ছে...", loading_ads: "বিজ্ঞাপন লোড হচ্ছে...", loading_auth: "অ্যাকাউন্টে সংযোগ করা হচ্ছে...", loading_data: "ইউজার ডেটা লোড হচ্ছে...", loading_ready: "আয়ের জন্য প্রস্তুত!",
+            your_balance: "আপনার ব্যালেন্স (PEPE)", pepe_precision: "PEPE | পূর্ণসংখ্যা নির্ভুলতা", referrals: "রেফারেল", total_earned: "মোট আয় (PEPE)", ref_bonus: "রেফারেল বোনাস (PEPE)",
+            platform_rules: "প্ল্যাটফর্মের নিয়ম", rule1: "কোনো অটোমেটেড টুল – স্থায়ী ব্যান", rule2: "টাকা তোলার জন্য ন্যূনতম বয়স ১৮ বছর", rule3: "টাকা তুলতে চাইলে 260,000 PEPE + ৩ রেফারেল প্রয়োজন", rule4: "৫% সার্ভিস ফি",
+            rule5: "প্রতি লিংকে ১০ সেকেন্ড থাকুন → পরবর্তী আনলক", rule6: "লিংক টাস্কের জন্য Chrome প্রয়োজন",
+            back_home: "হোমে ফিরুন", high_value_tasks: "উচ্চ মানের টাস্ক", link_challenge: "১০-লিংক চ্যালেঞ্জ", chrome_required: "⚠️ Chrome ব্রাউজারে খুলুন। অন্যথায় টাস্ক কমপ্লিট হবে না।",
+            link_warning: "প্রতি লিংকে পুরো ১০ সেকেন্ড থাকুন।", claim_reward: "২,০০০ PEPE দাবি করুন", cooldown_note: "দাবির পর ৪০ সেকেন্ড কুলডাউন। সর্বোচ্চ ১৫ দাবি/দিন। পুরস্কার: ২,০০০ PEPE",
+            video_challenge: "১০-ভিডিও বিজ্ঞাপন চ্যালেঞ্জ", video_warning: "সম্পূর্ণ বিজ্ঞাপন দেখুন। লিংক ধাপ: খুলুন এবং ১০ সেকেন্ড থাকুন।", 
+            video_note: "🔥 ক্রম: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → ৬-১০ পুনরাবৃত্তি। দাবির পর ৪০ সেকেন্ড কুলডাউন। সর্বোচ্চ ১৫ দাবি/দিন।",
+            one_time_rewards: "একবারের টেলিগ্রাম রিওয়ার্ড", available_balance: "উপলব্ধ ব্যালেন্স (PEPE)", withdraw_requirements: "টাকা তোলার শর্ত (সব পূরণ করুন)",
+            min_balance_label: "ন্যূনতম ব্যালেন্স:", min_balance_value: "২৬০,০০০ PEPE", min_refs_label: "ন্যূনতম রেফারেল:", min_refs_value: "৩ সক্রিয় রেফারেল",
+            amount: "পরিমাণ (PEPE)", fee: "ফি (৫%)", you_receive: "আপনি পাবেন (PEPE)", request_withdrawal: "উত্তোলনের অনুরোধ করুন", withdrawal_history: "উত্তোলনের ইতিহাস",
+            your_referral_code: "আপনার রেফারেল কোড", referral_desc: "এই কোড বন্ধুদের সাথে শেয়ার করুন। আপনার কোড ব্যবহার করলে উভয়েই ১০,০০০ PEPE বোনাস পাবেন!",
+            copy_code: "কোড কপি করুন", share_telegram: "টেলিগ্রামে শেয়ার করুন", your_referrals: "আপনার রেফারেল",
+            support: "সাপোর্ট", business_email: "ব্যবসা: earnforearnbusinessteam@gmail.com", withdraw_conditions: "উত্তোলনের শর্ত",
+            cond1: "• ন্যূনতম ব্যালেন্স ২৬০,০০০ PEPE", cond2: "• ন্যূনতম ৩ রেফারেল", cond3: "• ৫% সার্ভিস ফি", cond4: "• অনুমোদনের পর ৭ দিনের মধ্যে প্রক্রিয়াকরণ", cond5: "• শর্ত পূরণ হলে সীমাহীন উত্তোলন",
+            task_details: "টাস্ক বিস্তারিত", task_detail1: "• ১০-লিংক চ্যালেঞ্জ: প্রতি লিংকে ১০ সেকেন্ড থাকুন → পরবর্তী আনলক (Chrome প্রয়োজন)", task_detail2: "• ১০-ভিডিও বিজ্ঞাপন: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → ৬-১০ পুনরাবৃত্তি", task_detail3: "• কুলডাউন: প্রতি রিওয়ার্ড দাবির পর ৪০ সেকেন্ড", task_detail4: "• দৈনিক সীমা: প্রতি চ্যালেঞ্জে ১৫ দাবি", task_detail5: "• একবারের টেলিগ্রাম টাস্ক: ৫০০ PEPE প্রতিটি, জয়েন করুন ও ভেরিফাই করুন",
+            additional_rules: "অতিরিক্ত নিয়ম", rule7: "• একাধিক অ্যাকাউন্ট নয়", rule8: "• VPN/প্রক্সি ব্যবহার নিষিদ্ধ", rule9: "• সব টাস্ক ম্যানুয়ালি করতে হবে", rule10: "• সাপোর্ট ৪৮ ঘণ্টার মধ্যে উত্তর দেয়",
+            home: "হোম", tasks: "টাস্ক", cashout: "ক্যাশআউট", referral: "রেফারেল", info: "তথ্য", information: "তথ্য", privacy_policy: "গোপনীয়তা নীতি", terms_conditions: "শর্তাবলী",
+            my_referral_code: "আমার রেফারেল কোড", telegram_username: "টেলিগ্রাম ইউজারনেম", stay_on_link: "⏳ লিংক পেজে থাকুন", timer_instruction: "এই উইন্ডো বন্ধ করবেন না। ১০ সেকেন্ড পরে, পরবর্তী ধাপ আনলক করতে অ্যাপে ফিরুন।",
+            cancel_task: "টাস্ক বাতিল করুন", risk_warning_title: "⚠️ অ্যাকাউন্ট ঝুঁকি সতর্কতা", risk_warning_text: "আপনি ১০ সেকেন্ড আগেই ফিরে এসেছেন। দয়া করে পুরো সময় লিংকে থাকুন।",
+            try_again: "আবার চেষ্টা করুন", cancel: "বাতিল", loading_ad: "বিজ্ঞাপন লোড হচ্ছে...",
+            withdraw_limit: "উত্তোলন সীমা: প্রতি মাসে ২ বার", remaining_withdrawals: "এই মাসে বাকি: "
+        },
+        es: {
+            loading_initializing: "Inicializando sistema...", loading_ads: "Cargando anuncios...", loading_auth: "Conectando a la cuenta...", loading_data: "Cargando datos de usuario...", loading_ready: "¡Listo para ganar!",
+            your_balance: "Su Saldo (PEPE)", pepe_precision: "PEPE | precisión entera", referrals: "Referidos", total_earned: "Ganado Total (PEPE)", ref_bonus: "Bono Ref (PEPE)",
+            platform_rules: "Reglas de la Plataforma", rule1: "No herramientas automatizadas – prohibición permanente", rule2: "Edad mínima 18 años para retiros", rule3: "Retiro requiere 260,000 PEPE + 3 referidos", rule4: "Se aplica una tarifa del 5%",
+            rule5: "Cada enlace: permanezca 10 segundos → desbloqueo automático", rule6: "Navegador Chrome obligatorio para tareas de enlace",
+            back_home: "Volver al Inicio", high_value_tasks: "Tareas de Alto Valor", link_challenge: "Desafío de 10 Enlaces", chrome_required: "⚠️ ABRIR con Chrome. Las tareas NO se completarán si se abren con otros navegadores.",
+            link_warning: "Permanezca 10 segundos en cada enlace.", claim_reward: "Reclamar 2,000 PEPE", cooldown_note: "Enfriamiento de 40s después de reclamar. Máx 15 reclamaciones/día. Recompensa: 2,000 PEPE",
+            video_challenge: "Desafío de 10 Anuncios", video_warning: "Vea cada anuncio completo. Paso de enlace: abra y permanezca 10 segundos.", 
+            video_note: "🔥 Secuencia: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → repetir 6-10. Enfriamiento 40s después de reclamar. Máx 15/día.",
+            one_time_rewards: "Recompensas Únicas de Telegram", available_balance: "Saldo Disponible (PEPE)", withdraw_requirements: "Requisitos de Retiro (Todos deben cumplirse)",
+            min_balance_label: "Saldo Mínimo:", min_balance_value: "260,000 PEPE", min_refs_label: "Referidos Mínimos:", min_refs_value: "3 referidos activos",
+            amount: "Monto (PEPE)", fee: "Tarifa (5%)", you_receive: "Usted Recibe (PEPE)", request_withdrawal: "Solicitar Retiro", withdrawal_history: "Historial de Retiros",
+            your_referral_code: "Su Código de Referido", referral_desc: "Comparta este código con amigos. Cuando se unan con su código, ambos reciben 10,000 PEPE de bonificación.",
+            copy_code: "Copiar Código", share_telegram: "Compartir en Telegram", your_referrals: "Tus Referidos",
+            support: "Soporte", business_email: "Negocios: earnforearnbusinessteam@gmail.com", withdraw_conditions: "Condiciones de Retiro",
+            cond1: "• Saldo mínimo 260,000 PEPE", cond2: "• Mínimo 3 referidos", cond3: "• Tarifa del 5%", cond4: "• Procesamiento dentro de 7 días después de la aprobación", cond5: "• Retiros ilimitados si se cumplen las condiciones",
+            task_details: "Detalles de Tareas", task_detail1: "• Desafío de 10 Enlaces: permanezca 10 segundos por enlace → desbloqueo automático (Chrome requerido)", task_detail2: "• Desafío de 10 Anuncios: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → repetir 6-10", task_detail3: "• Enfriamiento: 40 segundos después de reclamar cada recompensa", task_detail4: "• Límite diario: 15 reclamaciones por desafío", task_detail5: "• Tareas únicas de Telegram: 500 PEPE cada una, únete y verifica",
+            additional_rules: "Reglas Adicionales", rule7: "• No múltiples cuentas", rule8: "• El uso de VPN/proxy puede resultar en prohibición", rule9: "• Todas las tareas deben hacerse manualmente", rule10: "• Soporte responde en 48 horas",
+            home: "Inicio", tasks: "Tareas", cashout: "Retirar", referral: "Referidos", info: "Info", information: "Información", privacy_policy: "Política de Privacidad", terms_conditions: "Términos y Condiciones",
+            my_referral_code: "Mi Código de Referido", telegram_username: "Nombre de Usuario de Telegram", stay_on_link: "⏳ Permanezca en la Página del Enlace", timer_instruction: "No cierre esta ventana. Después de 10 segundos, regrese a la aplicación para desbloquear el siguiente paso.",
+            cancel_task: "Cancelar Tarea", risk_warning_title: "⚠️ Advertencia de Riesgo de Cuenta", risk_warning_text: "Regresó antes de 10 segundos. Permanezca en el enlace durante toda la duración.",
+            try_again: "Reintentar", cancel: "Cancelar", loading_ad: "Cargando anuncio...",
+            withdraw_limit: "Límite de retiro: 2 por mes", remaining_withdrawals: "Restantes este mes: "
+        },
+        ar: {
+            loading_initializing: "جاري تهيئة النظام...", loading_ads: "تحميل الإعلانات...", loading_auth: "الاتصال بالحساب...", loading_data: "تحميل بيانات المستخدم...", loading_ready: "جاهز للربح!",
+            your_balance: "رصيدك (PEPE)", pepe_precision: "PEPE | دقة عدد صحيح", referrals: "الإحالات", total_earned: "إجمالي الربح (PEPE)", ref_bonus: "مكافأة الإحالة (PEPE)",
+            platform_rules: "قواعد المنصة", rule1: "لا أدوات آلية – حظر دائم", rule2: "الحد الأدنى للعمر 18 سنة للسحب", rule3: "السحب يتطلب 260,000 PEPE + 3 إحالات", rule4: "رسوم خدمة 5%",
+            rule5: "كل رابط: ابق 10 ثوانٍ → فتح تلقائي", rule6: "متصفح Chrome إلزامي لمهام الروابط",
+            back_home: "العودة للرئيسية", high_value_tasks: "مهام عالية القيمة", link_challenge: "تحدي 10 روابط", chrome_required: "⚠️ افتح مع Chrome. لن تكتمل المهام إذا تم فتحها بمتصفحات أخرى.",
+            link_warning: "ابق على كل رابط لمدة 10 ثوانٍ بالضبط.", claim_reward: "استلم 2,000 PEPE", cooldown_note: "تهدئة 40 ثانية بعد المطالبة. الحد الأقصى 15 مطالبة/يوم. المكافأة: 2,000 PEPE",
+            video_challenge: "تحدي 10 إعلانات", video_warning: "شاهد كل إعلان بالكامل. خطوة الرابط: افتح وابق 10 ثوانٍ.", 
+            video_note: "🔥 التسلسل: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → كرر 6-10. تهدئة 40 ثانية بعد المطالبة. الحد الأقصى 15/يوم.",
+            one_time_rewards: "مكافآت تليغرام لمرة واحدة", available_balance: "الرصيد المتاح (PEPE)", withdraw_requirements: "متطلبات السحب (يجب تحقيق الكل)",
+            min_balance_label: "الحد الأدنى للرصيد:", min_balance_value: "260,000 PEPE", min_refs_label: "الحد الأدنى للإحالات:", min_refs_value: "3 إحالات نشطة",
+            amount: "المبلغ (PEPE)", fee: "الرسوم (5%)", you_receive: "ستستلم (PEPE)", request_withdrawal: "طلب سحب", withdrawal_history: "سجل السحوبات",
+            your_referral_code: "رمز الإحالة الخاص بك", referral_desc: "شارك هذا الرمز مع الأصدقاء. عند انضمامهم باستخدام رمزك، يحصل كل منكما على 10,000 PEPE مكافأة!",
+            copy_code: "نسخ الرمز", share_telegram: "مشاركة على تليغرام", your_referrals: "إحالاتك",
+            support: "الدعم", business_email: "الأعمال: earnforearnbusinessteam@gmail.com", withdraw_conditions: "شروط السحب",
+            cond1: "• الحد الأدنى للرصيد 260,000 PEPE", cond2: "• الحد الأدنى 3 إحالات", cond3: "• رسوم خدمة 5%", cond4: "• المعالجة خلال 7 أيام بعد الموافقة", cond5: "• سحوبات غير محدودة إذا تم استيفاء الشروط",
+            task_details: "تفاصيل المهام", task_detail1: "• تحدي 10 روابط: ابق 10 ثوانٍ لكل رابط → فتح تلقائي (Chrome مطلوب)", task_detail2: "• تحدي 10 إعلانات فيديو: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → كرر 6-10", task_detail3: "• التهدئة: 40 ثانية بعد استلام كل مكافأة", task_detail4: "• الحد اليومي: 15 مطالبة لكل تحدي", task_detail5: "• مهام تليغرام لمرة واحدة: 500 PEPE لكل منها، انضم وتحقق",
+            additional_rules: "قواعد إضافية", rule7: "• لا حسابات متعددة", rule8: "• استخدام VPN/بروكسي قد يؤدي إلى حظر", rule9: "• جميع المهام يدوية", rule10: "• الدعم يرد خلال 48 ساعة",
+            home: "الرئيسية", tasks: "المهام", cashout: "سحب", referral: "إحالة", info: "معلومات", information: "معلومات", privacy_policy: "سياسة الخصوصية", terms_conditions: "الشروط والأحكام",
+            my_referral_code: "رمز الإحالة الخاص بي", telegram_username: "اسم مستخدم تليغرام", stay_on_link: "⏳ ابق في صفحة الرابط", timer_instruction: "لا تغلق هذه النافذة. بعد 10 ثوانٍ، عد إلى التطبيق لفتح الخطوة التالية تلقائياً.",
+            cancel_task: "إلغاء المهمة", risk_warning_title: "⚠️ تحذير مخاطر الحساب", risk_warning_text: "لقد عدت قبل 10 ثوانٍ. يرجى البقاء على الرابط للمدة الكاملة.",
+            try_again: "حاول مرة أخرى", cancel: "إلغاء", loading_ad: "جاري تحميل الإعلان...",
+            withdraw_limit: "حد السحب: 2 شهريًا", remaining_withdrawals: "المتبقي هذا الشهر: "
+        },
+        fr: {
+            loading_initializing: "Initialisation du système...", loading_ads: "Chargement des publicités...", loading_auth: "Connexion au compte...", loading_data: "Chargement des données utilisateur...", loading_ready: "Prêt à gagner!",
+            your_balance: "Votre Solde (PEPE)", pepe_precision: "PEPE | précision entière", referrals: "Références", total_earned: "Total Gagné (PEPE)", ref_bonus: "Bonus Réf (PEPE)",
+            platform_rules: "Règles de la Plateforme", rule1: "Pas d'outils automatisés – bannissement permanent", rule2: "Âge minimum 18 ans pour les retraits", rule3: "Retrait nécessite 260,000 PEPE + 3 références", rule4: "Des frais de service de 5% s'appliquent",
+            rule5: "Chaque lien: rester 10 secondes → déverrouillage automatique", rule6: "Navigateur Chrome obligatoire pour les tâches de lien",
+            back_home: "Retour à l'Accueil", high_value_tasks: "Tâches à Haute Valeur", link_challenge: "Défi 10 Liens", chrome_required: "⚠️ OUVREZ avec Chrome. Les tâches ne seront PAS terminées si elles sont ouvertes avec d'autres navigateurs.",
+            link_warning: "Restez 10 secondes sur chaque lien.", claim_reward: "Réclamer 2,000 PEPE", cooldown_note: "Refroidissement 40s après réclamation. Max 15 réclamations/jour. Récompense: 2,000 PEPE",
+            video_challenge: "Défi 10 Vidéos", video_warning: "Regardez chaque publicité entièrement. Étape lien: ouvrez et restez 10 secondes.", 
+            video_note: "🔥 Séquence: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Lien → répéter 6-10. Refroidissement 40s après réclamation. Max 15/jour.",
+            one_time_rewards: "Récompenses Telegram Unique", available_balance: "Solde Disponible (PEPE)", withdraw_requirements: "Conditions de Retrait (Toutes doivent être remplies)",
+            min_balance_label: "Solde Minimum:", min_balance_value: "260,000 PEPE", min_refs_label: "Références Minimum:", min_refs_value: "3 références actives",
+            amount: "Montant (PEPE)", fee: "Frais (5%)", you_receive: "Vous Recevez (PEPE)", request_withdrawal: "Demander un Retrait", withdrawal_history: "Historique des Retraits",
+            your_referral_code: "Votre Code de Parrainage", referral_desc: "Partagez ce code avec vos amis. Lorsqu'ils rejoignent avec votre code, vous recevez tous les deux 10,000 PEPE de bonus!",
+            copy_code: "Copier le Code", share_telegram: "Partager sur Telegram", your_referrals: "Vos Références",
+            support: "Support", business_email: "Affaires: earnforearnbusinessteam@gmail.com", withdraw_conditions: "Conditions de Retrait",
+            cond1: "• Solde minimum 260,000 PEPE", cond2: "• Minimum 3 références", cond3: "• Frais de 5%", cond4: "• Traitement sous 7 jours après approbation", cond5: "• Retraits illimités si les conditions sont remplies",
+            task_details: "Détails des Tâches", task_detail1: "• Défi 10 Liens: rester 10 secondes par lien → déverrouillage automatique (Chrome requis)", task_detail2: "• Défi 10 Vidéos: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Lien → répéter 6-10", task_detail3: "• Refroidissement: 40 secondes après chaque réclamation", task_detail4: "• Limite quotidienne: 15 réclamations par défi", task_detail5: "• Tâches Telegram uniques: 500 PEPE chacune, rejoignez et vérifiez",
+            additional_rules: "Règles Supplémentaires", rule7: "• Pas de comptes multiples", rule8: "• L'utilisation de VPN/proxy peut entraîner un bannissement", rule9: "• Toutes les tâches doivent être faites manuellement", rule10: "• Le support répond sous 48 heures",
+            home: "Accueil", tasks: "Tâches", cashout: "Retirer", referral: "Parrainage", info: "Infos", information: "Informations", privacy_policy: "Politique de Confidentialité", terms_conditions: "Conditions d'Utilisation",
+            my_referral_code: "Mon Code de Parrainage", telegram_username: "Nom d'utilisateur Telegram", stay_on_link: "⏳ Restez sur la Page du Lien", timer_instruction: "Ne fermez pas cette fenêtre. Après 10 secondes, revenez à l'application pour déverrouiller automatiquement l'étape suivante.",
+            cancel_task: "Annuler la Tâche", risk_warning_title: "⚠️ Avertissement de Risque de Compte", risk_warning_text: "Vous êtes revenu avant 10 secondes. Veuillez rester sur le lien pendant toute la durée.",
+            try_again: "Réessayer", cancel: "Annuler", loading_ad: "Chargement de la publicité...",
+            withdraw_limit: "Limite de retrait: 2 par mois", remaining_withdrawals: "Restant ce mois-ci: "
+        }
     };
-    // Fill missing languages with Hindi as base (will be replaced with actual translations in final code)
-    const bnBase = JSON.parse(JSON.stringify(translations.hi));
-    bnBase.break_message = "আপনি 15 মিনিট ধরে সক্রিয় আছেন। অনুগ্রহ করে বিশ্রাম নিন।";
-    bnBase.video_note = "🔥 নতুন ক্রম: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → 6-10 পুনরাবৃত্তি। দাবির পর 40 সেকেন্ড কুলডাউন।";
-    const esBase = JSON.parse(JSON.stringify(translations.hi));
-    esBase.break_message = "Has estado activo durante 15 minutos. Por favor, descansa.";
-    esBase.video_note = "🔥 Nueva secuencia: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → repetir 6-10. Enfriamiento 40s después de reclamar.";
-    const arBase = JSON.parse(JSON.stringify(translations.hi));
-    arBase.break_message = "لقد كنت نشطًا لمدة 15 دقيقة. يرجى أخذ قسط من الراحة.";
-    arBase.video_note = "🔥 تسلسل جديد: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → تكرار 6-10. تبريد 40 ثانية بعد المطالبة.";
-    const frBase = JSON.parse(JSON.stringify(translations.hi));
-    frBase.break_message = "Vous êtes actif depuis 15 minutes. Veuillez vous reposer.";
-    frBase.video_note = "🔥 Nouvelle séquence: 1.Adsgram 2.Monetag 3.Adexora 4.OnClicka 5.Link → répéter 6-10. Refroidissement 40s après réclamation.";
-    translations.bn = bnBase; translations.es = esBase; translations.ar = arBase; translations.fr = frBase;
     
     let currentLang = localStorage.getItem('selectedLanguage') || 'en';
     
@@ -1020,12 +1126,10 @@
         if(claimVideo && t.claim_reward) claimVideo.innerText = t.claim_reward;
         const withdrawBtn = document.getElementById('submitWithdrawBtn');
         if(withdrawBtn && t.request_withdrawal) withdrawBtn.innerText = t.request_withdrawal;
-        const breakTitle = document.querySelector('#breakOverlay .break-title');
-        const breakMessage = document.querySelector('#breakOverlay .break-message:first-of-type');
-        const breakContinue = document.querySelector('#breakOverlay .break-message:last-of-type');
-        if(breakTitle && t.break_title) breakTitle.innerText = t.break_title;
-        if(breakMessage && t.break_message) breakMessage.innerText = t.break_message;
-        if(breakContinue && t.break_continue) breakContinue.innerText = t.break_continue;
+        const limitText = document.querySelector('#withdrawLimitBox .withdraw-limit-text:first-child');
+        if(limitText && t.withdraw_limit) limitText.innerText = t.withdraw_limit;
+        updateWithdrawLimitDisplay();
+        updateDailyLimitUI();
     }
     
     function loadLanguageOptions() {
@@ -1056,78 +1160,11 @@
         });
     }
     
-    // ==================== BREAK TIMER (15 minutes active → 30 min break) ====================
-    let activityStartTime = Date.now();
-    let breakTimerInterval = null;
-    let isBreakActive = false;
-    let breakEndTime = null;
-    
-    function resetActivityTimer() {
-        if(isBreakActive) return;
-        activityStartTime = Date.now();
-    }
-    
-    function startBreak() {
-        if(isBreakActive) return;
-        isBreakActive = true;
-        breakEndTime = Date.now() + 30 * 60 * 1000;
-        const overlay = document.getElementById('breakOverlay');
-        overlay.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        updateBreakTimerDisplay();
-        if(breakTimerInterval) clearInterval(breakTimerInterval);
-        breakTimerInterval = setInterval(() => {
-            if(!isBreakActive) {
-                clearInterval(breakTimerInterval);
-                return;
-            }
-            const remaining = breakEndTime - Date.now();
-            if(remaining <= 0) {
-                clearInterval(breakTimerInterval);
-                isBreakActive = false;
-                overlay.classList.add('hidden');
-                document.body.style.overflow = '';
-                resetActivityTimer();
-                refreshUI();
-            } else {
-                updateBreakTimerDisplay();
-            }
-        }, 1000);
-    }
-    
-    function updateBreakTimerDisplay() {
-        const remaining = Math.max(0, breakEndTime - Date.now());
-        const minutes = Math.floor(remaining / 60000);
-        const seconds = Math.floor((remaining % 60000) / 1000);
-        document.getElementById('breakTimer').innerText = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-    }
-    
-    function attachActivityListener() {
-        const container = document.getElementById('mainApp');
-        if(!container) return;
-        container.addEventListener('click', (e) => {
-            if(isBreakActive) {
-                e.stopPropagation();
-                e.preventDefault();
-                return false;
-            }
-            resetActivityTimer();
-        });
-        setInterval(() => {
-            if(isBreakActive) return;
-            const activeTime = (Date.now() - activityStartTime) / 1000;
-            if(activeTime >= 15 * 60) {  // 15 minutes
-                startBreak();
-            }
-        }, 5000);
-    }
-    
-    // ==================== CORE APP FUNCTIONS ====================
+    // ==================== CORE APP FUNCTIONS (No break timer) ====================
     function showSpinner(show) { document.getElementById('spinner').style.display = show ? 'flex' : 'none'; }
-    function showModal(modal) { if(!isBreakActive) modal.classList.add('active'); }
+    function showModal(modal) { modal.classList.add('active'); }
     function hideModal(modal) { modal.classList.remove('active'); }
     function showStatus(msg, type) {
-        if(isBreakActive) return;
         const el = document.getElementById('homeStatusMessage');
         el.style.display = 'block';
         el.className = `status-message status-${type}`;
@@ -1142,9 +1179,7 @@
         refreshUI();
     }
     
-    async function fetchUserData() {
-        try { return (await db.ref(`users/${telegramId}`).once('value')).val(); } catch(e){ return null; }
-    }
+    async function fetchUserData() { return (await db.ref(`users/${telegramId}`).once('value')).val(); }
     
     async function applyReferralBonus(referralCode) {
         const snapshot = await db.ref('users').orderByChild('referralCode').equalTo(referralCode).once('value');
@@ -1152,24 +1187,17 @@
         const referrerId = Object.keys(snapshot.val())[0];
         if(referrerId === telegramId) return false;
         const referrerData = snapshot.val()[referrerId];
-        const bonus = 0.01;
+        const bonus = 10000;
         const updatedRefs = [...(referrerData.referrals||[]), { username: telegramUsername, id: telegramId, date: Date.now(), bonus }];
         await db.ref(`users/${referrerId}`).update({
-            referrals: updatedRefs,
-            referralBonus: (referrerData.referralBonus||0) + bonus,
-            balance: (referrerData.balance||0) + bonus,
-            totalEarned: (referrerData.totalEarned||0) + bonus
+            referrals: updatedRefs, referralBonus: (referrerData.referralBonus||0)+bonus,
+            balance: (referrerData.balance||0)+bonus, totalEarned: (referrerData.totalEarned||0)+bonus
         });
         await db.ref(`users/${telegramId}`).update({
-            balance: (userData.balance||0) + bonus,
-            totalEarned: (userData.totalEarned||0) + bonus,
-            referralBonus: (userData.referralBonus||0) + bonus,
-            referralUsed: referralCode,
-            referralBonusApplied: true
+            balance: (userData.balance||0)+bonus, totalEarned: (userData.totalEarned||0)+bonus,
+            referralBonus: (userData.referralBonus||0)+bonus, referralUsed: referralCode, referralBonusApplied: true
         });
-        userData.balance += bonus;
-        userData.totalEarned += bonus;
-        userData.referralBonus += bonus;
+        userData.balance += bonus; userData.totalEarned += bonus; userData.referralBonus += bonus;
         userData.referralBonusApplied = true;
         refreshUI();
         return true;
@@ -1181,9 +1209,10 @@
             if(!data) {
                 const refCode = telegramUsername.slice(0,5).toUpperCase() + Math.random().toString(36).substr(2,5).toUpperCase();
                 const newUser = {
-                    username: telegramUsername, telegramId, balance: 0, totalEarned: 0, referralBonus: 0, referrals: [],
+                    username: telegramUsername, telegramId, balance:0, totalEarned:0, referralBonus:0, referrals:[],
                     referralCode: refCode, referralBonusApplied: false, createdAt: Date.now(),
-                    linkTask: { steps: 0, cooldownUntil: 0 }, videoTask: { steps: 0, cooldownUntil: 0 },
+                    linkTask: { steps:0, cooldownUntil:0 }, videoTask: { steps:0, cooldownUntil:0 },
+                    linkDailyCount: 0, videoDailyCount: 0, lastResetDate: new Date().toDateString(),
                     oneTimeTasks: { telegramUpdate: false, telegramProof: false }, withdrawalHistory: []
                 };
                 await db.ref(`users/${telegramId}`).set(newUser);
@@ -1192,116 +1221,92 @@
             userData = data;
             linkStepsDone = userData.linkTask?.steps || 0;
             videoStepsDone = userData.videoTask?.steps || 0;
-            if(!userData.referralBonusApplied) {
-                document.getElementById('referralCodeModal').style.display = 'flex';
-            } else {
-                proceedToApp();
-            }
-        } catch(error) {
-            console.error("Init error:", error);
-            document.getElementById('loadingStep').innerText = "Connection error. Retrying...";
-            setTimeout(initUser, 2000);
-        }
+            resetDailyIfNeeded();
+            if(!userData.referralBonusApplied) document.getElementById('referralCodeModal').style.display = 'flex';
+            else proceedToApp();
+        } catch(e) { console.error(e); setTimeout(initUser, 2000); }
     }
     
     async function proceedToApp() {
         document.getElementById('referralCodeModal').style.display = 'none';
         refreshUI();
-        db.ref(`users/${telegramId}`).on('value', snap => {
-            if(snap.exists()) {
-                userData = snap.val();
-                linkStepsDone = userData.linkTask?.steps || 0;
-                videoStepsDone = userData.videoTask?.steps || 0;
-                refreshUI();
-            }
-        });
-        attachActivityListener();
-        resetActivityTimer();
+        db.ref(`users/${telegramId}`).on('value', snap => { if(snap.exists()) { userData = snap.val(); linkStepsDone = userData.linkTask?.steps||0; videoStepsDone = userData.videoTask?.steps||0; resetDailyIfNeeded(); refreshUI(); } });
     }
     
     function startCooldownCountdown(elementId, endTime) {
-        const element = document.getElementById(elementId);
-        if(!element) return;
+        const el = document.getElementById(elementId);
+        if(!el) return;
         const update = () => {
-            const remaining = Math.max(0, endTime - Date.now());
-            if(remaining <= 0) { element.innerHTML = ''; return; }
-            element.innerHTML = `<div class="cooldown-timer">Cooldown: ${Math.ceil(remaining/1000)}s</div>`;
+            const rem = Math.max(0, endTime - Date.now());
+            if(rem <= 0) { el.innerHTML = ''; return; }
+            el.innerHTML = `<div class="cooldown-timer">Cooldown: ${Math.ceil(rem/1000)}s</div>`;
             setTimeout(update, 500);
         };
         update();
     }
     
     function refreshUI() {
-        if(!userData || isBreakActive) return;
-        document.getElementById('balanceAmount').innerText = (userData.balance||0).toFixed(3);
-        document.getElementById('totalEarned').innerText = (userData.totalEarned||0).toFixed(3);
-        document.getElementById('refBonus').innerText = (userData.referralBonus||0).toFixed(3);
+        if(!userData) return;
+        document.getElementById('balanceAmount').innerText = formatNumber(userData.balance || 0);
+        document.getElementById('totalEarned').innerText = formatNumber(userData.totalEarned || 0);
+        document.getElementById('refBonus').innerText = formatNumber(userData.referralBonus || 0);
         document.getElementById('refCount').innerText = (userData.referrals?.length||0);
-        document.getElementById('withdrawBalance').innerText = (userData.balance||0).toFixed(3);
+        document.getElementById('withdrawBalance').innerText = formatNumber(userData.balance || 0);
         document.getElementById('userInitial').innerText = telegramUsername.charAt(0).toUpperCase();
         document.getElementById('menuUsername').innerText = telegramUsername;
         document.getElementById('referralCodeDisplay').innerHTML = userData.referralCode || '';
-        renderLinkTaskUI();
-        renderVideoTaskUI();
-        renderTelegramTasks();
-        renderReferralsList();
-        updateWithdrawalRequirements();
-        updateWithdrawCalc();
-        displayWithdrawalHistory();
-        const linkCooldown = userData.linkTask?.cooldownUntil || 0;
-        if(linkCooldown > Date.now()) startCooldownCountdown('linkCooldownArea', linkCooldown);
-        else document.getElementById('linkCooldownArea').innerHTML = '';
-        const videoCooldown = userData.videoTask?.cooldownUntil || 0;
-        if(videoCooldown > Date.now()) startCooldownCountdown('videoCooldownArea', videoCooldown);
-        else document.getElementById('videoCooldownArea').innerHTML = '';
+        renderLinkTaskUI(); renderVideoTaskUI(); renderTelegramTasks(); renderReferralsList();
+        updateDailyLimitUI();
+        updateWithdrawalRequirements(); updateWithdrawCalc(); displayWithdrawalHistory(); updateWithdrawLimitDisplay();
+        const lc = userData.linkTask?.cooldownUntil || 0;
+        if(lc > Date.now()) startCooldownCountdown('linkCooldownArea', lc); else document.getElementById('linkCooldownArea').innerHTML = '';
+        const vc = userData.videoTask?.cooldownUntil || 0;
+        if(vc > Date.now()) startCooldownCountdown('videoCooldownArea', vc); else document.getElementById('videoCooldownArea').innerHTML = '';
     }
     
-    // 10-Link Challenge (unchanged from original working version)
     function renderLinkTaskUI() {
-        const cooldown = Math.max(0, (userData.linkTask?.cooldownUntil||0) - Date.now());
-        const canStart = cooldown <= 0 && !isBreakActive;
-        let html = '';
+        const cooldown = Math.max(0, (userData.linkTask?.cooldownUntil||0)-Date.now());
+        const canStart = cooldown<=0;
+        let html='';
         for(let i=1;i<=10;i++) {
-            let cls = 'step-btn';
-            if(linkStepsDone >= i) cls += ' completed';
-            else if(linkStepsDone+1 === i && canStart) cls += ' active-step';
-            else if(!canStart || isBreakActive) cls += ' locked';
-            html += `<div class="${cls}" data-linkstep="${i}"><i class="fas fa-link"></i><span>${i}</span></div>`;
+            let cls='step-btn';
+            if(linkStepsDone>=i) cls+=' completed';
+            else if(linkStepsDone+1===i && canStart) cls+=' active-step';
+            else if(!canStart) cls+=' locked';
+            html+=`<div class="${cls}" data-linkstep="${i}"><i class="fas fa-link"></i><span>${i}</span></div>`;
         }
         document.getElementById('linkStepsContainer').innerHTML = html;
         const claimBtn = document.getElementById('claimLinkRewardBtn');
-        if(linkStepsDone >= 10 && cooldown<=0 && !isBreakActive) claimBtn.style.display='block'; else claimBtn.style.display='none';
+        const dailyRem = getLinkDailyRemaining();
+        if(linkStepsDone>=10 && cooldown<=0 && dailyRem>0) claimBtn.style.display='block'; else claimBtn.style.display='none';
         document.getElementById('linkProgress').innerHTML = `${linkStepsDone}/10 links`;
         document.querySelectorAll('#linkStepsContainer .step-btn').forEach(btn=>{
             btn.onclick = async()=>{
-                if(isBreakActive) return;
                 let step = parseInt(btn.dataset.linkstep);
                 if(linkStepsDone >= step) return;
-                if(linkStepsDone+1 !== step){ showStatus('Complete previous steps first', 'error'); return; }
-                if(cooldown>0){ showStatus('Cooldown active', 'error'); return; }
+                if(linkStepsDone+1 !== step){ showStatus('Complete previous steps first','error'); return; }
+                if(cooldown>0){ showStatus('Cooldown active','error'); return; }
                 startLinkStep(step);
             };
         });
-        if(claimBtn) claimBtn.onclick = () => { if(!isBreakActive) claimLinkReward(); };
+        if(claimBtn) claimBtn.onclick = ()=>{ claimLinkReward(); };
     }
     
     async function startLinkStep(step) {
-        if(isBreakActive) return;
         pendingLinkStep = step;
         const modal = document.getElementById('timerModal');
         const timerDisp = document.getElementById('timerCountdown');
         let sec = 10;
         timerDisp.innerText = sec;
         if(linkInterval) clearInterval(linkInterval);
-        linkInterval = setInterval(() => { sec--; timerDisp.innerText = sec; if(sec <= 0) clearInterval(linkInterval); }, 1000);
+        linkInterval = setInterval(() => { sec--; timerDisp.innerText = sec; if(sec<=0) clearInterval(linkInterval); }, 1000);
         showModal(modal);
-        const link = LINK_URLS[step-1];
-        window.open(link, '_blank');
+        window.open(LINK_URLS[step-1], '_blank');
         linkStartTime = Date.now();
         const onVisibility = () => {
-            if (!document.hidden && pendingLinkStep === step) {
-                const elapsed = (Date.now() - linkStartTime) / 1000;
-                if (elapsed >= 10) {
+            if(!document.hidden && pendingLinkStep===step) {
+                const elapsed = (Date.now()-linkStartTime)/1000;
+                if(elapsed>=10) {
                     if(linkInterval) clearInterval(linkInterval);
                     hideModal(modal);
                     document.removeEventListener('visibilitychange', onVisibility);
@@ -1321,18 +1326,15 @@
             hideModal(modal);
             document.removeEventListener('visibilitychange', onVisibility);
             pendingLinkStep = null;
-            showStatus('Task cancelled.', 'error');
+            showStatus('Task cancelled.','error');
         };
     }
     
     function showRiskWarning(step) {
-        if(isBreakActive) return;
         const modal = document.getElementById('tryAgainModal');
         showModal(modal);
-        const retryBtn = document.getElementById('tryAgainRetryBtn');
-        const cancelBtn = document.getElementById('tryAgainCancelBtn');
-        const newRetry = retryBtn.cloneNode(true);
-        const newCancel = cancelBtn.cloneNode(true);
+        const retryBtn = document.getElementById('tryAgainRetryBtn'), cancelBtn = document.getElementById('tryAgainCancelBtn');
+        const newRetry = retryBtn.cloneNode(true), newCancel = cancelBtn.cloneNode(true);
         retryBtn.parentNode.replaceChild(newRetry, retryBtn);
         cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
         newRetry.onclick = () => { hideModal(modal); startLinkStep(step); };
@@ -1340,142 +1342,125 @@
     }
     
     async function completeLinkStep(step) {
-        if(isBreakActive) return;
-        const ns = linkStepsDone + 1;
+        const ns = linkStepsDone+1;
         await updateUser({ linkTask: { steps: ns, cooldownUntil: userData.linkTask?.cooldownUntil||0 } });
         linkStepsDone = ns;
         refreshUI();
-        showStatus(`Link step ${step} completed!`, 'success');
+        showStatus(`Link step ${step} completed!`,'success');
     }
     
     async function claimLinkReward() {
-        if(isBreakActive) return;
-        if(linkStepsDone < 10) return showStatus('Complete all 10 links first', 'error');
-        const cooldown = (userData.linkTask?.cooldownUntil||0) - Date.now();
-        if(cooldown>0) return showStatus('Cooldown active', 'error');
-        const reward = 0.011;
-        const newBal = (userData.balance||0) + reward;
-        await updateUser({ balance: newBal, totalEarned: (userData.totalEarned||0)+reward, linkTask: { steps: 0, cooldownUntil: Date.now() + 40000 } });
+        if(linkStepsDone<10) return showStatus('Complete all 10 links first','error');
+        if((userData.linkTask?.cooldownUntil||0)-Date.now()>0) return showStatus('Cooldown active','error');
+        const dailyRem = getLinkDailyRemaining();
+        if(dailyRem <= 0) return showStatus('Daily limit reached (15 claims). Come back tomorrow!','error');
+        const reward = 2000;
+        await updateUser({ 
+            balance: (userData.balance||0)+reward, 
+            totalEarned: (userData.totalEarned||0)+reward, 
+            linkTask: { steps:0, cooldownUntil: Date.now()+40000 },
+            linkDailyCount: (userData.linkDailyCount||0)+1
+        });
         linkStepsDone = 0;
-        showStatus(`Reward claimed! +$${reward.toFixed(3)}`, 'success');
+        showStatus(`Reward claimed! +2,000 PEPE`,'success');
         refreshUI();
     }
     
-    // ========== VIDEO TASK WITH NEW SEQUENCE AND LINK STEP ==========
     function renderVideoTaskUI() {
-        const cooldown = Math.max(0, (userData.videoTask?.cooldownUntil||0) - Date.now());
-        const canStart = cooldown <= 0 && !isBreakActive;
-        let html = '';
+        const cooldown = Math.max(0, (userData.videoTask?.cooldownUntil||0)-Date.now());
+        const canStart = cooldown<=0;
+        let html='';
         for(let i=1;i<=10;i++) {
-            let cls = 'step-btn';
-            if(videoStepsDone >= i) cls += ' completed';
-            else if(videoStepsDone+1 === i && canStart) cls += ' active-step';
-            else if(!canStart || isBreakActive) cls += ' locked';
-            html += `<div class="${cls}" data-videostep="${i}"><i class="fas fa-play-circle"></i><span>${i}</span></div>`;
+            let cls='step-btn';
+            if(videoStepsDone>=i) cls+=' completed';
+            else if(videoStepsDone+1===i && canStart) cls+=' active-step';
+            else if(!canStart) cls+=' locked';
+            html+=`<div class="${cls}" data-videostep="${i}"><i class="fas fa-play-circle"></i><span>${i}</span></div>`;
         }
         document.getElementById('videoStepsContainer').innerHTML = html;
         const claimBtn = document.getElementById('claimVideoRewardBtn');
-        if(videoStepsDone >= 10 && cooldown<=0 && !isBreakActive) claimBtn.style.display='block'; else claimBtn.style.display='none';
+        const dailyRem = getVideoDailyRemaining();
+        if(videoStepsDone>=10 && cooldown<=0 && dailyRem>0) claimBtn.style.display='block'; else claimBtn.style.display='none';
         document.getElementById('videoProgress').innerHTML = `${videoStepsDone}/10 ads`;
         document.querySelectorAll('#videoStepsContainer .step-btn').forEach(btn=>{
             btn.onclick = async()=>{
-                if(isBreakActive) return;
                 let step = parseInt(btn.dataset.videostep);
-                if(videoStepsDone >= step) return;
-                if(videoStepsDone+1 !== step){
-                    showStatus('Complete previous ad first', 'error');
-                    return;
-                }
-                if(cooldown>0){
-                    showStatus('Cooldown active, wait before next ad', 'error');
-                    return;
-                }
+                if(videoStepsDone>=step) return;
+                if(videoStepsDone+1 !== step){ showStatus('Complete previous ad first','error'); return; }
+                if(cooldown>0){ showStatus('Cooldown active','error'); return; }
                 const adType = videoAdSequence[step-1];
-                if(adType === 'link') {
-                    startVideoLinkStep(step);
-                } else {
-                    await startVideoAdWithFallback(step, adType);
-                }
+                if(adType === 'link') startVideoLinkStep(step);
+                else await startVideoAdWithFallback(step, adType);
             };
         });
-        if(claimBtn) claimBtn.onclick = () => { if(!isBreakActive) claimVideoReward(); };
+        if(claimBtn) claimBtn.onclick = ()=>{ claimVideoReward(); };
     }
     
     async function startVideoAdWithFallback(step, preferredType) {
-        if(isBreakActive) return;
         showSpinner(true);
-        let networksToTry = [preferredType, ...FALLBACK_NETWORKS.filter(n => n !== preferredType)];
-        networksToTry = [...new Map(networksToTry.map(n => [n, n])).values()];
-        let success = false;
-        for (let network of networksToTry) {
+        let networksToTry = [preferredType, ...FALLBACK_NETWORKS.filter(n=>n!==preferredType)];
+        networksToTry = [...new Map(networksToTry.map(n=>[n,n])).values()];
+        let success=false;
+        for(let net of networksToTry) {
             try {
-                showStatus(`Trying ${network} ad...`, 'success');
-                await showAdByType(network);
-                success = true;
-                showStatus(`✅ Ad played successfully on ${network}!`, 'success');
+                await showAdByType(net);
+                success=true;
+                showStatus(`✅ Ad played on ${net}!`,'success');
                 break;
-            } catch (err) {
-                console.warn(`${network} failed:`, err);
-            }
+            } catch(e) { console.warn(`${net} failed:`,e); }
         }
         showSpinner(false);
         if(success) {
-            const newSteps = videoStepsDone + 1;
+            const newSteps = videoStepsDone+1;
             await updateUser({ videoTask: { steps: newSteps, cooldownUntil: userData.videoTask?.cooldownUntil||0 } });
             videoStepsDone = newSteps;
             refreshUI();
-        } else {
-            showStatus(`All ad networks failed. Please retry.`, 'error');
-        }
+        } else showStatus('All ad networks failed. Please retry.','error');
     }
     
     function startVideoLinkStep(step) {
-        if(isBreakActive) return;
         pendingVideoLinkStep = step;
         const modal = document.getElementById('timerModal');
         const timerDisp = document.getElementById('timerCountdown');
-        let sec = 10;
-        timerDisp.innerText = sec;
+        let sec=10;
+        timerDisp.innerText=sec;
         if(videoLinkInterval) clearInterval(videoLinkInterval);
-        videoLinkInterval = setInterval(() => { sec--; timerDisp.innerText = sec; if(sec <= 0) clearInterval(videoLinkInterval); }, 1000);
+        videoLinkInterval = setInterval(()=>{ sec--; timerDisp.innerText=sec; if(sec<=0) clearInterval(videoLinkInterval); },1000);
         showModal(modal);
-        window.open(VIDEO_LINK_URL, '_blank');
-        videoLinkStartTime = Date.now();
-        const onVisibility = () => {
-            if (!document.hidden && pendingVideoLinkStep === step) {
-                const elapsed = (Date.now() - videoLinkStartTime) / 1000;
-                if (elapsed >= 10) {
+        window.open(VIDEO_LINK_URL,'_blank');
+        videoLinkStartTime=Date.now();
+        const onVisibility = ()=>{
+            if(!document.hidden && pendingVideoLinkStep===step) {
+                const elapsed = (Date.now()-videoLinkStartTime)/1000;
+                if(elapsed>=10) {
                     if(videoLinkInterval) clearInterval(videoLinkInterval);
                     hideModal(modal);
-                    document.removeEventListener('visibilitychange', onVisibility);
+                    document.removeEventListener('visibilitychange',onVisibility);
                     completeVideoLinkStep(step);
                 } else {
                     if(videoLinkInterval) clearInterval(videoLinkInterval);
                     hideModal(modal);
-                    document.removeEventListener('visibilitychange', onVisibility);
+                    document.removeEventListener('visibilitychange',onVisibility);
                     showVideoRiskWarning(step);
                 }
-                pendingVideoLinkStep = null;
+                pendingVideoLinkStep=null;
             }
         };
-        document.addEventListener('visibilitychange', onVisibility);
-        document.getElementById('cancelTimerBtn').onclick = () => {
+        document.addEventListener('visibilitychange',onVisibility);
+        document.getElementById('cancelTimerBtn').onclick = ()=>{
             if(videoLinkInterval) clearInterval(videoLinkInterval);
             hideModal(modal);
-            document.removeEventListener('visibilitychange', onVisibility);
-            pendingVideoLinkStep = null;
-            showStatus('Link task cancelled.', 'error');
+            document.removeEventListener('visibilitychange',onVisibility);
+            pendingVideoLinkStep=null;
+            showStatus('Link task cancelled.','error');
         };
     }
     
     function showVideoRiskWarning(step) {
-        if(isBreakActive) return;
         const modal = document.getElementById('tryAgainModal');
         showModal(modal);
-        const retryBtn = document.getElementById('tryAgainRetryBtn');
-        const cancelBtn = document.getElementById('tryAgainCancelBtn');
-        const newRetry = retryBtn.cloneNode(true);
-        const newCancel = cancelBtn.cloneNode(true);
+        const retryBtn = document.getElementById('tryAgainRetryBtn'), cancelBtn = document.getElementById('tryAgainCancelBtn');
+        const newRetry = retryBtn.cloneNode(true), newCancel = cancelBtn.cloneNode(true);
         retryBtn.parentNode.replaceChild(newRetry, retryBtn);
         cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
         newRetry.onclick = () => { hideModal(modal); startVideoLinkStep(step); };
@@ -1483,32 +1468,35 @@
     }
     
     async function completeVideoLinkStep(step) {
-        if(isBreakActive) return;
-        const newSteps = videoStepsDone + 1;
+        const newSteps = videoStepsDone+1;
         await updateUser({ videoTask: { steps: newSteps, cooldownUntil: userData.videoTask?.cooldownUntil||0 } });
         videoStepsDone = newSteps;
         refreshUI();
-        showStatus(`Link step ${step} completed! +0.011 after all 10`, 'success');
+        showStatus(`Link step ${step} completed! +2,000 PEPE after all 10`,'success');
     }
     
     async function claimVideoReward() {
-        if(isBreakActive) return;
-        if(videoStepsDone < 10) return showStatus('Complete all 10 steps first', 'error');
-        const cooldown = (userData.videoTask?.cooldownUntil||0) - Date.now();
-        if(cooldown>0) return showStatus('Cooldown active', 'error');
-        const reward = 0.011;
-        const newBal = (userData.balance||0) + reward;
-        await updateUser({ balance: newBal, totalEarned: (userData.totalEarned||0)+reward, videoTask: { steps: 0, cooldownUntil: Date.now() + 40000 } });
+        if(videoStepsDone<10) return showStatus('Complete all 10 steps first','error');
+        if((userData.videoTask?.cooldownUntil||0)-Date.now()>0) return showStatus('Cooldown active','error');
+        const dailyRem = getVideoDailyRemaining();
+        if(dailyRem <= 0) return showStatus('Daily limit reached (15 claims). Come back tomorrow!','error');
+        const reward = 2000;
+        await updateUser({ 
+            balance: (userData.balance||0)+reward, 
+            totalEarned: (userData.totalEarned||0)+reward, 
+            videoTask: { steps:0, cooldownUntil: Date.now()+40000 },
+            videoDailyCount: (userData.videoDailyCount||0)+1
+        });
         videoStepsDone = 0;
-        showStatus(`Video reward claimed! +$${reward.toFixed(3)}`, 'success');
+        showStatus(`Video reward claimed! +2,000 PEPE`,'success');
         refreshUI();
     }
     
-    // Telegram tasks and other functions unchanged from original working version
     const tgTasks = [
-        {id:'telegramUpdate', title:'Join Update Channel', reward:0.003, link:'https://t.me/earnforearnupdate', key:'telegramUpdate'},
-        {id:'telegramProof', title:'Join Payment Proof Channel', reward:0.003, link:'https://t.me/earnforearnpaymentproof', key:'telegramProof'}
+        {id:'telegramUpdate', title:'Join Update Channel', reward:500, link:'https://t.me/earnforearnupdate', key:'telegramUpdate'},
+        {id:'telegramProof', title:'Join Payment Proof Channel', reward:500, link:'https://t.me/earnforearnpaymentproof', key:'telegramProof'}
     ];
+    
     function renderTelegramTasks() {
         const cont = document.getElementById('telegramTasksArea');
         if(!cont) return;
@@ -1518,21 +1506,20 @@
             if(comp[t.key]) return;
             const div = document.createElement('div');
             div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; background:var(--bg-elevated); border-radius:24px; padding:16px; margin-top:12px;';
-            div.innerHTML = `<div><strong>${t.title}</strong><br>+$${t.reward.toFixed(3)}</div><button class="tg-verify" style="background:#0088cc; border:none; padding:8px 16px; border-radius:40px; color:white; cursor:pointer;" data-link="${t.link}" data-key="${t.key}" data-reward="${t.reward}">Join & Verify</button>`;
+            div.innerHTML = `<div><strong>${t.title}</strong><br>+${formatNumber(t.reward)} PEPE</div><button class="tg-verify" style="background:#0088cc; border:none; padding:8px 16px; border-radius:40px; color:white; cursor:pointer;" data-link="${t.link}" data-key="${t.key}" data-reward="${t.reward}">Join & Verify</button>`;
             cont.appendChild(div);
         });
         document.querySelectorAll('.tg-verify').forEach(btn=>{
             btn.onclick = async()=>{
-                if(isBreakActive) return;
-                const link=btn.dataset.link, key=btn.dataset.key, reward=parseFloat(btn.dataset.reward);
+                const link=btn.dataset.link, key=btn.dataset.key, reward=parseInt(btn.dataset.reward);
                 window.open(link,'_blank');
-                if(confirm(`After joining the channel, confirm to claim $${reward.toFixed(3)}`)){
+                if(confirm(`After joining, confirm to claim ${formatNumber(reward)} PEPE`)){
                     const one=userData.oneTimeTasks||{};
-                    if(one[key]) return showStatus('Already claimed', 'error');
+                    if(one[key]) return showStatus('Already claimed','error');
                     one[key]=true;
                     const newBal=(userData.balance||0)+reward;
                     await updateUser({ oneTimeTasks:one, balance:newBal, totalEarned:(userData.totalEarned||0)+reward });
-                    showStatus(`+$${reward.toFixed(3)} added!`, 'success');
+                    showStatus(`+${formatNumber(reward)} PEPE added!`,'success');
                     refreshUI();
                 }
             };
@@ -1540,51 +1527,47 @@
     }
     
     function renderReferralsList() {
-        const refs = userData?.referrals || [];
+        const refs = userData?.referrals||[];
         const container = document.getElementById('referralsList');
         if(!container) return;
         if(refs.length===0){ container.innerHTML = '<div class="task-card">No referrals yet</div>'; return; }
-        container.innerHTML = refs.map(r=>`<div class="friend-card"><span><i class="fab fa-telegram"></i> ${r.username}</span><span style="color:var(--success);">+$${r.bonus.toFixed(3)}</span></div>`).join('');
+        container.innerHTML = refs.map(r=>`<div class="friend-card"><span><i class="fab fa-telegram"></i> ${r.username}</span><span style="color:var(--success);">+${formatNumber(r.bonus)} PEPE</span></div>`).join('');
     }
     
     function updateWithdrawalRequirements() {
-        const bal = userData?.balance || 0;
-        const refs = userData?.referrals?.length || 0;
-        const balOk = bal >= 0.5;
-        const refOk = refs >= 3;
-        const check1 = document.getElementById('reqCheck1');
-        const check2 = document.getElementById('reqCheck2');
+        const bal = userData?.balance||0, refs = userData?.referrals?.length||0;
+        const balOk = bal>=260000, refOk = refs>=3;
+        const check1=document.getElementById('reqCheck1'), check2=document.getElementById('reqCheck2');
         if(check1) check1.innerHTML = balOk ? '<i class="fas fa-check-circle" style="color:var(--success);"></i>' : '<i class="fas fa-times-circle" style="color:#555;"></i>';
         if(check2) check2.innerHTML = refOk ? '<i class="fas fa-check-circle" style="color:var(--success);"></i>' : '<i class="fas fa-times-circle" style="color:#555;"></i>';
         const withdrawBtn = document.getElementById('submitWithdrawBtn');
-        if(withdrawBtn) withdrawBtn.disabled = !(balOk && refOk) || isBreakActive;
+        if(withdrawBtn) withdrawBtn.disabled = !(balOk && refOk) || getWithdrawalsThisMonth()>=2;
     }
     
     function updateWithdrawCalc() {
-        let amt = parseFloat(document.getElementById('withdrawAmount').value) || 0;
-        const fee = amt * 0.03;
+        let amt = parseInt(document.getElementById('withdrawAmount').value) || 0;
+        const fee = Math.floor(amt * 0.05);
         const net = amt - fee;
-        document.getElementById('wdAmount').innerText = `$${amt.toFixed(3)}`;
-        document.getElementById('wdFee').innerText = `$${fee.toFixed(3)}`;
-        document.getElementById('wdNet').innerText = `$${net.toFixed(3)}`;
+        document.getElementById('wdAmount').innerText = formatNumber(amt);
+        document.getElementById('wdFee').innerText = formatNumber(fee);
+        document.getElementById('wdNet').innerText = formatNumber(net);
     }
     
     async function submitWithdrawal() {
-        if(isBreakActive) return;
-        const amt = parseFloat(document.getElementById('withdrawAmount').value);
+        const amt = parseInt(document.getElementById('withdrawAmount').value);
         const acc = document.getElementById('binanceAccount').value.trim();
-        if(!acc) return showStatus('Enter Binance account', 'error');
-        if(amt < 0.5) return showStatus('Minimum $0.500', 'error');
-        if((userData.balance||0) < amt) return showStatus('Insufficient balance', 'error');
-        if((userData.referrals||[]).length < 3) return showStatus('Need 3 referrals', 'error');
-        const fee = amt * 0.03;
+        if(!acc) return showStatus('Enter Binance account','error');
+        if(amt < 260000) return showStatus('Minimum 260,000 PEPE','error');
+        if((userData.balance||0) < amt) return showStatus('Insufficient balance','error');
+        if((userData.referrals||[]).length <3) return showStatus('Need 3 referrals','error');
+        if(getWithdrawalsThisMonth()>=2) return showStatus('Withdrawal limit reached (2 per month). Try next month.','error');
+        const fee = Math.floor(amt * 0.05);
         const net = amt - fee;
-        const wid = { id: Date.now(), withdrawId: 'WD-' + Date.now().toString().slice(-8) + Math.floor(Math.random()*1000), amount: amt, fee, netAmount: net, method: 'Binance', account: acc, status: 'pending', date: Date.now() };
-        const newBal = (userData.balance||0) - amt;
+        const wid = { id: Date.now(), withdrawId: 'WD-'+Date.now().toString().slice(-8)+Math.floor(Math.random()*1000), amount: amt, fee, netAmount: net, method: 'Binance', account: acc, status: 'pending', date: Date.now() };
+        const newBal = (userData.balance||0)-amt;
         const history = [...(userData.withdrawalHistory||[]), wid];
         await updateUser({ balance: newBal, withdrawalHistory: history });
-        const detailsDiv = document.getElementById('withdrawSuccessDetails');
-        detailsDiv.innerHTML = `<div><strong>Withdrawal ID:</strong> ${wid.withdrawId}</div><div><strong>Amount:</strong> $${amt.toFixed(3)}</div><div><strong>Fee (3%):</strong> $${fee.toFixed(3)}</div><div><strong>Net:</strong> $${net.toFixed(3)}</div><div><strong>Binance:</strong> ${acc}</div>`;
+        document.getElementById('withdrawSuccessDetails').innerHTML = `<div><strong>Withdrawal ID:</strong> ${wid.withdrawId}</div><div><strong>Amount:</strong> ${formatNumber(amt)} PEPE</div><div><strong>Fee (5%):</strong> ${formatNumber(fee)} PEPE</div><div><strong>Net:</strong> ${formatNumber(net)} PEPE</div><div><strong>Binance:</strong> ${acc}</div>`;
         showModal(document.getElementById('withdrawSuccessModal'));
         document.getElementById('binanceAccount').value = '';
         document.getElementById('withdrawAmount').value = '';
@@ -1592,40 +1575,38 @@
     }
     
     function displayWithdrawalHistory() {
-        const hist = userData?.withdrawalHistory || [];
+        const hist = userData?.withdrawalHistory||[];
         const container = document.getElementById('historyList');
         if(!container) return;
-        if(hist.length === 0) { container.innerHTML = '<div class="task-card">No withdrawal requests</div>'; return; }
-        container.innerHTML = hist.slice().reverse().map(w => `<div class="withdrawal-history-card"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><span class="withdraw-id"><i class="fas fa-receipt"></i> ${w.withdrawId}</span><span class="history-status status-${w.status}">${w.status.toUpperCase()}</span></div><div><strong>Amount:</strong> $${w.amount.toFixed(3)}</div><div><strong>Fee:</strong> $${w.fee.toFixed(3)}</div><div><strong>Net:</strong> $${w.netAmount.toFixed(3)}</div><div><strong>Account:</strong> ${w.account}</div><div style="font-size:0.7rem; color:var(--text-secondary); margin-top:8px;">${new Date(w.date).toLocaleString()}</div></div>`).join('');
+        if(hist.length===0){ container.innerHTML = '<div class="task-card">No withdrawal requests</div>'; return; }
+        container.innerHTML = hist.slice().reverse().map(w=>`<div class="withdrawal-history-card"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><span class="withdraw-id"><i class="fas fa-receipt"></i> ${w.withdrawId}</span><span class="history-status status-${w.status}">${w.status.toUpperCase()}</span></div><div><strong>Amount:</strong> ${formatNumber(w.amount)} PEPE</div><div><strong>Fee (5%):</strong> ${formatNumber(w.fee)} PEPE</div><div><strong>Net:</strong> ${formatNumber(w.netAmount)} PEPE</div><div><strong>Account:</strong> ${w.account}</div><div style="font-size:0.7rem; margin-top:8px;">${new Date(w.date).toLocaleString()}</div></div>`).join('');
     }
     
     function switchSection(id) {
-        if(isBreakActive) return;
         document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
         if(id==='homeSection') document.getElementById('navHome').classList.add('active');
         else if(id==='tasksSection') document.getElementById('navTasks').classList.add('active');
-        else if(id==='cashoutSection') document.getElementById('navCashout').classList.add('active');
+        else if(id==='cashoutSection') { document.getElementById('navCashout').classList.add('active'); updateWithdrawLimitDisplay(); updateWithdrawalRequirements(); }
         else if(id==='referralSection') document.getElementById('navReferral').classList.add('active');
         else if(id==='infoSection') document.getElementById('navInfo').classList.add('active');
     }
     
     // Event listeners
     document.getElementById('navHome').onclick = ()=>switchSection('homeSection');
-    document.getElementById('navTasks').onclick = ()=>{ if(!isBreakActive) { switchSection('tasksSection'); renderLinkTaskUI(); renderVideoTaskUI(); renderTelegramTasks(); } };
-    document.getElementById('navCashout').onclick = ()=>{ if(!isBreakActive) { switchSection('cashoutSection'); displayWithdrawalHistory(); updateWithdrawalRequirements(); updateWithdrawCalc(); } };
+    document.getElementById('navTasks').onclick = ()=>{ switchSection('tasksSection'); renderLinkTaskUI(); renderVideoTaskUI(); renderTelegramTasks(); };
+    document.getElementById('navCashout').onclick = ()=>{ switchSection('cashoutSection'); displayWithdrawalHistory(); updateWithdrawalRequirements(); updateWithdrawCalc(); updateWithdrawLimitDisplay(); };
     document.getElementById('navReferral').onclick = ()=>switchSection('referralSection');
     document.getElementById('navInfo').onclick = ()=>switchSection('infoSection');
     document.getElementById('tasksBackBtn').onclick = ()=>switchSection('homeSection');
     document.getElementById('cashoutBackBtn').onclick = ()=>switchSection('homeSection');
     document.getElementById('referralBackBtn').onclick = ()=>switchSection('homeSection');
     document.getElementById('infoBackBtn').onclick = ()=>switchSection('homeSection');
-    
-    document.getElementById('copyReferralCodeBtn').onclick = ()=>{ if(!isBreakActive) { navigator.clipboard.writeText(userData.referralCode); showStatus('Referral code copied!', 'success'); } };
-    document.getElementById('shareTelegramCodeBtn').onclick = ()=>{ if(!isBreakActive) { const text = `Join Earn For Earn using my referral code: ${userData.referralCode}`; window.open(`https://t.me/share/url?url=${encodeURIComponent(text)}`,'_blank'); } };
-    document.getElementById('menuReferralCode').onclick = ()=>{ if(!isBreakActive) { navigator.clipboard.writeText(userData.referralCode); showStatus('Code copied', 'success'); } };
-    document.getElementById('profileBtn').onclick = ()=>{ if(!isBreakActive) document.getElementById('userMenu').classList.toggle('active'); };
+    document.getElementById('copyReferralCodeBtn').onclick = ()=>{ navigator.clipboard.writeText(userData.referralCode); showStatus('Referral code copied!','success'); };
+    document.getElementById('shareTelegramCodeBtn').onclick = ()=>{ const text = `Join Earn For Earn using my referral code: ${userData.referralCode}`; window.open(`https://t.me/share/url?url=${encodeURIComponent(text)}`,'_blank'); };
+    document.getElementById('menuReferralCode').onclick = ()=>{ navigator.clipboard.writeText(userData.referralCode); showStatus('Code copied','success'); };
+    document.getElementById('profileBtn').onclick = ()=>document.getElementById('userMenu').classList.toggle('active');
     document.getElementById('menuPrivacy').onclick = ()=>window.open('https://earn-for-earn-privacy-police.vercel.app/','_blank');
     document.getElementById('menuTerms').onclick = ()=>window.open('https://earn-for-earn-terms-condition.vercel.app/','_blank');
     document.getElementById('menuInfo').onclick = ()=>{ document.getElementById('userMenu').classList.remove('active'); switchSection('infoSection'); };
@@ -1633,38 +1614,27 @@
     document.getElementById('langBtn').onclick = (e)=>{ e.stopPropagation(); document.getElementById('langMenu').classList.toggle('active'); };
     document.addEventListener('click', (e)=>{ if(!e.target.closest('.lang-selector')) document.getElementById('langMenu').classList.remove('active'); });
     document.addEventListener('click',(e)=>{ if(!e.target.closest('#profileBtn')&&!e.target.closest('#userMenu')) document.getElementById('userMenu').classList.remove('active'); });
-    
-    document.getElementById('submitReferralCodeBtn').onclick = async() => { 
-        const code = document.getElementById('referralCodeInput').value.trim().toUpperCase(); 
-        if(code) await applyReferralBonus(code);
-        if(!userData.referralBonusApplied) await updateUser({ referralBonusApplied: true });
-        proceedToApp();
-    };
-    document.getElementById('skipReferralCodeBtn').onclick = async() => {
-        if(!userData.referralBonusApplied) await updateUser({ referralBonusApplied: true });
-        proceedToApp();
-    };
+    document.getElementById('submitReferralCodeBtn').onclick = async() => { const code = document.getElementById('referralCodeInput').value.trim().toUpperCase(); if(code) await applyReferralBonus(code); if(!userData.referralBonusApplied) await updateUser({ referralBonusApplied: true }); proceedToApp(); };
+    document.getElementById('skipReferralCodeBtn').onclick = async() => { if(!userData.referralBonusApplied) await updateUser({ referralBonusApplied: true }); proceedToApp(); };
     document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawCalc);
     document.getElementById('submitWithdrawBtn').addEventListener('click', submitWithdrawal);
-    document.getElementById('closeSuccessModal').addEventListener('click', () => hideModal(document.getElementById('withdrawSuccessModal')));
+    document.getElementById('closeSuccessModal').addEventListener('click', ()=> hideModal(document.getElementById('withdrawSuccessModal')));
     
-    // Loading animation
     const loadingFill = document.getElementById('loadingFill');
     const loadingStepText = document.getElementById('loadingStep');
-    const loadSteps = ['loading_initializing', 'loading_ads', 'loading_auth', 'loading_data', 'loading_ready'];
+    const loadSteps = ['loading_initializing','loading_ads','loading_auth','loading_data','loading_ready'];
     async function animateLoading() {
         const t = translations[currentLang] || translations.en;
-        for(let i=0; i<loadSteps.length; i++) {
-            loadingFill.style.width = ((i+1)*20) + '%';
+        for(let i=0;i<loadSteps.length;i++) {
+            loadingFill.style.width = ((i+1)*20)+'%';
             loadingStepText.innerText = t[loadSteps[i]] || loadSteps[i];
-            await new Promise(r => setTimeout(r, 700));
+            await new Promise(r=>setTimeout(r,700));
         }
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise(r=>setTimeout(r,400));
         document.getElementById('loadingScreen').classList.add('hidden');
         document.getElementById('mainApp').style.display = 'block';
         await initUser();
     }
-    
     loadLanguageOptions();
     applyTranslations();
     animateLoading();
