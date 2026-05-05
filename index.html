@@ -10,7 +10,7 @@
 <style>
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     background: linear-gradient(135deg, #4facfe, #00f2fe);
     display: flex;
     justify-content: center;
@@ -18,40 +18,21 @@ body {
     height: 100vh;
 }
 
-/* Card ডিজাইন */
 .container {
     background: white;
-    padding: 30px;
+    padding: 25px;
     border-radius: 15px;
     text-align: center;
-    width: 300px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    width: 280px;
 }
 
-h1 {
-    margin-bottom: 10px;
-}
-
-/* Balance */
-.balance {
-    font-size: 20px;
-    margin: 15px 0;
-}
-
-/* Button */
 button {
-    padding: 12px 25px;
+    padding: 12px 20px;
     border: none;
     border-radius: 10px;
-    background: #4facfe;
+    background: #007bff;
     color: white;
     font-size: 16px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    background: #007bff;
 }
 </style>
 </head>
@@ -59,38 +40,41 @@ button:hover {
 <body>
 
 <div class="container">
-    <h1>Earn Money</h1>
-    <p>Watch ads & earn coins</p>
+    <h2>Earn App</h2>
+    <p>Click Start to watch ads</p>
 
-    <div class="balance">Balance: <span id="balance">0</span></div>
+    <!-- Ad Container -->
+    <div id="tads-container-9689"></div>
 
+    <br><br>
     <button id="startBtn">Start</button>
 </div>
 
 <script>
-let balance = 0;
+document.addEventListener("DOMContentLoaded", function () {
 
-const adController = window.tads.init({
-    widgetId: "9689", // তোমার widget id
-    type: "fullscreen",
-    debug: false,
+    const adController = window.tads.init({
+        widgetId: "9689",
+        type: "fullscreen",
+        debug: false,
 
-    onShowReward: function () {
-        balance += 10; // প্রতি ad = 10 coin
-        document.getElementById("balance").innerText = balance;
-        alert("Ad watched! +10 coins");
-    },
+        onShowReward: function (res) {
+            alert("Ad watched! Reward added");
+            console.log(res);
+        },
 
-    onAdsNotFound: function () {
-        alert("No ads available, try later");
-    }
+        onAdsNotFound: function () {
+            alert("No ads available, try later");
+        }
+    });
+
+    document.getElementById("startBtn").addEventListener("click", function () {
+        adController.loadAd()
+            .then(() => adController.showAd())
+            .catch(() => alert("Ad failed"));
+    });
+
 });
-
-document.getElementById("startBtn").onclick = function () {
-    adController.loadAd()
-        .then(() => adController.showAd())
-        .catch(() => alert("Ad failed"));
-};
 </script>
 
 </body>
