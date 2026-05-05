@@ -1,80 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Earn App</title>
-
-<script src="https://w.tads.me/widget.js"></script>
-
-<style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.container {
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    text-align: center;
-    width: 280px;
-}
-
-button {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 10px;
-    background: #007bff;
-    color: white;
-    font-size: 16px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Telegram Ad Demo</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: var(--tg-theme-secondary-bg-color, #f4f4f5);
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        button {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 40px;
+            padding: 14px 28px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 24px;
+            width: 100%;
+            transition: opacity 0.2s;
+        }
+        button:active {
+            opacity: 0.8;
+        }
+        .info {
+            margin-bottom: 16px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
-    <h2>Earn App</h2>
-    <p>Click Start to watch ads</p>
+<!-- Tads ad container (exactly as required) -->
+<div id="tads-container-9689"></div>
 
-    <!-- Ad Container -->
-    <div id="tads-container-9689"></div>
-
-    <br><br>
-    <button id="startBtn">Start</button>
+<div class="card">
+    <h2>🎮 Watch & Earn</h2>
+    <p class="info">Tap the button below to watch a fullscreen ad.<br>Reward will be given after completion.</p>
+    <!-- Your trigger button – ID is kept as 'show-ad-button' (you can change text/style) -->
+    <button id="show-ad-button">▶ Show Fullscreen Ad</button>
 </div>
 
+<!-- Telegram Web App Script -->
+<script src="https://telegram.org/js/telegram-web-app.js?62"></script>
+
+<!-- Tads Widget Script -->
+<script src="https://w.tads.me/widget.js"></script>
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+    // 1. Initialize Telegram Web App (if inside Telegram)
+    let tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();   // makes the app full-height
+        console.log("Telegram Web App ready, theme:", tg.colorScheme);
+    } else {
+        console.log("Not running inside Telegram WebView");
+    }
 
-    const adController = window.tads.init({
-        widgetId: "9689",
-        type: "fullscreen",
-        debug: false,
+    // 2. Tads ad controller setup (widget ID = 9689)
+    document.addEventListener("DOMContentLoaded", function() {
+        const WIDGET_ID = "9689";               // your widget id – unchanged
+        const IS_DEBUG = false;                 // false for production
+        const btnIdSelector = "show-ad-button"; // button ID as in original
 
-        onShowReward: function (res) {
-            alert("Ad watched! Reward added");
-            console.log(res);
-        },
+        const onShowRewardCallback = (result) => {
+            console.log('✅ Ad finished, reward user:', result);
+            // You can give coins, points, etc.
+            if (tg) {
+                tg.showAlert("🎉 Ad completed! You received your reward.");
+            } else {
+                alert("🎉 Ad completed! Reward granted.");
+            }
+        };
 
-        onAdsNotFound: function () {
-            alert("No ads available, try later");
+        const onAdsNotFound = () => {
+            console.log('⚠️ No ads available');
+            if (tg) {
+                tg.showAlert("No ads available right now. Please try later.");
+            } else {
+                alert("No ads available right now.");
+            }
+        };
+
+        const adController = window.tads.init({
+            widgetId: WIDGET_ID,
+            type: 'fullscreen',
+            debug: IS_DEBUG,
+            onShowReward: onShowRewardCallback,
+            onAdsNotFound: onAdsNotFound,
+        });
+
+        const button = document.getElementById(btnIdSelector);
+        if (button) {
+            button.addEventListener('click', () => {
+                adController
+                    .then(() => adController.showAd())
+                    .catch((err) => {
+                        console.error('Ad error:', err);
+                        if (tg) tg.showAlert("Failed to load ad: " + err);
+                    });
+            });
+        } else {
+            console.error(`Button with ID "${btnIdSelector}" not found.`);
         }
     });
-
-    document.getElementById("startBtn").addEventListener("click", function () {
-        adController.loadAd()
-            .then(() => adController.showAd())
-            .catch(() => alert("Ad failed"));
-    });
-
-});
 </script>
 
 </body>
