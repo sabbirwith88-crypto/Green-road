@@ -2,130 +2,250 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Telegram Ad Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Earn For Earn – PEPE Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
+    <!-- Ad Network SDKs (Adsgram, Monetag, OnClicka, Giga) -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
+    <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
+    <script src="https://ad.gigapub.tech/script?id=6432"></script>
     <style>
-        body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        :root {
+            --bg-primary: #0a0a0a; --bg-secondary: #121212; --bg-card: #1e1e1e; --bg-elevated: #2a2a2a;
+            --text-primary: #ffffff; --text-secondary: #b0b0b0; --border: #2c2c2c;
+            --purple: #6c5ce7; --purple-dark: #5b4bc4; --blue: #0984e3; --success: #00b894;
+            --error: #d63031; --warning: #fdcb6e; --gold: #f9ca24;
         }
-        .card {
-            background: var(--tg-theme-secondary-bg-color, #f4f4f5);
-            border-radius: 24px;
-            padding: 24px;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        button {
-            background: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            border: none;
-            border-radius: 40px;
-            padding: 14px 28px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 24px;
-            width: 100%;
-            transition: opacity 0.2s;
-        }
-        button:active {
-            opacity: 0.8;
-        }
-        .info {
-            margin-bottom: 16px;
-            font-size: 14px;
-            opacity: 0.7;
-        }
+        body { background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+        .app-container { width: 100%; max-width: 500px; margin: 0 auto; min-height: 100vh; background: radial-gradient(circle at 10% 20%, #0f0f0f, #000); position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        
+        .auth-container { display: flex; flex-direction: column; justify-content: center; min-height: 100vh; padding: 32px 24px; }
+        .auth-card { background: var(--bg-card); border-radius: 48px; padding: 32px 24px; border: 1px solid var(--border); }
+        .auth-tabs { display: flex; gap: 12px; margin-bottom: 28px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+        .auth-tab { flex: 1; text-align: center; padding: 8px; background: none; border: none; color: var(--text-secondary); font-weight: 600; font-size: 1rem; cursor: pointer; border-radius: 40px; transition: 0.2s; }
+        .auth-tab.active { background: var(--purple); color: white; }
+        .auth-title { font-size: 1.8rem; font-weight: 700; background: linear-gradient(45deg, var(--purple), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; text-align: center; margin-bottom: 28px; }
+        .floating-label-group { position: relative; margin: 20px 0; }
+        .floating-input { width: 100%; padding: 12px 16px; background: #000; border: 1px solid var(--border); border-radius: 40px; color: white; font-size: 0.95rem; }
+        .floating-input:focus { border-color: var(--purple); outline: none; }
+        .floating-label { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); transition: 0.2s; pointer-events: none; font-size: 0.9rem; }
+        .floating-input:focus ~ .floating-label, .floating-input:not(:placeholder-shown) ~ .floating-label { top: -8px; left: 12px; font-size: 0.7rem; background: #000; padding: 0 6px; color: var(--purple); }
+        .auth-btn { background: linear-gradient(90deg, var(--purple), var(--blue)); color: white; font-weight: bold; padding: 12px; border-radius: 40px; width: 100%; border: none; margin-top: 20px; cursor: pointer; transition: 0.2s; }
+        .error-msg { color: var(--error); font-size: 0.75rem; margin-top: 5px; }
+        
+        .loading-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-primary); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; pointer-events: none; }
+        .loading-screen.hidden { opacity: 0; visibility: hidden; }
+        .loading-logo { width: 80px; height: 80px; border-radius: 30px; background: linear-gradient(135deg, var(--purple), var(--purple-dark)); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(108,92,231,0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(108,92,231,0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(108,92,231,0); } }
+        .loading-logo i { font-size: 2.5rem; color: white; }
+        .loading-title { font-size: 1.5rem; font-weight: 700; background: linear-gradient(45deg, var(--purple), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loading-progress { width: 200px; height: 3px; background: #333; border-radius: 4px; margin: 15px auto; overflow: hidden; }
+        .loading-progress-fill { width: 100%; height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); transition: width 0.3s; }
+        
+        .header { background: rgba(18,18,18,0.95); backdrop-filter: blur(15px); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .app-title { font-size: 1.3rem; font-weight: 700; background: linear-gradient(45deg, var(--purple), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .lang-selector { position: relative; }
+        .lang-btn { background: var(--bg-card); border: 1px solid var(--border); border-radius: 60px; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; }
+        .lang-menu { position: absolute; top: 40px; right: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; width: 220px; max-height: 300px; overflow-y: auto; display: none; z-index: 200; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .lang-menu.active { display: block; }
+        .lang-search { padding: 10px; border-bottom: 1px solid var(--border); }
+        .lang-search input { width: 100%; padding: 8px; background: #000; border: 1px solid var(--border); border-radius: 40px; color: white; font-size: 0.8rem; }
+        .lang-option { padding: 10px 15px; cursor: pointer; transition: 0.2s; }
+        .lang-option:hover { background: rgba(255,255,255,0.05); }
+        .user-profile { width: 36px; height: 36px; border-radius: 60px; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: 1px solid var(--border); }
+        .user-menu { position: absolute; top: 55px; right: 15px; background: rgba(30,30,30,0.98); backdrop-filter: blur(20px); border-radius: 24px; padding: 12px; min-width: 220px; border: 1px solid rgba(108,92,231,0.3); display: none; z-index: 150; }
+        .user-menu.active { display: block; }
+        .menu-item { padding: 10px 16px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
+        .menu-item:hover { background: rgba(255,255,255,0.05); }
+        
+        .balance-card { background: linear-gradient(135deg, var(--purple), var(--purple-dark)); border-radius: 32px; padding: 20px; margin-bottom: 20px; }
+        .balance-amount { font-size: 2.2rem; font-weight: 700; margin: 5px 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: var(--bg-card); border-radius: 24px; padding: 12px; text-align: center; border: 1px solid var(--border); }
+        .stat-value { font-size: 1.3rem; font-weight: 700; }
+        .rule-card { background: var(--bg-card); border-radius: 28px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); max-height: 460px; overflow-y: auto; }
+        .rule-card h3 { font-size: 1.2rem; margin-bottom: 12px; }
+        .rule-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem; }
+        .task-card { background: var(--bg-card); border-radius: 32px; padding: 18px; margin-bottom: 18px; border: 1px solid var(--border); }
+        .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+        .task-reward { background: linear-gradient(135deg, var(--gold), #e6b422); padding: 4px 12px; border-radius: 40px; font-weight: 800; color: #000; font-size: 0.8rem; }
+        .steps-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 15px 0; }
+        .step-btn { aspect-ratio: 1; border-radius: 50px; background: #222; border: 2px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 0.7rem; cursor: pointer; transition: 0.2s; }
+        .step-btn.completed { background: var(--success); border-color: var(--success); color: white; }
+        .step-btn.active-step { border: 2px solid var(--warning); box-shadow: 0 0 10px rgba(253,203,110,0.6); }
+        .step-btn.locked { opacity: 0.3; cursor: not-allowed; }
+        .claim-btn { background: linear-gradient(90deg, var(--gold), #e6b422); color: #000; font-weight: bold; padding: 10px; border-radius: 40px; width: 100%; border: none; margin-top: 10px; cursor: pointer; font-size: 0.9rem; }
+        .chrome-warning { background: rgba(9,132,227,0.2); padding: 8px; border-radius: 24px; margin-bottom: 12px; font-size: 0.75rem; border-left: 3px solid var(--blue); display: flex; gap: 8px; align-items: center; }
+        .info-note { background: rgba(253,203,110,0.1); padding: 8px; border-radius: 20px; margin-top: 10px; font-size: 0.7rem; color: var(--warning); text-align: center; }
+        .cooldown-timer, .daily-limit-text, .reset-timer { text-align: center; margin-top: 8px; font-size: 0.75rem; }
+        .reset-timer { background: rgba(108,92,231,0.15); padding: 4px; border-radius: 40px; }
+        .modal { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--bg-card); border-radius: 40px; padding: 24px; width: 90%; max-width: 360px; text-align: center; }
+        .status-message { padding: 10px; border-radius: 40px; margin: 10px 0; text-align: center; font-size: 0.8rem; }
+        .status-success { background: rgba(0,184,148,0.15); color: var(--success); }
+        .status-error { background: rgba(214,48,49,0.15); color: var(--error); }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(18,18,18,0.96); backdrop-filter: blur(12px); display: flex; justify-content: space-around; padding: 8px 0 18px; border-top: 1px solid var(--border); max-width: 500px; margin: 0 auto; z-index: 100; }
+        .nav-btn { background: none; border: none; color: var(--text-secondary); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.65rem; padding: 6px; flex: 1; border-radius: 20px; cursor: pointer; }
+        .nav-btn i { font-size: 1.3rem; }
+        .nav-btn.active { color: white; background: var(--bg-elevated); }
+        .content-section { display: none; padding: 15px; padding-bottom: 80px; }
+        .content-section.active { display: block; }
+        .back-button { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 6px 14px; border-radius: 40px; font-size: 0.8rem; }
+        .form-input { width: 100%; padding: 12px 16px; background: #000; border: 1px solid var(--border); border-radius: 50px; color: white; margin: 10px 0; }
+        .withdraw-btn { background: linear-gradient(90deg, var(--purple), var(--blue)); color: white; font-weight: bold; padding: 14px; border-radius: 50px; width: 100%; border: none; margin-top: 20px; cursor: pointer; }
+        .history-card { background: var(--bg-elevated); border-radius: 24px; padding: 14px; margin-bottom: 12px; border-left: 4px solid var(--purple); }
+        .copyable { cursor: pointer; background: rgba(108,92,231,0.15); border-radius: 40px; padding: 6px 12px; display: inline-block; }
+        .friend-list-item { display: flex; justify-content: space-between; background: var(--bg-elevated); padding: 10px; border-radius: 20px; margin-bottom: 8px; }
+        .one-time-task-box { background: linear-gradient(145deg, #1a1f2e, #11151f); border-radius: 32px; padding: 16px; margin-bottom: 18px; border: 1px solid rgba(108,92,231,0.4); }
+        .join-telegram-btn { background: #0088cc; color: white; padding: 10px; border-radius: 40px; border: none; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; }
+        .referral-code-box { background: #000; padding: 12px; border-radius: 40px; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; }
+        .copy-btn-icon { background: var(--purple); border: none; padding: 6px 14px; border-radius: 40px; color: white; cursor: pointer; }
+        .cashout-container { background: var(--bg-card); border-radius: 40px; padding: 24px; margin-bottom: 20px; border: 1px solid rgba(108,92,231,0.3); }
+        .requirement-check { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .check-icon { width: 26px; height: 26px; border-radius: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .check-icon.success { background: var(--success); color: white; }
+        .check-icon.pending { background: #333; color: var(--text-secondary); }
+        .fee-calculator { background: rgba(0,0,0,0.4); border-radius: 28px; padding: 16px; margin: 20px 0; }
+        .fee-row { display: flex; justify-content: space-between; padding: 8px 0; }
+        .survey-list-card { background: var(--bg-card); border-radius: 28px; padding: 18px; margin-bottom: 20px; }
+        .survey-item { background: var(--bg-elevated); border-radius: 20px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .survey-start-btn { background: var(--purple); border: none; padding: 8px 18px; border-radius: 40px; color: white; cursor: pointer; }
+        .survey-question { background: var(--bg-card); border-radius: 28px; padding: 18px; margin: 15px 0; }
+        .survey-option { background: var(--bg-elevated); padding: 10px 16px; border-radius: 40px; margin-bottom: 8px; cursor: pointer; }
+        .survey-option.selected { background: var(--purple); color: white; }
     </style>
 </head>
 <body>
+<div class="loading-screen" id="loadingScreen"><div class="loading-logo"><i class="fas fa-coins"></i></div><div class="loading-title">Earn For Earn</div><div class="loading-progress"><div class="loading-progress-fill"></div></div></div>
 
-<!-- Tads ad container (exactly as required) -->
-<div id="tads-container-9689"></div>
+<div class="app-container" id="mainApp" style="display: none;">
+    <div class="header">
+        <div class="app-title">Earn For Earn</div>
+        <div class="header-right">
+            <div class="lang-selector"><div class="lang-btn" id="langBtn"><i class="fas fa-globe"></i> <span id="currentLangLabel">English</span> <i class="fas fa-chevron-down"></i></div>
+            <div class="lang-menu" id="langMenu"><div class="lang-search"><input type="text" id="langSearch" placeholder="Search..."></div><div id="langOptionsList"></div></div></div>
+            <div class="user-profile" id="profileBtn"><span id="userInitial">U</span></div>
+        </div>
+    </div>
+    <div class="user-menu" id="userMenu"><div class="menu-item"><i class="fas fa-envelope"></i> <span id="menuEmail"></span></div><div class="menu-item" id="menuReferralCode"><i class="fas fa-qrcode"></i> My Referral Code</div><div class="menu-item" id="menuInfo"><i class="fas fa-info-circle"></i> Platform Info</div><div class="menu-item" id="menuLogout"><i class="fas fa-sign-out-alt"></i> Logout</div></div>
 
-<div class="card">
-    <h2>🎮 Watch & Earn</h2>
-    <p class="info">Tap the button below to watch a fullscreen ad.<br>Reward will be given after completion.</p>
-    <!-- Your trigger button – ID is kept as 'show-ad-button' (you can change text/style) -->
-    <button id="show-ad-button">▶ Show Fullscreen Ad</button>
+    <div class="main-content">
+        <div id="homeSection" class="content-section active">
+            <div class="balance-card"><div data-i18n="available_balance">Available Balance</div><div class="balance-amount" id="balanceAmount">0</div><div>PEPE</div></div>
+            <div class="stats-grid"><div class="stat-card"><div class="stat-value" id="tasksCompletedCount">0</div><div data-i18n="tasks_done">Tasks Done</div></div><div class="stat-card"><div class="stat-value" id="refCount">0</div><div data-i18n="referrals">Referrals</div></div><div class="stat-card"><div class="stat-value" id="refBonus">0</div><div data-i18n="commission">Commission</div></div></div>
+            <div class="rule-card"><h3 data-i18n="platform_rules">Platform Regulations</h3><div class="rule-item"><span>1.</span><span data-i18n="rule1">No automated tools – permanent ban</span></div><div class="rule-item"><span>2.</span><span data-i18n="rule2">Withdrawal: min 300k PEPE + 3 referrals, 5% fee, max 2/month</span></div><div class="rule-item"><span>3.</span><span data-i18n="rule3">10-Link & 10-Video: 15 claims/8h, 40s cooldown after claim</span></div><div class="rule-item"><span>4.</span><span data-i18n="rule4">Referral: 5% lifetime commission</span></div><div class="rule-item"><span>5.</span><span data-i18n="rule5">Chrome required for link tasks, stay 10 seconds each</span></div></div>
+            <div id="homeStatusMessage" class="status-message" style="display: none;"></div>
+        </div>
+
+        <div id="tasksSection" class="content-section">
+            <div class="back-button" id="tasksBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back">Back</span></div>
+            <div id="oneTimeTasksContainer"></div>
+
+            <!-- 10-Link Challenge (800 PEPE) -->
+            <div class="task-card"><div class="task-header"><span data-i18n="ten_link_challenge">🔥 10‑Link Challenge</span><span class="task-reward">+800 PEPE</span></div><div class="chrome-warning"><i class="fab fa-chrome"></i> <span data-i18n="chrome_required">⚠️ Chrome browser required. Stay 10 seconds per link.</span></div><div class="steps-container" id="linkStepsContainer10"></div><div id="linkCooldownArea"></div><button id="claimLinkRewardBtn" class="claim-btn" data-i18n="claim_reward">Claim 800 PEPE</button><div id="linkProgress"></div><div class="daily-limit-text" id="linkDailyLimitText">claims 0/15</div><div class="reset-timer" id="linkResetTimer">Reset in --:--:--</div></div>
+
+            <!-- 10-Video Ads Challenge (800 PEPE) -->
+            <div class="task-card"><div class="task-header"><span data-i18n="ten_video_challenge">🎬 10‑Video Ads Challenge</span><span class="task-reward">+800 PEPE</span></div><div class="info-note"><span data-i18n="video_sequence">Sequence: Adsgram→Monetag→Giga→OnClicka→Link (repeat 10x)</span></div><div class="steps-container" id="videoStepsContainer10"></div><div id="videoCooldownArea10"></div><button id="claimVideoRewardBtn10" class="claim-btn" data-i18n="claim_reward">Claim 800 PEPE</button><div id="videoProgress10"></div><div class="daily-limit-text" id="videoDailyLimitText">claims 0/15</div><div class="reset-timer" id="videoResetTimer10">Reset in --:--:--</div></div>
+
+            <!-- Gmail Support Task (informational) -->
+            <div class="task-card"><div class="task-header"><span data-i18n="support_task">Create Gmail (Support)</span><span class="task-reward">20,000 PEPE*</span></div><button id="createEmailTaskBtn" class="claim-btn" style="background:#0088cc;">Connect Support</button><div class="info-note" data-i18n="no_reward_note">*Visual only, no reward. Opens Telegram support.</div></div>
+        </div>
+
+        <div id="surveySection" class="content-section"><div class="back-button" id="surveyBackBtn"><i class="fas fa-arrow-left"></i> Back</div><div class="survey-list-card"><h3 data-i18n="surveys">Professional Surveys</h3><div id="surveysListContainer"></div></div></div>
+
+        <div id="referralSection" class="content-section"><div class="back-button" id="referralBackBtn"><i class="fas fa-arrow-left"></i> Back</div><div class="referral-professional"><h2 data-i18n="referral_commission">5% Lifetime Commission</h2><div class="referral-code-box"><span id="referralCodeDisplay"></span><button class="copy-btn-icon" id="copyReferralCodeBtn">Copy</button></div></div><div id="referralsList"></div></div>
+
+        <div id="cashoutSection" class="content-section"><div class="back-button" id="cashoutBackBtn"><i class="fas fa-arrow-left"></i> Back</div><div class="balance-card"><div>Available Balance</div><div class="balance-amount" id="withdrawBalance">0</div><div>PEPE</div></div><div class="cashout-container"><h3 data-i18n="withdraw_req">Withdrawal Requirements</h3><div class="requirement-check"><span id="reqIcon1">✘</span> <span data-i18n="min_balance">Min 300,000 PEPE</span></div><div class="requirement-check"><span id="reqIcon2">✘</span> <span data-i18n="min_refs">3+ active referrals</span></div><div class="requirement-check"><span id="reqIcon3">✘</span> <span data-i18n="monthly_limit">Max 2 withdrawals/month</span></div><div class="fee-calculator"><div class="fee-row"><span data-i18n="amount">Amount</span><strong id="wdAmount">0 PEPE</strong></div><div class="fee-row"><span data-i18n="fee">Fee (5%)</span><span id="wdFee">0</span></div><div class="fee-row"><span data-i18n="net">Net Payout</span><strong id="wdNet">0</strong></div></div><input type="text" id="binanceAccount" class="form-input" placeholder="Binance Email/UID"><input type="number" id="withdrawAmount" step="1000" min="300000" class="form-input" placeholder="Amount (≥300,000)"><button id="submitWithdrawBtn" class="withdraw-btn" data-i18n="request_withdrawal">Request Withdrawal</button></div><div id="historyList"></div></div>
+    </div>
+    <div class="bottom-nav"><button class="nav-btn active" id="navHome"><i class="fas fa-home"></i><span data-i18n="home">Home</span></button><button class="nav-btn" id="navTasks"><i class="fas fa-tasks"></i><span data-i18n="tasks">Tasks</span></button><button class="nav-btn" id="navSurvey"><i class="fas fa-poll"></i><span data-i18n="survey">Survey</span></button><button class="nav-btn" id="navReferral"><i class="fas fa-user-friends"></i><span data-i18n="referral">Friends</span></button><button class="nav-btn" id="navCashout"><i class="fas fa-wallet"></i><span data-i18n="cashout">Cashout</span></button></div>
 </div>
 
-<!-- Telegram Web App Script -->
-<script src="https://telegram.org/js/telegram-web-app.js?62"></script>
+<div id="authContainer" class="auth-container" style="display: none;"><div class="auth-card"><div class="auth-tabs"><button class="auth-tab active" data-tab="signup">Sign Up</button><button class="auth-tab" data-tab="login">Login</button></div><div id="signupForm"><div class="auth-title">Create Account</div><div class="floating-label-group"><input type="text" id="signupName" class="floating-input" placeholder=" "><label class="floating-label">Full Name</label></div><div class="floating-label-group"><input type="email" id="signupEmail" class="floating-input" placeholder=" "><label class="floating-label">Email</label></div><div class="floating-label-group"><input type="password" id="signupPassword" class="floating-input" placeholder=" "><label class="floating-label">Password (6+ chars)</label></div><div class="floating-label-group"><input type="text" id="signupReferral" class="floating-input" placeholder=" "><label class="floating-label">Referral Code (opt)</label></div><div id="signupError" class="error-msg"></div><button id="doSignupBtn" class="auth-btn">Sign Up</button></div><div id="loginForm" style="display: none;"><div class="auth-title">Welcome Back</div><div class="floating-label-group"><input type="email" id="loginEmail" class="floating-input" placeholder=" "><label class="floating-label">Email</label></div><div class="floating-label-group"><input type="password" id="loginPassword" class="floating-input" placeholder=" "><label class="floating-label">Password</label></div><div id="loginError" class="error-msg"></div><button id="doLoginBtn" class="auth-btn">Login</button></div></div></div>
 
-<!-- Tads Widget Script -->
-<script src="https://w.tads.me/widget.js"></script>
+<div id="infoModal" class="modal"><div class="modal-content"><h2>Platform Info</h2><p>Earn PEPE by completing 10-Link/10-Video challenges, surveys & referrals.</p><button id="closeInfoModal" style="background:var(--purple); padding:10px; border-radius:40px; margin-top:15px;">Close</button></div></div>
+<div id="timerModal" class="modal"><div class="modal-content"><h3 data-i18n="stay_on_link">Stay on Link Page</h3><div id="timerCountdown" style="font-size:2rem;">10</div><p data-i18n="timer_instruction">Do not close. After 10s return to app.</p><button id="cancelTimerBtn" data-i18n="cancel_task">Cancel</button></div></div>
+<div id="tryAgainModal" class="modal"><div class="modal-content"><h3>⚠️ Risk Warning</h3><p data-i18n="risk_text">Returned before 10s. Please stay.</p><button id="tryAgainRetryBtn">Try Again</button><button id="tryAgainCancelBtn">Cancel</button></div></div>
+<div id="surveyModal" class="modal" style="display:none;"><div class="modal-content"><h2 id="modalSurveyTitle">Survey</h2><div id="surveyModalContent"></div></div></div>
 
 <script>
-    // 1. Initialize Telegram Web App (if inside Telegram)
-    let tg = window.Telegram?.WebApp;
-    if (tg) {
-        tg.ready();
-        tg.expand();   // makes the app full-height
-        console.log("Telegram Web App ready, theme:", tg.colorScheme);
-    } else {
-        console.log("Not running inside Telegram WebView");
-    }
+    // 6 Languages
+    const translations = { en:{ available_balance:"Available Balance", tasks_done:"Tasks Done", referrals:"Referrals", commission:"Commission", platform_rules:"Platform Rules", rule1:"No automated tools", rule2:"300k PEPE + 3 referrals, 5% fee", rule3:"15 claims/8h, 40s cooldown", rule4:"5% lifetime commission", rule5:"Chrome required, stay 10s", back:"Back", ten_link_challenge:"10-Link Challenge", chrome_required:"Chrome required, stay 10s per link", ten_video_challenge:"10-Video Ads Challenge", video_sequence:"Adsgram→Monetag→Giga→OnClicka→Link (repeat)", claim_reward:"Claim Reward", support_task:"Gmail Support (Info)", no_reward_note:"*Informational only, no reward", surveys:"Surveys", referral_commission:"5% Lifetime Commission", withdraw_req:"Withdrawal Requirements", min_balance:"Min 300,000 PEPE", min_refs:"3+ active referrals", monthly_limit:"Max 2 withdrawals/month", amount:"Amount", fee:"Fee (5%)", net:"Net Payout", request_withdrawal:"Request Withdrawal", home:"Home", tasks:"Tasks", survey:"Survey", referral:"Referral", cashout:"Cashout", stay_on_link:"Stay on Link", timer_instruction:"After 10 seconds return", cancel_task:"Cancel", risk_text:"You returned early. Try again." }, hi:{available_balance:"उपलब्ध शेष",tasks_done:"कार्य पूर्ण",referrals:"रेफरल",commission:"कमीशन",platform_rules:"नियम",ten_link_challenge:"10-लिंक चैलेंज",chrome_required:"Chrome अनिवार्य",ten_video_challenge:"10-वीडियो चैलेंज",claim_reward:"इनाम लें",surveys:"सर्वेक्षण",request_withdrawal:"निकासी अनुरोध",home:"होम",tasks:"कार्य",survey:"सर्वे",referral:"रेफरल",cashout:"नकद निकासी"}, bn:{available_balance:"উপলব্ধ ব্যালেন্স",tasks_done:"সম্পন্ন কাজ",referrals:"রেফারেল",commission:"কমিশন",ten_link_challenge:"১০-লিংক চ্যালেঞ্জ",claim_reward:"পুরস্কার নিন",home:"হোম",tasks:"কাজ",survey:"জরিপ",referral:"রেফারেল",cashout:"ক্যাশআউট"}, es:{available_balance:"Saldo disponible",ten_link_challenge:"Desafío 10 Enlaces",claim_reward:"Reclamar",home:"Inicio",tasks:"Tareas",survey:"Encuestas",referral:"Referidos",cashout:"Retirar"}, ar:{available_balance:"الرصيد المتاح",ten_link_challenge:"تحدي 10 روابط",claim_reward:"استلم",home:"الرئيسية",tasks:"المهام",survey:"استبيان",referral:"إحالة",cashout:"سحب"}, fr:{available_balance:"Solde disponible",ten_link_challenge:"Défi 10 liens",claim_reward:"Réclamer",home:"Accueil",tasks:"Tâches",survey:"Sondage",referral:"Parrainage",cashout:"Retirer"} };
+    let currentLang = localStorage.getItem('selectedLanguage') || 'en';
+    function applyTranslations(){ let t=translations[currentLang]||translations.en; document.querySelectorAll('[data-i18n]').forEach(el=>{ let k=el.getAttribute('data-i18n'); if(t[k]) el.innerText=t[k]; }); document.getElementById('currentLangLabel').innerText={en:'English',hi:'हिन्दी',bn:'বাংলা',es:'Español',ar:'العربية',fr:'Français'}[currentLang]; }
+    function loadLangOptions(){ let langs=['en','hi','bn','es','ar','fr'], names=['English','हिन्दी','বাংলা','Español','العربية','Français']; let container=document.getElementById('langOptionsList'); container.innerHTML=''; langs.forEach((c,i)=>{ let div=document.createElement('div'); div.className='lang-option'; div.innerText=names[i]; div.onclick=()=>{ currentLang=c; localStorage.setItem('selectedLanguage',c); applyTranslations(); refreshAllTexts(); document.getElementById('langMenu').classList.remove('active'); }; container.appendChild(div); }); document.getElementById('langSearch').addEventListener('input',e=>{ let term=e.target.value.toLowerCase(); document.querySelectorAll('.lang-option').forEach(opt=>opt.style.display=opt.innerText.toLowerCase().includes(term)?'block':'none'); }); }
+    function refreshAllTexts(){ applyTranslations(); if(window.renderLinkTaskUI) renderLinkTaskUI(); if(window.renderVideoTaskUI) renderVideoTaskUI(); renderSurveysList(); renderOneTimeTasks(); }
 
-    // 2. Tads ad controller setup (widget ID = 9689)
-    document.addEventListener("DOMContentLoaded", function() {
-        const WIDGET_ID = "9689";               // your widget id – unchanged
-        const IS_DEBUG = false;                 // false for production
-        const btnIdSelector = "show-ad-button"; // button ID as in original
+    // LocalStorage Auth
+    const STORAGE_KEY = 'pepe_final_10x'; const SESSION_KEY = 'pepe_session_10x';
+    function loadUsers(){ let d=localStorage.getItem(STORAGE_KEY); return d?JSON.parse(d):[]; }
+    function saveUsers(u){ localStorage.setItem(STORAGE_KEY,JSON.stringify(u)); }
+    function getCurrentUser(){ let s=localStorage.getItem(SESSION_KEY); return s?JSON.parse(s):null; }
+    function setCurrentUser(u){ localStorage.setItem(SESSION_KEY,JSON.stringify(u)); }
+    let currentUserData=null;
+    async function addEarnings(userId,amount,source){ let users=loadUsers(); let idx=users.findIndex(u=>u.id===userId); if(idx===-1) return; let user=users[idx]; user.balance=(user.balance||0)+amount; user.totalEarned=(user.totalEarned||0)+amount; if(source!=='commission' && user.referredBy){ let refIdx=users.findIndex(u=>u.id===user.referredBy); if(refIdx!==-1){ let commission=amount*0.05; if(commission>0){ users[refIdx].balance+=commission; users[refIdx].totalEarned+=commission; users[refIdx].referralBonus=(users[refIdx].referralBonus||0)+commission; let refs=users[refIdx].referrals||[]; let r=refs.find(r=>r.userId===userId); if(r) r.commissionEarned=(r.commissionEarned||0)+commission; else refs.push({ userId, username: user.fullName.split(' ')[0], date:Date.now(), commissionEarned:commission }); users[refIdx].referrals=refs; } } } if(source==='task'||source==='survey') user.tasksCompleted=(user.tasksCompleted||0)+1; saveUsers(users); if(currentUserData && currentUserData.id===userId){ currentUserData=users[idx]; setCurrentUser(currentUserData); refreshUI(); } }
+    async function saveUserData(updates){ if(!currentUserData) return; let users=loadUsers(); let idx=users.findIndex(u=>u.id===currentUserData.id); if(idx!==-1){ users[idx]={...users[idx],...updates}; saveUsers(users); currentUserData=users[idx]; setCurrentUser(currentUserData); refreshUI(); } }
 
-        const onShowRewardCallback = (result) => {
-            console.log('✅ Ad finished, reward user:', result);
-            // You can give coins, points, etc.
-            if (tg) {
-                tg.showAlert("🎉 Ad completed! You received your reward.");
-            } else {
-                alert("🎉 Ad completed! Reward granted.");
-            }
-        };
+    // One-time tasks
+    const ONETIME_TASKS=[{id:'updateChannel',name:'Join Update Channel',link:'https://t.me/earnforearnupdate',reward:1000},{id:'proofChannel',name:'Join Payment Proof',link:'https://t.me/earnforearnpaymentproof',reward:1000}];
+    function ensureOneTimeField(user){ if(!user.oneTimeCompleted) user.oneTimeCompleted={}; ONETIME_TASKS.forEach(t=>{ if(user.oneTimeCompleted[t.id]===undefined) user.oneTimeCompleted[t.id]=false; }); return user; }
+    async function completeOneTimeTask(id,reward,link){ if(currentUserData.oneTimeCompleted?.[id]) return showStatus('Already done','error'); window.open(link,'_blank'); await saveUserData({ oneTimeCompleted:{...currentUserData.oneTimeCompleted,[id]:true} }); await addEarnings(currentUserData.id,reward,'one_time'); showStatus(`+${reward} PEPE`,'success'); renderOneTimeTasks(); }
+    function renderOneTimeTasks(){ let container=document.getElementById('oneTimeTasksContainer'); if(!container||!currentUserData) return; ensureOneTimeField(currentUserData); let pending=ONETIME_TASKS.filter(t=>!currentUserData.oneTimeCompleted[t.id]); if(pending.length===0){ container.innerHTML='<div class="info-note">All one-time tasks done.</div>'; return; } container.innerHTML='<h3>One-Time Rewards</h3>'+pending.map(t=>`<div class="one-time-task-box"><div>${t.name} +${t.reward} PEPE</div><button class="join-telegram-btn" data-id="${t.id}" data-reward="${t.reward}" data-link="${t.link}">Join & Claim</button></div>`).join(''); document.querySelectorAll('.join-telegram-btn').forEach(btn=>btn.addEventListener('click',()=>completeOneTimeTask(btn.dataset.id,parseInt(btn.dataset.reward),btn.dataset.link))); }
+    function openGmailSupport(){ window.open('https://t.me/earnforearneamilinformation','_blank'); showStatus('Support opened. No reward.','info'); }
 
-        const onAdsNotFound = () => {
-            console.log('⚠️ No ads available');
-            if (tg) {
-                tg.showAlert("No ads available right now. Please try later.");
-            } else {
-                alert("No ads available right now.");
-            }
-        };
+    // 10-Link Challenge
+    const LINK_URLS=["https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757","https://earnforearnlinksads2.vercel.app/","https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://earnforearnlinksads2.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757"];
+    let pendingLinkStep=null, linkStartTime=0, linkInterval=null;
+    function getPeriodStart(){ return Math.floor(Date.now()/28800000)*28800000; }
+    function getLinkRemaining(){ let p=getPeriodStart(); if(currentUserData.linkPeriodStart!==p) return 15; return Math.max(0,15-(currentUserData.linkCountInPeriod||0)); }
+    async function incrementLinkCount(){ let p=getPeriodStart(); let cnt=(currentUserData.linkPeriodStart===p?(currentUserData.linkCountInPeriod||0)+1:1); await saveUserData({ linkPeriodStart:p, linkCountInPeriod:cnt }); }
+    async function claimLinkReward(){ if((currentUserData.linkTask?.steps||0)<10) return showStatus('Complete all 10 links first','error'); if((currentUserData.linkTask?.cooldownUntil||0)>Date.now()) return showStatus('Cooldown active','error'); if(getLinkRemaining()<=0) return showStatus('Limit reached (15/8h)','error'); await incrementLinkCount(); await addEarnings(currentUserData.id,800,'task'); await saveUserData({ linkTask:{ steps:0, cooldownUntil:Date.now()+40000 } }); showStatus('+800 PEPE claimed!','success'); refreshUI(); renderLinkTaskUI(); }
+    async function completeLinkStep(step){ await saveUserData({ linkTask:{ steps:step, cooldownUntil:currentUserData.linkTask?.cooldownUntil||0 } }); refreshUI(); renderLinkTaskUI(); showStatus(`Link ${step}/10 done`,'success'); }
+    function startLinkStep(step){ pendingLinkStep=step; let modal=document.getElementById('timerModal'); let timerSpan=document.getElementById('timerCountdown'); let sec=10; timerSpan.innerText=sec; if(linkInterval) clearInterval(linkInterval); linkInterval=setInterval(()=>{ sec--; timerSpan.innerText=sec; if(sec<=0)clearInterval(linkInterval); },1000); modal.classList.add('active'); window.open(LINK_URLS[step-1],'_blank'); linkStartTime=Date.now(); let onVisibility=()=>{ if(!document.hidden && pendingLinkStep===step){ let elapsed=(Date.now()-linkStartTime)/1000; if(elapsed>=10){ clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); completeLinkStep(step); }else{ clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showRiskWarning(step); } pendingLinkStep=null; } }; document.addEventListener('visibilitychange',onVisibility); document.getElementById('cancelTimerBtn').onclick=()=>{ clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); pendingLinkStep=null; showStatus('Cancelled','error'); }; }
+    function showRiskWarning(step){ let modal=document.getElementById('tryAgainModal'); modal.classList.add('active'); document.getElementById('tryAgainRetryBtn').onclick=()=>{ modal.classList.remove('active'); startLinkStep(step); }; document.getElementById('tryAgainCancelBtn').onclick=()=>modal.classList.remove('active'); }
+    function renderLinkTaskUI(){ if(!currentUserData) return; let steps=currentUserData.linkTask?.steps||0; let cooldown=Math.max(0,(currentUserData.linkTask?.cooldownUntil||0)-Date.now()); let canStart=cooldown<=0; let html=''; for(let i=1;i<=10;i++){ let cls='step-btn'; if(steps>=i) cls+=' completed'; else if(steps+1===i && canStart) cls+=' active-step'; else cls+=' locked'; html+=`<div class="${cls}" data-step="${i}"><i class="fas fa-link"></i><span>${i}</span></div>`; } document.getElementById('linkStepsContainer10').innerHTML=html; let claimBtn=document.getElementById('claimLinkRewardBtn'); claimBtn.style.display=(steps>=10 && cooldown<=0 && getLinkRemaining()>0)?'block':'none'; document.getElementById('linkProgress').innerHTML=`${steps}/10 links`; document.querySelectorAll('#linkStepsContainer10 .step-btn').forEach(btn=>{ btn.onclick=()=>{ let st=parseInt(btn.dataset.step); if(steps>=st) return; if(steps+1!==st) return showStatus('Complete previous','error'); if(cooldown>0) return showStatus('Cooldown','error'); startLinkStep(st); }; }); updateResetTimer('linkResetTimer', getPeriodStart()+28800000); document.getElementById('linkDailyLimitText').innerText=`claims ${15-getLinkRemaining()}/15`; }
 
-        const adController = window.tads.init({
-            widgetId: WIDGET_ID,
-            type: 'fullscreen',
-            debug: IS_DEBUG,
-            onShowReward: onShowRewardCallback,
-            onAdsNotFound: onAdsNotFound,
-        });
+    // 10-Video Challenge
+    const VIDEO_LINK_URL="https://earnforearnlinksads.vercel.app/"; const videoAdSeq=['adsgram','monetag','giga','onclicka','link','adsgram','monetag','giga','onclicka','link'];
+    async function showAdByType(type){ if(type==='adsgram'){ let c=window.Adsgram.init({blockId:"int-28543"}); await c.show(); }else if(type==='monetag'){ await window.show_10541383(); }else if(type==='giga'){ await window.showGiga(); }else if(type==='onclicka'){ let fn=await window.initCdTma({id:'438680'}); await fn(); }else throw new Error(); }
+    let pendingVideoStep=null, videoLinkStart=0, videoLinkInterval=null;
+    async function completeVideoStep(step){ await saveUserData({ videoTask10:{ steps:step, cooldownUntil:currentUserData.videoTask10?.cooldownUntil||0 } }); refreshUI(); renderVideoTaskUI(); showStatus(`Video step ${step}/10 done`,'success'); }
+    async function startVideoStep(step){ let adType=videoAdSeq[step-1]; if(adType==='link'){ pendingVideoStep=step; let modal=document.getElementById('timerModal'); let timerSpan=document.getElementById('timerCountdown'); let sec=10; timerSpan.innerText=sec; if(videoLinkInterval) clearInterval(videoLinkInterval); videoLinkInterval=setInterval(()=>{ sec--; timerSpan.innerText=sec; if(sec<=0)clearInterval(videoLinkInterval); },1000); modal.classList.add('active'); window.open(VIDEO_LINK_URL,'_blank'); videoLinkStart=Date.now(); let onVisibility=()=>{ if(!document.hidden && pendingVideoStep===step){ let elapsed=(Date.now()-videoLinkStart)/1000; if(elapsed>=10){ clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); completeVideoStep(step); }else{ clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showRiskWarning(step); } pendingVideoStep=null; } }; document.addEventListener('visibilitychange',onVisibility); document.getElementById('cancelTimerBtn').onclick=()=>{ clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); pendingVideoStep=null; showStatus('Cancelled','error'); }; } else { showStatus('Playing ad...','info'); try{ await showAdByType(adType); await completeVideoStep(step); }catch(e){ showStatus('Ad failed, retry','error'); } } }
+    function getVideoRemaining10(){ let p=getPeriodStart(); if(currentUserData.videoPeriodStart10!==p) return 15; return Math.max(0,15-(currentUserData.videoCountInPeriod10||0)); }
+    async function incrementVideoCount10(){ let p=getPeriodStart(); let cnt=(currentUserData.videoPeriodStart10===p?(currentUserData.videoCountInPeriod10||0)+1:1); await saveUserData({ videoPeriodStart10:p, videoCountInPeriod10:cnt }); }
+    async function claimVideoReward10(){ let steps=currentUserData.videoTask10?.steps||0; let cooldown=Math.max(0,(currentUserData.videoTask10?.cooldownUntil||0)-Date.now()); if(steps<10) return showStatus('Complete all 10 steps','error'); if(cooldown>0) return showStatus('Cooldown active','error'); if(getVideoRemaining10()<=0) return showStatus('Limit reached 15/8h','error'); await incrementVideoCount10(); await addEarnings(currentUserData.id,800,'task'); await saveUserData({ videoTask10:{ steps:0, cooldownUntil:Date.now()+40000 } }); showStatus('+800 PEPE claimed!','success'); refreshUI(); renderVideoTaskUI(); }
+    function renderVideoTaskUI(){ if(!currentUserData) return; let steps=currentUserData.videoTask10?.steps||0; let cooldown=Math.max(0,(currentUserData.videoTask10?.cooldownUntil||0)-Date.now()); let canStart=cooldown<=0; let html=''; for(let i=1;i<=10;i++){ let cls='step-btn'; if(steps>=i) cls+=' completed'; else if(steps+1===i && canStart) cls+=' active-step'; else cls+=' locked'; html+=`<div class="${cls}" data-vstep="${i}"><i class="fas fa-video"></i><span>${i}</span></div>`; } document.getElementById('videoStepsContainer10').innerHTML=html; let claimBtn=document.getElementById('claimVideoRewardBtn10'); claimBtn.style.display=(steps>=10 && cooldown<=0 && getVideoRemaining10()>0)?'block':'none'; document.getElementById('videoProgress10').innerHTML=`${steps}/10 ads`; document.querySelectorAll('#videoStepsContainer10 .step-btn').forEach(btn=>{ btn.onclick=()=>{ let st=parseInt(btn.dataset.vstep); if(steps>=st) return; if(steps+1!==st) return showStatus('Complete previous','error'); if(cooldown>0) return showStatus('Cooldown','error'); startVideoStep(st); }; }); updateResetTimer('videoResetTimer10', getPeriodStart()+28800000); document.getElementById('videoDailyLimitText').innerText=`claims ${15-getVideoRemaining10()}/15`; }
 
-        const button = document.getElementById(btnIdSelector);
-        if (button) {
-            button.addEventListener('click', () => {
-                adController
-                    .then(() => adController.showAd())
-                    .catch((err) => {
-                        console.error('Ad error:', err);
-                        if (tg) tg.showAlert("Failed to load ad: " + err);
-                    });
-            });
-        } else {
-            console.error(`Button with ID "${btnIdSelector}" not found.`);
-        }
-    });
+    function updateResetTimer(elId,nextReset){ let interval=setInterval(()=>{ let r=Math.max(0,nextReset-Date.now()); if(r<=0) location.reload(); let h=Math.floor(r/3600000),m=Math.floor((r%3600000)/60000),s=Math.floor((r%60000)/1000); let el=document.getElementById(elId); if(el) el.innerText=`Reset in ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; },1000); }
+
+    // Surveys (simplified, 10 questions)
+    const baseQ=[{text:"Capital of France?",options:["Paris","Berlin","Madrid"],correct:"Paris"},{text:"15+7=?",options:["22","21","23"],correct:"22"}];
+    function randomQuestions(){ let q=[...baseQ]; for(let i=0;i<8;i++) q.push(baseQ[i%baseQ.length]); return q.slice(0,10); }
+    let surveyActive=false;
+    async function renderSurveysList(){ let cont=document.getElementById('surveysListContainer'); if(!cont) return; cont.innerHTML=''; let cd=currentUserData.surveyCooldowns||{}; for(let i=1;i<=5;i++){ let avail=(cd[i]||0)<=Date.now(); let btn=document.createElement('button'); btn.innerText=avail?'Start':'Locked'; btn.className='survey-start-btn'; if(!avail) btn.disabled=true; btn.onclick=()=>startSurvey(i); let div=document.createElement('div'); div.className='survey-item'; div.innerHTML=`<span>Survey ${i} (2,000 PEPE)</span>`; div.appendChild(btn); cont.appendChild(div); } }
+    function startSurvey(id){ if(surveyActive) return; let questions=randomQuestions(); let answers=new Array(10).fill(null); let step=0; surveyActive=true; let modal=document.getElementById('surveyModal'); modal.style.display='flex'; function render(){ let q=questions[step]; let html=`<div><strong>${step+1}/10: ${q.text}</strong></div>`; q.options.forEach(opt=>{ let cls='survey-option'; if(answers[step]===opt) cls+=' selected'; html+=`<div class="${cls}" data-val="${opt}">${opt}</div>`; }); html+=`<button id="surveyNextBtn">${step===9?'Complete':'Next'}</button>`; document.getElementById('surveyModalContent').innerHTML=html; document.querySelectorAll('.survey-option').forEach(el=>{ el.onclick=()=>{ let val=el.dataset.val; if(val===q.correct){ answers[step]=val; if(step===9){ addEarnings(currentUserData.id,2000,'survey'); let newCd={...(currentUserData.surveyCooldowns||{})}; newCd[id]=Date.now()+7*3600000; saveUserData({surveyCooldowns:newCd}); modal.style.display='none'; surveyActive=false; showStatus('+2,000 PEPE','success'); renderSurveysList(); } else { step++; render(); } } else { showStatus('Wrong answer! Survey reset.','error'); modal.style.display='none'; surveyActive=false; } }; }); document.getElementById('surveyNextBtn').onclick=()=>{ if(answers[step]) render(); else alert('Select answer'); }; } render(); }
+
+    // Referral & Cashout
+    function renderReferralsList(){ let container=document.getElementById('referralsList'); if(!container) return; let refs=currentUserData.referrals||[]; if(refs.length===0){ container.innerHTML='<div class="info-note">No referrals yet.</div>'; return; } container.innerHTML=refs.map(r=>`<div class="friend-list-item"><div><strong>${r.username}</strong><br><small>${new Date(r.date).toLocaleDateString()}</small></div><div>+${(r.commissionEarned||0).toFixed(0)}</div></div>`).join(''); }
+    function getWithdrawalsThisMonth(){ let now=new Date(), cnt=0; for(let w of (currentUserData.withdrawalHistory||[])){ let d=new Date(w.date); if(d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth()) cnt++; } return cnt; }
+    function updateWithdrawalRequirements(){ let bal=currentUserData.balance||0, refs=(currentUserData.referrals||[]).length; let balOk=bal>=300000, refOk=refs>=3, monthOk=getWithdrawalsThisMonth()<2; document.getElementById('reqIcon1').innerHTML=balOk?'✓':'✘'; document.getElementById('reqIcon2').innerHTML=refOk?'✓':'✘'; document.getElementById('reqIcon3').innerHTML=monthOk?'✓':'✘'; document.getElementById('submitWithdrawBtn').disabled=!(balOk&&refOk&&monthOk); }
+    function updateWithdrawCalc(){ let amt=parseFloat(document.getElementById('withdrawAmount').value)||0; let fee=amt*0.05; document.getElementById('wdAmount').innerText=amt.toFixed(0); document.getElementById('wdFee').innerText=fee.toFixed(0); document.getElementById('wdNet').innerText=(amt-fee).toFixed(0); }
+    async function submitWithdrawal(){ let amt=parseFloat(document.getElementById('withdrawAmount').value); let acc=document.getElementById('binanceAccount').value.trim(); if(!acc||amt<300000||(currentUserData.balance||0)<amt||(currentUserData.referrals||[]).length<3||getWithdrawalsThisMonth()>=2) return showStatus('Requirements not met','error'); let fee=amt*0.05, net=amt-fee; let wid={id:Date.now(),withdrawId:'WD-'+Date.now().toString().slice(-6),amount:amt,fee,netAmount:net,account:acc,status:'pending',date:Date.now()}; let newHistory=[...(currentUserData.withdrawalHistory||[]),wid]; await saveUserData({balance:(currentUserData.balance||0)-amt, withdrawalHistory:newHistory}); showStatus('Withdrawal requested','success'); updateWithdrawalRequirements(); document.getElementById('withdrawAmount').value='';document.getElementById('binanceAccount').value=''; updateWithdrawCalc(); displayHistory(); }
+    function displayHistory(){ let hist=currentUserData.withdrawalHistory||[]; let container=document.getElementById('historyList'); if(!container) return; if(hist.length===0){container.innerHTML='<div>No history</div>';return;} container.innerHTML=hist.slice().reverse().map(w=>`<div class="history-card"><div>${w.withdrawId}</div><div>${w.status} | ${w.netAmount.toFixed(0)} PEPE</div></div>`).join(''); }
+    function refreshUI(){ if(!currentUserData) return; document.getElementById('balanceAmount').innerText=(currentUserData.balance||0).toFixed(0); document.getElementById('tasksCompletedCount').innerText=currentUserData.tasksCompleted||0; document.getElementById('refCount').innerText=(currentUserData.referrals||[]).length; document.getElementById('refBonus').innerText=(currentUserData.referralBonus||0).toFixed(0); document.getElementById('withdrawBalance').innerText=(currentUserData.balance||0).toFixed(0); document.getElementById('userInitial').innerText=(currentUserData.fullName?.charAt(0)||'U').toUpperCase(); document.getElementById('menuEmail').innerText=currentUserData.email; document.getElementById('referralCodeDisplay').innerText=currentUserData.referralCode||''; renderLinkTaskUI(); renderVideoTaskUI(); renderReferralsList(); updateWithdrawalRequirements(); updateWithdrawCalc(); displayHistory(); renderSurveysList(); renderOneTimeTasks(); ensureOneTimeField(currentUserData); }
+    function showStatus(msg,type){ let el=document.getElementById('homeStatusMessage'); if(el){ el.style.display='block'; el.className=`status-message status-${type}`; el.innerText=msg; setTimeout(()=>el.style.display='none',3000); } }
+    function bindEvents(){ let sections=['home','tasks','survey','referral','cashout']; sections.forEach(s=>document.getElementById(`nav${s.charAt(0).toUpperCase()+s.slice(1)}`).onclick=()=>switchSection(`${s}Section`)); ['tasks','survey','referral','cashout'].forEach(s=>document.getElementById(`${s}BackBtn`).onclick=()=>switchSection('homeSection')); document.getElementById('copyReferralCodeBtn').onclick=()=>{ navigator.clipboard.writeText(currentUserData.referralCode); showStatus('Copied!','success'); }; document.getElementById('menuReferralCode').onclick=()=>{ navigator.clipboard.writeText(currentUserData.referralCode); showStatus('Code copied','success'); }; document.getElementById('profileBtn').onclick=()=>document.getElementById('userMenu').classList.toggle('active'); document.getElementById('menuInfo').onclick=()=>{ document.getElementById('userMenu').classList.remove('active'); document.getElementById('infoModal').classList.add('active'); }; document.getElementById('closeInfoModal').onclick=()=>document.getElementById('infoModal').classList.remove('active'); document.getElementById('withdrawAmount').addEventListener('input',updateWithdrawCalc); document.getElementById('submitWithdrawBtn').addEventListener('click',submitWithdrawal); document.getElementById('claimLinkRewardBtn').addEventListener('click',claimLinkReward); document.getElementById('claimVideoRewardBtn10').addEventListener('click',claimVideoReward10); document.getElementById('createEmailTaskBtn').addEventListener('click',openGmailSupport); document.getElementById('menuLogout').onclick=()=>{ localStorage.removeItem(SESSION_KEY); location.reload(); }; document.addEventListener('click',e=>{ if(!e.target.closest('#profileBtn')&&!e.target.closest('#userMenu')) document.getElementById('userMenu').classList.remove('active'); }); }
+    function switchSection(id){ document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); let map={homeSection:'navHome',tasksSection:'navTasks',surveySection:'navSurvey',referralSection:'navReferral',cashoutSection:'navCashout'}; if(map[id]) document.getElementById(map[id]).classList.add('active'); if(id==='surveySection') renderSurveysList(); if(id==='cashoutSection'){ updateWithdrawalRequirements(); updateWithdrawCalc(); displayHistory(); } if(id==='tasksSection') renderOneTimeTasks(); }
+    async function afterLogin(user){ currentUserData=user; ensureOneTimeField(currentUserData); if(!currentUserData.linkTask) currentUserData.linkTask={steps:0,cooldownUntil:0}; if(!currentUserData.videoTask10) currentUserData.videoTask10={steps:0,cooldownUntil:0}; if(!currentUserData.linkPeriodStart) currentUserData.linkPeriodStart=getPeriodStart(); if(currentUserData.linkCountInPeriod===undefined) currentUserData.linkCountInPeriod=0; if(!currentUserData.videoPeriodStart10) currentUserData.videoPeriodStart10=getPeriodStart(); if(currentUserData.videoCountInPeriod10===undefined) currentUserData.videoCountInPeriod10=0; await saveUserData(currentUserData); document.getElementById('authContainer').style.display='none'; document.getElementById('mainApp').style.display='block'; refreshUI(); bindEvents(); }
+    document.getElementById('doSignupBtn').onclick=async()=>{ let name=document.getElementById('signupName').value, email=document.getElementById('signupEmail').value.trim(), pwd=document.getElementById('signupPassword').value, ref=document.getElementById('signupReferral').value.trim().toUpperCase(); if(!name||!email||pwd.length<6) return document.getElementById('signupError').innerText='Invalid'; let users=loadUsers(); if(users.find(u=>u.email===email)) return document.getElementById('signupError').innerText='Email exists'; let userId=Date.now()+Math.random().toString(36).substr(2,6); let code=email.split('@')[0].slice(0,3).toUpperCase()+Math.random().toString(36).substr(2,4).toUpperCase(); let newUser={ id:userId, fullName:name, email, password:btoa(pwd), balance:0, totalEarned:0, referralBonus:0, referrals:[], referralCode:code, referredBy:null, createdAt:Date.now(), videoTask10:{steps:0,cooldownUntil:0}, linkTask:{steps:0,cooldownUntil:0}, oneTimeCompleted:{}, tasksCompleted:0, withdrawalHistory:[], surveyCooldowns:{}, linkPeriodStart:getPeriodStart(), linkCountInPeriod:0, videoPeriodStart10:getPeriodStart(), videoCountInPeriod10:0 }; if(ref){ let referrer=users.find(u=>u.referralCode===ref); if(referrer && referrer.id!==userId){ newUser.referredBy=referrer.id; referrer.referrals=referrer.referrals||[]; referrer.referrals.push({userId,username:name.split(' ')[0],date:Date.now(),commissionEarned:0}); } } users.push(newUser); saveUsers(users); setCurrentUser(newUser); afterLogin(newUser); };
+    document.getElementById('doLoginBtn').onclick=async()=>{ let email=document.getElementById('loginEmail').value.trim(), pwd=document.getElementById('loginPassword').value; let users=loadUsers(); let user=users.find(u=>u.email===email && u.password===btoa(pwd)); if(user) afterLogin(user); else document.getElementById('loginError').innerText='Invalid'; };
+    document.querySelectorAll('.auth-tab').forEach(tab=>tab.addEventListener('click',()=>{ document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); let form=tab.dataset.tab; document.getElementById('signupForm').style.display=form==='signup'?'block':'none'; document.getElementById('loginForm').style.display=form==='login'?'block':'none'; }));
+    window.onload=()=>{ setTimeout(()=>document.getElementById('loadingScreen').classList.add('hidden'),400); loadLangOptions(); applyTranslations(); let sess=getCurrentUser(); if(sess){ let users=loadUsers(); let fresh=users.find(u=>u.id===sess.id); if(fresh){ currentUserData=fresh; setCurrentUser(fresh); afterLogin(fresh); } else { document.getElementById('authContainer').style.display='flex'; document.getElementById('mainApp').style.display='none'; } } else { document.getElementById('authContainer').style.display='flex'; document.getElementById('mainApp').style.display='none'; } };
 </script>
-
 </body>
 </html>
