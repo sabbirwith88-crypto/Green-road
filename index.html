@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,8 +7,6 @@
     <title>Earn For Earn – PEPE Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
     <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
@@ -17,17 +16,32 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         :root { --bg-primary: #0a0a0a; --bg-secondary: #121212; --bg-card: #1e1e1e; --bg-elevated: #2a2a2a; --text-primary: #fff; --text-secondary: #b0b0b0; --border: #2c2c2c; --purple: #6c5ce7; --purple-dark: #5b4bc4; --blue: #0984e3; --success: #00b894; --error: #d63031; --warning: #fdcb6e; --gold: #f9ca24; }
         body { background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
-        .app-container { max-width: 500px; margin: 0 auto; min-height: 100vh; background: radial-gradient(circle at 10% 20%, #0f0f0f, #000); position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.5); display: block; }
+        .app-container { max-width: 500px; margin: 0 auto; min-height: 100vh; background: radial-gradient(circle at 10% 20%, #0f0f0f, #000); position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.5); display: none; }
+        /* Loading screen - fast 4 seconds */
         .loading-screen { position: fixed; inset: 0; background: linear-gradient(145deg, #0a0a0a, #000000); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s ease; }
         .loading-screen.fade-out { opacity: 0; pointer-events: none; }
-        .loading-logo { width: 85px; height: 85px; border-radius: 30px; background: linear-gradient(135deg, var(--purple), var(--blue)); display: flex; align-items: center; justify-content: center; margin-bottom: 25px; animation: pulse 1.2s infinite; box-shadow: 0 15px 25px -8px rgba(108,92,231,0.5); }
+        .loading-logo { width: 85px; height: 85px; border-radius: 30px; background: linear-gradient(135deg, var(--purple), var(--blue)); display: flex; align-items: center; justify-content: center; margin-bottom: 25px; animation: pulse 1.2s infinite ease-in-out; box-shadow: 0 15px 25px -8px rgba(108,92,231,0.5); }
         @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         .loading-logo i { font-size: 2.8rem; color: white; }
         .loading-title { font-size: 1.8rem; font-weight: 800; background: linear-gradient(45deg, var(--purple), var(--blue), var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 5px; }
         .loading-progress-container { width: 240px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin: 20px 0 10px; }
-        .loading-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue), var(--gold)); border-radius: 10px; transition: width 0.05s linear; }
+        .loading-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue), var(--gold)); border-radius: 10px; transition: width 0.1s linear; }
         .loading-percent { font-size: 1rem; font-weight: 600; font-family: monospace; color: var(--gold); margin-bottom: 8px; }
         .loading-status { font-size: 0.7rem; color: var(--text-secondary); background: rgba(108,92,231,0.2); padding: 4px 12px; border-radius: 40px; }
+        /* Rest of styles (same as before, compact) */
+        .auth-container { display: flex; flex-direction: column; justify-content: center; min-height: 100vh; padding: 32px 24px; }
+        .auth-card { background: var(--bg-card); border-radius: 48px; padding: 32px 24px; border: 1px solid var(--border); }
+        .auth-tabs { display: flex; gap: 12px; margin-bottom: 28px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+        .auth-tab { flex: 1; text-align: center; padding: 8px; background: none; border: none; color: var(--text-secondary); font-weight: 600; font-size: 1rem; cursor: pointer; border-radius: 40px; transition: 0.2s; }
+        .auth-tab.active { background: var(--purple); color: white; }
+        .auth-title { font-size: 1.8rem; font-weight: 700; background: linear-gradient(45deg, var(--purple), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; text-align: center; margin-bottom: 28px; }
+        .floating-label-group { position: relative; margin: 20px 0; }
+        .floating-input { width: 100%; padding: 12px 16px; background: #000; border: 1px solid var(--border); border-radius: 40px; color: white; font-size: 0.95rem; }
+        .floating-input:focus { border-color: var(--purple); outline: none; }
+        .floating-label { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); transition: 0.2s; pointer-events: none; font-size: 0.9rem; }
+        .floating-input:focus ~ .floating-label, .floating-input:not(:placeholder-shown) ~ .floating-label { top: -8px; left: 12px; font-size: 0.7rem; background: #000; padding: 0 6px; color: var(--purple); }
+        .auth-btn { background: linear-gradient(90deg, var(--purple), var(--blue)); color: white; font-weight: bold; padding: 12px; border-radius: 40px; width: 100%; border: none; margin-top: 20px; cursor: pointer; }
+        .error-msg { color: var(--error); font-size: 0.75rem; margin-top: 5px; }
         .header { background: rgba(18,18,18,0.95); backdrop-filter: blur(15px); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
         .app-title { font-size: 1.3rem; font-weight: 700; background: linear-gradient(45deg, var(--purple), var(--blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .header-right { display: flex; gap: 12px; align-items: center; }
@@ -111,34 +125,25 @@
 </head>
 <body>
 
+<!-- FAST LOADING SCREEN 0-100% in ~3-4 seconds -->
 <div class="loading-screen" id="loadingScreen">
     <div class="loading-logo"><i class="fas fa-coins"></i></div>
     <div class="loading-title">Earn For Earn</div>
     <div class="loading-progress-container"><div class="loading-progress-fill" id="loadingFill"></div></div>
     <div class="loading-percent" id="loadingPercent">0%</div>
-    <div class="loading-status" id="loadingStatus">Starting...</div>
+    <div class="loading-status" id="loadingStatus">Connecting...</div>
 </div>
 
 <div class="app-container" id="mainApp">
-    <div class="header">
-        <div class="app-title">Earn For Earn</div>
-        <div class="header-right">
-            <div class="lang-selector"><div class="lang-btn" id="langBtn"><i class="fas fa-globe"></i> <span id="currentLangLabel">English</span></div><div class="lang-menu" id="langMenu"><div id="langOptionsList"></div></div></div>
-            <div class="user-profile" id="profileBtn"><span id="userInitial">U</span></div>
-        </div>
-    </div>
-    <div class="user-menu" id="userMenu">
-        <div class="menu-item"><i class="fas fa-envelope"></i> <span id="menuEmail"></span></div>
-        <div class="menu-item" id="menuReferralCode"><i class="fas fa-qrcode"></i> My Referral Code</div>
-        <div class="menu-item" id="menuInfo"><i class="fas fa-headset"></i> For Support</div>
-        <div class="menu-item" id="menuLogout"><i class="fas fa-sign-out-alt"></i> Logout</div>
-    </div>
+    <!-- Same header, nav, sections as before, but surveys reduced to 3 -->
+    <div class="header"><div class="app-title">Earn For Earn</div><div class="header-right"><div class="lang-selector"><div class="lang-btn" id="langBtn"><i class="fas fa-globe"></i> <span id="currentLangLabel">English</span></div><div class="lang-menu" id="langMenu"><div id="langOptionsList"></div></div></div><div class="user-profile" id="profileBtn"><span id="userInitial">U</span></div></div></div>
+    <div class="user-menu" id="userMenu"><div class="menu-item"><i class="fas fa-envelope"></i> <span id="menuEmail"></span></div><div class="menu-item" id="menuReferralCode"><i class="fas fa-qrcode"></i> My Referral Code</div><div class="menu-item" id="menuInfo"><i class="fas fa-headset"></i> For Support</div><div class="menu-item" id="menuLogout"><i class="fas fa-sign-out-alt"></i> Logout</div></div>
 
     <div class="main-content">
         <div id="homeSection" class="content-section active">
             <div class="balance-card"><div>Available Balance</div><div class="balance-amount" id="balanceAmount">0</div><div>PEPE</div></div>
             <div class="stats-grid"><div class="stat-card"><div class="stat-value" id="tasksCompletedCount">0</div><div>Tasks Done</div></div><div class="stat-card"><div class="stat-value" id="refCount">0</div><div>Referrals</div></div><div class="stat-card"><div class="stat-value" id="refBonus">0</div><div>Commission</div></div></div>
-            <div class="rule-card"><h3><i class="fas fa-gavel"></i> Platform Rules (10)</h3><div class="rule-item">1. No automated tools – permanent ban.</div><div class="rule-item">2. Min withdrawal: 300k PEPE + 3 referrals, 5% fee, max 2/month.</div><div class="rule-item">3. 10-Link & 10-Video: 10 claims/8h, 40s cooldown. Chrome required.</div><div class="rule-item">4. Referral program: 5% lifetime commission.</div><div class="rule-item">5. Surveys: 3 surveys, 1,600 PEPE each, 7h cooldown per survey.</div><div class="rule-item">6. One-time Telegram tasks: 1,000 PEPE each.</div><div class="rule-item">7. Gmail Support Task: informational, no reward.</div><div class="rule-item">8. Multiple accounts, VPN, ad fraud = instant ban.</div><div class="rule-item">9. Data stored in Firebase. One account per user.</div><div class="rule-item">10. Support responds within 48h.</div></div>
+            <div class="rule-card"><h3><i class="fas fa-gavel"></i> Platform Rules (10)</h3><div class="rule-item">1. No automated tools – permanent ban.</div><div class="rule-item">2. Min withdrawal: 300k PEPE + 3 referrals, 5% fee, max 2/month.</div><div class="rule-item">3. 10-Link & 10-Video: 10 claims/8h, 40s cooldown. Chrome required.</div><div class="rule-item">4. Referral program: 5% lifetime commission.</div><div class="rule-item">5. Surveys: 3 surveys available, 1,600 PEPE each, 7h cooldown per survey.</div><div class="rule-item">6. One-time Telegram tasks: 1,000 PEPE each.</div><div class="rule-item">7. Gmail Support Task: informational, no reward.</div><div class="rule-item">8. Multiple accounts, VPN, ad fraud = instant ban.</div><div class="rule-item">9. Data stored locally; clearing browser resets progress.</div><div class="rule-item">10. Support responds within 48h.</div></div>
             <div id="homeStatusMessage" class="status-message" style="display: none;"></div>
         </div>
 
@@ -147,17 +152,17 @@
             <div id="oneTimeTasksContainer"></div>
             <div class="task-card"><div class="task-header"><span>🔥 10‑Link Challenge</span><span class="task-reward">+1,600 PEPE</span></div><div class="chrome-warning"><i class="fab fa-chrome"></i> Chrome required. Stay 10 seconds per link.</div><div class="steps-container" id="linkStepsContainer10"></div><div id="linkCooldownArea"></div><button id="claimLinkRewardBtn" class="claim-btn">Claim 1,600 PEPE</button><div id="linkProgress"></div><div class="daily-limit-text" id="linkDailyLimitText">claims 0/10</div><div class="reset-timer" id="linkResetTimer">Reset in --:--:--</div></div>
             <div class="task-card"><div class="task-header"><span>🎬 10‑Video Ads Challenge</span><span class="task-reward">+1,600 PEPE</span></div><div class="info-note">Sequence: Adsgram → Monetag → Giga → OnClicka → Link (repeat)</div><div class="steps-container" id="videoStepsContainer10"></div><div id="videoCooldownArea10"></div><button id="claimVideoRewardBtn10" class="claim-btn">Claim 1,600 PEPE</button><div id="videoProgress10"></div><div class="daily-limit-text" id="videoDailyLimitText">claims 0/10</div><div class="reset-timer" id="videoResetTimer10">Reset in --:--:--</div></div>
-            <div class="task-card"><div class="task-header"><span>📧 Create Gmail Account (Info Task)</span><span class="task-reward">0 PEPE*</span></div><p style="font-size:0.85rem; margin-bottom:8px;">Support team will assist you. Click below to connect.</p><button id="createEmailTaskBtn" class="claim-btn" style="background:#0088cc;">Connect Support (Telegram)</button><div class="info-note">*Informational only. No PEPE reward.</div></div>
+            <div class="task-card"><div class="task-header"><span>📧 Create Gmail Account (Info Task)</span><span class="task-reward">0 PEPE*</span></div><p style="font-size:0.85rem; margin-bottom:8px;">Support team will assist you to create Gmail and share Gmail information. Click below to connect.</p><button id="createEmailTaskBtn" class="claim-btn" style="background:#0088cc;">Connect Support (Telegram)</button><div class="info-note">*Informational only. No PEPE reward. Telegram chat opens with pre‑filled request.</div></div>
         </div>
 
         <div id="surveySection" class="content-section">
             <div class="back-button" id="surveyBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
-            <div class="survey-list-card"><h3><i class="fas fa-poll"></i> Professional Surveys (1,600 PEPE)</h3><p>3 surveys | 10 questions | 4 options | Wrong = reset | 7h cooldown</p><div id="surveysListContainer"></div></div>
+            <div class="survey-list-card"><h3><i class="fas fa-poll"></i> Professional Surveys (1,600 PEPE)</h3><p>3 surveys available | 10 random questions | 4 options each | Wrong answer = reset | 7h cooldown</p><div id="surveysListContainer"></div></div>
         </div>
 
         <div id="referralSection" class="content-section">
             <div class="back-button" id="referralBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
-            <div class="referral-stats-container"><i class="fas fa-user-friends" style="font-size:2rem; color:var(--gold);"></i><h2 style="margin:10px 0;">5% Lifetime Commission</h2><div class="referral-stats-grid"><div class="stat-circle"><div class="stat-number" id="totalRefsStat">0</div><div>Referrals</div></div><div class="stat-circle"><div class="stat-number" id="totalCommStat">0</div><div>Commission (PEPE)</div></div></div><div class="referral-code-box"><span id="referralCodeDisplay"></span><button class="copy-btn-icon" id="copyReferralCodeBtn"><i class="fas fa-copy"></i> Copy</button></div><div class="info-note">Share code → friend joins → you earn 5% of their earnings!</div></div>
+            <div class="referral-stats-container"><i class="fas fa-user-friends" style="font-size:2rem; color:var(--gold);"></i><h2 style="margin:10px 0;">5% Lifetime Commission</h2><div class="referral-stats-grid"><div class="stat-circle"><div class="stat-number" id="totalRefsStat">0</div><div>Total Referrals</div></div><div class="stat-circle"><div class="stat-number" id="totalCommStat">0</div><div>Total Commission (PEPE)</div></div></div><div class="referral-code-box"><span id="referralCodeDisplay"></span><button class="copy-btn-icon" id="copyReferralCodeBtn"><i class="fas fa-copy"></i> Copy Code</button></div><div class="info-note">Share code → friend joins → you earn 5% of everything they earn!</div></div>
             <div><h3>📋 Your Referral Network</h3><div id="referralsList"></div></div>
         </div>
 
@@ -170,264 +175,123 @@
     <div class="bottom-nav"><button class="nav-btn active" id="navHome"><i class="fas fa-home"></i><span>Home</span></button><button class="nav-btn" id="navTasks"><i class="fas fa-tasks"></i><span>Tasks</span></button><button class="nav-btn" id="navSurvey"><i class="fas fa-poll"></i><span>Survey</span></button><button class="nav-btn" id="navReferral"><i class="fas fa-user-friends"></i><span>Friends</span></button><button class="nav-btn" id="navCashout"><i class="fas fa-wallet"></i><span>Cashout</span></button></div>
 </div>
 
-<div id="infoModal" class="modal"><div class="modal-content"><h2><i class="fas fa-headset"></i> For Support</h2><br><p>Need help? Contact:</p><div class="copyable" onclick="window.open('https://t.me/earnforearnsupport','_blank')">📱 Telegram: @earnforearnsupport</div><div class="copyable" onclick="window.location.href='mailto:earnforearnsupportteam@gmail.com'">📧 Email: earnforearnsupportteam@gmail.com</div><br><button id="closeInfoModal" style="background:var(--purple); padding:10px; border-radius:40px; width:100%;">Close</button></div></div>
-<div id="timerModal" class="modal"><div class="modal-content"><h3>⏳ Stay on Link Page</h3><div id="timerCountdown" style="font-size:2rem;">10</div><p>After 10s return to app.</p><button id="cancelTimerBtn" style="background:#333; padding:8px 20px; border-radius:40px; margin-top:10px;">Cancel</button></div></div>
+<div id="authContainer" class="auth-container" style="display: none;"><div class="auth-card"><div class="auth-tabs"><button class="auth-tab active" data-tab="signup">Sign Up</button><button class="auth-tab" data-tab="login">Login</button></div><div id="signupForm"><div class="auth-title">Create Account</div><div class="floating-label-group"><input type="text" id="signupName" class="floating-input" placeholder=" "><label class="floating-label">Full Name</label></div><div class="floating-label-group"><input type="email" id="signupEmail" class="floating-input" placeholder=" "><label class="floating-label">Email</label></div><div class="floating-label-group"><input type="password" id="signupPassword" class="floating-input" placeholder=" "><label class="floating-label">Password (6+ chars)</label></div><div class="floating-label-group"><input type="text" id="signupReferral" class="floating-input" placeholder=" "><label class="floating-label">Referral Code (opt)</label></div><div id="signupError" class="error-msg"></div><button id="doSignupBtn" class="auth-btn">Sign Up</button></div><div id="loginForm" style="display: none;"><div class="auth-title">Welcome Back</div><div class="floating-label-group"><input type="email" id="loginEmail" class="floating-input" placeholder=" "><label class="floating-label">Email</label></div><div class="floating-label-group"><input type="password" id="loginPassword" class="floating-input" placeholder=" "><label class="floating-label">Password</label></div><div id="loginError" class="error-msg"></div><button id="doLoginBtn" class="auth-btn">Login</button></div></div></div>
+
+<div id="infoModal" class="modal"><div class="modal-content"><h2><i class="fas fa-headset"></i> For Support</h2><br><p>Need help? Contact our support team:</p><div class="copyable" onclick="window.open('https://t.me/earnforearnsupport','_blank')">📱 Telegram: @earnforearnsupport</div><div class="copyable" onclick="window.location.href='mailto:earnforearnsupportteam@gmail.com'">📧 Email: earnforearnsupportteam@gmail.com</div><br><p>Response within 48 hours.</p><br><button id="closeInfoModal" style="background:var(--purple); padding:10px; border-radius:40px; width:100%;">Close</button></div></div>
+<div id="timerModal" class="modal"><div class="modal-content"><h3>⏳ Stay on Link Page</h3><div id="timerCountdown" style="font-size:2rem;">10</div><p>Do not close. After 10s return to app.</p><button id="cancelTimerBtn" style="background:#333; padding:8px 20px; border-radius:40px; margin-top:10px;">Cancel</button></div></div>
 <div id="tryAgainModal" class="modal"><div class="modal-content"><h3>⚠️ Risk Warning</h3><p>You returned before 10 seconds. Please stay on the link for full duration.</p><button id="tryAgainRetryBtn" style="background:var(--purple); padding:8px 20px; border-radius:40px; margin:5px;">Try Again</button><button id="tryAgainCancelBtn" style="background:#333; padding:8px 20px; border-radius:40px;">Cancel</button></div></div>
 <div id="surveyModal" class="modal"><div class="modal-content" style="max-width:450px; width:95%; max-height:90vh; overflow-y:auto;"><h2 id="modalSurveyTitle">Survey Challenge (1,600 PEPE)</h2><div id="surveyModalContent"></div></div></div>
 
 <script>
-    // Firebase Config
-    const firebaseConfig = {
-        apiKey: "AIzaSyCAlQL5txzjUagN9A5L0Idki9sjAezOczk",
-        authDomain: "earn-for-earn.firebaseapp.com",
-        databaseURL: "https://earn-for-earn-default-rtdb.firebaseio.com",
-        projectId: "earn-for-earn",
-        storageBucket: "earn-for-earn.firebasestorage.app",
-        messagingSenderId: "730217056305",
-        appId: "1:730217056305:web:d1ab3c775b1ed097742d10",
-        measurementId: "G-N8PP006EGK"
-    };
-    let db = null;
-    try {
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.database();
-        console.log("Firebase initialized");
-    } catch(e) { console.warn("Firebase init failed", e); db = null; }
-
-    // Telegram / Guest detection
-    let webApp = window.Telegram?.WebApp;
-    if(webApp) webApp.expand();
-    let tgUser = webApp?.initDataUnsafe?.user;
-    let telegramId, telegramUsername;
-    if(tgUser && tgUser.id) {
-        telegramId = tgUser.id.toString();
-        telegramUsername = tgUser.username || tgUser.first_name || ("user_" + telegramId);
-    } else {
-        let guestId = localStorage.getItem('earn_guest_id');
-        if(!guestId) {
-            guestId = "guest_" + Date.now() + "_" + Math.random().toString(36).substr(2,6);
-            localStorage.setItem('earn_guest_id', guestId);
-        }
-        telegramId = guestId;
-        telegramUsername = "Guest_" + guestId.slice(-6);
-    }
-    console.log("User ID:", telegramId, "Username:", telegramUsername);
-
+    // 6 Languages (simplified)
+    let currentLang = localStorage.getItem('selectedLanguage') || 'en';
+    function applyTranslations(){ document.getElementById('currentLangLabel').innerText = {en:'English',hi:'हिन्दी',bn:'বাংলা',es:'Español',ar:'العربية',fr:'Français'}[currentLang]; }
+    function loadLangOptions(){ let langs=['en','hi','bn','es','ar','fr'], names=['English','हिन्दी','বাংলা','Español','العربية','Français']; let container=document.getElementById('langOptionsList'); container.innerHTML=''; langs.forEach((c,i)=>{ let div=document.createElement('div'); div.className='lang-option'; div.innerText=names[i]; div.onclick=()=>{ currentLang=c; localStorage.setItem('selectedLanguage',c); applyTranslations(); refreshAllTexts(); document.getElementById('langMenu').classList.remove('active'); }; container.appendChild(div); }); }
+    function refreshAllTexts(){ applyTranslations(); renderLinkTaskUI(); renderVideoTaskUI(); renderSurveysList(); renderOneTimeTasks(); renderReferralsList(); }
+    // LocalStorage
+    const STORAGE_KEY = 'pepe_final_v10'; const SESSION_KEY = 'pepe_session_v10';
+    function loadUsers(){ let d=localStorage.getItem(STORAGE_KEY); return d?JSON.parse(d):[]; }
+    function saveUsers(u){ localStorage.setItem(STORAGE_KEY,JSON.stringify(u)); }
+    function getCurrentUser(){ let s=localStorage.getItem(SESSION_KEY); return s?JSON.parse(s):null; }
+    function setCurrentUser(u){ localStorage.setItem(SESSION_KEY,JSON.stringify(u)); }
     let currentUserData = null;
-    let userRef = null;
-
-    function generateReferralCode(username) {
-        let base = username.replace(/[^a-zA-Z0-9]/g, '').slice(0,5).toUpperCase();
-        if(base.length < 3) base = "USER";
-        return base + Math.random().toString(36).substring(2,7).toUpperCase();
-    }
-
-    async function initUserData() {
-        if(db) {
-            userRef = db.ref(`users/${telegramId}`);
-            const snapshot = await userRef.once('value');
-            if(!snapshot.exists()) {
-                const newUser = {
-                    username: telegramUsername, telegramId: telegramId, balance: 0, totalEarned: 0, referralBonus: 0, referrals: [],
-                    referralCode: generateReferralCode(telegramUsername), referredBy: null, createdAt: Date.now(),
-                    linkTask: { steps: 0, cooldownUntil: 0 }, videoTask10: { steps: 0, cooldownUntil: 0 },
-                    linkPeriodStart: getPeriodStart(), linkCountInPeriod: 0, videoPeriodStart10: getPeriodStart(), videoCountInPeriod10: 0,
-                    surveyCooldowns: { 1:0, 2:0, 3:0 }, oneTimeCompleted: { updateChannel: false, proofChannel: false },
-                    withdrawalHistory: [], tasksCompleted: 0
-                };
-                await userRef.set(newUser);
-                currentUserData = newUser;
-            } else {
-                currentUserData = snapshot.val();
-            }
-            userRef.on('value', (snap) => { if(snap.exists()) { currentUserData = snap.val(); refreshUI(); } });
-        } else {
-            // Fallback local storage
-            let localData = localStorage.getItem('earn_user_' + telegramId);
-            if(!localData) {
-                currentUserData = {
-                    username: telegramUsername, telegramId: telegramId, balance: 0, totalEarned: 0, referralBonus: 0, referrals: [],
-                    referralCode: generateReferralCode(telegramUsername), referredBy: null, createdAt: Date.now(),
-                    linkTask: { steps: 0, cooldownUntil: 0 }, videoTask10: { steps: 0, cooldownUntil: 0 },
-                    linkPeriodStart: getPeriodStart(), linkCountInPeriod: 0, videoPeriodStart10: getPeriodStart(), videoCountInPeriod10: 0,
-                    surveyCooldowns: { 1:0, 2:0, 3:0 }, oneTimeCompleted: { updateChannel: false, proofChannel: false },
-                    withdrawalHistory: [], tasksCompleted: 0
-                };
-                localStorage.setItem('earn_user_' + telegramId, JSON.stringify(currentUserData));
-            } else {
-                currentUserData = JSON.parse(localData);
-            }
-        }
-        refreshUI();
-        document.getElementById('mainApp').style.display = 'block';
-    }
-
-    function getPeriodStart() { return Math.floor(Date.now() / 28800000) * 28800000; }
-    function getLinkRemaining() { let p=getPeriodStart(); if(currentUserData.linkPeriodStart!==p) return 10; return Math.max(0,10-(currentUserData.linkCountInPeriod||0)); }
-    async function incrementLinkCount() { let p=getPeriodStart(); let cnt=(currentUserData.linkPeriodStart===p?(currentUserData.linkCountInPeriod||0)+1:1); await updateUserData({ linkPeriodStart:p, linkCountInPeriod:cnt }); }
-    function getVideoRemaining10() { let p=getPeriodStart(); if(currentUserData.videoPeriodStart10!==p) return 10; return Math.max(0,10-(currentUserData.videoCountInPeriod10||0)); }
-    async function incrementVideoCount10() { let p=getPeriodStart(); let cnt=(currentUserData.videoPeriodStart10===p?(currentUserData.videoCountInPeriod10||0)+1:1); await updateUserData({ videoPeriodStart10:p, videoCountInPeriod10:cnt }); }
-
-    async function updateUserData(updates) {
-        Object.assign(currentUserData, updates);
-        if(db && userRef) await userRef.update(updates);
-        else localStorage.setItem('earn_user_' + telegramId, JSON.stringify(currentUserData));
-        refreshUI();
-    }
-
-    async function addEarnings(amount, source) {
-        let newBalance = (currentUserData.balance||0) + amount;
-        let newTotal = (currentUserData.totalEarned||0) + amount;
-        let updates = { balance: newBalance, totalEarned: newTotal };
-        if(source === 'task' || source === 'survey') updates.tasksCompleted = (currentUserData.tasksCompleted||0) + 1;
-        await updateUserData(updates);
-        if(source !== 'commission' && currentUserData.referredBy && db) {
-            let referrerRef = db.ref(`users/${currentUserData.referredBy}`);
-            let referrerSnap = await referrerRef.once('value');
-            if(referrerSnap.exists()) {
-                let referrer = referrerSnap.val();
-                let commission = amount * 0.05;
-                if(commission > 0) {
-                    let newRefBalance = (referrer.balance||0) + commission;
-                    let newRefTotal = (referrer.totalEarned||0) + commission;
-                    let newRefBonus = (referrer.referralBonus||0) + commission;
-                    let refs = referrer.referrals || [];
-                    let existing = refs.find(r => r.userId === telegramId);
-                    if(existing) existing.commissionEarned = (existing.commissionEarned||0) + commission;
-                    else refs.push({ userId: telegramId, username: telegramUsername, date: Date.now(), commissionEarned: commission });
-                    await referrerRef.update({ balance: newRefBalance, totalEarned: newRefTotal, referralBonus: newRefBonus, referrals: refs });
-                }
-            }
-        }
-    }
-
-    // One-time tasks
-    async function completeOneTimeTask(taskId, reward, link) {
-        if(currentUserData.oneTimeCompleted?.[taskId]) { showStatus('Already done', 'error'); return; }
-        window.open(link, '_blank');
-        await addEarnings(reward, 'one_time');
-        await updateUserData({ oneTimeCompleted: { ...currentUserData.oneTimeCompleted, [taskId]: true } });
-        showStatus(`+${reward} PEPE earned!`, 'success');
-        renderOneTimeTasks();
-    }
-    function renderOneTimeTasks() {
-        let container = document.getElementById('oneTimeTasksContainer');
-        if(!container) return;
-        let tasks = [
-            { id: 'updateChannel', name: 'Join Update Channel', link: 'https://t.me/earnforearnupdate', reward: 1000 },
-            { id: 'proofChannel', name: 'Join Payment Proof Channel', link: 'https://t.me/earnforearnpaymentproof', reward: 1000 }
-        ];
-        let pending = tasks.filter(t => !currentUserData.oneTimeCompleted?.[t.id]);
-        if(pending.length === 0) { container.innerHTML = '<div class="info-note">All one-time tasks completed.</div>'; return; }
-        container.innerHTML = '<h3>⭐ One-Time Rewards (1,000 PEPE each)</h3>' + pending.map(t => `<div class="one-time-task-box"><div><strong>${t.name}</strong> +${t.reward} PEPE</div><button class="join-telegram-btn" data-id="${t.id}" data-reward="${t.reward}" data-link="${t.link}">Join & Claim</button></div>`).join('');
-        document.querySelectorAll('.join-telegram-btn').forEach(btn => { btn.onclick = () => completeOneTimeTask(btn.dataset.id, parseInt(btn.dataset.reward), btn.dataset.link); });
-    }
-    function openGmailSupport() { window.open('https://t.me/earnforearneamilinformation?text='+encodeURIComponent("I want to create a Gmail account. Give me Gmail information and help me."), '_blank'); showStatus('Support chat opened.', 'info'); }
-
-    // 10-Link Challenge
-    const LINK_URLS = ["https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757","https://earnforearnlinksads2.vercel.app/","https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://earnforearnlinksads2.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757"];
+    async function addEarnings(userId,amount,source){ let users=loadUsers(); let idx=users.findIndex(u=>u.id===userId); if(idx===-1) return; let user=users[idx]; user.balance=(user.balance||0)+amount; user.totalEarned=(user.totalEarned||0)+amount; if(source!=='commission' && user.referredBy){ let refIdx=users.findIndex(u=>u.id===user.referredBy); if(refIdx!==-1){ let commission=amount*0.05; if(commission>0){ users[refIdx].balance+=commission; users[refIdx].totalEarned+=commission; users[refIdx].referralBonus=(users[refIdx].referralBonus||0)+commission; let refs=users[refIdx].referrals||[]; let r=refs.find(r=>r.userId===userId); if(r) r.commissionEarned=(r.commissionEarned||0)+commission; else refs.push({ userId, username: user.fullName.split(' ')[0], date:Date.now(), commissionEarned:commission }); users[refIdx].referrals=refs; } } } if(source==='task'||source==='survey') user.tasksCompleted=(user.tasksCompleted||0)+1; saveUsers(users); if(currentUserData && currentUserData.id===userId){ currentUserData=users[idx]; setCurrentUser(currentUserData); refreshUI(); } }
+    async function saveUserData(updates){ if(!currentUserData) return; let users=loadUsers(); let idx=users.findIndex(u=>u.id===currentUserData.id); if(idx!==-1){ users[idx]={...users[idx],...updates}; saveUsers(users); currentUserData=users[idx]; setCurrentUser(currentUserData); refreshUI(); } }
+    const ONETIME_TASKS=[{id:'updateChannel',name:'Join Update Channel',link:'https://t.me/earnforearnupdate',reward:1000},{id:'proofChannel',name:'Join Payment Proof Channel',link:'https://t.me/earnforearnpaymentproof',reward:1000}];
+    function ensureOneTimeField(user){ if(!user.oneTimeCompleted) user.oneTimeCompleted={}; ONETIME_TASKS.forEach(t=>{ if(user.oneTimeCompleted[t.id]===undefined) user.oneTimeCompleted[t.id]=false; }); return user; }
+    async function completeOneTimeTask(id,reward,link){ if(currentUserData.oneTimeCompleted?.[id]) return showStatus('Already done','error'); window.open(link,'_blank'); await saveUserData({ oneTimeCompleted:{...currentUserData.oneTimeCompleted,[id]:true} }); await addEarnings(currentUserData.id,reward,'one_time'); showStatus(`+${reward} PEPE earned!`,'success'); renderOneTimeTasks(); }
+    function renderOneTimeTasks(){ let container=document.getElementById('oneTimeTasksContainer'); if(!container||!currentUserData) return; ensureOneTimeField(currentUserData); let pending=ONETIME_TASKS.filter(t=>!currentUserData.oneTimeCompleted[t.id]); if(pending.length===0){ container.innerHTML='<div class="info-note">All one-time tasks completed.</div>'; return; } container.innerHTML='<h3>⭐ One-Time Rewards (1,000 PEPE each)</h3>'+pending.map(t=>`<div class="one-time-task-box"><div><strong>${t.name}</strong> +${t.reward} PEPE</div><button class="join-telegram-btn" data-id="${t.id}" data-reward="${t.reward}" data-link="${t.link}">Join Channel & Claim</button></div>`).join(''); document.querySelectorAll('.join-telegram-btn').forEach(btn=>btn.addEventListener('click',()=>completeOneTimeTask(btn.dataset.id,parseInt(btn.dataset.reward),btn.dataset.link))); }
+    function openGmailSupport(){ window.open('https://t.me/earnforearneamilinformation?text='+encodeURIComponent("I want to create a Gmail account. Give me Gmail information and help me."), '_blank'); showStatus('Support chat opened.','info'); }
+    // LINK CHALLENGE (unchanged)
+    const LINK_URLS=["https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757","https://earnforearnlinksads2.vercel.app/","https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://earnforearnlinksads2.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757"];
     let pendingLinkStep=null, linkStartTime=0, linkInterval=null;
-    async function claimLinkReward() { if((currentUserData.linkTask?.steps||0) < 10) return showStatus('Complete all 10 links first', 'error'); if((currentUserData.linkTask?.cooldownUntil||0) > Date.now()) return showStatus('Cooldown active', 'error'); if(getLinkRemaining() <= 0) return showStatus('Limit reached 10/8h', 'error'); await incrementLinkCount(); await addEarnings(1600, 'task'); await updateUserData({ linkTask: { steps: 0, cooldownUntil: Date.now() + 40000 } }); showStatus('+1,600 PEPE claimed!', 'success'); refreshUI(); renderLinkTaskUI(); updateCooldownDisplay('linkCooldownArea', Date.now()+40000); }
-    async function completeLinkStep(step) { await updateUserData({ linkTask: { steps: step, cooldownUntil: currentUserData.linkTask?.cooldownUntil || 0 } }); refreshUI(); renderLinkTaskUI(); showStatus(`Link ${step}/10 done`, 'success'); }
-    function startLinkStep(step) { pendingLinkStep=step; let modal=document.getElementById('timerModal'); let timerSpan=document.getElementById('timerCountdown'); let sec=10; timerSpan.innerText=sec; if(linkInterval) clearInterval(linkInterval); linkInterval=setInterval(()=>{ sec--; timerSpan.innerText=sec; if(sec<=0)clearInterval(linkInterval); },1000); modal.classList.add('active'); window.open(LINK_URLS[step-1], '_blank'); linkStartTime=Date.now(); let onVisibility=()=>{ if(!document.hidden && pendingLinkStep===step){ let elapsed=(Date.now()-linkStartTime)/1000; if(elapsed>=10){ clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange', onVisibility); completeLinkStep(step); } else { clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange', onVisibility); showRiskWarning(step); } pendingLinkStep=null; } }; document.addEventListener('visibilitychange', onVisibility); document.getElementById('cancelTimerBtn').onclick=()=>{ clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange', onVisibility); pendingLinkStep=null; showStatus('Cancelled','error'); }; }
-    function showRiskWarning(step) { let modal=document.getElementById('tryAgainModal'); modal.classList.add('active'); document.getElementById('tryAgainRetryBtn').onclick=()=>{ modal.classList.remove('active'); startLinkStep(step); }; document.getElementById('tryAgainCancelBtn').onclick=()=>modal.classList.remove('active'); }
-    function renderLinkTaskUI() { let steps=currentUserData.linkTask?.steps||0; let cooldown=Math.max(0,(currentUserData.linkTask?.cooldownUntil||0)-Date.now()); let canStart=cooldown<=0; let html=''; for(let i=1;i<=10;i++){ let cls='step-btn'; if(steps>=i) cls+=' completed'; else if(steps+1===i && canStart) cls+=' active-step'; else cls+=' locked'; html+=`<div class="${cls}" data-step="${i}"><i class="fas fa-link"></i><span>${i}</span></div>`; } document.getElementById('linkStepsContainer10').innerHTML=html; document.getElementById('claimLinkRewardBtn').style.display=(steps>=10 && cooldown<=0 && getLinkRemaining()>0)?'block':'none'; document.getElementById('linkProgress').innerHTML=`${steps}/10 links`; document.querySelectorAll('#linkStepsContainer10 .step-btn').forEach(btn=>{ btn.onclick=()=>{ let st=parseInt(btn.dataset.step); if(steps>=st) return; if(steps+1!==st) return showStatus('Complete previous','error'); if(cooldown>0) return showStatus('Cooldown','error'); startLinkStep(st); }; }); updateResetTimer('linkResetTimer', getPeriodStart()+28800000); document.getElementById('linkDailyLimitText').innerText=`claims ${10-getLinkRemaining()}/10`; if(cooldown>0) updateCooldownDisplay('linkCooldownArea', currentUserData.linkTask.cooldownUntil); else document.getElementById('linkCooldownArea').innerHTML=''; }
-
-    // 10-Video Challenge
+    function getPeriodStart(){ return Math.floor(Date.now()/28800000)*28800000; }
+    function getLinkRemaining(){ let p=getPeriodStart(); if(currentUserData.linkPeriodStart!==p) return 10; return Math.max(0,10-(currentUserData.linkCountInPeriod||0)); }
+    async function incrementLinkCount(){ let p=getPeriodStart(); let cnt=(currentUserData.linkPeriodStart===p?(currentUserData.linkCountInPeriod||0)+1:1); await saveUserData({ linkPeriodStart:p, linkCountInPeriod:cnt }); }
+    async function claimLinkReward(){ if((currentUserData.linkTask?.steps||0)<10) return showStatus('Complete all 10 links','error'); if((currentUserData.linkTask?.cooldownUntil||0)>Date.now()) return showStatus('Cooldown active','error'); if(getLinkRemaining()<=0) return showStatus('Limit reached 10/8h','error'); await incrementLinkCount(); await addEarnings(currentUserData.id,1600,'task'); await saveUserData({ linkTask:{ steps:0, cooldownUntil:Date.now()+40000 } }); showStatus('+1,600 PEPE claimed!','success'); refreshUI(); renderLinkTaskUI(); updateCooldownDisplay('linkCooldownArea', Date.now()+40000); }
+    async function completeLinkStep(step){ await saveUserData({ linkTask:{ steps:step, cooldownUntil:currentUserData.linkTask?.cooldownUntil||0 } }); refreshUI(); renderLinkTaskUI(); showStatus(`Link ${step}/10 done`,'success'); }
+    function startLinkStep(step){ pendingLinkStep=step; let modal=document.getElementById('timerModal'); let timerSpan=document.getElementById('timerCountdown'); let sec=10; timerSpan.innerText=sec; if(linkInterval) clearInterval(linkInterval); linkInterval=setInterval(()=>{ sec--; timerSpan.innerText=sec; if(sec<=0)clearInterval(linkInterval); },1000); modal.classList.add('active'); window.open(LINK_URLS[step-1],'_blank'); linkStartTime=Date.now(); let onVisibility=()=>{ if(!document.hidden && pendingLinkStep===step){ let elapsed=(Date.now()-linkStartTime)/1000; if(elapsed>=10){ clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); completeLinkStep(step); }else{ clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showRiskWarning(step); } pendingLinkStep=null; } }; document.addEventListener('visibilitychange',onVisibility); document.getElementById('cancelTimerBtn').onclick=()=>{ clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); pendingLinkStep=null; showStatus('Cancelled','error'); }; }
+    function showRiskWarning(step){ let modal=document.getElementById('tryAgainModal'); modal.classList.add('active'); document.getElementById('tryAgainRetryBtn').onclick=()=>{ modal.classList.remove('active'); startLinkStep(step); }; document.getElementById('tryAgainCancelBtn').onclick=()=>modal.classList.remove('active'); }
+    function updateCooldownDisplay(areaId, endTime){ let area=document.getElementById(areaId); if(!area) return; let interval=setInterval(()=>{ let rem=Math.max(0, endTime-Date.now()); if(rem<=0){ area.innerHTML=''; clearInterval(interval); return; } let sec=Math.ceil(rem/1000); area.innerHTML=`<div class="live-cooldown">⏱️ Cooldown: ${sec}s</div>`; }, 500); }
+    function renderLinkTaskUI(){ if(!currentUserData) return; let steps=currentUserData.linkTask?.steps||0; let cooldown=Math.max(0,(currentUserData.linkTask?.cooldownUntil||0)-Date.now()); let canStart=cooldown<=0; let html=''; for(let i=1;i<=10;i++){ let cls='step-btn'; if(steps>=i) cls+=' completed'; else if(steps+1===i && canStart) cls+=' active-step'; else cls+=' locked'; html+=`<div class="${cls}" data-step="${i}"><i class="fas fa-link"></i><span>${i}</span></div>`; } document.getElementById('linkStepsContainer10').innerHTML=html; let claimBtn=document.getElementById('claimLinkRewardBtn'); claimBtn.style.display=(steps>=10 && cooldown<=0 && getLinkRemaining()>0)?'block':'none'; document.getElementById('linkProgress').innerHTML=`${steps}/10 links`; document.querySelectorAll('#linkStepsContainer10 .step-btn').forEach(btn=>{ btn.onclick=()=>{ let st=parseInt(btn.dataset.step); if(steps>=st) return; if(steps+1!==st) return showStatus('Complete previous','error'); if(cooldown>0) return showStatus('Cooldown','error'); startLinkStep(st); }; }); updateResetTimer('linkResetTimer', getPeriodStart()+28800000); document.getElementById('linkDailyLimitText').innerText=`claims ${10-getLinkRemaining()}/10`; if(cooldown>0) updateCooldownDisplay('linkCooldownArea', currentUserData.linkTask.cooldownUntil); else document.getElementById('linkCooldownArea').innerHTML=''; }
+    // VIDEO CHALLENGE (unchanged)
     const VIDEO_LINK_URL="https://earnforearnlinksads.vercel.app/";
     const allAdNetworks = ['adsgram', 'monetag', 'giga', 'onclicka'];
     async function showAnyAd(networks){ for(let net of networks){ try{ if(net==='adsgram'){ let c=window.Adsgram.init({blockId:"int-28543"}); await c.show(); return true; } if(net==='monetag'){ await window.show_10541383(); return true; } if(net==='giga'){ await window.showGiga(); return true; } if(net==='onclicka'){ let fn=await window.initCdTma({id:'438680'}); await fn(); return true; } }catch(e){ continue; } } return false; }
     let pendingVideoStep=null, videoLinkStart=0, videoLinkInterval=null;
+    async function completeVideoStep(step){ await saveUserData({ videoTask10:{ steps:step, cooldownUntil:currentUserData.videoTask10?.cooldownUntil||0 } }); refreshUI(); renderVideoTaskUI(); showStatus(`Video step ${step}/10 done`,'success'); }
+    async function startVideoStep(step){ let adType = videoAdSeq[step-1]; if(adType==='link'){ pendingVideoStep=step; let modal=document.getElementById('timerModal'); let timerSpan=document.getElementById('timerCountdown'); let sec=10; timerSpan.innerText=sec; if(videoLinkInterval) clearInterval(videoLinkInterval); videoLinkInterval=setInterval(()=>{ sec--; timerSpan.innerText=sec; if(sec<=0)clearInterval(videoLinkInterval); },1000); modal.classList.add('active'); window.open(VIDEO_LINK_URL,'_blank'); videoLinkStart=Date.now(); let onVisibility=()=>{ if(!document.hidden && pendingVideoStep===step){ let elapsed=(Date.now()-videoLinkStart)/1000; if(elapsed>=10){ clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); completeVideoStep(step); }else{ clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showRiskWarning(step); } pendingVideoStep=null; } }; document.addEventListener('visibilitychange',onVisibility); document.getElementById('cancelTimerBtn').onclick=()=>{ clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); pendingVideoStep=null; showStatus('Cancelled','error'); }; } else { showStatus('Loading ad...','info'); let success = await showAnyAd([adType, ...allAdNetworks.filter(n=>n!==adType)]); if(success){ await completeVideoStep(step); } else { showStatus('All ad networks failed. Please retry.','error'); } } }
     const videoAdSeq = ['adsgram','monetag','giga','onclicka','link','adsgram','monetag','giga','onclicka','link'];
-    async function completeVideoStep(step) { await updateUserData({ videoTask10: { steps: step, cooldownUntil: currentUserData.videoTask10?.cooldownUntil||0 } }); refreshUI(); renderVideoTaskUI(); showStatus(`Video step ${step}/10 done`,'success'); }
-    async function startVideoStep(step) { let adType = videoAdSeq[step-1]; if(adType==='link'){ pendingVideoStep=step; let modal=document.getElementById('timerModal'); let timerSpan=document.getElementById('timerCountdown'); let sec=10; timerSpan.innerText=sec; if(videoLinkInterval) clearInterval(videoLinkInterval); videoLinkInterval=setInterval(()=>{ sec--; timerSpan.innerText=sec; if(sec<=0)clearInterval(videoLinkInterval); },1000); modal.classList.add('active'); window.open(VIDEO_LINK_URL,'_blank'); videoLinkStart=Date.now(); let onVisibility=()=>{ if(!document.hidden && pendingVideoStep===step){ let elapsed=(Date.now()-videoLinkStart)/1000; if(elapsed>=10){ clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); completeVideoStep(step); }else{ clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showRiskWarning(step); } pendingVideoStep=null; } }; document.addEventListener('visibilitychange',onVisibility); document.getElementById('cancelTimerBtn').onclick=()=>{ clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); pendingVideoStep=null; showStatus('Cancelled','error'); }; } else { showStatus('Loading ad...','info'); let success = await showAnyAd([adType, ...allAdNetworks.filter(n=>n!==adType)]); if(success) await completeVideoStep(step); else showStatus('All ad networks failed. Retry.','error'); } }
-    async function claimVideoReward10() { let steps=currentUserData.videoTask10?.steps||0; let cooldown=Math.max(0,(currentUserData.videoTask10?.cooldownUntil||0)-Date.now()); if(steps<10) return showStatus('Complete all 10 steps','error'); if(cooldown>0) return showStatus('Cooldown active','error'); if(getVideoRemaining10()<=0) return showStatus('Limit reached 10/8h','error'); await incrementVideoCount10(); await addEarnings(1600,'task'); await updateUserData({ videoTask10: { steps:0, cooldownUntil:Date.now()+40000 } }); showStatus('+1,600 PEPE claimed!','success'); refreshUI(); renderVideoTaskUI(); updateCooldownDisplay('videoCooldownArea10', Date.now()+40000); }
-    function renderVideoTaskUI() { let steps=currentUserData.videoTask10?.steps||0; let cooldown=Math.max(0,(currentUserData.videoTask10?.cooldownUntil||0)-Date.now()); let canStart=cooldown<=0; let html=''; for(let i=1;i<=10;i++){ let cls='step-btn'; if(steps>=i) cls+=' completed'; else if(steps+1===i && canStart) cls+=' active-step'; else cls+=' locked'; html+=`<div class="${cls}" data-vstep="${i}"><i class="fas fa-video"></i><span>${i}</span></div>`; } document.getElementById('videoStepsContainer10').innerHTML=html; document.getElementById('claimVideoRewardBtn10').style.display=(steps>=10 && cooldown<=0 && getVideoRemaining10()>0)?'block':'none'; document.getElementById('videoProgress10').innerHTML=`${steps}/10 ads`; document.querySelectorAll('#videoStepsContainer10 .step-btn').forEach(btn=>{ btn.onclick=()=>{ let st=parseInt(btn.dataset.vstep); if(steps>=st) return; if(steps+1!==st) return showStatus('Complete previous','error'); if(cooldown>0) return showStatus('Cooldown','error'); startVideoStep(st); }; }); updateResetTimer('videoResetTimer10', getPeriodStart()+28800000); document.getElementById('videoDailyLimitText').innerText=`claims ${10-getVideoRemaining10()}/10`; if(cooldown>0) updateCooldownDisplay('videoCooldownArea10', currentUserData.videoTask10.cooldownUntil); else document.getElementById('videoCooldownArea10').innerHTML=''; }
-
-    // Surveys
-    const baseQuestions = [ {text:"What is the capital of France?", options:["Paris","Berlin","Madrid","London"], correct:"Paris"}, {text:"15 + 27 = ?", options:["42","41","43","44"], correct:"42"}, {text:"Who created Bitcoin?", options:["Satoshi Nakamoto","Elon Musk","Vitalik Buterin","Charles Hoskinson"], correct:"Satoshi Nakamoto"}, {text:"9 × 8 = ?", options:["72","64","81","56"], correct:"72"}, {text:"Largest ocean on Earth?", options:["Pacific","Atlantic","Indian","Arctic"], correct:"Pacific"}, {text:"Telegram was founded by?", options:["Pavel Durov","Mark Zuckerberg","Jack Dorsey","Evan Spiegel"], correct:"Pavel Durov"}, {text:"144 ÷ 12 = ?", options:["12","10","14","16"], correct:"12"}, {text:"Most populous country?", options:["China","India","USA","Indonesia"], correct:"China"}, {text:"Which is our platform bot name?", options:["EarnBot","PEPE Helper","SupportBot","RewardBot"], correct:"EarnBot"}, {text:"25% of 200 = ?", options:["50","25","75","100"], correct:"50"} ];
+    function getVideoRemaining10(){ let p=getPeriodStart(); if(currentUserData.videoPeriodStart10!==p) return 10; return Math.max(0,10-(currentUserData.videoCountInPeriod10||0)); }
+    async function incrementVideoCount10(){ let p=getPeriodStart(); let cnt=(currentUserData.videoPeriodStart10===p?(currentUserData.videoCountInPeriod10||0)+1:1); await saveUserData({ videoPeriodStart10:p, videoCountInPeriod10:cnt }); }
+    async function claimVideoReward10(){ let steps=currentUserData.videoTask10?.steps||0; let cooldown=Math.max(0,(currentUserData.videoTask10?.cooldownUntil||0)-Date.now()); if(steps<10) return showStatus('Complete all 10 steps','error'); if(cooldown>0) return showStatus('Cooldown active','error'); if(getVideoRemaining10()<=0) return showStatus('Limit reached 10/8h','error'); await incrementVideoCount10(); await addEarnings(currentUserData.id,1600,'task'); await saveUserData({ videoTask10:{ steps:0, cooldownUntil:Date.now()+40000 } }); showStatus('+1,600 PEPE claimed!','success'); refreshUI(); renderVideoTaskUI(); updateCooldownDisplay('videoCooldownArea10', Date.now()+40000); }
+    function renderVideoTaskUI(){ if(!currentUserData) return; let steps=currentUserData.videoTask10?.steps||0; let cooldown=Math.max(0,(currentUserData.videoTask10?.cooldownUntil||0)-Date.now()); let canStart=cooldown<=0; let html=''; for(let i=1;i<=10;i++){ let cls='step-btn'; if(steps>=i) cls+=' completed'; else if(steps+1===i && canStart) cls+=' active-step'; else cls+=' locked'; html+=`<div class="${cls}" data-vstep="${i}"><i class="fas fa-video"></i><span>${i}</span></div>`; } document.getElementById('videoStepsContainer10').innerHTML=html; let claimBtn=document.getElementById('claimVideoRewardBtn10'); claimBtn.style.display=(steps>=10 && cooldown<=0 && getVideoRemaining10()>0)?'block':'none'; document.getElementById('videoProgress10').innerHTML=`${steps}/10 ads`; document.querySelectorAll('#videoStepsContainer10 .step-btn').forEach(btn=>{ btn.onclick=()=>{ let st=parseInt(btn.dataset.vstep); if(steps>=st) return; if(steps+1!==st) return showStatus('Complete previous','error'); if(cooldown>0) return showStatus('Cooldown','error'); startVideoStep(st); }; }); updateResetTimer('videoResetTimer10', getPeriodStart()+28800000); document.getElementById('videoDailyLimitText').innerText=`claims ${10-getVideoRemaining10()}/10`; if(cooldown>0) updateCooldownDisplay('videoCooldownArea10', currentUserData.videoTask10.cooldownUntil); else document.getElementById('videoCooldownArea10').innerHTML=''; }
+    function updateResetTimer(elId,nextReset){ let interval=setInterval(()=>{ let r=Math.max(0,nextReset-Date.now()); if(r<=0) location.reload(); let h=Math.floor(r/3600000),m=Math.floor((r%3600000)/60000),s=Math.floor((r%60000)/1000); let el=document.getElementById(elId); if(el) el.innerText=`Reset in ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; },1000); }
+    // SURVEY - Only 3 surveys
+    const baseQuestions = [
+        {text:"What is the capital of France?", options:["Paris","Berlin","Madrid","London"], correct:"Paris"},
+        {text:"15 + 27 = ?", options:["42","41","43","44"], correct:"42"},
+        {text:"Who created Bitcoin?", options:["Satoshi Nakamoto","Elon Musk","Vitalik Buterin","Charles Hoskinson"], correct:"Satoshi Nakamoto"},
+        {text:"9 × 8 = ?", options:["72","64","81","56"], correct:"72"},
+        {text:"Largest ocean on Earth?", options:["Pacific","Atlantic","Indian","Arctic"], correct:"Pacific"},
+        {text:"Telegram was founded by?", options:["Pavel Durov","Mark Zuckerberg","Jack Dorsey","Evan Spiegel"], correct:"Pavel Durov"},
+        {text:"144 ÷ 12 = ?", options:["12","10","14","16"], correct:"12"},
+        {text:"Most populous country?", options:["China","India","USA","Indonesia"], correct:"China"},
+        {text:"Which is our platform bot name?", options:["EarnBot","PEPE Helper","SupportBot","RewardBot"], correct:"EarnBot"},
+        {text:"25% of 200 = ?", options:["50","25","75","100"], correct:"50"}
+    ];
     function shuffleArray(arr){ for(let i=arr.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
     function getRandomizedQuestions(){ let qs = [...baseQuestions]; for(let q of qs){ q.options = shuffleArray([...q.options]); } return shuffleArray(qs).slice(0,10); }
     let surveyActive=false, currentSurveyQuestions=[], currentAnswers=[], currentStep=0, currentSurveyId=null;
-    async function showAdexoraAndLink(){ try{ if(window.showAdexora) await window.showAdexora(); }catch(e){} window.open('https://ukuleqasforsalesre.com?hTTVD=1246757','_blank'); }
-    async function renderSurveysList(){ let cont=document.getElementById('surveysListContainer'); if(!cont) return; cont.innerHTML=''; let cd=currentUserData.surveyCooldowns||{}; for(let i=1;i<=3;i++){ let avail=(cd[i]||0)<=Date.now(); let btn=document.createElement('button'); btn.innerText=avail?'Start Survey (1,600 PEPE)':`Locked (${Math.ceil(((cd[i]||0)-Date.now())/3600000)}h)`; btn.className='survey-start-btn'; if(!avail) btn.disabled=true; btn.onclick=()=>startSurvey(i); let div=document.createElement('div'); div.className='survey-item'; div.innerHTML=`<span><strong>Survey ${i}</strong><br><small>1,600 PEPE</small></span>`; div.appendChild(btn); cont.appendChild(div); } }
+    async function showAdexoraAndLink(){ try{ if(window.showAdexora){ await window.showAdexora(); } else { console.warn("Adexora not ready"); } }catch(e){ console.warn("Adexora failed",e); } window.open('https://ukuleqasforsalesre.com?hTTVD=1246757','_blank'); }
+    async function renderSurveysList(){ let cont=document.getElementById('surveysListContainer'); if(!cont) return; cont.innerHTML=''; let cd=currentUserData.surveyCooldowns||{}; // only 3 surveys
+    for(let i=1;i<=3;i++){ let avail=(cd[i]||0)<=Date.now(); let btn=document.createElement('button'); btn.innerText=avail?'Start Survey (1,600 PEPE)':`Locked (${Math.ceil(((cd[i]||0)-Date.now())/3600000)}h left)`; btn.className='survey-start-btn'; if(!avail) btn.disabled=true; btn.onclick=()=>startSurvey(i); let div=document.createElement('div'); div.className='survey-item'; div.innerHTML=`<span><strong>Survey ${i}</strong><br><small>1,600 PEPE</small></span>`; div.appendChild(btn); cont.appendChild(div); } }
     function startSurvey(id){ if(surveyActive) return; currentSurveyId=id; currentSurveyQuestions=getRandomizedQuestions(); currentAnswers=new Array(10).fill(null); currentStep=0; surveyActive=true; let modal=document.getElementById('surveyModal'); modal.style.display='flex'; document.getElementById('modalSurveyTitle').innerHTML=`Survey ${id} (1,600 PEPE)`; renderSurveyStep(); }
     function loadBannerAd(containerId){ let container=document.getElementById(containerId); if(container){ container.innerHTML=`<div id="container-b9c20b34ebbebe1a437bd607936a7266"></div><script async src="https://pl29357059.profitablecpmratenetwork.com/b9c20b34ebbebe1a437bd607936a7266/invoke.js"><\/script><script> atOptions = { 'key' : '240ad3e9d46c423c9b50f0d7fe1fd91f', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} }; <\/script><script src="https://www.highperformanceformat.com/240ad3e9d46c423c9b50f0d7fe1fd91f/invoke.js"><\/script>`; } }
-    function renderSurveyStep(){ if(!surveyActive) return; let q=currentSurveyQuestions[currentStep]; let selected=currentAnswers[currentStep]; let html=`<div class="banner-ad" id="surveyTopBanner"></div><div class="survey-question-card"><p><strong>${currentStep+1}/10</strong> • ${q.text}</p>`; q.options.forEach(opt=>{ let cls='option-btn' + (selected===opt?' selected':''); html+=`<div class="${cls}" data-val="${opt}">${opt}</div>`; }); html+=`</div><div class="banner-ad" id="surveyBottomBanner"></div><div class="survey-nav"><button id="surveyBackBtnStep" ${currentStep===0?'disabled style="opacity:0.5;"':''}>Back</button><button id="surveyNextBtn">${currentStep===9?'Complete & Earn 1,600 PEPE':'Next'}</button></div>`; document.getElementById('surveyModalContent').innerHTML=html; loadBannerAd('surveyTopBanner'); loadBannerAd('surveyBottomBanner'); document.querySelectorAll('.option-btn').forEach(el=>{ el.onclick=()=>{ let val=el.dataset.val; currentAnswers[currentStep]=val; renderSurveyStep(); }; }); document.getElementById('surveyNextBtn').onclick=async()=>{ if(!currentAnswers[currentStep]){ alert('Select an answer!'); return; } if(currentAnswers[currentStep]!==q.correct){ showStatus('Wrong answer! Survey reset.','error'); document.getElementById('surveyModal').style.display='none'; surveyActive=false; return; } await showAdexoraAndLink(); if(currentStep===9){ await addEarnings(1600,'survey'); let newCd={...(currentUserData.surveyCooldowns||{})}; newCd[currentSurveyId]=Date.now()+7*3600000; await updateUserData({surveyCooldowns:newCd}); document.getElementById('surveyModal').style.display='none'; surveyActive=false; showStatus('+1,600 PEPE earned!','success'); renderSurveysList(); } else { currentStep++; renderSurveyStep(); } }; document.getElementById('surveyBackBtnStep').onclick=()=>{ if(currentStep>0){ currentStep--; renderSurveyStep(); } }; }
-
-    // Referral & Cashout
-    function renderReferralsList(){ let container=document.getElementById('referralsList'); if(!container) return; let refs=currentUserData.referrals||[]; document.getElementById('totalRefsStat').innerText=refs.length; document.getElementById('totalCommStat').innerText=(currentUserData.referralBonus||0).toFixed(0); if(refs.length===0){ container.innerHTML='<div class="info-note">No referrals yet. Share your code!</div>'; return; } container.innerHTML=refs.map(r=>`<div class="friend-list-item"><div><i class="fab fa-telegram"></i> <strong>${r.username}</strong><br><small>Joined: ${new Date(r.date).toLocaleDateString()}</small></div><div>+${(r.commissionEarned||0).toFixed(0)} PEPE</div></div>`).join(''); }
+    function renderSurveyStep(){ if(!surveyActive) return; let q=currentSurveyQuestions[currentStep]; let selected=currentAnswers[currentStep]; let html=`<div class="banner-ad" id="surveyTopBanner"></div><div class="survey-question-card"><p><strong>${currentStep+1}/10</strong> • ${q.text}</p>`; q.options.forEach(opt=>{ let cls='option-btn' + (selected===opt?' selected':''); html+=`<div class="${cls}" data-val="${opt}">${opt}</div>`; }); html+=`</div><div class="banner-ad" id="surveyBottomBanner"></div><div class="survey-nav"><button id="surveyBackBtnStep" ${currentStep===0?'disabled style="opacity:0.5;"':''}>Back</button><button id="surveyNextBtn">${currentStep===9?'Complete & Earn 1,600 PEPE':'Next'}</button></div>`; document.getElementById('surveyModalContent').innerHTML=html; loadBannerAd('surveyTopBanner'); loadBannerAd('surveyBottomBanner'); document.querySelectorAll('.option-btn').forEach(el=>{ el.onclick=()=>{ let val=el.dataset.val; currentAnswers[currentStep]=val; renderSurveyStep(); }; }); document.getElementById('surveyNextBtn').onclick=async()=>{ if(!currentAnswers[currentStep]){ alert('Please select an answer!'); return; } if(currentAnswers[currentStep]!==q.correct){ showStatus('Wrong answer! Survey reset.','error'); document.getElementById('surveyModal').style.display='none'; surveyActive=false; return; } await showAdexoraAndLink(); if(currentStep===9){ await addEarnings(currentUserData.id,1600,'survey'); let newCd={...(currentUserData.surveyCooldowns||{})}; newCd[currentSurveyId]=Date.now()+7*3600000; await saveUserData({surveyCooldowns:newCd}); document.getElementById('surveyModal').style.display='none'; surveyActive=false; showStatus('+1,600 PEPE earned!','success'); renderSurveysList(); } else { currentStep++; renderSurveyStep(); } }; document.getElementById('surveyBackBtnStep').onclick=()=>{ if(currentStep>0){ currentStep--; renderSurveyStep(); } }; }
+    // Referral & Cashout (same)
+    function renderReferralsList(){ let container=document.getElementById('referralsList'); if(!container) return; let refs=currentUserData.referrals||[]; document.getElementById('totalRefsStat').innerText=refs.length; let totalComm=currentUserData.referralBonus||0; document.getElementById('totalCommStat').innerText=totalComm.toFixed(0); if(refs.length===0){ container.innerHTML='<div class="info-note">No referrals yet. Share your code to earn 5% commission.</div>'; return; } container.innerHTML=refs.map(r=>`<div class="friend-list-item"><div><i class="fab fa-telegram"></i> <strong>${r.username}</strong><br><small>Joined: ${new Date(r.date).toLocaleDateString()}</small></div><div>+${(r.commissionEarned||0).toFixed(0)} PEPE</div></div>`).join(''); }
     function getWithdrawalsThisMonth(){ let now=new Date(), cnt=0; for(let w of (currentUserData.withdrawalHistory||[])){ let d=new Date(w.date); if(d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth()) cnt++; } return cnt; }
-    async function submitWithdrawal(){ let amt=parseFloat(document.getElementById('withdrawAmount').value); let acc=document.getElementById('binanceAccount').value.trim(); if(!acc||amt<300000||(currentUserData.balance||0)<amt||(currentUserData.referrals||[]).length<3||getWithdrawalsThisMonth()>=2) return showStatus('Requirements not met','error'); let fee=amt*0.05, net=amt-fee; let wid={id:Date.now(),withdrawId:'WD-'+Date.now().toString().slice(-6),amount:amt,fee,netAmount:net,account:acc,status:'pending',date:Date.now()}; let newHistory=[...(currentUserData.withdrawalHistory||[]), wid]; await updateUserData({ balance: (currentUserData.balance||0)-amt, withdrawalHistory: newHistory }); showStatus('Withdrawal requested','success'); document.getElementById('withdrawAmount').value=''; document.getElementById('binanceAccount').value=''; updateWithdrawCalc(); displayHistory(); }
-    function displayHistory(){ let hist=currentUserData.withdrawalHistory||[]; let container=document.getElementById('historyList'); if(!container) return; if(hist.length===0){ container.innerHTML='<div>No history</div>'; return; } container.innerHTML=hist.slice().reverse().map(w=>`<div class="history-card"><div><strong>${w.withdrawId}</strong><br><small>${new Date(w.date).toLocaleString()}</small></div><div><span style="background:#f39c12; padding:4px 12px; border-radius:40px;">${w.status}</span><br>${w.netAmount.toFixed(0)} PEPE</div></div>`).join(''); }
     function updateWithdrawalRequirements(){ let bal=currentUserData.balance||0, refs=(currentUserData.referrals||[]).length; let balOk=bal>=300000, refOk=refs>=3, monthOk=getWithdrawalsThisMonth()<2; document.getElementById('reqIcon1').innerHTML=balOk?'✓':'✘'; document.getElementById('reqIcon2').innerHTML=refOk?'✓':'✘'; document.getElementById('reqIcon3').innerHTML=monthOk?'✓':'✘'; document.getElementById('submitWithdrawBtn').disabled=!(balOk&&refOk&&monthOk); }
     function updateWithdrawCalc(){ let amt=parseFloat(document.getElementById('withdrawAmount').value)||0; let fee=amt*0.05; document.getElementById('wdAmount').innerText=amt.toFixed(0); document.getElementById('wdFee').innerText=fee.toFixed(0); document.getElementById('wdNet').innerText=(amt-fee).toFixed(0); }
-    function refreshUI(){ if(!currentUserData) return; document.getElementById('balanceAmount').innerText=(currentUserData.balance||0).toFixed(0); document.getElementById('tasksCompletedCount').innerText=currentUserData.tasksCompleted||0; document.getElementById('refCount').innerText=(currentUserData.referrals||[]).length; document.getElementById('refBonus').innerText=(currentUserData.referralBonus||0).toFixed(0); document.getElementById('withdrawBalance').innerText=(currentUserData.balance||0).toFixed(0); document.getElementById('userInitial').innerText=(telegramUsername.charAt(0)).toUpperCase(); document.getElementById('menuEmail').innerText=telegramUsername; document.getElementById('referralCodeDisplay').innerText=currentUserData.referralCode||''; renderLinkTaskUI(); renderVideoTaskUI(); renderReferralsList(); updateWithdrawalRequirements(); updateWithdrawCalc(); displayHistory(); renderSurveysList(); renderOneTimeTasks(); }
+    async function submitWithdrawal(){ let amt=parseFloat(document.getElementById('withdrawAmount').value); let acc=document.getElementById('binanceAccount').value.trim(); if(!acc||amt<300000||(currentUserData.balance||0)<amt||(currentUserData.referrals||[]).length<3||getWithdrawalsThisMonth()>=2) return showStatus('Requirements not met','error'); let fee=amt*0.05, net=amt-fee; let wid={id:Date.now(),withdrawId:'WD-'+Date.now().toString().slice(-6),amount:amt,fee,netAmount:net,account:acc,status:'pending',date:Date.now()}; let newHistory=[...(currentUserData.withdrawalHistory||[]),wid]; await saveUserData({balance:(currentUserData.balance||0)-amt, withdrawalHistory:newHistory}); showStatus('Withdrawal requested','success'); updateWithdrawalRequirements(); document.getElementById('withdrawAmount').value='';document.getElementById('binanceAccount').value=''; updateWithdrawCalc(); displayHistory(); }
+    function displayHistory(){ let hist=currentUserData.withdrawalHistory||[]; let container=document.getElementById('historyList'); if(!container) return; if(hist.length===0){container.innerHTML='<div>No history</div>';return;} container.innerHTML=hist.slice().reverse().map(w=>`<div class="history-card"><div><strong>${w.withdrawId}</strong><br><small>${new Date(w.date).toLocaleString()}</small></div><div><span style="background:#f39c12; padding:4px 12px; border-radius:40px;">${w.status}</span><br>${w.netAmount.toFixed(0)} PEPE</div></div>`).join(''); }
+    function refreshUI(){ if(!currentUserData) return; document.getElementById('balanceAmount').innerText=(currentUserData.balance||0).toFixed(0); document.getElementById('tasksCompletedCount').innerText=currentUserData.tasksCompleted||0; document.getElementById('refCount').innerText=(currentUserData.referrals||[]).length; document.getElementById('refBonus').innerText=(currentUserData.referralBonus||0).toFixed(0); document.getElementById('withdrawBalance').innerText=(currentUserData.balance||0).toFixed(0); document.getElementById('userInitial').innerText=(currentUserData.fullName?.charAt(0)||'U').toUpperCase(); document.getElementById('menuEmail').innerText=currentUserData.email; document.getElementById('referralCodeDisplay').innerText=currentUserData.referralCode||''; renderLinkTaskUI(); renderVideoTaskUI(); renderReferralsList(); updateWithdrawalRequirements(); updateWithdrawCalc(); displayHistory(); renderSurveysList(); renderOneTimeTasks(); ensureOneTimeField(currentUserData); }
     function showStatus(msg,type){ let el=document.getElementById('homeStatusMessage'); if(el){ el.style.display='block'; el.className=`status-message status-${type}`; el.innerText=msg; setTimeout(()=>el.style.display='none',3000); } }
-    function updateCooldownDisplay(areaId, endTime){ let area=document.getElementById(areaId); if(!area) return; let interval=setInterval(()=>{ let rem=Math.max(0, endTime-Date.now()); if(rem<=0){ area.innerHTML=''; clearInterval(interval); return; } let sec=Math.ceil(rem/1000); area.innerHTML=`<div class="live-cooldown">⏱️ Cooldown: ${sec}s</div>`; }, 500); }
-    function updateResetTimer(elId, nextReset){ setInterval(()=>{ let r=Math.max(0, nextReset-Date.now()); if(r<=0) location.reload(); let h=Math.floor(r/3600000), m=Math.floor((r%3600000)/60000), s=Math.floor((r%60000)/1000); let el=document.getElementById(elId); if(el) el.innerText=`Reset in ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }, 1000); }
-
-    // Language selector
-    let currentLang = localStorage.getItem('selectedLanguage') || 'en';
-    function applyTranslations(){ document.getElementById('currentLangLabel').innerText = {en:'English',hi:'हिन्दी',bn:'বাংলা',es:'Español',ar:'العربية',fr:'Français'}[currentLang]; }
-    function loadLangOptions(){ let langs=['en','hi','bn','es','ar','fr'], names=['English','हिन्दी','বাংলা','Español','العربية','Français']; let container=document.getElementById('langOptionsList'); container.innerHTML=''; langs.forEach((c,i)=>{ let div=document.createElement('div'); div.className='lang-option'; div.innerText=names[i]; div.onclick=()=>{ currentLang=c; localStorage.setItem('selectedLanguage',c); applyTranslations(); document.getElementById('langMenu').classList.remove('active'); }; container.appendChild(div); }); }
-    applyTranslations(); loadLangOptions();
-
-    // Navigation
-    function bindEvents(){
-        let sections=['home','tasks','survey','referral','cashout'];
-        sections.forEach(s=>document.getElementById(`nav${s.charAt(0).toUpperCase()+s.slice(1)}`).onclick=()=>switchSection(`${s}Section`));
-        ['tasks','survey','referral','cashout'].forEach(s=>document.getElementById(`${s}BackBtn`).onclick=()=>switchSection('homeSection'));
-        document.getElementById('copyReferralCodeBtn').onclick=()=>{ navigator.clipboard.writeText(currentUserData.referralCode); showStatus('Copied!','success'); };
-        document.getElementById('menuReferralCode').onclick=()=>{ navigator.clipboard.writeText(currentUserData.referralCode); showStatus('Code copied','success'); };
-        document.getElementById('profileBtn').onclick=()=>document.getElementById('userMenu').classList.toggle('active');
-        document.getElementById('menuInfo').onclick=()=>{ document.getElementById('userMenu').classList.remove('active'); document.getElementById('infoModal').classList.add('active'); };
-        document.getElementById('closeInfoModal').onclick=()=>document.getElementById('infoModal').classList.remove('active');
-        document.getElementById('withdrawAmount').addEventListener('input', updateWithdrawCalc);
-        document.getElementById('submitWithdrawBtn').addEventListener('click', submitWithdrawal);
-        document.getElementById('claimLinkRewardBtn').addEventListener('click', claimLinkReward);
-        document.getElementById('claimVideoRewardBtn10').addEventListener('click', claimVideoReward10);
-        document.getElementById('createEmailTaskBtn').addEventListener('click', openGmailSupport);
-        document.getElementById('menuLogout').onclick=()=>{ localStorage.clear(); location.reload(); };
-        document.addEventListener('click',e=>{ if(!e.target.closest('#profileBtn')&&!e.target.closest('#userMenu')) document.getElementById('userMenu').classList.remove('active'); });
-    }
+    function bindEvents(){ let sections=['home','tasks','survey','referral','cashout']; sections.forEach(s=>document.getElementById(`nav${s.charAt(0).toUpperCase()+s.slice(1)}`).onclick=()=>switchSection(`${s}Section`)); ['tasks','survey','referral','cashout'].forEach(s=>document.getElementById(`${s}BackBtn`).onclick=()=>switchSection('homeSection')); document.getElementById('copyReferralCodeBtn').onclick=()=>{ navigator.clipboard.writeText(currentUserData.referralCode); showStatus('Copied!','success'); }; document.getElementById('menuReferralCode').onclick=()=>{ navigator.clipboard.writeText(currentUserData.referralCode); showStatus('Code copied','success'); }; document.getElementById('profileBtn').onclick=()=>document.getElementById('userMenu').classList.toggle('active'); document.getElementById('menuInfo').onclick=()=>{ document.getElementById('userMenu').classList.remove('active'); document.getElementById('infoModal').classList.add('active'); }; document.getElementById('closeInfoModal').onclick=()=>document.getElementById('infoModal').classList.remove('active'); document.getElementById('withdrawAmount').addEventListener('input',updateWithdrawCalc); document.getElementById('submitWithdrawBtn').addEventListener('click',submitWithdrawal); document.getElementById('claimLinkRewardBtn').addEventListener('click',claimLinkReward); document.getElementById('claimVideoRewardBtn10').addEventListener('click',claimVideoReward10); document.getElementById('createEmailTaskBtn').addEventListener('click',openGmailSupport); document.getElementById('menuLogout').onclick=()=>{ localStorage.removeItem(SESSION_KEY); location.reload(); }; document.addEventListener('click',e=>{ if(!e.target.closest('#profileBtn')&&!e.target.closest('#userMenu')) document.getElementById('userMenu').classList.remove('active'); }); }
     function switchSection(id){ document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); let map={homeSection:'navHome',tasksSection:'navTasks',surveySection:'navSurvey',referralSection:'navReferral',cashoutSection:'navCashout'}; if(map[id]) document.getElementById(map[id]).classList.add('active'); if(id==='surveySection') renderSurveysList(); if(id==='cashoutSection'){ updateWithdrawalRequirements(); updateWithdrawCalc(); displayHistory(); } if(id==='tasksSection') renderOneTimeTasks(); }
-
-    // Fast loading (2-3 seconds) and show app
-    window.onload = () => {
-        let percent = 0, fill = document.getElementById('loadingFill'), percentEl = document.getElementById('loadingPercent'), statusEl = document.getElementById('loadingStatus');
-        let steps = ['Connecting...', 'Loading user...', 'Preparing...', 'Ready!'];
-        let stepIdx = 0;
-        let interval = setInterval(() => {
-            percent += Math.floor(Math.random() * 18) + 7;
-            if(percent >= 100) percent = 100;
-            fill.style.width = percent + '%';
-            percentEl.innerText = percent + '%';
-            if(percent >= 25 && stepIdx < steps.length-1 && percent % 25 < 5) { stepIdx++; statusEl.innerText = steps[stepIdx]; }
-            if(percent === 100) {
+    async function afterLogin(user){ currentUserData=user; ensureOneTimeField(currentUserData); if(!currentUserData.linkTask) currentUserData.linkTask={steps:0,cooldownUntil:0}; if(!currentUserData.videoTask10) currentUserData.videoTask10={steps:0,cooldownUntil:0}; if(!currentUserData.linkPeriodStart) currentUserData.linkPeriodStart=getPeriodStart(); if(currentUserData.linkCountInPeriod===undefined) currentUserData.linkCountInPeriod=0; if(!currentUserData.videoPeriodStart10) currentUserData.videoPeriodStart10=getPeriodStart(); if(currentUserData.videoCountInPeriod10===undefined) currentUserData.videoCountInPeriod10=0; await saveUserData(currentUserData); document.getElementById('authContainer').style.display='none'; document.getElementById('mainApp').style.display='block'; refreshUI(); bindEvents(); }
+    document.getElementById('doSignupBtn').onclick=async()=>{ let name=document.getElementById('signupName').value, email=document.getElementById('signupEmail').value.trim(), pwd=document.getElementById('signupPassword').value, ref=document.getElementById('signupReferral').value.trim().toUpperCase(); if(!name||!email||pwd.length<6) return document.getElementById('signupError').innerText='Invalid'; let users=loadUsers(); if(users.find(u=>u.email===email)) return document.getElementById('signupError').innerText='Email exists'; let userId=Date.now()+Math.random().toString(36).substr(2,6); let code=email.split('@')[0].slice(0,3).toUpperCase()+Math.random().toString(36).substr(2,4).toUpperCase(); let newUser={ id:userId, fullName:name, email, password:btoa(pwd), balance:0, totalEarned:0, referralBonus:0, referrals:[], referralCode:code, referredBy:null, createdAt:Date.now(), videoTask10:{steps:0,cooldownUntil:0}, linkTask:{steps:0,cooldownUntil:0}, oneTimeCompleted:{}, tasksCompleted:0, withdrawalHistory:[], surveyCooldowns:{}, linkPeriodStart:getPeriodStart(), linkCountInPeriod:0, videoPeriodStart10:getPeriodStart(), videoCountInPeriod10:0 }; if(ref){ let referrer=users.find(u=>u.referralCode===ref); if(referrer && referrer.id!==userId){ newUser.referredBy=referrer.id; referrer.referrals=referrer.referrals||[]; referrer.referrals.push({userId,username:name.split(' ')[0],date:Date.now(),commissionEarned:0}); } } users.push(newUser); saveUsers(users); setCurrentUser(newUser); afterLogin(newUser); };
+    document.getElementById('doLoginBtn').onclick=async()=>{ let email=document.getElementById('loginEmail').value.trim(), pwd=document.getElementById('loginPassword').value; let users=loadUsers(); let user=users.find(u=>u.email===email && u.password===btoa(pwd)); if(user) afterLogin(user); else document.getElementById('loginError').innerText='Invalid'; };
+    document.querySelectorAll('.auth-tab').forEach(tab=>tab.addEventListener('click',()=>{ document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); let form=tab.dataset.tab; document.getElementById('signupForm').style.display=form==='signup'?'block':'none'; document.getElementById('loginForm').style.display=form==='login'?'block':'none'; }));
+    // FAST LOADING: 0% to 100% in exactly 3.5 seconds (~100ms increments)
+    window.onload=()=>{
+        let percent=0;
+        let fill=document.getElementById('loadingFill');
+        let percentEl=document.getElementById('loadingPercent');
+        let statusEl=document.getElementById('loadingStatus');
+        let steps=['Initializing...','Loading modules...','Preparing tasks...','Finalizing...','Ready!'];
+        let stepIdx=0;
+        let interval=setInterval(()=>{
+            percent+=Math.floor(Math.random()*10)+3;
+            if(percent>=100) percent=100;
+            fill.style.width=percent+'%';
+            percentEl.innerText=percent+'%';
+            if(percent>=20 && stepIdx<steps.length-1 && percent%25<5){ stepIdx++; statusEl.innerText=steps[stepIdx]; }
+            if(percent===100){
                 clearInterval(interval);
-                document.getElementById('loadingScreen').classList.add('fade-out');
-                setTimeout(() => {
-                    document.getElementById('loadingScreen').style.display = 'none';
-                    initUserData().then(() => {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        let refCode = urlParams.get('ref');
-                        if(refCode && !currentUserData.referredBy && db) {
-                            db.ref('users').orderByChild('referralCode').equalTo(refCode.toUpperCase()).once('value').then(snap => {
-                                if(snap.exists()) {
-                                    let referrerId = Object.keys(snap.val())[0];
-                                    if(referrerId !== telegramId) {
-                                        addEarnings(1600, 'referral_bonus');
-                                        updateUserData({ referredBy: referrerId });
-                                    }
-                                }
-                            }).catch(e=>console.warn);
-                        }
-                        bindEvents();
-                    }).catch(() => { document.getElementById('mainApp').style.display = 'block'; bindEvents(); });
-                }, 250);
+                setTimeout(()=>{
+                    document.getElementById('loadingScreen').classList.add('fade-out');
+                    setTimeout(()=>{
+                        document.getElementById('loadingScreen').style.display='none';
+                        loadLangOptions(); applyTranslations();
+                        let sess=getCurrentUser();
+                        if(sess){ let users=loadUsers(); let fresh=users.find(u=>u.id===sess.id); if(fresh){ currentUserData=fresh; setCurrentUser(fresh); afterLogin(fresh); } else { document.getElementById('authContainer').style.display='flex'; document.getElementById('mainApp').style.display='none'; } }
+                        else { document.getElementById('authContainer').style.display='flex'; document.getElementById('mainApp').style.display='none'; }
+                    }, 300);
+                }, 100);
             }
-        }, 35);
+        }, 35); // ~3.5 seconds to full
     };
 </script>
 </body>
