@@ -626,7 +626,7 @@
     const videoAdSequence = ['adsgram','monetag','giga','onclicka','link','adsgram','monetag','giga','onclicka','link'];
     const FALLBACK_NETWORKS = ['adsgram','monetag','giga','onclicka'];
     let onclickaShowFn = null;
-    if(typeof window.initCdTma === 'function') window.initCdTma({ id: 6117840 }).then(fn=>{ onclickaShowFn=fn; }).catch(e=>console.warn(e));
+    if(typeof window.initCdTma === 'function') window.initCdTma({ id: "6117840" }).then(fn=>{ onclickaShowFn=fn; }).catch(e=>console.warn(e));
     async function showAdByType(type) { if(type==='adsgram') { const ctrl = window.Adsgram.init({ blockId: "int-28543" }); await ctrl.show(); } else if(type==='monetag') await window.show_10541383(); else if(type==='giga') await window.showGiga("main"); else if(type==='onclicka') await onclickaShowFn(); }
     // 8h limits changed to 10 claims
     const PERIOD_MS = 8*60*60*1000;
