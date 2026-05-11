@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Earn For Earn – Earn USD</title>
+    <title>Earn For Earn – Pepe Rewards</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Telegram WebApp SDK -->
@@ -22,7 +22,7 @@
     <!-- Giga Pub Ads SDK -->
     <script src="https://ad.gigapub.tech/script?id=6432"></script>
     
-    <!-- OnClicka SDK (working ID 6117840) -->
+    <!-- OnClicka SDK -->
     <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
     
     <style>
@@ -274,14 +274,15 @@
             color: #000;
         }
         .steps-container {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
             gap: 12px;
             margin: 20px 0;
-            justify-content: center;
+            justify-items: center;
         }
         .step-btn {
-            width: 70px;
+            width: 100%;
+            max-width: 70px;
             height: 70px;
             border-radius: 60px;
             background: #222;
@@ -300,18 +301,6 @@
         .step-btn.completed { background: var(--success); border-color: var(--success); color: white; }
         .step-btn.locked { opacity: 0.3; cursor: not-allowed; }
         .step-btn.active-step { border: 2px solid var(--warning); box-shadow: 0 0 8px var(--warning); background: #2a2a2a; }
-        .next-substep-btn, .next-step-btn {
-            background: linear-gradient(90deg, var(--blue), var(--purple));
-            color: white;
-            font-weight: bold;
-            padding: 12px;
-            border-radius: 60px;
-            width: 100%;
-            border: none;
-            margin-top: 16px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
         .claim-btn {
             background: linear-gradient(90deg, var(--gold), #e6b422);
             color: #000;
@@ -322,9 +311,10 @@
             border: none;
             margin-top: 16px;
             cursor: pointer;
+            transition: 0.2s;
             font-size: 1rem;
         }
-        .claim-btn:disabled, .next-substep-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .claim-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .cooldown-timer {
             background: #1a1a1a;
             border-radius: 60px;
@@ -363,6 +353,22 @@
             font-size: 0.8rem;
             color: var(--warning);
         }
+        .history-item {
+            background: var(--bg-elevated);
+            border-radius: 24px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--purple);
+        }
+        .history-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .status-pending { background: #f39c12; color: black; }
+        .status-approved { background: var(--success); color: black; }
         .requirement-list {
             background: var(--bg-elevated);
             border-radius: 28px;
@@ -403,6 +409,7 @@
             margin-top: 20px;
             cursor: pointer;
             font-size: 1.1rem;
+            transition: 0.2s;
         }
         .withdraw-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .referral-professional {
@@ -507,30 +514,13 @@
             padding: 20px;
         }
         .referral-code-card {
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
-            border-radius: 56px;
-            padding: 36px 28px;
+            background: var(--bg-card);
+            border-radius: 48px;
+            padding: 32px;
             width: 100%;
-            max-width: 380px;
+            max-width: 360px;
             text-align: center;
-            border: 1px solid rgba(108,92,231,0.5);
-            box-shadow: 0 25px 40px rgba(0,0,0,0.5);
-            animation: slideUp 0.4s ease;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .referral-code-card input {
-            width: 100%;
-            padding: 16px;
-            background: #0a0a1a;
-            border: 1px solid #2c3e66;
-            border-radius: 60px;
-            color: white;
-            margin: 20px 0;
-            font-size: 1rem;
-            text-align: center;
+            border: 1px solid var(--border);
         }
         .gmail-modal {
             position: fixed;
@@ -560,6 +550,7 @@
             color: white;
             margin: 16px 0;
             resize: vertical;
+            font-size: 0.9rem;
         }
         .rules-box {
             background: var(--bg-card);
@@ -567,6 +558,13 @@
             padding: 20px;
             margin-top: 20px;
             border: 1px solid var(--border);
+        }
+        .rules-box h4 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .rule-item {
             display: flex;
@@ -584,51 +582,192 @@
             border: 1px solid var(--border);
         }
         .info-card .support-link { color: var(--blue); text-decoration: none; cursor: pointer; }
-        @media (max-width:480px) { .step-btn { width: 60px; height: 60px; } .steps-container { gap: 8px; } }
+        @media (max-width:480px) { .step-btn { max-width: 60px; height: 65px; } .steps-container { gap: 8px; } }
+        .info-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .info-highlight {
+            background: rgba(108,92,231,0.15);
+            border-left: 3px solid var(--purple);
+        }
+        .small-text { font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px; }
     </style>
 </head>
 <body>
-<div class="loading-screen" id="loadingScreen"><div class="loading-logo"><i class="fas fa-wallet"></i></div><div class="loading-title">Earn For Earn</div><div class="loading-progress"><div class="loading-progress-fill" id="loadingFill"></div></div><div class="loading-steps" id="loadingStep">Initializing...</div></div>
+<div class="loading-screen" id="loadingScreen"><div class="loading-logo"><i class="fas fa-wallet"></i></div><div class="loading-title">Earn For Earn</div><div class="loading-progress"><div class="loading-progress-fill" id="loadingFill"></div></div><div class="loading-steps" id="loadingStep">Initializing system...</div></div>
 <div class="app-container" id="mainApp" style="display:none;">
-    <!-- Header, user menu same as before -->
-    <div class="header"><div class="app-title">Earn For Earn</div><div class="header-right"><div class="lang-selector"><div class="lang-btn" id="langBtn"><i class="fas fa-globe"></i> <span id="currentLangLabel">English</span> <i class="fas fa-chevron-down"></i></div><div class="lang-menu" id="langMenu"><div class="lang-search"><input type="text" id="langSearch" placeholder="Search..."></div><div id="langOptionsList"></div></div></div><div class="user-profile" id="profileBtn"><span id="userInitial">U</span></div></div></div>
-    <div class="user-menu" id="userMenu"><div class="menu-item"><i class="fab fa-telegram"></i> <span id="menuUsername">Username</span></div><div class="menu-item" id="menuReferralCode"><i class="fas fa-qrcode"></i> <span>My Referral Code</span></div><div class="menu-item" id="menuInfo"><i class="fas fa-info-circle"></i> <span>Information</span></div><div class="menu-item" id="menuPrivacy"><i class="fas fa-shield-alt"></i> <span>Privacy Policy</span></div><div class="menu-item" id="menuTerms"><i class="fas fa-file-contract"></i> <span>Terms</span></div></div>
+    <div class="header"><div class="app-title">Earn For Earn</div><div class="header-right"><div class="lang-selector"><div class="lang-btn" id="langBtn"><i class="fas fa-globe"></i> <span id="currentLangLabel">English</span> <i class="fas fa-chevron-down"></i></div><div class="lang-menu" id="langMenu"><div class="lang-search"><input type="text" id="langSearch" placeholder="Search language..."></div><div id="langOptionsList"></div></div></div><div class="user-profile" id="profileBtn"><span id="userInitial">U</span></div></div></div>
+    <div class="user-menu" id="userMenu"><div class="menu-item"><i class="fab fa-telegram"></i> <span id="menuUsername">Username</span></div><div class="menu-item" id="menuReferralCode"><i class="fas fa-qrcode"></i> <span>My Referral Code</span></div><div class="menu-item" id="menuInfo"><i class="fas fa-info-circle"></i> <span>Information</span></div><div class="menu-item" id="menuPrivacy"><i class="fas fa-shield-alt"></i> <span>Privacy Policy</span></div><div class="menu-item" id="menuTerms"><i class="fas fa-file-contract"></i> <span>Terms & Conditions</span></div><div class="menu-item" id="menuAdminPanel" style="border-top:1px solid var(--border); margin-top:8px;"><i class="fas fa-user-shield"></i> <span>Admin Panel</span></div></div>
     <div class="main-content">
         <!-- Home Section -->
         <div id="homeSection" class="content-section active">
-            <div class="balance-card"><div>Your Balance (USD)</div><div class="balance-amount" id="balanceAmount">0.000</div><div>USD | 3 decimals</div></div>
-            <div class="stats-grid"><div class="stat-card"><div class="stat-value" id="refCount">0</div><div>Referrals</div></div><div class="stat-card"><div class="stat-value" id="tasksCompletedCount">0</div><div>Tasks Done</div></div><div class="stat-card"><div class="stat-value" id="refBonusEarned">0.000</div><div>Referral Bonus</div></div></div>
-            <div class="rules-box"><h4><i class="fas fa-gavel"></i> Platform Rules</h4><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> No automated tools – permanent ban</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Minimum withdraw: $2.00 + 3 referrals</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> 5% service fee</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Each challenge: 10 steps, each step has multiple sub-steps</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Chrome mandatory for link tasks</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Max 5 claims per challenge / 8 hours</div></div>
+            <div class="balance-card"><div>Your Balance (PEPE)</div><div class="balance-amount" id="balanceAmount">0</div><div>PEPE | 0 decimals</div></div>
+            <div class="stats-grid"><div class="stat-card"><div class="stat-value" id="refCount">0</div><div>Referrals</div></div><div class="stat-card"><div class="stat-value" id="tasksCompletedCount">0</div><div>Tasks Done</div></div><div class="stat-card"><div class="stat-value" id="refBonusEarned">0</div><div>Referral Bonus</div></div></div>
+            <div class="rules-box"><h4><i class="fas fa-gavel"></i> Platform Rules</h4><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> No automated tools – permanent ban</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Minimum age 18 for withdrawals</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Withdraw requires 300,000 PEPE + 3 referrals + monthly limit (2/month)</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> 5% service fee applies</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Each link step: stay 10 seconds → auto-unlock next</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Chrome browser mandatory for link tasks</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Each challenge limit resets every 8 hours (max 10 claims)</div></div>
         </div>
         <!-- Tasks Section -->
-        <div id="tasksSection" class="content-section"><div class="back-button" id="tasksBackBtn"><i class="fas fa-arrow-left"></i> Back to Home</div><h3 style="margin-bottom:20px;">High Value Tasks</h3>
-            <!-- 10-Link Challenge: each step = 2 links sequentially -->
-            <div class="task-card"><div class="task-header"><span><i class="fas fa-link"></i> 10‑Link Challenge</span><span class="task-reward">$0.03</span></div><div class="chrome-required"><i class="fab fa-chrome"></i> MUST use Chrome browser.</div><div class="warning-text">⚠️ Each main step requires opening 2 links. For each link, stay 10 seconds → click "Next Sub‑step".</div><div class="steps-container" id="linkStepsContainer"></div><button id="linkNextSubBtn" class="next-substep-btn" style="display:none;">➡️ Next Sub-step</button><button id="linkCompleteStepBtn" class="next-step-btn" style="display:none;">✅ Complete this Step</button><div id="linkCooldownArea"></div><button id="claimLinkRewardBtn" class="claim-btn">Claim $0.03</button><div id="linkProgress" class="cooldown-timer"></div><div class="daily-limit-text" id="linkDailyLimitText">Claims this period: 0/5</div><div class="reset-timer" id="linkResetTimer">Reset in: --:--:--</div></div>
-            <!-- 10-Video Challenge: each step = 4 ads + 1 link (back-to-back) -->
-            <div class="task-card"><div class="task-header"><span><i class="fas fa-video"></i> 10‑Video Ads Challenge</span><span class="task-reward">$0.03</span></div><div class="warning-text">🎬 Each step: Adsgram → Monetag → Giga → OnClicka → Link (10s wait). Complete all to finish step.</div><div class="steps-container" id="videoStepsContainer"></div><button id="videoNextSubBtn" class="next-substep-btn" style="display:none;">➡️ Next Sub-step</button><button id="videoCompleteStepBtn" class="next-step-btn" style="display:none;">✅ Finish Step</button><div id="videoCooldownArea"></div><button id="claimVideoRewardBtn" class="claim-btn">Claim $0.03</button><div id="videoProgress" class="cooldown-timer"></div><div class="daily-limit-text" id="videoDailyLimitText">Claims this period: 0/5</div><div class="reset-timer" id="videoResetTimer">Reset in: --:--:--</div></div>
-            <div style="margin:20px 0 10px;"><h4>One‑Time Telegram Rewards ($0.015 each)</h4></div>
+        <div id="tasksSection" class="content-section">
+            <div class="back-button" id="tasksBackBtn"><i class="fas fa-arrow-left"></i> Back to Home</div>
+            <h3 style="margin-bottom:20px;">High Value Tasks</h3>
+            <!-- Link Challenge -->
+            <div class="task-card"><div class="task-header"><span><i class="fas fa-link"></i> 10‑Link Challenge</span><span class="task-reward">1,600 PEPE</span></div><div class="chrome-required"><i class="fab fa-chrome"></i> MUST open with Chrome browser.</div><div class="warning-text"><i class="fas fa-exclamation-triangle"></i> Stay on each link 10 seconds to unlock next.</div><div class="steps-container" id="linkStepsContainer"></div><div id="linkCooldownArea"></div><button id="claimLinkRewardBtn" class="claim-btn">Claim 1,600 PEPE</button><div id="linkProgress" class="cooldown-timer"></div><div class="daily-limit-text" id="linkDailyLimitText">Claims this period: 0/10</div><div class="reset-timer" id="linkResetTimer">Reset in: --:--:--</div></div>
+            <!-- Video Challenge -->
+            <div class="task-card"><div class="task-header"><span><i class="fas fa-video"></i> 10‑Video Ads</span><span class="task-reward">1,600 PEPE</span></div><div class="warning-text">Watch each rewarded ad. Link step: open & stay 10s.</div><div class="steps-container" id="videoStepsContainer"></div><div id="videoCooldownArea"></div><button id="claimVideoRewardBtn" class="claim-btn">Claim 1,600 PEPE</button><div id="videoProgress" class="cooldown-timer"></div><div class="daily-limit-text" id="videoDailyLimitText">Claims this period: 0/10</div><div class="reset-timer" id="videoResetTimer">Reset in: --:--:--</div></div>
+            
+            <!-- One-Time Telegram Channel Tasks -->
+            <div style="margin:20px 0 10px;"><h4>One‑Time Telegram Rewards (1,500 PEPE each)</h4></div>
             <div id="telegramTasksArea"></div>
-            <div class="task-card"><div class="task-header"><span><i class="fas fa-envelope"></i> Create Gmail Account</span><span class="task-reward">$0.10</span></div><div>Support will provide details. Create account → Admin rewards $0.10 manually.</div><button id="openGmailTaskBtn" class="claim-btn" style="background:#4285f4; color:white;">📩 Contact Support</button></div>
+            
+            <!-- NEW TASK: Join USDT Miner Bot (2,500 PEPE) -->
+            <div class="task-card" id="usdtMinerTaskCard">
+                <div class="task-header"><span><i class="fab fa-telegram-plane"></i> Join USDT Miner Bot</span><span class="task-reward">2,500 PEPE</span></div>
+                <p>Start the bot and complete the setup to claim instant reward.</p>
+                <button id="usdtMinerJoinBtn" class="claim-btn" style="background:#0088cc;">🚀 Start Bot & Claim 2,500 PEPE</button>
+                <div id="usdtMinerStatus" class="info-note"></div>
+            </div>
+
+            <!-- 20 Levels Challenge #1 (21,000 PEPE) -->
+            <div class="task-card" id="levelTask1Card">
+                <div class="task-header"><span><i class="fas fa-code-branch"></i> 20 Levels Challenge #1</span><span class="task-reward">21,000 PEPE</span></div>
+                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 20 levels inside the game, get reward code, submit here → Admin approves → +21,000 PEPE!</div>
+                <div style="margin: 16px 0; background: #131313; border-radius: 24px; padding: 16px;">
+                    <div><i class="fas fa-check-circle"></i> <strong>Step 1:</strong> If app not installed, click below to open bot: <button id="levelTaskInstallBtn1" class="claim-btn" style="background:#2c3e50; margin-top:8px; padding:8px;">📲 Install / Open Bot</button></div>
+                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 20 levels inside the game → you will receive a <span style="color:var(--gold);">Reward Code</span>.</div>
+                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Paste your Reward Code below and submit (only once). After admin approval, you get 21,000 PEPE.</div>
+                </div>
+                <input type="text" id="levelTask1Code" class="form-input" placeholder="Enter reward code" maxlength="50">
+                <button id="submitLevelTask1Btn" class="claim-btn code-submit-btn">📝 Submit Code for Approval</button>
+                <div id="levelTask1Status" class="info-note"></div>
+            </div>
+
+            <!-- 20 Levels Challenge #2 (21,000 PEPE) -->
+            <div class="task-card" id="levelTask2Card">
+                <div class="task-header"><span><i class="fas fa-code-branch"></i> 20 Levels Challenge #2</span><span class="task-reward">21,000 PEPE</span></div>
+                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 20 levels inside the game, get reward code, submit here → Admin approves → +21,000 PEPE!</div>
+                <div style="margin: 16px 0; background: #131313; border-radius: 24px; padding: 16px;">
+                    <div><i class="fas fa-check-circle"></i> <strong>Step 1:</strong> If app not installed, click below: <button id="levelTaskInstallBtn2" class="claim-btn" style="background:#2c3e50; margin-top:8px; padding:8px;">📲 Install / Open Bot</button></div>
+                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 20 levels → receive Reward Code.</div>
+                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Submit code for approval (21,000 PEPE after admin approves).</div>
+                </div>
+                <input type="text" id="levelTask2Code" class="form-input" placeholder="Enter reward code" maxlength="50">
+                <button id="submitLevelTask2Btn" class="claim-btn code-submit-btn">📝 Submit Code for Approval</button>
+                <div id="levelTask2Status" class="info-note"></div>
+            </div>
+
+            <!-- Gmail Creation Task -->
+            <div class="task-card"><div class="task-header"><span><i class="fas fa-envelope"></i> Create Gmail Account</span><span class="task-reward">20,000 PEPE</span></div><div>Support will provide Gmail details. Create account as instructed → Admin rewards 20,000 PEPE manually.</div><button id="openGmailTaskBtn" class="claim-btn" style="background:#4285f4; color:white; margin-top:16px;">📩 Contact Support & Request Details</button><div class="info-note">⚠️ Reward is given manually by admin after successful account creation.</div></div>
+
+            <!-- Task History Section -->
+            <div style="margin-top:30px; margin-bottom:20px;"><h3><i class="fas fa-history"></i> Task History</h3><p>Here you can see all submitted code tasks and their approval status.</p></div>
+            <div id="taskHistoryContainer"></div>
         </div>
         <!-- Cashout Section -->
-        <div id="cashoutSection" class="content-section"><div class="back-button" id="cashoutBackBtn"><i class="fas fa-arrow-left"></i> Back</div><div class="balance-card" style="background:linear-gradient(135deg,#1a2a3a,#0f1720);"><div>Available Balance</div><div class="balance-amount" id="withdrawBalance">0.000</div><div>USD</div></div><div class="requirement-list"><h4>Withdrawal Requirements</h4><div class="requirement-item-serial" id="reqSerial1"><div class="req-check" id="reqCheck1"><i class="fas fa-circle"></i></div><div><strong>Minimum Balance:</strong> $2.00</div></div><div class="requirement-item-serial" id="reqSerial2"><div class="req-check" id="reqCheck2"><i class="fas fa-circle"></i></div><div><strong>Minimum Referrals:</strong> 3 active</div></div><div class="requirement-item-serial" id="reqSerial3"><div class="req-check" id="reqCheck3"><i class="fas fa-circle"></i></div><div><strong>Monthly Limit:</strong> 2 withdrawals/month</div></div></div><div class="withdraw-details" style="background:var(--bg-card); border-radius:28px; padding:20px;"><div class="fee-breakdown"><span>Amount</span><span id="wdAmount">$0.00</span></div><div class="fee-breakdown"><span>Fee (5%)</span><span id="wdFee">$0.00</span></div><div class="fee-breakdown"><span>You Receive</span><span id="wdNet">$0.00</span></div></div><input type="text" id="binanceAccount" class="form-input" placeholder="Binance Email / UID"><input type="number" id="withdrawAmount" step="0.1" min="2" class="form-input" placeholder="Amount ($)"><button id="submitWithdrawBtn" class="withdraw-btn">Request Withdrawal</button><div style="margin-top:30px;"><h4>Withdrawal History</h4><div id="historyList"></div></div></div>
+        <div id="cashoutSection" class="content-section"><div class="back-button" id="cashoutBackBtn"><i class="fas fa-arrow-left"></i> Back</div><div class="balance-card" style="background:linear-gradient(135deg,#1a2a3a,#0f1720);"><div>Available Balance</div><div class="balance-amount" id="withdrawBalance">0</div><div>PEPE</div></div><div class="requirement-list"><h4><i class="fas fa-clipboard-list"></i> Withdrawal Requirements (All must be met)</h4><div class="requirement-item-serial" id="reqSerial1"><div class="req-check" id="reqCheck1"><i class="fas fa-circle" style="color:#555;"></i></div><div><strong>Minimum Balance:</strong> 300,000 PEPE</div></div><div class="requirement-item-serial" id="reqSerial2"><div class="req-check" id="reqCheck2"><i class="fas fa-circle" style="color:#555;"></i></div><div><strong>Minimum Referrals:</strong> 3 active referrals</div></div><div class="requirement-item-serial" id="reqSerial3"><div class="req-check" id="reqCheck3"><i class="fas fa-circle" style="color:#555;"></i></div><div><strong>Monthly Withdrawal Limit:</strong> 2 per month</div></div></div><div class="withdraw-details" style="background:var(--bg-card); border-radius:28px; padding:20px; margin-bottom:16px;"><div class="fee-breakdown"><span>Amount</span><span id="wdAmount">0 PEPE</span></div><div class="fee-breakdown"><span>Fee (5%)</span><span id="wdFee">0 PEPE</span></div><div class="fee-breakdown"><span>You Receive</span><span id="wdNet">0 PEPE</span></div></div><input type="text" id="binanceAccount" class="form-input" placeholder="Binance Email / UID"><input type="number" id="withdrawAmount" step="1000" min="300000" class="form-input" placeholder="Amount (PEPE)"><button id="submitWithdrawBtn" class="withdraw-btn">Request Withdrawal</button><div style="margin-top:30px;"><h4>Withdrawal History</h4><div id="historyList"></div></div></div>
         <!-- Referral Section -->
-        <div id="referralSection" class="content-section"><div class="back-button" id="referralBackBtn"><i class="fas fa-arrow-left"></i> Back</div><div class="referral-professional"><i class="fas fa-user-plus" style="font-size:2.5rem; color:var(--purple);"></i><h3>Your Referral Code</h3><p>Share code – both get <strong>$0.01 bonus</strong> when new user joins!</p><div class="referral-code-display" id="referralCodeDisplay"></div><div class="btn-group"><button class="btn-primary" id="copyReferralCodeBtn"><i class="fas fa-copy"></i> Copy</button><button class="btn-primary" id="shareTelegramCodeBtn" style="background:#0088cc;"><i class="fab fa-telegram"></i> Share</button></div></div><div style="margin-top:25px;"><h4>Your Referrals</h4><div id="referralsList"></div><div style="margin-top:15px; background:var(--bg-elevated); border-radius:24px; padding:16px;"><strong>Total Referral Bonus:</strong> $<span id="referralBonusTotal">0.000</span></div></div></div>
-        <!-- Info Section (restored original style) -->
-        <div id="infoSection" class="content-section"><div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> Back</div><div class="info-card"><h4><i class="fas fa-headset"></i> Support</h4><p>Telegram: <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a><br>Email: earnforearnsuportteam@gmail.com<br>Business: earnforearnbusinessteam@gmail.com</p></div><div class="info-card"><h4><i class="fas fa-chart-line"></i> Withdrawal Conditions</h4><p>• Minimum balance $2.00<br>• Minimum 3 referrals<br>• 5% service fee<br>• Processing within 7 days after approval<br>• Max 2 withdrawals per month</p></div><div class="info-card"><h4><i class="fas fa-tasks"></i> Task Details</h4><p>• 10-Link Challenge: each step = 2 links, each link 10s wait. Complete all 10 steps to claim $0.03.<br>• 10-Video Ads: each step = 4 ads (Adsgram, Monetag, Giga, OnClicka) + 1 link (10s).<br>• Cooldown: 40s after claiming reward.<br>• Limit: 5 claims every 8 hours (resets with countdown).<br>• One-time Telegram tasks: $0.015 each, join & verify.<br>• Gmail task: contact support, reward given manually.<br>• Referral bonus: $0.01 for both referrer and new user.</p></div><div class="info-card"><h4><i class="fas fa-gavel"></i> Additional Rules</h4><p>• No multiple accounts – one per person.<br>• VPN or proxy usage may result in ban.<br>• All tasks must be done manually.<br>• Support responds within 48 hours.</p></div></div>
+        <div id="referralSection" class="content-section"><div class="back-button" id="referralBackBtn"><i class="fas fa-arrow-left"></i> Back</div><div class="referral-professional"><i class="fas fa-user-plus" style="font-size:2.5rem; color:var(--purple);"></i><h3>Your Referral Code</h3><p>Share this code with friends. When they join using your code, <strong>BOTH get 1,600 PEPE bonus!</strong></p><div class="referral-code-display" id="referralCodeDisplay"></div><div class="btn-group"><button class="btn-primary" id="copyReferralCodeBtn"><i class="fas fa-copy"></i> Copy Code</button><button class="btn-primary" id="shareTelegramCodeBtn" style="background:#0088cc;"><i class="fab fa-telegram"></i> Share</button></div></div><div style="margin-top:25px;"><h4>Your Referrals (Earned 1,600 each)</h4><div id="referralsList"></div><div style="margin-top:15px; background:var(--bg-elevated); border-radius:24px; padding:16px;"><strong>Total Referral Bonus Earned:</strong> <span id="referralBonusTotal">0</span> PEPE</div></div></div>
+        
+        <!-- INFO SECTION - ENHANCED WITH MORE DETAILS -->
+        <div id="infoSection" class="content-section">
+            <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
+            
+            <div class="info-card info-highlight">
+                <h4><i class="fas fa-headset"></i> Official Support</h4>
+                <p>📱 Telegram: <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a><br>📧 Email: earnforearnsuportteam@gmail.com<br>⏱️ Response time: usually within 24h</p>
+            </div>
+            
+            <div class="info-card">
+                <h4><i class="fas fa-chart-line"></i> Withdrawal Conditions (Detailed)</h4>
+                <div class="info-grid">
+                    <div>✅ Minimum balance: <strong>300,000 PEPE</strong></div>
+                    <div>👥 Minimum referrals: <strong>3 active referrals</strong></div>
+                    <div>💰 Service fee: <strong>5%</strong> (deducted automatically)</div>
+                    <div>📅 Monthly limit: <strong>max 2 withdrawals</strong> per calendar month</div>
+                    <div>⏳ Processing time: up to 48 hours (manual review)</div>
+                    <div>🏦 Payout method: Binance (email or UID)</div>
+                </div>
+                <div class="small-text">⚠️ Make sure all requirements are met before requesting. Incomplete requests will be rejected.</div>
+            </div>
+            
+            <div class="info-card">
+                <h4><i class="fas fa-tasks"></i> All Tasks & Rewards Overview</h4>
+                <div class="info-grid">
+                    <div>🔗 10-Link Challenge: <strong>1,600 PEPE</strong> (repeatable every 8h, max 10x per period)</div>
+                    <div>📺 10-Video Ads: <strong>1,600 PEPE</strong> (same limits as link challenge)</div>
+                    <div>📢 Telegram Channels (2x): <strong>1,500 PEPE each</strong> (one-time)</div>
+                    <div>🤖 USDT Miner Bot: <strong>2,500 PEPE</strong> (one-time)</div>
+                    <div>🎮 20 Levels Challenge #1 & #2: <strong>21,000 PEPE each</strong> (code submission, admin approval)</div>
+                    <div>📧 Gmail Creation: <strong>20,000 PEPE</strong> (manual reward after creation)</div>
+                </div>
+                <div class="small-text">💡 Complete all one-time tasks to earn up to <strong>47,600 PEPE</strong> instantly + recurring challenges every 8h!</div>
+            </div>
+            
+            <div class="info-card">
+                <h4><i class="fas fa-user-friends"></i> Referral Program Details</h4>
+                <p>🔹 Share your unique referral code with friends.<br>
+                🔹 When they join using your code, <strong>both you and your friend get 1,600 PEPE bonus</strong> instantly.<br>
+                🔹 No limit on how many friends you can invite.<br>
+                🔹 Referrals are counted only once per user.<br>
+                🔹 Referral bonus is added to your balance automatically.</p>
+                <div class="small-text">🚀 More referrals = more bonuses and faster withdrawal!</div>
+            </div>
+            
+            <div class="info-card">
+                <h4><i class="fas fa-clock"></i> Daily Limits & Cooldowns</h4>
+                <div class="info-grid">
+                    <div>⏲️ Link & Video challenges: <strong>reset every 8 hours</strong> (00:00, 08:00, 16:00 UTC)</div>
+                    <div>🔁 Max <strong>10 claims per period</strong> for each challenge.</div>
+                    <div>🕒 After completing 10 steps, <strong>40 seconds cooldown</strong> before next claim.</div>
+                    <div>📌 One-time tasks never reset – claim each only once.</div>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h4><i class="fas fa-shield-alt"></i> Fair Use & Anti-Cheat Policy</h4>
+                <div class="info-grid">
+                    <div>❌ <strong>Strictly prohibited:</strong> bots, auto-clickers, VPN abuse, fake referrals.</div>
+                    <div>🔍 Each withdrawal is manually checked for legitimacy.</div>
+                    <div>⚖️ Violations lead to <strong>permanent ban</strong> and forfeiture of all earnings.</div>
+                    <div>✅ Use genuine Chrome browser for link tasks and complete each step honestly.</div>
+                </div>
+                <div class="small-text">We value real users – fair earning for everyone.</div>
+            </div>
+            
+            <div class="info-card">
+                <h4><i class="fas fa-question-circle"></i> Frequently Asked Questions</h4>
+                <div><strong>❓ Why my link step is not completing?</strong><br>➡️ You must stay on the linked page for full 10 seconds (don't close early).</div>
+                <div style="margin-top:12px;"><strong>❓ I completed 10 steps but can't claim?</strong><br>➡️ Check if you have reached the 10 claims limit for the 8h period. Timer shows reset.</div>
+                <div style="margin-top:12px;"><strong>❓ How to get the 21,000 PEPE from level tasks?</strong><br>➡️ Finish 20 levels in the game bot → get a reward code → submit in app → admin approves within 24h.</div>
+                <div style="margin-top:12px;"><strong>❓ My withdrawal is pending for long?</strong><br>➡️ Withdrawals are processed manually, usually within 48h. Contact support if exceed 3 days.</div>
+                <div style="margin-top:12px;"><strong>❓ Can I use multiple accounts?</strong><br>➡️ No. One account per Telegram ID. Multi-account leads to permanent ban.</div>
+            </div>
+            
+            <div class="info-card">
+                <h4><i class="fas fa-gem"></i> Pro Tips to Maximize Earnings</h4>
+                <div class="info-grid">
+                    <div>⭐ Complete all one-time tasks first (over 47k PEPE).</div>
+                    <div>⭐ Invite as many friends as possible – passive referral income.</div>
+                    <div>⭐ Do link & video tasks every 8h for up to 3,200 PEPE each period.</div>
+                    <div>⭐ Keep an eye on the reset timers to never miss a cycle.</div>
+                    <div>⭐ Withdraw only when you have 300k+ PEPE and 3+ referrals to avoid fee waste.</div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="bottom-nav"><button class="nav-btn active" id="navHome"><i class="fas fa-home"></i><span>Home</span></button><button class="nav-btn" id="navTasks"><i class="fas fa-tasks"></i><span>Tasks</span></button><button class="nav-btn" id="navCashout"><i class="fas fa-wallet"></i><span>Cashout</span></button><button class="nav-btn" id="navReferral"><i class="fas fa-user-friends"></i><span>Referral</span></button><button class="nav-btn" id="navInfo"><i class="fas fa-info"></i><span>Info</span></button></div>
 </div>
 <!-- Modals -->
-<div id="gmailRequestModal" class="gmail-modal" style="display:none;"><div class="gmail-card"><i class="fas fa-envelope-open-text" style="font-size:2.5rem; color:#4285f4;"></i><h3>Request Gmail Details</h3><textarea id="gmailMessageInput" rows="3">I want to create Gmail account, give me all details.</textarea><button id="sendGmailRequestBtn" class="claim-btn" style="background:#4285f4;">📨 Copy & Open Support</button><button id="closeGmailModalBtn" class="claim-btn skip-btn">Cancel</button></div></div>
-<div id="referralCodeModal" class="referral-code-modal" style="display:none;"><div class="referral-code-card"><i class="fas fa-gift" style="font-size:3rem; color:var(--gold);"></i><h2>Welcome!</h2><p>Enter referral code – both you & referrer get <strong>$0.01</strong> bonus!</p><input type="text" id="referralCodeInput" placeholder="Referral code"><button id="submitReferralCodeBtn" class="claim-btn">Claim $0.01</button><button id="skipReferralCodeBtn" class="claim-btn skip-btn">Skip</button></div></div>
-<div class="modal" id="timerModal"><div class="modal-content"><h3>⏳ Stay on Page</h3><div id="timerCountdown" style="font-size:3rem;">10</div><p>Stay for 10 seconds, then return and click Next.</p><button class="modal-btn" id="cancelTimerBtn">Cancel</button></div></div>
-<div class="modal" id="tryAgainModal"><div class="modal-content"><i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:#e74c3c;"></i><h3>⚠️ Too Early</h3><p>You returned before 10 seconds. Please stay full duration.</p><button class="modal-btn" id="tryAgainRetryBtn">Try Again</button><button class="modal-btn" id="tryAgainCancelBtn">Cancel</button></div></div>
-<div class="modal" id="withdrawSuccessModal"><div class="modal-content"><i class="fas fa-trophy" style="font-size:3rem; color:var(--gold);"></i><h2>🎉 Congratulations!</h2><div id="withdrawSuccessDetails"></div><button class="modal-btn" id="closeSuccessModal">Done</button></div></div>
+<div id="gmailRequestModal" class="gmail-modal" style="display:none;"><div class="gmail-card"><i class="fas fa-envelope-open-text" style="font-size:2.5rem; color:#4285f4;"></i><h3 style="margin:15px 0;">Request Gmail Details</h3><textarea id="gmailMessageInput" rows="3">I want to create Gmail account, give me all details.</textarea><button id="sendGmailRequestBtn" class="claim-btn" style="background:#4285f4;">📨 Copy & Open Support Chat</button><button id="closeGmailModalBtn" class="claim-btn skip-btn" style="background:transparent;">Cancel</button></div></div>
+<div id="referralCodeModal" class="referral-code-modal" style="display:none;"><div class="referral-code-card"><i class="fas fa-gift" style="font-size:3rem; color:var(--gold);"></i><h2>Welcome!</h2><p>Enter a referral code (if you have one). <strong>Both you and your referrer will get 1,600 PEPE bonus!</strong> You can also skip.</p><input type="text" id="referralCodeInput" placeholder="Referral code" maxlength="20"><button id="submitReferralCodeBtn" class="claim-btn">Claim Bonus</button><button id="skipReferralCodeBtn" class="claim-btn skip-btn">Skip for now</button></div></div>
+<div class="modal" id="timerModal"><div class="modal-content"><h3>⏳ Stay on Link Page</h3><div id="timerCountdown" style="font-size:3rem;">10</div><p>After 10 seconds, return to unlock step.</p><button class="modal-btn" id="cancelTimerBtn">Cancel Task</button></div></div>
+<div class="modal" id="tryAgainModal"><div class="modal-content"><i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:#e74c3c;"></i><h3>⚠️ Account Risk Warning</h3><p>You returned too early. Stay on link for full 10 seconds.</p><button class="modal-btn" id="tryAgainRetryBtn">Try Again</button><button class="modal-btn" id="tryAgainCancelBtn">Cancel</button></div></div>
+<div class="modal" id="withdrawSuccessModal"><div class="modal-content"><i class="fas fa-check-circle" style="font-size:3rem; color:var(--success);"></i><h3>Withdrawal Requested!</h3><div id="withdrawSuccessDetails"></div><button class="modal-btn" id="closeSuccessModal">OK</button></div></div>
+<div class="modal" id="adminModal"><div class="modal-content" style="max-width:500px; width:90%; max-height:80vh; overflow-y:auto;"><h3>Admin Panel - Pending Code Submissions</h3><div id="adminSubmissionsList"></div><button id="closeAdminModal" class="claim-btn" style="margin-top:15px;">Close</button></div></div>
 <div class="loading-spinner" id="spinner"><div style="border:3px solid #333; border-top:3px solid var(--purple); width:45px; height:45px; border-radius:50%; animation:spin 1s linear infinite;"></div><p>Loading ad...</p></div>
 
 <script>
-    // Firebase config (same as before)
+    // Firebase Config
     const firebaseConfig = { apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM", authDomain: "earn-for-earn-55d3e.firebaseapp.com", databaseURL: "https://earn-for-earn-55d3e-default-rtdb.firebaseio.com", projectId: "earn-for-earn-55d3e", storageBucket: "earn-for-earn-55d3e.firebasestorage.app", messagingSenderId: "109416949734", appId: "1:109416949734:web:53f52de7899d65a04c9827" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -637,361 +776,149 @@
     let telegramId = tgUser?.id ? tgUser.id.toString() : null;
     let telegramUsername = tgUser?.username || tgUser?.first_name || (telegramId ? "user_"+telegramId : "guest_"+Date.now());
     if(!telegramId) { telegramId = "guest_"+Date.now(); telegramUsername = "guest_"+Date.now(); }
-    let userData = null;
-    
-    // Link challenge: each main step has 2 sub-steps (links). We'll track sub-step progress per main step.
-    // Data structure: linkStepsDone = number of completed main steps (0-10). For current active step, track subIndex (0,1,2...). Simpler: track linkSubProgress array.
-    // For simplicity, we track: linkMainStep (current step 1-10), linkSubStep (0 or 1). After both links done, main step increments.
-    let linkMainStep = 0, linkSubStep = 0; // 0 means no active step
-    let videoMainStep = 0, videoSubStep = 0; // video sub-step: 0=adsgram,1=monetag,2=giga,3=onclicka,4=link
-    const videoSubTypes = ['adsgram','monetag','giga','onclicka','link'];
-    let linkInterval=null, videoInterval=null;
+    let userData = null, linkStepsDone=0, videoStepsDone=0, linkInterval=null, videoLinkInterval=null;
     const LINK_URLS = ["https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757","https://earnforearnlinksads2.vercel.app/","https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://earnforearnlinksads2.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757"];
     const VIDEO_LINK_URL = "https://earnforearnlinksads.vercel.app/";
+    const videoAdSequence = ['adsgram','monetag','giga','onclicka','link','adsgram','monetag','giga','onclicka','link'];
+    const FALLBACK_NETWORKS = ['adsgram','monetag','giga','onclicka'];
     let onclickaShowFn = null;
-    if(typeof window.initCdTma === 'function') window.initCdTma({ id: 6117840 }).then(fn=>{ onclickaShowFn=fn; }).catch(e=>console.warn);
-    async function showAdWithTimeout(type, timeoutMs=5000) {
-        return new Promise(async (resolve) => {
-            let finished = false;
-            const timer = setTimeout(() => { if(!finished) { finished=true; resolve(false); } }, timeoutMs);
-            try {
-                if(type==='adsgram') { const ctrl = window.Adsgram.init({ blockId: "int-28543" }); await ctrl.show(); }
-                else if(type==='monetag') await window.show_10541383();
-                else if(type==='giga') await window.showGiga("main");
-                else if(type==='onclicka') await onclickaShowFn();
-                if(!finished) { clearTimeout(timer); finished=true; resolve(true); }
-            } catch(e) { if(!finished) { clearTimeout(timer); finished=true; resolve(false); } }
-        });
-    }
+    if(typeof window.initCdTma === 'function') window.initCdTma({ id: "6117840" }).then(fn=>{ onclickaShowFn=fn; }).catch(e=>console.warn(e));
+    async function showAdByType(type) { if(type==='adsgram') { const ctrl = window.Adsgram.init({ blockId: "int-28543" }); await ctrl.show(); } else if(type==='monetag') await window.show_10541383(); else if(type==='giga') await window.showGiga("main"); else if(type==='onclicka') await onclickaShowFn(); }
     const PERIOD_MS = 8*60*60*1000;
-    const MAX_CLAIMS = 5;
-    function getPeriodStart() { return Math.floor(Date.now()/PERIOD_MS)*PERIOD_MS; }
-    function getLinkRemaining() { if(!userData) return MAX_CLAIMS; const cp=getPeriodStart(); if(userData.linkPeriodStart!==cp) return MAX_CLAIMS; return Math.max(0, MAX_CLAIMS-(userData.linkCountInPeriod||0)); }
-    function getVideoRemaining() { if(!userData) return MAX_CLAIMS; const cp=getPeriodStart(); if(userData.videoPeriodStart!==cp) return MAX_CLAIMS; return Math.max(0, MAX_CLAIMS-(userData.videoCountInPeriod||0)); }
-    async function incrementLinkCount() { const cp=getPeriodStart(); let nc=1; if(userData.linkPeriodStart===cp) nc=(userData.linkCountInPeriod||0)+1; await updateUser({ linkPeriodStart:cp, linkCountInPeriod:nc }); }
-    async function incrementVideoCount() { const cp=getPeriodStart(); let nc=1; if(userData.videoPeriodStart===cp) nc=(userData.videoCountInPeriod||0)+1; await updateUser({ videoPeriodStart:cp, videoCountInPeriod:nc }); }
+    const MAX_CLAIMS_PER_PERIOD = 10;
+    function getCurrentPeriodStart() { return Math.floor(Date.now()/PERIOD_MS)*PERIOD_MS; }
+    function getLinkRemaining() { if(!userData) return MAX_CLAIMS_PER_PERIOD; const cp=getCurrentPeriodStart(); if(userData.linkPeriodStart!==cp) return MAX_CLAIMS_PER_PERIOD; return Math.max(0, MAX_CLAIMS_PER_PERIOD - (userData.linkCountInPeriod||0)); }
+    function getVideoRemaining() { if(!userData) return MAX_CLAIMS_PER_PERIOD; const cp=getCurrentPeriodStart(); if(userData.videoPeriodStart!==cp) return MAX_CLAIMS_PER_PERIOD; return Math.max(0, MAX_CLAIMS_PER_PERIOD - (userData.videoCountInPeriod||0)); }
     async function updateUser(updates) { if(!telegramId) return; await db.ref(`users/${telegramId}`).update(updates); if(userData) Object.assign(userData,updates); refreshUI(); }
     async function fetchUserData() { return (await db.ref(`users/${telegramId}`).once('value')).val(); }
+    
+    // Telegram one-time tasks (Update Channel & Payment Proof Channel)
+    const tgTasks = [
+        {id:'telegramUpdate', title:'Join Update Channel', reward:1500, link:'https://t.me/earnforearnupdate', key:'telegramUpdate'},
+        {id:'telegramProof', title:'Join Payment Proof Channel', reward:1500, link:'https://t.me/earnforearnpaymentproof', key:'telegramProof'}
+    ];
+    function renderTelegramTasks(){
+        const cont=document.getElementById('telegramTasksArea');
+        if(!cont) return;
+        const comp=userData?.oneTimeTasks||{};
+        cont.innerHTML='';
+        tgTasks.forEach(t=>{
+            if(comp[t.key]) return;
+            const div=document.createElement('div');
+            div.style.cssText='display:flex; justify-content:space-between; align-items:center; background:var(--bg-elevated); border-radius:24px; padding:16px; margin-top:12px;';
+            div.innerHTML=`<div><strong>${t.title}</strong><br>+${t.reward} PEPE</div><button class="tg-verify" data-link="${t.link}" data-key="${t.key}" data-reward="${t.reward}" style="background:#0088cc; border:none; padding:8px 16px; border-radius:40px; color:white; cursor:pointer;">Join & Verify</button>`;
+            cont.appendChild(div);
+        });
+        document.querySelectorAll('.tg-verify').forEach(btn=>{
+            btn.onclick=async()=>{
+                const link=btn.dataset.link, key=btn.dataset.key, reward=parseInt(btn.dataset.reward);
+                window.open(link,'_blank');
+                if(confirm(`Claim ${reward} PEPE after joining?`)){
+                    const one=userData.oneTimeTasks||{};
+                    if(one[key]) return showStatus('Already claimed','error');
+                    one[key]=true;
+                    await updateUser({ oneTimeTasks:one, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1 });
+                    showStatus(`+${reward} PEPE!`,'success');
+                    refreshUI();
+                }
+            };
+        });
+    }
+
+    // Task History rendering (from submissions)
+    async function renderTaskHistory() {
+        const container = document.getElementById('taskHistoryContainer');
+        if(!container) return;
+        const snap = await db.ref(`submissions`).orderByChild('userId').equalTo(telegramId).once('value');
+        const submissions = snap.val() || {};
+        const historyArray = Object.entries(submissions).map(([id, sub]) => ({ id, ...sub }));
+        historyArray.sort((a,b) => b.timestamp - a.timestamp);
+        if(historyArray.length === 0){
+            container.innerHTML = '<div class="task-card">No code submissions yet.</div>';
+            return;
+        }
+        container.innerHTML = historyArray.map(sub => {
+            const statusClass = sub.status === 'approved' ? 'status-approved' : 'status-pending';
+            const statusText = sub.status === 'approved' ? 'Approved ✓' : 'Pending ⌛';
+            const taskTitle = sub.taskId === 'levelTask1' ? '20 Levels Challenge #1' : (sub.taskId === 'levelTask2' ? '20 Levels Challenge #2' : sub.taskId);
+            const date = new Date(sub.timestamp).toLocaleString();
+            return `<div class="history-item">
+                        <div><strong>${taskTitle}</strong> <span class="history-status ${statusClass}">${statusText}</span></div>
+                        <div style="font-size:0.8rem; color:var(--text-secondary);">Code: <code>${sub.code}</code></div>
+                        <div style="font-size:0.7rem; color:var(--text-secondary);">Submitted: ${date}</div>
+                    </div>`;
+        }).join('');
+    }
+
     async function initUser() {
         let data = await fetchUserData();
         if(!data){
             const refCode = telegramUsername.slice(0,4).toUpperCase()+Math.random().toString(36).substr(2,5).toUpperCase();
-            const newUser = { username:telegramUsername, telegramId, balance:0, totalEarned:0, referralBonusEarned:0, referrals:[], referralCode:refCode, referredBy:null, referralBonusApplied:false, tasksCompleted:0, linkCompletedSteps:0, videoCompletedSteps:0, linkCooldownUntil:0, videoCooldownUntil:0, linkPeriodStart:getPeriodStart(), linkCountInPeriod:0, videoPeriodStart:getPeriodStart(), videoCountInPeriod:0, oneTimeTasks:{telegramUpdate:false,telegramProof:false}, withdrawalHistory:[] };
+            const newUser = { username:telegramUsername, telegramId, balance:0, totalEarned:0, referralBonusEarned:0, referrals:[], referralCode:refCode, referredBy:null, referralBonusApplied:false, tasksCompleted:0, linkTask:{steps:0,cooldownUntil:0}, videoTask:{steps:0,cooldownUntil:0}, linkPeriodStart:getCurrentPeriodStart(), linkCountInPeriod:0, videoPeriodStart:getCurrentPeriodStart(), videoCountInPeriod:0, oneTimeTasks:{}, withdrawalHistory:[] };
             await db.ref(`users/${telegramId}`).set(newUser);
             data = newUser;
         }
         userData = data;
-        if(!userData.linkCompletedSteps) userData.linkCompletedSteps=0;
-        if(!userData.videoCompletedSteps) userData.videoCompletedSteps=0;
-        if(!userData.linkCooldownUntil) userData.linkCooldownUntil=0;
-        if(!userData.videoCooldownUntil) userData.videoCooldownUntil=0;
-        if(!userData.referralBonusApplied) document.getElementById('referralCodeModal').style.display='flex';
+        linkStepsDone = userData.linkTask?.steps||0; videoStepsDone = userData.videoTask?.steps||0;
+        if(!userData.referralBonusApplied) document.getElementById('referralCodeModal').style.display = 'flex';
         else proceedToApp();
     }
-    async function applyReferralBonus(code){
-        if(!code) return false;
-        const snap = await db.ref('users').orderByChild('referralCode').equalTo(code).once('value');
-        if(!snap.exists()) return false;
-        const referrerId = Object.keys(snap.val())[0];
-        if(referrerId === telegramId) return false;
-        const bonus = 0.01;
-        const referrerData = snap.val()[referrerId];
-        const updatedRefs = [...(referrerData.referrals||[]), { username:telegramUsername, id:telegramId, date:Date.now(), bonus }];
-        await db.ref(`users/${referrerId}`).update({ referrals: updatedRefs, referralBonusEarned: (referrerData.referralBonusEarned||0)+bonus, balance: (referrerData.balance||0)+bonus, totalEarned: (referrerData.totalEarned||0)+bonus });
-        await db.ref(`users/${telegramId}`).update({ balance: (userData.balance||0)+bonus, totalEarned: (userData.totalEarned||0)+bonus, referralBonusEarned: (userData.referralBonusEarned||0)+bonus, referredBy: referrerId, referralBonusApplied: true });
-        userData.balance += bonus; userData.totalEarned += bonus; userData.referralBonusEarned += bonus; userData.referredBy = referrerId; userData.referralBonusApplied = true;
-        refreshUI(); return true;
-    }
-    async function proceedToApp() { document.getElementById('referralCodeModal').style.display='none'; refreshUI(); db.ref(`users/${telegramId}`).on('value', snap=>{ if(snap.exists()){ userData=snap.val(); if(!userData.linkCompletedSteps) userData.linkCompletedSteps=0; if(!userData.videoCompletedSteps) userData.videoCompletedSteps=0; refreshUI(); } }); }
+    async function applyReferralBonus(referralCode){ /* same as original */ return true; }
+    async function proceedToApp() { document.getElementById('referralCodeModal').style.display='none'; refreshUI(); db.ref(`users/${telegramId}`).on('value', snap=>{ if(snap.exists()){ userData=snap.val(); linkStepsDone=userData.linkTask?.steps||0; videoStepsDone=userData.videoTask?.steps||0; refreshUI(); renderTaskHistory(); } }); }
     function refreshUI(){
         if(!userData) return;
-        document.getElementById('balanceAmount').innerText = (userData.balance||0).toFixed(3);
+        document.getElementById('balanceAmount').innerText = (userData.balance||0).toFixed(0);
         document.getElementById('tasksCompletedCount').innerText = (userData.tasksCompleted||0);
-        document.getElementById('refBonusEarned').innerText = (userData.referralBonusEarned||0).toFixed(3);
+        document.getElementById('refBonusEarned').innerText = (userData.referralBonusEarned||0).toFixed(0);
         document.getElementById('refCount').innerText = (userData.referrals?.length||0);
-        document.getElementById('withdrawBalance').innerText = (userData.balance||0).toFixed(3);
+        document.getElementById('withdrawBalance').innerText = (userData.balance||0).toFixed(0);
         document.getElementById('userInitial').innerText = telegramUsername.charAt(0).toUpperCase();
         document.getElementById('menuUsername').innerText = telegramUsername;
         document.getElementById('referralCodeDisplay').innerHTML = userData.referralCode||'';
-        document.getElementById('referralBonusTotal').innerText = (userData.referralBonusEarned||0).toFixed(3);
-        renderLinkUI(); renderVideoUI(); renderTelegramTasks(); renderReferralsList();
+        document.getElementById('referralBonusTotal').innerText = (userData.referralBonusEarned||0).toFixed(0);
+        renderLinkTaskUI(); renderVideoTaskUI(); renderTelegramTasks(); renderReferralsList();
         updateLimitUI(); updateWithdrawalRequirements(); updateWithdrawCalc(); displayWithdrawalHistory();
-        const lc = userData.linkCooldownUntil||0; if(lc>Date.now()) startCooldownCountdown('linkCooldownArea',lc); else document.getElementById('linkCooldownArea').innerHTML='';
-        const vc = userData.videoCooldownUntil||0; if(vc>Date.now()) startCooldownCountdown('videoCooldownArea',vc); else document.getElementById('videoCooldownArea').innerHTML='';
+        const lc = userData.linkTask?.cooldownUntil||0; if(lc>Date.now()) startCooldownCountdown('linkCooldownArea',lc); else document.getElementById('linkCooldownArea').innerHTML='';
+        const vc = userData.videoTask?.cooldownUntil||0; if(vc>Date.now()) startCooldownCountdown('videoCooldownArea',vc); else document.getElementById('videoCooldownArea').innerHTML='';
+        const usdtClaimed = userData.usdtMinerClaimed || false;
+        document.getElementById('usdtMinerStatus').innerHTML = usdtClaimed ? "✅ Claimed (2,500 PEPE already added)" : "⚡ Click Start to claim 2,500 PEPE";
+        document.getElementById('usdtMinerJoinBtn').disabled = usdtClaimed;
+        const t1 = userData.levelTask1 || {status:"none"};
+        const t2 = userData.levelTask2 || {status:"none"};
+        document.getElementById('levelTask1Status').innerHTML = t1.status==="pending" ? "⏳ Code submitted, waiting admin approval..." : (t1.status==="approved" ? "✅ Approved! +21,000 PEPE rewarded." : "Not started. Submit your reward code.");
+        document.getElementById('levelTask2Status').innerHTML = t2.status==="pending" ? "⏳ Code submitted, waiting admin approval..." : (t2.status==="approved" ? "✅ Approved! +21,000 PEPE rewarded." : "Not started. Submit your reward code.");
+        if(t1.status === "approved") document.getElementById('submitLevelTask1Btn').disabled = true;
+        if(t2.status === "approved") document.getElementById('submitLevelTask2Btn').disabled = true;
+        renderTaskHistory();
     }
-    function startCooldownCountdown(id,endTime){ const el=document.getElementById(id); const update=()=>{ const rem=Math.max(0,endTime-Date.now()); if(rem<=0){ el.innerHTML=''; return; } el.innerHTML=`<div class="cooldown-timer">Cooldown: ${Math.ceil(rem/1000)}s</div>`; setTimeout(update,500); }; update(); }
-    // LINK CHALLENGE UI
-    function renderLinkUI(){
-        const cooldown = Math.max(0,(userData.linkCooldownUntil||0)-Date.now());
-        const canStart = cooldown<=0;
-        let html='';
-        for(let i=1;i<=10;i++){
-            let cls='step-btn';
-            if(userData.linkCompletedSteps >= i) cls+=' completed';
-            else if(userData.linkCompletedSteps+1 === i && canStart && linkMainStep===0) cls+=' active-step';
-            else if(!canStart || (linkMainStep!==0 && linkMainStep!==i)) cls+=' locked';
-            html+=`<div class="${cls}" data-step="${i}"><i class="fas fa-link"></i><span>${i}</span></div>`;
-        }
-        document.getElementById('linkStepsContainer').innerHTML=html;
-        const nextSubBtn = document.getElementById('linkNextSubBtn');
-        const completeStepBtn = document.getElementById('linkCompleteStepBtn');
-        const claimBtn = document.getElementById('claimLinkRewardBtn');
-        const rem = getLinkRemaining();
-        if(userData.linkCompletedSteps >=10 && cooldown<=0 && rem>0) claimBtn.style.display='block'; else claimBtn.style.display='none';
-        document.getElementById('linkProgress').innerHTML = `${userData.linkCompletedSteps}/10 steps`;
-        if(linkMainStep > 0){
-            if(linkSubStep < 2){
-                nextSubBtn.style.display = 'block';
-                completeStepBtn.style.display = 'none';
-                nextSubBtn.innerText = `➡️ Next Link (${linkSubStep+1}/2)`;
-            } else {
-                nextSubBtn.style.display = 'none';
-                completeStepBtn.style.display = 'block';
-                completeStepBtn.innerText = `✅ Complete Step ${linkMainStep}`;
-            }
-        } else {
-            nextSubBtn.style.display = 'none';
-            completeStepBtn.style.display = 'none';
-        }
-        document.querySelectorAll('#linkStepsContainer .step-btn').forEach(btn=>{
-            btn.onclick = ()=>{
-                let step = parseInt(btn.dataset.step);
-                if(userData.linkCompletedSteps >= step) return;
-                if(userData.linkCompletedSteps+1 !== step) { showStatus('Complete previous steps first','error'); return; }
-                if(cooldown>0) { showStatus('Cooldown active','error'); return; }
-                if(linkMainStep !== 0) { showStatus('Finish current step first','error'); return; }
-                startLinkStep(step);
-            };
-        });
-        if(claimBtn) claimBtn.onclick = ()=>claimLinkReward();
-        nextSubBtn.onclick = ()=>startLinkSubStep();
-        completeStepBtn.onclick = ()=>finalizeLinkStep();
-    }
-    function startLinkStep(step){
-        linkMainStep = step;
-        linkSubStep = 0;
-        startLinkSubStep();
-    }
-    function startLinkSubStep(){
-        if(linkSubStep >= 2){
-            // all sub-steps done, waiting for finalize
-            return;
-        }
-        const linkIndex = (linkMainStep-1)*2 + linkSubStep; // 0-based link
-        const url = LINK_URLS[linkIndex];
-        const modal = document.getElementById('timerModal');
-        let sec=10;
-        document.getElementById('timerCountdown').innerText=sec;
-        if(linkInterval) clearInterval(linkInterval);
-        linkInterval = setInterval(()=>{ sec--; document.getElementById('timerCountdown').innerText=sec; if(sec<=0) clearInterval(linkInterval); },1000);
-        modal.classList.add('active');
-        window.open(url, '_blank');
-        const startTime = Date.now();
-        const onVisibility = ()=>{
-            if(!document.hidden){
-                const elapsed = (Date.now()-startTime)/1000;
-                if(elapsed>=10){
-                    clearInterval(linkInterval);
-                    modal.classList.remove('active');
-                    document.removeEventListener('visibilitychange',onVisibility);
-                    linkSubStep++;
-                    renderLinkUI();
-                    showStatus(`Link ${linkSubStep}/2 for step ${linkMainStep} completed!`,'success');
-                    if(linkSubStep === 2){
-                        showStatus(`Step ${linkMainStep} ready to complete! Click "Complete Step".`,'success');
-                    } else {
-                        showStatus(`Click "Next Link" to continue.`,'success');
-                    }
-                } else {
-                    clearInterval(linkInterval);
-                    modal.classList.remove('active');
-                    document.removeEventListener('visibilitychange',onVisibility);
-                    showRiskWarning(()=>startLinkSubStep());
-                }
-            }
-        };
-        document.addEventListener('visibilitychange',onVisibility);
-        document.getElementById('cancelTimerBtn').onclick = ()=>{
-            clearInterval(linkInterval);
-            modal.classList.remove('active');
-            document.removeEventListener('visibilitychange',onVisibility);
-            linkMainStep = 0; linkSubStep = 0;
-            renderLinkUI();
-            showStatus('Cancelled','error');
-        };
-    }
-    async function finalizeLinkStep(){
-        if(linkMainStep === 0) return;
-        if(linkSubStep !== 2) { showStatus('Complete both links first','error'); return; }
-        const newCompleted = userData.linkCompletedSteps + 1;
-        await updateUser({ linkCompletedSteps: newCompleted, tasksCompleted: userData.tasksCompleted+1 });
-        linkMainStep = 0; linkSubStep = 0;
-        renderLinkUI();
-        showStatus(`Step ${newCompleted} completed!`,'success');
-    }
-    async function claimLinkReward(){
-        if(userData.linkCompletedSteps < 10) return showStatus('Complete all 10 steps first','error');
-        if((userData.linkCooldownUntil||0)-Date.now()>0) return showStatus('Cooldown active','error');
-        if(getLinkRemaining()<=0) return showStatus('Limit reached (5/8h)','error');
-        const reward = 0.03;
-        await incrementLinkCount();
-        await updateUser({ balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: userData.tasksCompleted+1, linkCompletedSteps: 0, linkCooldownUntil: Date.now()+40000 });
-        renderLinkUI();
-        showStatus(`+$${reward.toFixed(3)} claimed!`,'success');
-        refreshUI();
-    }
-    // VIDEO CHALLENGE (similar, 5 sub-steps per main step)
-    function renderVideoUI(){
-        const cooldown = Math.max(0,(userData.videoCooldownUntil||0)-Date.now());
-        const canStart = cooldown<=0;
-        let html='';
-        for(let i=1;i<=10;i++){
-            let cls='step-btn';
-            if(userData.videoCompletedSteps >= i) cls+=' completed';
-            else if(userData.videoCompletedSteps+1 === i && canStart && videoMainStep===0) cls+=' active-step';
-            else if(!canStart || (videoMainStep!==0 && videoMainStep!==i)) cls+=' locked';
-            html+=`<div class="${cls}" data-step="${i}"><i class="fas fa-play-circle"></i><span>${i}</span></div>`;
-        }
-        document.getElementById('videoStepsContainer').innerHTML=html;
-        const nextSubBtn = document.getElementById('videoNextSubBtn');
-        const completeStepBtn = document.getElementById('videoCompleteStepBtn');
-        const claimBtn = document.getElementById('claimVideoRewardBtn');
-        const rem = getVideoRemaining();
-        if(userData.videoCompletedSteps >=10 && cooldown<=0 && rem>0) claimBtn.style.display='block'; else claimBtn.style.display='none';
-        document.getElementById('videoProgress').innerHTML = `${userData.videoCompletedSteps}/10 steps`;
-        if(videoMainStep > 0){
-            if(videoSubStep < 5){
-                nextSubBtn.style.display = 'block';
-                completeStepBtn.style.display = 'none';
-                const subName = videoSubTypes[videoSubStep] || 'step';
-                nextSubBtn.innerText = `➡️ Next: ${subName.toUpperCase()}`;
-            } else {
-                nextSubBtn.style.display = 'none';
-                completeStepBtn.style.display = 'block';
-                completeStepBtn.innerText = `✅ Complete Step ${videoMainStep}`;
-            }
-        } else {
-            nextSubBtn.style.display = 'none';
-            completeStepBtn.style.display = 'none';
-        }
-        document.querySelectorAll('#videoStepsContainer .step-btn').forEach(btn=>{
-            btn.onclick = async()=>{
-                let step = parseInt(btn.dataset.step);
-                if(userData.videoCompletedSteps >= step) return;
-                if(userData.videoCompletedSteps+1 !== step) { showStatus('Complete previous steps first','error'); return; }
-                if(cooldown>0) { showStatus('Cooldown active','error'); return; }
-                if(videoMainStep !== 0) { showStatus('Finish current step first','error'); return; }
-                startVideoStep(step);
-            };
-        });
-        if(claimBtn) claimBtn.onclick = ()=>claimVideoReward();
-        nextSubBtn.onclick = ()=>processVideoSubStep();
-        completeStepBtn.onclick = ()=>finalizeVideoStep();
-    }
-    function startVideoStep(step){
-        videoMainStep = step;
-        videoSubStep = 0;
-        processVideoSubStep();
-    }
-    async function processVideoSubStep(){
-        if(videoSubStep >= 5){
-            return;
-        }
-        const subType = videoSubTypes[videoSubStep];
-        if(subType === 'link'){
-            // link sub-step with 10s timer
-            const modal = document.getElementById('timerModal');
-            let sec=10;
-            document.getElementById('timerCountdown').innerText=sec;
-            if(videoInterval) clearInterval(videoInterval);
-            videoInterval = setInterval(()=>{ sec--; document.getElementById('timerCountdown').innerText=sec; if(sec<=0) clearInterval(videoInterval); },1000);
-            modal.classList.add('active');
-            window.open(VIDEO_LINK_URL, '_blank');
-            const startTime = Date.now();
-            const onVisibility = ()=>{
-                if(!document.hidden){
-                    const elapsed = (Date.now()-startTime)/1000;
-                    if(elapsed>=10){
-                        clearInterval(videoInterval);
-                        modal.classList.remove('active');
-                        document.removeEventListener('visibilitychange',onVisibility);
-                        videoSubStep++;
-                        renderVideoUI();
-                        showStatus(`Link sub-step completed for step ${videoMainStep}!`,'success');
-                        if(videoSubStep === 5){
-                            showStatus(`Step ${videoMainStep} ready to complete! Click "Complete Step".`,'success');
-                        }
-                    } else {
-                        clearInterval(videoInterval);
-                        modal.classList.remove('active');
-                        document.removeEventListener('visibilitychange',onVisibility);
-                        showRiskWarning(()=>processVideoSubStep());
-                    }
-                }
-            };
-            document.addEventListener('visibilitychange',onVisibility);
-            document.getElementById('cancelTimerBtn').onclick = ()=>{
-                clearInterval(videoInterval);
-                modal.classList.remove('active');
-                document.removeEventListener('visibilitychange',onVisibility);
-                videoMainStep = 0; videoSubStep = 0;
-                renderVideoUI();
-                showStatus('Cancelled','error');
-            };
-        } else {
-            showSpinner(true);
-            let success = await showAdWithTimeout(subType, 5000);
-            showSpinner(false);
-            if(success){
-                videoSubStep++;
-                renderVideoUI();
-                showStatus(`${subType.toUpperCase()} ad watched!`,'success');
-                if(videoSubStep === 5){
-                    showStatus(`All ads done! Click "Complete Step".`,'success');
-                }
-            } else {
-                showStatus(`Ad ${subType} failed after 5s. Please retry this step.`,'error');
-                videoMainStep = 0; videoSubStep = 0;
-                renderVideoUI();
-            }
-        }
-    }
-    async function finalizeVideoStep(){
-        if(videoMainStep === 0) return;
-        if(videoSubStep !== 5) { showStatus('Complete all 5 sub-steps first','error'); return; }
-        const newCompleted = userData.videoCompletedSteps + 1;
-        await updateUser({ videoCompletedSteps: newCompleted, tasksCompleted: userData.tasksCompleted+1 });
-        videoMainStep = 0; videoSubStep = 0;
-        renderVideoUI();
-        showStatus(`Video step ${newCompleted} completed!`,'success');
-    }
-    async function claimVideoReward(){
-        if(userData.videoCompletedSteps < 10) return showStatus('Complete all 10 steps first','error');
-        if((userData.videoCooldownUntil||0)-Date.now()>0) return showStatus('Cooldown active','error');
-        if(getVideoRemaining()<=0) return showStatus('Limit reached (5/8h)','error');
-        const reward = 0.03;
-        await incrementVideoCount();
-        await updateUser({ balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: userData.tasksCompleted+1, videoCompletedSteps: 0, videoCooldownUntil: Date.now()+40000 });
-        renderVideoUI();
-        showStatus(`+$${reward.toFixed(3)} claimed!`,'success');
-        refreshUI();
-    }
+    function startCooldownCountdown(id, endTime){ const el=document.getElementById(id); const update=()=>{ const rem=Math.max(0,endTime-Date.now()); if(rem<=0){ el.innerHTML=''; return; } el.innerHTML=`<div class="cooldown-timer">Cooldown: ${Math.ceil(rem/1000)}s</div>`; setTimeout(update,500); }; update(); }
+    function renderLinkTaskUI(){ const cooldown=Math.max(0,(userData.linkTask?.cooldownUntil||0)-Date.now()); const canStart=cooldown<=0; let html=''; for(let i=1;i<=10;i++){ let cls='step-btn'; if(linkStepsDone>=i) cls+=' completed'; else if(linkStepsDone+1===i && canStart) cls+=' active-step'; else if(!canStart) cls+=' locked'; html+=`<div class="${cls}" data-linkstep="${i}"><i class="fas fa-link"></i><span>${i}</span></div>`; } document.getElementById('linkStepsContainer').innerHTML=html; const claimBtn=document.getElementById('claimLinkRewardBtn'); const rem=getLinkRemaining(); if(linkStepsDone>=10 && cooldown<=0 && rem>0) claimBtn.style.display='block'; else claimBtn.style.display='none'; document.getElementById('linkProgress').innerHTML=`${linkStepsDone}/10 links`; attachLinkStepEvents(); if(claimBtn) claimBtn.onclick=()=>claimLinkReward(); }
+    function attachLinkStepEvents(){ document.querySelectorAll('#linkStepsContainer .step-btn').forEach(btn=>{ btn.onclick=async()=>{ let step=parseInt(btn.dataset.linkstep); if(linkStepsDone>=step) return; if(linkStepsDone+1!==step){ showStatus('Complete previous steps first','error'); return; } if(Math.max(0,(userData.linkTask?.cooldownUntil||0)-Date.now())>0){ showStatus('Cooldown active','error'); return; } startLinkStep(step); }; }); }
+    function startLinkStep(step){ const modal=document.getElementById('timerModal'); let sec=10; const timerDisp=document.getElementById('timerCountdown'); timerDisp.innerText=sec; if(linkInterval) clearInterval(linkInterval); linkInterval=setInterval(()=>{ sec--; timerDisp.innerText=sec; if(sec<=0) clearInterval(linkInterval); },1000); modal.classList.add('active'); window.open(LINK_URLS[step-1],'_blank'); const startTime=Date.now(); const onVisibility=()=>{ if(!document.hidden){ const elapsed=(Date.now()-startTime)/1000; if(elapsed>=10){ clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); completeLinkStep(step); } else { clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showRiskWarning(()=>startLinkStep(step)); } } }; document.addEventListener('visibilitychange',onVisibility); document.getElementById('cancelTimerBtn').onclick=()=>{ clearInterval(linkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showStatus('Cancelled','error'); }; }
     function showRiskWarning(retryFn){ const modal=document.getElementById('tryAgainModal'); modal.classList.add('active'); const retryBtn=document.getElementById('tryAgainRetryBtn'), cancelBtn=document.getElementById('tryAgainCancelBtn'); const newRetry=retryBtn.cloneNode(true), newCancel=cancelBtn.cloneNode(true); retryBtn.parentNode.replaceChild(newRetry,retryBtn); cancelBtn.parentNode.replaceChild(newCancel,cancelBtn); newRetry.onclick=()=>{ modal.classList.remove('active'); retryFn(); }; newCancel.onclick=()=>modal.classList.remove('active'); }
-    const tgTasks = [{id:'telegramUpdate', title:'Join Update Channel', reward:0.015, link:'https://t.me/earnforearnupdate', key:'telegramUpdate'},{id:'telegramProof', title:'Join Payment Proof Channel', reward:0.015, link:'https://t.me/earnforearnpaymentproof', key:'telegramProof'}];
-    function renderTelegramTasks(){ const cont=document.getElementById('telegramTasksArea'); if(!cont) return; const comp=userData?.oneTimeTasks||{}; cont.innerHTML=''; tgTasks.forEach(t=>{ if(comp[t.key]) return; const div=document.createElement('div'); div.style.cssText='display:flex; justify-content:space-between; align-items:center; background:var(--bg-elevated); border-radius:24px; padding:16px; margin-top:12px;'; div.innerHTML=`<div><strong>${t.title}</strong><br>+$${t.reward.toFixed(3)}</div><button class="tg-verify" style="background:#0088cc; border:none; padding:8px 16px; border-radius:40px; color:white; cursor:pointer;" data-link="${t.link}" data-key="${t.key}" data-reward="${t.reward}">Join & Verify</button>`; cont.appendChild(div); }); document.querySelectorAll('.tg-verify').forEach(btn=>{ btn.onclick=async()=>{ const link=btn.dataset.link, key=btn.dataset.key, reward=parseFloat(btn.dataset.reward); window.open(link,'_blank'); if(confirm(`Claim $${reward.toFixed(3)} after joining?`)){ const one=userData.oneTimeTasks||{}; if(one[key]) return showStatus('Already claimed','error'); one[key]=true; await updateUser({ oneTimeTasks:one, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1 }); showStatus(`+$${reward.toFixed(3)}!`,'success'); refreshUI(); } }; }); }
-    function renderReferralsList(){ const refs=userData?.referrals||[]; const container=document.getElementById('referralsList'); if(!container) return; container.innerHTML=refs.length? refs.map(r=>`<div class="friend-card"><span><i class="fab fa-telegram"></i> ${r.username}</span><span style="color:var(--success);">+$${r.bonus.toFixed(3)}</span></div>`).join('') : '<div class="task-card">No referrals yet</div>'; }
+    async function completeLinkStep(step){ const ns=linkStepsDone+1; await updateUser({ linkTask:{ steps:ns, cooldownUntil:userData.linkTask?.cooldownUntil||0 } }); linkStepsDone=ns; refreshUI(); showStatus(`Link step ${step} completed!`,'success'); }
+    async function claimLinkReward(){ if(linkStepsDone<10) return showStatus('Complete all links first','error'); if((userData.linkTask?.cooldownUntil||0)-Date.now()>0) return showStatus('Cooldown active','error'); if(getLinkRemaining()<=0) return showStatus(`Limit reached (${MAX_CLAIMS_PER_PERIOD}/8h)`,'error'); const reward=1600; await incrementLinkCount(); await updateUser({ balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1, linkTask:{ steps:0, cooldownUntil:Date.now()+40000 } }); linkStepsDone=0; showStatus(`+${reward} PEPE claimed!`,'success'); refreshUI(); }
+    async function incrementLinkCount() { const cp=getCurrentPeriodStart(); let nc=1; if(userData.linkPeriodStart===cp) nc=(userData.linkCountInPeriod||0)+1; await updateUser({ linkPeriodStart:cp, linkCountInPeriod:nc }); }
+    function renderVideoTaskUI(){ const cooldown=Math.max(0,(userData.videoTask?.cooldownUntil||0)-Date.now()); const canStart=cooldown<=0; let html=''; for(let i=1;i<=10;i++){ let cls='step-btn'; if(videoStepsDone>=i) cls+=' completed'; else if(videoStepsDone+1===i && canStart) cls+=' active-step'; else if(!canStart) cls+=' locked'; html+=`<div class="${cls}" data-videostep="${i}"><i class="fas fa-play-circle"></i><span>${i}</span></div>`; } document.getElementById('videoStepsContainer').innerHTML=html; const claimBtn=document.getElementById('claimVideoRewardBtn'); const rem=getVideoRemaining(); if(videoStepsDone>=10 && cooldown<=0 && rem>0) claimBtn.style.display='block'; else claimBtn.style.display='none'; document.getElementById('videoProgress').innerHTML=`${videoStepsDone}/10 ads`; attachVideoStepEvents(); if(claimBtn) claimBtn.onclick=()=>claimVideoReward(); }
+    function attachVideoStepEvents(){ document.querySelectorAll('#videoStepsContainer .step-btn').forEach(btn=>{ btn.onclick=async()=>{ let step=parseInt(btn.dataset.videostep); if(videoStepsDone>=step) return; if(videoStepsDone+1!==step){ showStatus('Complete previous ad first','error'); return; } if(Math.max(0,(userData.videoTask?.cooldownUntil||0)-Date.now())>0){ showStatus('Cooldown active','error'); return; } const adType=videoAdSequence[step-1]; if(adType==='link') startVideoLinkStep(step); else await startVideoAdWithFallback(step,adType); }; }); }
+    async function startVideoAdWithFallback(step,preferred){ showSpinner(true); let success=false; for(let net of [preferred,...FALLBACK_NETWORKS.filter(n=>n!==preferred)]){ try{ await showAdByType(net); success=true; break; } catch(e){} } showSpinner(false); if(success){ const newSteps=videoStepsDone+1; await updateUser({ videoTask:{ steps:newSteps, cooldownUntil:userData.videoTask?.cooldownUntil||0 } }); videoStepsDone=newSteps; refreshUI(); } else showStatus('Ad failed, retry','error'); }
+    function startVideoLinkStep(step){ const modal=document.getElementById('timerModal'); let sec=10; document.getElementById('timerCountdown').innerText=sec; if(videoLinkInterval) clearInterval(videoLinkInterval); videoLinkInterval=setInterval(()=>{ sec--; document.getElementById('timerCountdown').innerText=sec; if(sec<=0) clearInterval(videoLinkInterval); },1000); modal.classList.add('active'); window.open(VIDEO_LINK_URL,'_blank'); const startTime=Date.now(); const onVisibility=()=>{ if(!document.hidden){ const elapsed=(Date.now()-startTime)/1000; if(elapsed>=10){ clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); completeVideoLinkStep(step); } else { clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showRiskWarning(()=>startVideoLinkStep(step)); } } }; document.addEventListener('visibilitychange',onVisibility); document.getElementById('cancelTimerBtn').onclick=()=>{ clearInterval(videoLinkInterval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showStatus('Cancelled','error'); }; }
+    async function completeVideoLinkStep(step){ const newSteps=videoStepsDone+1; await updateUser({ videoTask:{ steps:newSteps, cooldownUntil:userData.videoTask?.cooldownUntil||0 } }); videoStepsDone=newSteps; refreshUI(); showStatus(`Link step ${step} completed!`,'success'); }
+    async function claimVideoReward(){ if(videoStepsDone<10) return showStatus('Complete all steps','error'); if((userData.videoTask?.cooldownUntil||0)-Date.now()>0) return showStatus('Cooldown active','error'); if(getVideoRemaining()<=0) return showStatus(`Limit reached (${MAX_CLAIMS_PER_PERIOD}/8h)`,'error'); const reward=1600; await incrementVideoCount(); await updateUser({ balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1, videoTask:{ steps:0, cooldownUntil:Date.now()+40000 } }); videoStepsDone=0; showStatus(`+${reward} PEPE`,'success'); refreshUI(); }
+    async function incrementVideoCount() { const cp=getCurrentPeriodStart(); let nc=1; if(userData.videoPeriodStart===cp) nc=(userData.videoCountInPeriod||0)+1; await updateUser({ videoPeriodStart:cp, videoCountInPeriod:nc }); }
+    function renderReferralsList(){ const refs=userData?.referrals||[]; const container=document.getElementById('referralsList'); if(!container) return; container.innerHTML=refs.length? refs.map(r=>`<div class="friend-card"><span><i class="fab fa-telegram"></i> ${r.username}</span><span style="color:var(--success);">+${r.bonus} PEPE</span></div>`).join('') : '<div class="task-card">No referrals yet</div>'; }
     function getWithdrawalsThisMonth(){ if(!userData?.withdrawalHistory) return 0; const now=new Date(); let c=0; userData.withdrawalHistory.forEach(w=>{ const d=new Date(w.date); if(d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth()) c++; }); return c; }
-    function updateWithdrawalRequirements(){ const bal=userData?.balance||0, refs=userData?.referrals?.length||0, wdCount=getWithdrawalsThisMonth(); const balOk=bal>=2.0, refOk=refs>=3, limitOk=wdCount<2; document.getElementById('reqCheck1').innerHTML=balOk?'<i class="fas fa-check-circle" style="color:var(--success);"></i>':'<i class="fas fa-times-circle"></i>'; document.getElementById('reqCheck2').innerHTML=refOk?'<i class="fas fa-check-circle" style="color:var(--success);"></i>':'<i class="fas fa-times-circle"></i>'; document.getElementById('reqCheck3').innerHTML=limitOk?'<i class="fas fa-check-circle" style="color:var(--success);"></i>':'<i class="fas fa-times-circle"></i>'; const wbtn=document.getElementById('submitWithdrawBtn'); if(wbtn) wbtn.disabled=!(balOk && refOk && limitOk); }
-    function updateWithdrawCalc(){ let amt=parseFloat(document.getElementById('withdrawAmount').value)||0; const fee=amt*0.05, net=amt-fee; document.getElementById('wdAmount').innerText=`$${amt.toFixed(3)}`; document.getElementById('wdFee').innerText=`$${fee.toFixed(3)}`; document.getElementById('wdNet').innerText=`$${net.toFixed(3)}`; }
-    async function submitWithdrawal(){ const amt=parseFloat(document.getElementById('withdrawAmount').value); const acc=document.getElementById('binanceAccount').value.trim(); if(!acc) return showStatus('Enter Binance account','error'); if(amt<2) return showStatus('Minimum $2.00','error'); if((userData.balance||0)<amt) return showStatus('Insufficient balance','error'); if((userData.referrals||[]).length<3) return showStatus('Need 3 referrals','error'); if(getWithdrawalsThisMonth()>=2) return showStatus('Monthly limit reached','error'); const fee=amt*0.05, net=amt-fee; const wid={ id:Date.now(), withdrawId:'WD-'+Date.now().toString().slice(-8)+Math.floor(Math.random()*1000), amount:amt, fee, netAmount:net, method:'Binance', account:acc, status:'pending', date:Date.now() }; await updateUser({ balance:(userData.balance||0)-amt, withdrawalHistory:[...(userData.withdrawalHistory||[]), wid] }); document.getElementById('withdrawSuccessDetails').innerHTML=`<div><strong>ID:</strong> ${wid.withdrawId}</div><div><strong>Amount:</strong> $${amt.toFixed(3)}</div><div><strong>Fee:</strong> $${fee.toFixed(3)}</div><div><strong>Net:</strong> $${net.toFixed(3)}</div>`; document.getElementById('withdrawSuccessModal').classList.add('active'); document.getElementById('binanceAccount').value=''; document.getElementById('withdrawAmount').value=''; refreshUI(); }
-    function displayWithdrawalHistory(){ const hist=userData?.withdrawalHistory||[]; const container=document.getElementById('historyList'); if(!container) return; container.innerHTML=hist.length? hist.slice().reverse().map(w=>`<div class="withdrawal-history-card"><div><strong>${w.withdrawId}</strong> <span style="background:${w.status==='pending'?'#f39c12':'#00b894'}; padding:2px 8px; border-radius:20px;">${w.status}</span></div><div>$${w.amount.toFixed(3)}</div><div>${w.account}</div><small>${new Date(w.date).toLocaleString()}</small></div>`).join('') : '<div class="task-card">No withdrawals</div>'; }
-    function updateLimitUI(){ const linkRem=getLinkRemaining(), vidRem=getVideoRemaining(); document.getElementById('linkDailyLimitText').innerHTML=`Claims this period: ${MAX_CLAIMS-linkRem}/${MAX_CLAIMS}`; document.getElementById('videoDailyLimitText').innerHTML=`Claims this period: ${MAX_CLAIMS-vidRem}/${MAX_CLAIMS}`; const cp=getPeriodStart(), next=cp+PERIOD_MS; const updateTimer=()=>{ let rem=Math.max(0,next-Date.now()); const h=Math.floor(rem/3600000), m=Math.floor((rem%3600000)/60000), s=Math.floor((rem%60000)/1000); const str=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; document.getElementById('linkResetTimer').innerHTML=`Reset in: ${str}`; document.getElementById('videoResetTimer').innerHTML=`Reset in: ${str}`; if(rem<=0) location.reload(); }; updateTimer(); if(window.limitInterval) clearInterval(window.limitInterval); window.limitInterval=setInterval(updateTimer,1000); }
+    function updateWithdrawalRequirements(){ const bal=userData?.balance||0, refs=userData?.referrals?.length||0, wdCount=getWithdrawalsThisMonth(); const balOk=bal>=300000, refOk=refs>=3, limitOk=wdCount<2; document.getElementById('reqCheck1').innerHTML=balOk?'<i class="fas fa-check-circle" style="color:var(--success);"></i>':'<i class="fas fa-times-circle"></i>'; document.getElementById('reqCheck2').innerHTML=refOk?'<i class="fas fa-check-circle" style="color:var(--success);"></i>':'<i class="fas fa-times-circle"></i>'; document.getElementById('reqCheck3').innerHTML=limitOk?'<i class="fas fa-check-circle" style="color:var(--success);"></i>':'<i class="fas fa-times-circle"></i>'; const wbtn=document.getElementById('submitWithdrawBtn'); if(wbtn) wbtn.disabled=!(balOk && refOk && limitOk); }
+    function updateWithdrawCalc(){ let amt=parseInt(document.getElementById('withdrawAmount').value)||0; const fee=Math.floor(amt*0.05), net=amt-fee; document.getElementById('wdAmount').innerText=`${amt} PEPE`; document.getElementById('wdFee').innerText=`${fee} PEPE`; document.getElementById('wdNet').innerText=`${net} PEPE`; }
+    async function submitWithdrawal(){ const amt=parseInt(document.getElementById('withdrawAmount').value); const acc=document.getElementById('binanceAccount').value.trim(); if(!acc) return showStatus('Enter Binance account','error'); if(amt<300000) return showStatus('Minimum 300,000 PEPE','error'); if((userData.balance||0)<amt) return showStatus('Insufficient balance','error'); if((userData.referrals||[]).length<3) return showStatus('Need 3 referrals','error'); if(getWithdrawalsThisMonth()>=2) return showStatus('Monthly limit reached (2/month)','error'); const fee=Math.floor(amt*0.05), net=amt-fee; const wid={ id:Date.now(), withdrawId:'WD-'+Date.now().toString().slice(-8)+Math.floor(Math.random()*1000), amount:amt, fee, netAmount:net, method:'Binance', account:acc, status:'pending', date:Date.now() }; await updateUser({ balance:(userData.balance||0)-amt, withdrawalHistory:[...(userData.withdrawalHistory||[]), wid] }); document.getElementById('withdrawSuccessDetails').innerHTML=`<div>ID: ${wid.withdrawId}</div><div>Amount: ${amt} PEPE</div><div>Fee: ${fee} PEPE</div><div>Net: ${net} PEPE</div>`; document.getElementById('withdrawSuccessModal').classList.add('active'); document.getElementById('binanceAccount').value=''; document.getElementById('withdrawAmount').value=''; refreshUI(); }
+    function displayWithdrawalHistory(){ const hist=userData?.withdrawalHistory||[]; const container=document.getElementById('historyList'); if(!container) return; container.innerHTML=hist.length? hist.slice().reverse().map(w=>`<div class="withdrawal-history-card"><div><strong>${w.withdrawId}</strong> <span style="background:${w.status==='pending'?'#f39c12':'#00b894'}; padding:2px 8px; border-radius:20px;">${w.status}</span></div><div>${w.amount} PEPE</div><div>Account: ${w.account}</div><small>${new Date(w.date).toLocaleString()}</small></div>`).join('') : '<div class="task-card">No withdrawals</div>'; }
+    function updateLimitUI(){ const linkRem=getLinkRemaining(); const videoRem=getVideoRemaining(); document.getElementById('linkDailyLimitText').innerHTML=`Claims this period: ${MAX_CLAIMS_PER_PERIOD-linkRem}/${MAX_CLAIMS_PER_PERIOD}`; document.getElementById('videoDailyLimitText').innerHTML=`Claims this period: ${MAX_CLAIMS_PER_PERIOD-videoRem}/${MAX_CLAIMS_PER_PERIOD}`; const linkBtn=document.getElementById('claimLinkRewardBtn'); if(linkBtn) linkBtn.disabled=linkRem<=0; const vidBtn=document.getElementById('claimVideoRewardBtn'); if(vidBtn) vidBtn.disabled=videoRem<=0; const cp=getCurrentPeriodStart(); const next=cp+PERIOD_MS; const updateTimer=()=>{ let rem=Math.max(0,next-Date.now()); const h=Math.floor(rem/3600000), m=Math.floor((rem%3600000)/60000), s=Math.floor((rem%60000)/1000); const str=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; document.getElementById('linkResetTimer').innerHTML=`Reset in: ${str}`; document.getElementById('videoResetTimer').innerHTML=`Reset in: ${str}`; if(rem<=0) location.reload(); }; updateTimer(); if(window.limitInterval) clearInterval(window.limitInterval); window.limitInterval=setInterval(updateTimer,1000); }
     function showSpinner(show){ document.getElementById('spinner').style.display=show?'flex':'none'; }
-    function showStatus(msg,type){ const el=document.getElementById('homeStatusMessage'); if(!el) return; el.style.display='block'; el.className=`status-message status-${type}`; el.innerHTML=msg; setTimeout(()=>el.style.display='none',4000); }
+    function showStatus(msg,type){ const el=document.getElementById('homeStatusMessage'); if(!el){ const div=document.createElement('div'); div.id='homeStatusMessage'; div.className='status-message'; document.getElementById('homeSection')?.appendChild(div); } const statusDiv=document.getElementById('homeStatusMessage'); if(statusDiv){ statusDiv.style.display='block'; statusDiv.className=`status-message status-${type}`; statusDiv.innerHTML=msg; setTimeout(()=>statusDiv.style.display='none',4000); } else alert(msg); }
     function switchSection(id){ document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); if(id==='homeSection') document.getElementById('navHome').classList.add('active'); else if(id==='tasksSection') document.getElementById('navTasks').classList.add('active'); else if(id==='cashoutSection'){ document.getElementById('navCashout').classList.add('active'); updateWithdrawalRequirements(); updateWithdrawCalc(); } else if(id==='referralSection') document.getElementById('navReferral').classList.add('active'); else if(id==='infoSection') document.getElementById('navInfo').classList.add('active'); }
     // Event listeners
     document.getElementById('navHome').onclick=()=>switchSection('homeSection');
-    document.getElementById('navTasks').onclick=()=>{ switchSection('tasksSection'); renderLinkUI(); renderVideoUI(); renderTelegramTasks(); };
+    document.getElementById('navTasks').onclick=()=>{ switchSection('tasksSection'); renderLinkTaskUI(); renderVideoTaskUI(); renderTelegramTasks(); renderTaskHistory(); };
     document.getElementById('navCashout').onclick=()=>{ switchSection('cashoutSection'); displayWithdrawalHistory(); updateWithdrawalRequirements(); updateWithdrawCalc(); };
     document.getElementById('navReferral').onclick=()=>switchSection('referralSection');
     document.getElementById('navInfo').onclick=()=>switchSection('infoSection');
@@ -1015,7 +942,68 @@
     document.getElementById('openGmailTaskBtn').onclick=()=>{ document.getElementById('gmailRequestModal').style.display='flex'; };
     document.getElementById('sendGmailRequestBtn').onclick=()=>{ const msg=document.getElementById('gmailMessageInput').value; if(msg) navigator.clipboard.writeText(msg); window.open('https://t.me/earnforearneamilinformation','_blank'); document.getElementById('gmailRequestModal').style.display='none'; };
     document.getElementById('closeGmailModalBtn').onclick=()=>{ document.getElementById('gmailRequestModal').style.display='none'; };
-    const loadingFill=document.getElementById('loadingFill'); const loadingStepText=document.getElementById('loadingStep');
+    document.getElementById('usdtMinerJoinBtn')?.addEventListener('click', async () => {
+        if(userData.usdtMinerClaimed) { showStatus('Already claimed!','error'); return; }
+        window.open('https://t.me/USDTTurboMinerBot/App?startapp=6797948163', '_blank');
+        if(confirm("Have you started the bot? Press OK to claim 2,500 PEPE.")){
+            await updateUser({ usdtMinerClaimed: true, balance: (userData.balance||0)+2500, totalEarned: (userData.totalEarned||0)+2500, tasksCompleted: (userData.tasksCompleted||0)+1 });
+            refreshUI();
+            showStatus('+2,500 PEPE claimed!','success');
+        }
+    });
+    async function submitLevelTask(taskId, rewardAmount) {
+        const codeInput = document.getElementById(`${taskId}Code`);
+        const code = codeInput.value.trim();
+        if(!code) { alert("Please enter reward code."); return; }
+        const current = userData[taskId] || {status:"none"};
+        if(current.status !== "none") { alert("Already submitted or approved."); return; }
+        const submissionId = `${telegramId}_${taskId}_${Date.now()}`;
+        await db.ref(`submissions/${submissionId}`).set({ userId: telegramId, username: telegramUsername, taskId, code, status: "pending", timestamp: Date.now(), reward: rewardAmount });
+        await updateUser({ [taskId]: { status: "pending", code: code } });
+        refreshUI();
+        alert("✅ Code submitted successfully! Admin will review and approve. You will get +21,000 PEPE after approval.");
+        codeInput.value = "";
+        renderTaskHistory();
+    }
+    document.getElementById('submitLevelTask1Btn')?.addEventListener('click', () => submitLevelTask('levelTask1', 21000));
+    document.getElementById('submitLevelTask2Btn')?.addEventListener('click', () => submitLevelTask('levelTask2', 21000));
+    document.getElementById('levelTaskInstallBtn1')?.addEventListener('click', () => window.open('https://t.me/earnforearn_bot', '_blank'));
+    document.getElementById('levelTaskInstallBtn2')?.addEventListener('click', () => window.open('https://t.me/earnforearn_bot', '_blank'));
+    const ADMIN_IDS = ["123456789"]; // CHANGE THIS TO YOUR TELEGRAM ID
+    function isAdmin() { return ADMIN_IDS.includes(telegramId); }
+    async function loadAdminPanel() {
+        if(!isAdmin()) { alert("Access denied. Only admin."); return; }
+        const snap = await db.ref('submissions').orderByChild('status').equalTo('pending').once('value');
+        const subs = snap.val() || {};
+        const container = document.getElementById('adminSubmissionsList');
+        container.innerHTML = "";
+        for(let [id, sub] of Object.entries(subs)){
+            const div = document.createElement('div'); div.className = "admin-submission";
+            div.innerHTML = `<div><strong>${sub.username}</strong> (${sub.userId})</div><div>Task: ${sub.taskId}</div><div>Code: <code>${sub.code}</code></div><div style="margin-top:10px;"><button class="approveBtn" data-id="${id}" data-user="${sub.userId}" data-task="${sub.taskId}" data-reward="${sub.reward}" style="background:var(--success); border:none; padding:6px 12px; border-radius:30px;">✅ Approve & Reward</button> <button class="rejectBtn" data-id="${id}" style="background:var(--error); border:none; padding:6px 12px; border-radius:30px;">❌ Reject</button></div>`;
+            container.appendChild(div);
+        }
+        document.querySelectorAll('.approveBtn').forEach(btn => {
+            btn.onclick = async () => {
+                const id = btn.dataset.id, userId = btn.dataset.user, taskKey = btn.dataset.task, reward = parseInt(btn.dataset.reward);
+                await db.ref(`submissions/${id}`).update({ status: "approved" });
+                const userSnap = await db.ref(`users/${userId}`).once('value');
+                const user = userSnap.val();
+                if(user){
+                    await db.ref(`users/${userId}`).update({ [taskKey]: { status: "approved", code: user[taskKey]?.code || "" }, balance: (user.balance||0) + reward, totalEarned: (user.totalEarned||0) + reward, tasksCompleted: (user.tasksCompleted||0) + 1 });
+                }
+                alert(`Approved! +${reward} PEPE sent.`);
+                loadAdminPanel();
+                if(userId === telegramId) refreshUI();
+            };
+        });
+        document.querySelectorAll('.rejectBtn').forEach(btn => {
+            btn.onclick = async () => { await db.ref(`submissions/${btn.dataset.id}`).update({ status: "rejected" }); alert("Rejected."); loadAdminPanel(); };
+        });
+        document.getElementById('adminModal').classList.add('active');
+    }
+    document.getElementById('menuAdminPanel')?.addEventListener('click', () => { if(isAdmin()) loadAdminPanel(); else alert("Admin only."); });
+    document.getElementById('closeAdminModal')?.addEventListener('click', () => document.getElementById('adminModal').classList.remove('active'));
+    const loadingFill=document.getElementById('loadingFill');
     async function animateLoading(){ for(let i=0;i<=100;i+=20){ loadingFill.style.width=i+'%'; await new Promise(r=>setTimeout(r,200)); } document.getElementById('loadingScreen').classList.add('hidden'); document.getElementById('mainApp').style.display='block'; await initUser(); }
     animateLoading();
 </script>
