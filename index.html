@@ -13,16 +13,16 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     
-    <!-- Monetag SDK (Rewarded) -->
+    <!-- Monetag SDK (will be used as Giga after swap) -->
     <script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
     
     <!-- Adsgram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     
-    <!-- Giga Pub Ads SDK -->
+    <!-- Giga Pub Ads SDK (will be used as Monetag after swap) -->
     <script src="https://ad.gigapub.tech/script?id=6432"></script>
     
-    <!-- Adexora SDK (replaces OnClicka) -->
+    <!-- Adexora SDK -->
     <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
     
     <style>
@@ -601,28 +601,28 @@
                 <div id="usdtMinerStatus" class="info-note"></div>
             </div>
 
-            <!-- 20 Levels Challenge #1 (NEW REWARD 6,000 PEPE) -->
+            <!-- 10 Levels Challenge #1 (NEW REWARD 6,000 PEPE) - UPDATED -->
             <div class="task-card" id="levelTask1Card">
-                <div class="task-header"><span><i class="fas fa-code-branch"></i> 20 Levels Challenge #1</span><span class="task-reward">6,000 PEPE</span></div>
-                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 20 levels inside the game, get reward code, submit here → Admin approves → +6,000 PEPE (repeatable after approval).</div>
+                <div class="task-header"><span><i class="fas fa-code-branch"></i> 10 Levels Challenge #1</span><span class="task-reward">6,000 PEPE</span></div>
+                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +6,000 PEPE (repeatable after approval).</div>
                 <div style="margin: 16px 0; background: #131313; border-radius: 24px; padding: 16px;">
                     <div><i class="fas fa-check-circle"></i> <strong>Step 1:</strong> Open bot: <button id="levelTaskInstallBtn1" class="claim-btn" style="background:#2c3e50; margin-top:8px; padding:8px;">📲 Install / Open Bot</button></div>
-                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 20 levels → receive Reward Code.</div>
-                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Paste code & submit. Wait for admin approval (you can submit again only after admin resolves).</div>
+                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 10 levels → receive Reward Code.</div>
+                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Paste code & submit. The task disappears until admin approves/rejects, then you can submit again.</div>
                 </div>
                 <input type="text" id="levelTask1Code" class="form-input" placeholder="Enter reward code" maxlength="50">
                 <button id="submitLevelTask1Btn" class="claim-btn code-submit-btn">📝 Submit Code for Approval</button>
                 <div id="levelTask1Status" class="info-note"></div>
             </div>
 
-            <!-- 20 Levels Challenge #2 (6,000 PEPE) -->
+            <!-- 10 Levels Challenge #2 (6,000 PEPE) - UPDATED -->
             <div class="task-card" id="levelTask2Card">
-                <div class="task-header"><span><i class="fas fa-code-branch"></i> 20 Levels Challenge #2</span><span class="task-reward">6,000 PEPE</span></div>
-                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 20 levels inside the game, get reward code, submit here → Admin approves → +6,000 PEPE (repeatable after approval).</div>
+                <div class="task-header"><span><i class="fas fa-code-branch"></i> 10 Levels Challenge #2</span><span class="task-reward">6,000 PEPE</span></div>
+                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +6,000 PEPE (repeatable after approval).</div>
                 <div style="margin: 16px 0; background: #131313; border-radius: 24px; padding: 16px;">
                     <div><i class="fas fa-check-circle"></i> <strong>Step 1:</strong> Open bot: <button id="levelTaskInstallBtn2" class="claim-btn" style="background:#2c3e50; margin-top:8px; padding:8px;">📲 Install / Open Bot</button></div>
-                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 20 levels → receive Reward Code.</div>
-                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Submit code for approval (6,000 PEPE after admin approves).</div>
+                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 10 levels → receive Reward Code.</div>
+                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Submit code for approval (6,000 PEPE after admin approves). Task disappears until admin resolves.</div>
                 </div>
                 <input type="text" id="levelTask2Code" class="form-input" placeholder="Enter reward code" maxlength="50">
                 <button id="submitLevelTask2Btn" class="claim-btn code-submit-btn">📝 Submit Code for Approval</button>
@@ -641,12 +641,12 @@
         <!-- Referral Section -->
         <div id="referralSection" class="content-section"><div class="back-button" id="referralBackBtn"><i class="fas fa-arrow-left"></i> Back</div><div class="referral-professional"><i class="fas fa-user-plus" style="font-size:2.5rem; color:var(--purple);"></i><h3>Your Referral Code</h3><p>Share this code with friends. When they join using your code, <strong>BOTH get 1,600 PEPE bonus!</strong></p><div class="referral-code-display" id="referralCodeDisplay"></div><div class="btn-group"><button class="btn-primary" id="copyReferralCodeBtn"><i class="fas fa-copy"></i> Copy Code</button><button class="btn-primary" id="shareTelegramCodeBtn" style="background:#0088cc;"><i class="fab fa-telegram"></i> Share</button></div></div><div style="margin-top:25px;"><h4>Your Referrals (Earned 1,600 each)</h4><div id="referralsList"></div><div style="margin-top:15px; background:var(--bg-elevated); border-radius:24px; padding:16px;"><strong>Total Referral Bonus Earned:</strong> <span id="referralBonusTotal">0</span> PEPE</div></div></div>
         
-        <!-- INFO SECTION UPDATED -->
+        <!-- INFO SECTION -->
         <div id="infoSection" class="content-section">
             <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
             <div class="info-card info-highlight"><h4><i class="fas fa-headset"></i> Official Support</h4><p>📱 Telegram: <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a><br>📧 Email: earnforearnsuportteam@gmail.com<br>⏱️ Response time: usually within 24h</p></div>
             <div class="info-card"><h4><i class="fas fa-chart-line"></i> Withdrawal Conditions</h4><div class="info-grid"><div>✅ Minimum balance: 300,000 PEPE</div><div>👥 Minimum referrals: 3 active referrals</div><div>💰 Service fee: 5%</div><div>📅 Monthly limit: max 2 withdrawals</div></div></div>
-            <div class="info-card"><h4><i class="fas fa-tasks"></i> All Tasks & Rewards Overview</h4><div class="info-grid"><div>🔗 10-Link Challenge: <strong>1,500 PEPE</strong> (repeatable every 8h)</div><div>📺 10-Video Ads: <strong>1,500 PEPE</strong></div><div>📢 Telegram Channels: 1,500 PEPE each</div><div>🤖 USDT Miner Bot: 2,500 PEPE</div><div>🎮 20 Levels Challenges: <strong>6,000 PEPE each</strong> (repeatable after admin approval)</div><div>📧 Gmail Creation: 20,000 PEPE</div></div></div>
+            <div class="info-card"><h4><i class="fas fa-tasks"></i> All Tasks & Rewards Overview</h4><div class="info-grid"><div>🔗 10-Link Challenge: <strong>1,500 PEPE</strong> (repeatable every 8h)</div><div>📺 10-Video Ads: <strong>1,500 PEPE</strong></div><div>📢 Telegram Channels: 1,500 PEPE each</div><div>🤖 USDT Miner Bot: 2,500 PEPE</div><div>🎮 10 Levels Challenges: <strong>6,000 PEPE each</strong> (repeatable after admin approval)</div><div>📧 Gmail Creation: 20,000 PEPE</div></div></div>
         </div>
     </div>
     <div class="bottom-nav"><button class="nav-btn active" id="navHome"><i class="fas fa-home"></i><span>Home</span></button><button class="nav-btn" id="navTasks"><i class="fas fa-tasks"></i><span>Tasks</span></button><button class="nav-btn" id="navCashout"><i class="fas fa-wallet"></i><span>Cashout</span></button><button class="nav-btn" id="navReferral"><i class="fas fa-user-friends"></i><span>Referral</span></button><button class="nav-btn" id="navInfo"><i class="fas fa-info"></i><span>Info</span></button></div>
@@ -672,15 +672,16 @@
     let telegramUsername = tgUser?.username || tgUser?.first_name || (telegramId ? "user_"+telegramId : "guest_"+Date.now());
     if(!telegramId) { telegramId = "guest_"+Date.now(); telegramUsername = "guest_"+Date.now(); }
     let userData = null, linkStepsDone = 0, videoStepsDone = 0;
-    let processingVideo = false; // LOCK to prevent double completion
+    let processingVideo = false;
     const LINK_URLS = ["https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757","https://earnforearnlinksads2.vercel.app/","https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://earnforearnlinksads2.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757"];
     const VIDEO_LINK_URL = "https://earnforearnlinksads.vercel.app/";
-    const videoAdSequence = ['adsgram','monetag','giga','adexora','link','adsgram','monetag','giga','adexora','link'];
-    const FALLBACK_NETWORKS = ['adsgram','monetag','giga','adexora'];
+    // SWAPPED: Monetag ⇄ Giga Pub – now 'monetag' triggers Giga, 'giga' triggers Monetag
+    const videoAdSequence = ['adsgram','giga','monetag','adexora','link','adsgram','giga','monetag','adexora','link'];
+    const FALLBACK_NETWORKS = ['adsgram','giga','monetag','adexora'];
     async function showAdByType(type) { 
         if(type==='adsgram') { const ctrl = window.Adsgram.init({ blockId: "int-28543" }); await ctrl.show(); } 
-        else if(type==='monetag') await window.show_10541383(); 
-        else if(type==='giga') await window.showGiga("main"); 
+        else if(type==='monetag') await window.showGiga("main");   // swapped: monetag uses giga
+        else if(type==='giga') await window.show_10541383();        // swapped: giga uses monetag
         else if(type==='adexora') await window.showAdexora(); 
     }
     const PERIOD_MS = 8*60*60*1000, MAX_CLAIMS_PER_PERIOD = 10;
@@ -690,23 +691,25 @@
     async function updateUser(updates) { if(!telegramId) return; await db.ref(`users/${telegramId}`).update(updates); if(userData) Object.assign(userData,updates); refreshUI(); }
     async function fetchUserData() { return (await db.ref(`users/${telegramId}`).once('value')).val(); }
     
-    // Level task submit with pending flag
+    // Level task submit with hide-on-submit & reappear after admin resolution
     async function submitLevelTask(taskId, rewardAmount) {
         const codeInput = document.getElementById(`${taskId}Code`);
         const code = codeInput.value.trim();
         if(!code) { alert("Please enter reward code."); return; }
         const pendingKey = `${taskId}Pending`;
+        const hiddenKey = `${taskId}Hidden`;
         if(userData[pendingKey]) { alert("You already have a pending submission. Wait for admin approval/rejection."); return; }
         const submissionId = `${telegramId}_${taskId}_${Date.now()}`;
         await db.ref(`submissions/${submissionId}`).set({ userId: telegramId, username: telegramUsername, taskId, code, status: "pending", timestamp: Date.now(), reward: rewardAmount });
-        await updateUser({ [pendingKey]: true });
-        alert("✅ Code submitted! Admin will review. You'll receive reward upon approval/rejection.");
+        // Hide the task card immediately
+        await updateUser({ [pendingKey]: true, [hiddenKey]: true });
+        alert("✅ Code submitted! The task is now hidden. Admin will review. After approval/rejection, the task will reappear and you can submit again.");
         codeInput.value = "";
         renderTaskHistory();
         refreshUI();
     }
     
-    // Admin panel with approve/reject that clears pending flag
+    // Admin panel with approve/reject that clears pending & hidden flags
     async function loadAdminPanel() {
         const ADMIN_IDS = ["123456789"]; // ⚠️ REPLACE WITH YOUR TELEGRAM ID
         if(!ADMIN_IDS.includes(telegramId)) { alert("Admin only."); return; }
@@ -727,8 +730,14 @@
                 const user = userSnap.val();
                 if(user){
                     const pendingKey = `${taskKey}Pending`;
-                    const updates = { balance: (user.balance||0) + reward, totalEarned: (user.totalEarned||0) + reward, tasksCompleted: (user.tasksCompleted||0) + 1 };
-                    if(user[pendingKey]) updates[pendingKey] = null;
+                    const hiddenKey = `${taskKey}Hidden`;
+                    const updates = { 
+                        balance: (user.balance||0) + reward, 
+                        totalEarned: (user.totalEarned||0) + reward, 
+                        tasksCompleted: (user.tasksCompleted||0) + 1,
+                        [pendingKey]: null,
+                        [hiddenKey]: null
+                    };
                     await db.ref(`users/${userId}`).update(updates);
                 }
                 alert(`Approved! +${reward} PEPE sent.`);
@@ -741,7 +750,8 @@
                 const id = btn.dataset.id, userId = btn.dataset.user, taskKey = btn.dataset.task;
                 await db.ref(`submissions/${id}`).update({ status: "rejected" });
                 const pendingKey = `${taskKey}Pending`;
-                await db.ref(`users/${userId}`).update({ [pendingKey]: null });
+                const hiddenKey = `${taskKey}Hidden`;
+                await db.ref(`users/${userId}`).update({ [pendingKey]: null, [hiddenKey]: null });
                 alert("Rejected. User can submit a new code now.");
                 loadAdminPanel();
                 if(userId === telegramId) refreshUI();
@@ -926,7 +936,6 @@
         showSpinner(false); 
         processingVideo = false;
         if(success){ 
-            // Increment only one step
             const newSteps = videoStepsDone + 1;
             await updateUser({ videoTask:{ steps:newSteps, cooldownUntil:userData.videoTask?.cooldownUntil||0 } }); 
             videoStepsDone = newSteps; 
@@ -990,7 +999,7 @@
     
     function renderReferralsList(){ const refs=userData?.referrals||[]; document.getElementById('referralsList').innerHTML=refs.length? refs.map(r=>`<div class="friend-card"><span><i class="fab fa-telegram"></i> ${r.username}</span><span style="color:var(--success);">+${r.bonus} PEPE</span></div>`).join('') : '<div class="task-card">No referrals yet</div>'; }
     
-    function renderTaskHistory(){ db.ref(`submissions`).orderByChild('userId').equalTo(telegramId).once('value', snap=>{ const subs=snap.val()||{}; const arr=Object.entries(subs).map(([id,sub])=>({...sub,id})).sort((a,b)=>b.timestamp-a.timestamp); document.getElementById('taskHistoryContainer').innerHTML=arr.length? arr.map(sub=>`<div class="history-item"><div><strong>${sub.taskId==='levelTask1'?'20 Levels #1':sub.taskId==='levelTask2'?'20 Levels #2':sub.taskId}</strong> <span class="history-status ${sub.status==='approved'?'status-approved':'status-pending'}">${sub.status==='approved'?'Approved ✓':'Pending ⌛'}</span></div><div><code>${sub.code}</code></div><div><small>${new Date(sub.timestamp).toLocaleString()}</small></div></div>`).join('') : '<div class="task-card">No submissions yet.</div>'; }); }
+    function renderTaskHistory(){ db.ref(`submissions`).orderByChild('userId').equalTo(telegramId).once('value', snap=>{ const subs=snap.val()||{}; const arr=Object.entries(subs).map(([id,sub])=>({...sub,id})).sort((a,b)=>b.timestamp-a.timestamp); document.getElementById('taskHistoryContainer').innerHTML=arr.length? arr.map(sub=>`<div class="history-item"><div><strong>${sub.taskId==='levelTask1'?'10 Levels #1':sub.taskId==='levelTask2'?'10 Levels #2':sub.taskId}</strong> <span class="history-status ${sub.status==='approved'?'status-approved':'status-pending'}">${sub.status==='approved'?'Approved ✓':'Pending ⌛'}</span></div><div><code>${sub.code}</code></div><div><small>${new Date(sub.timestamp).toLocaleString()}</small></div></div>`).join('') : '<div class="task-card">No submissions yet.</div>'; }); }
     
     function updateLimitUI(){ const linkRem=getLinkRemaining(), videoRem=getVideoRemaining(); document.getElementById('linkDailyLimitText').innerHTML=`Claims this period: ${MAX_CLAIMS_PER_PERIOD-linkRem}/${MAX_CLAIMS_PER_PERIOD}`; document.getElementById('videoDailyLimitText').innerHTML=`Claims this period: ${MAX_CLAIMS_PER_PERIOD-videoRem}/${MAX_CLAIMS_PER_PERIOD}`; const cp=getCurrentPeriodStart(); const next=cp+PERIOD_MS; const updateTimer=()=>{ let rem=Math.max(0,next-Date.now()); const h=Math.floor(rem/3600000), m=Math.floor((rem%3600000)/60000), s=Math.floor((rem%60000)/1000); document.getElementById('linkResetTimer').innerHTML=`Reset in: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; document.getElementById('videoResetTimer').innerHTML=`Reset in: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }; updateTimer(); if(window.limitInterval) clearInterval(window.limitInterval); window.limitInterval=setInterval(updateTimer,1000); }
     
@@ -1022,10 +1031,17 @@
         const usdtClaimed=userData.usdtMinerClaimed||false; 
         document.getElementById('usdtMinerStatus').innerHTML=usdtClaimed?'✅ Claimed (2,500 PEPE)':'⚡ Click Start to claim 2,500 PEPE'; 
         document.getElementById('usdtMinerJoinBtn').disabled=usdtClaimed; 
-        document.getElementById('levelTask1Status').innerHTML=userData.levelTask1Pending?'⏳ Pending approval... Wait for admin.':'✅ Ready to submit new code.'; 
-        document.getElementById('levelTask2Status').innerHTML=userData.levelTask2Pending?'⏳ Pending approval... Wait for admin.':'✅ Ready to submit new code.'; 
+        document.getElementById('levelTask1Status').innerHTML=userData.levelTask1Pending?'⏳ Pending approval... Task hidden.':'✅ Ready – submit new code.'; 
+        document.getElementById('levelTask2Status').innerHTML=userData.levelTask2Pending?'⏳ Pending approval... Task hidden.':'✅ Ready – submit new code.'; 
         document.getElementById('submitLevelTask1Btn').disabled=!!userData.levelTask1Pending; 
-        document.getElementById('submitLevelTask2Btn').disabled=!!userData.levelTask2Pending; 
+        document.getElementById('submitLevelTask2Btn').disabled=!!userData.levelTask2Pending;
+        // Hide task cards if hidden flag is true
+        const hide1 = userData.levelTask1Hidden || userData.levelTask1Pending;
+        const hide2 = userData.levelTask2Hidden || userData.levelTask2Pending;
+        const card1 = document.getElementById('levelTask1Card');
+        const card2 = document.getElementById('levelTask2Card');
+        if(card1) card1.style.display = hide1 ? 'none' : 'block';
+        if(card2) card2.style.display = hide2 ? 'none' : 'block';
         renderTaskHistory(); 
     }
     
@@ -1057,7 +1073,7 @@
         let data=await fetchUserData(); 
         if(!data){ 
             const refCode=telegramUsername.slice(0,4).toUpperCase()+Math.random().toString(36).substr(2,5).toUpperCase(); 
-            const newUser={ username:telegramUsername, telegramId, balance:0, totalEarned:0, referralBonusEarned:0, referrals:[], referralCode:refCode, referredBy:null, referralBonusApplied:false, tasksCompleted:0, linkTask:{steps:0,cooldownUntil:0}, videoTask:{steps:0,cooldownUntil:0}, linkPeriodStart:getCurrentPeriodStart(), linkCountInPeriod:0, videoPeriodStart:getCurrentPeriodStart(), videoCountInPeriod:0, oneTimeTasks:{}, withdrawalHistory:[] }; 
+            const newUser={ username:telegramUsername, telegramId, balance:0, totalEarned:0, referralBonusEarned:0, referrals:[], referralCode:refCode, referredBy:null, referralBonusApplied:false, tasksCompleted:0, linkTask:{steps:0,cooldownUntil:0}, videoTask:{steps:0,cooldownUntil:0}, linkPeriodStart:getCurrentPeriodStart(), linkCountInPeriod:0, videoPeriodStart:getCurrentPeriodStart(), videoCountInPeriod:0, oneTimeTasks:{}, withdrawalHistory:[], levelTask1Pending:false, levelTask1Hidden:false, levelTask2Pending:false, levelTask2Hidden:false }; 
             await db.ref(`users/${telegramId}`).set(newUser); 
             data=newUser; 
         } 
@@ -1106,8 +1122,15 @@
     document.getElementById('levelTaskInstallBtn1').onclick=()=>window.open('https://t.me/earnforearn_bot','_blank'); 
     document.getElementById('levelTaskInstallBtn2').onclick=()=>window.open('https://t.me/earnforearn_bot','_blank');
     
-    // Admin panel access (hidden from menu, but still functional via console or secret? We'll keep it but not in menu. To access, user must call loadAdminPanel from console or we can add a hidden gesture? Not needed.)
-    // But we need to keep the admin panel for admin. We'll add a secret double-tap on profile? Optional. But for now, admin can open console and call loadAdminPanel(). Or we can add a hidden menu item for admin only? Not required as per "remove admin panel option". So removed from menu.
+    // Secret admin trigger (double‑click profile picture)
+    let adminClickCount = 0;
+    document.getElementById('profileBtn').addEventListener('dblclick', () => {
+        adminClickCount++;
+        if(adminClickCount >= 2) {
+            loadAdminPanel();
+            adminClickCount = 0;
+        }
+    });
     
     // Loading animation
     const loadingFill=document.getElementById('loadingFill'); 
