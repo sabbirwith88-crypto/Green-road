@@ -601,39 +601,41 @@
                 <div id="usdtMinerStatus" class="info-note"></div>
             </div>
 
-            <!-- 10 Levels Challenge #1 (NEW REWARD 6,000 PEPE) - UPDATED -->
+            <!-- 10 Levels Challenge #1 (Daily limit 4, no pending lock, admin approval gives reward) -->
             <div class="task-card" id="levelTask1Card">
                 <div class="task-header"><span><i class="fas fa-code-branch"></i> 10 Levels Challenge #1</span><span class="task-reward">6,000 PEPE</span></div>
-                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +6,000 PEPE (repeatable after approval).</div>
+                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +6,000 PEPE. Max 4 submissions per day. Submit multiple codes anytime.</div>
                 <div style="margin: 16px 0; background: #131313; border-radius: 24px; padding: 16px;">
                     <div><i class="fas fa-check-circle"></i> <strong>Step 1:</strong> Open bot: <button id="levelTaskInstallBtn1" class="claim-btn" style="background:#2c3e50; margin-top:8px; padding:8px;">📲 Install / Open Bot</button></div>
                     <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 10 levels → receive Reward Code.</div>
-                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Paste code & submit. The task disappears until admin approves/rejects, then you can submit again.</div>
+                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Paste code & submit. You can submit up to 4 codes per day (each goes to admin for approval). No waiting between submissions.</div>
                 </div>
                 <input type="text" id="levelTask1Code" class="form-input" placeholder="Enter reward code" maxlength="50">
-                <button id="submitLevelTask1Btn" class="claim-btn code-submit-btn">📝 Submit Code for Approval</button>
+                <button id="submitLevelTask1Btn" class="claim-btn code-submit-btn">📝 Submit Code for Admin Approval</button>
                 <div id="levelTask1Status" class="info-note"></div>
+                <div id="levelTask1LimitInfo" style="margin-top:8px; font-size:0.8rem; color:var(--text-secondary);"></div>
             </div>
 
-            <!-- 10 Levels Challenge #2 (6,000 PEPE) - UPDATED -->
+            <!-- 10 Levels Challenge #2 (Daily limit 4, no pending lock) -->
             <div class="task-card" id="levelTask2Card">
                 <div class="task-header"><span><i class="fas fa-code-branch"></i> 10 Levels Challenge #2</span><span class="task-reward">6,000 PEPE</span></div>
-                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +6,000 PEPE (repeatable after approval).</div>
+                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +6,000 PEPE. Max 4 submissions per day.</div>
                 <div style="margin: 16px 0; background: #131313; border-radius: 24px; padding: 16px;">
                     <div><i class="fas fa-check-circle"></i> <strong>Step 1:</strong> Open bot: <button id="levelTaskInstallBtn2" class="claim-btn" style="background:#2c3e50; margin-top:8px; padding:8px;">📲 Install / Open Bot</button></div>
                     <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 10 levels → receive Reward Code.</div>
-                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Submit code for approval (6,000 PEPE after admin approves). Task disappears until admin resolves.</div>
+                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Submit code for approval. Up to 4 submissions per day – submit next immediately.</div>
                 </div>
                 <input type="text" id="levelTask2Code" class="form-input" placeholder="Enter reward code" maxlength="50">
-                <button id="submitLevelTask2Btn" class="claim-btn code-submit-btn">📝 Submit Code for Approval</button>
+                <button id="submitLevelTask2Btn" class="claim-btn code-submit-btn">📝 Submit Code for Admin Approval</button>
                 <div id="levelTask2Status" class="info-note"></div>
+                <div id="levelTask2LimitInfo" style="margin-top:8px; font-size:0.8rem; color:var(--text-secondary);"></div>
             </div>
 
             <!-- Gmail Creation Task -->
             <div class="task-card"><div class="task-header"><span><i class="fas fa-envelope"></i> Create Gmail Account</span><span class="task-reward">20,000 PEPE</span></div><div>Support will provide Gmail details. Create account as instructed → Admin rewards 20,000 PEPE manually.</div><button id="openGmailTaskBtn" class="claim-btn" style="background:#4285f4; color:white; margin-top:16px;">📩 Contact Support & Request Details</button><div class="info-note">⚠️ Reward is given manually by admin after successful account creation.</div></div>
 
             <!-- Task History Section -->
-            <div style="margin-top:30px; margin-bottom:20px;"><h3><i class="fas fa-history"></i> Task History</h3><p>Here you can see all submitted code tasks and their approval status.</p></div>
+            <div style="margin-top:30px; margin-bottom:20px;"><h3><i class="fas fa-history"></i> Task History</h3><p>Here you can see all your submitted codes and their approval status.</p></div>
             <div id="taskHistoryContainer"></div>
         </div>
         <!-- Cashout Section -->
@@ -646,7 +648,7 @@
             <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
             <div class="info-card info-highlight"><h4><i class="fas fa-headset"></i> Official Support</h4><p>📱 Telegram: <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a><br>📧 Email: earnforearnsuportteam@gmail.com<br>⏱️ Response time: usually within 24h</p></div>
             <div class="info-card"><h4><i class="fas fa-chart-line"></i> Withdrawal Conditions</h4><div class="info-grid"><div>✅ Minimum balance: 300,000 PEPE</div><div>👥 Minimum referrals: 3 active referrals</div><div>💰 Service fee: 5%</div><div>📅 Monthly limit: max 2 withdrawals</div></div></div>
-            <div class="info-card"><h4><i class="fas fa-tasks"></i> All Tasks & Rewards Overview</h4><div class="info-grid"><div>🔗 10-Link Challenge: <strong>1,500 PEPE</strong> (repeatable every 8h)</div><div>📺 10-Video Ads: <strong>1,500 PEPE</strong></div><div>📢 Telegram Channels: 1,500 PEPE each</div><div>🤖 USDT Miner Bot: 2,500 PEPE</div><div>🎮 10 Levels Challenges: <strong>6,000 PEPE each</strong> (repeatable after admin approval)</div><div>📧 Gmail Creation: 20,000 PEPE</div></div></div>
+            <div class="info-card"><h4><i class="fas fa-tasks"></i> All Tasks & Rewards Overview</h4><div class="info-grid"><div>🔗 10-Link Challenge: <strong>1,500 PEPE</strong> (repeatable every 8h)</div><div>📺 10-Video Ads: <strong>1,500 PEPE</strong></div><div>📢 Telegram Channels: 1,500 PEPE each</div><div>🤖 USDT Miner Bot: 2,500 PEPE</div><div>🎮 10 Levels Challenges: <strong>6,000 PEPE each</strong> (admin approval, max 4 submissions per day, no waiting)</div><div>📧 Gmail Creation: 20,000 PEPE (manual admin)</div></div></div>
         </div>
     </div>
     <div class="bottom-nav"><button class="nav-btn active" id="navHome"><i class="fas fa-home"></i><span>Home</span></button><button class="nav-btn" id="navTasks"><i class="fas fa-tasks"></i><span>Tasks</span></button><button class="nav-btn" id="navCashout"><i class="fas fa-wallet"></i><span>Cashout</span></button><button class="nav-btn" id="navReferral"><i class="fas fa-user-friends"></i><span>Referral</span></button><button class="nav-btn" id="navInfo"><i class="fas fa-info"></i><span>Info</span></button></div>
@@ -675,41 +677,76 @@
     let processingVideo = false;
     const LINK_URLS = ["https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757","https://earnforearnlinksads2.vercel.app/","https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://earnforearnlinksads2.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757"];
     const VIDEO_LINK_URL = "https://earnforearnlinksads.vercel.app/";
-    // SWAPPED: Monetag ⇄ Giga Pub – now 'monetag' triggers Giga, 'giga' triggers Monetag
+    // SWAPPED: Monetag ⇄ Giga Pub
     const videoAdSequence = ['adsgram','giga','monetag','adexora','link','adsgram','giga','monetag','adexora','link'];
     const FALLBACK_NETWORKS = ['adsgram','giga','monetag','adexora'];
     async function showAdByType(type) { 
         if(type==='adsgram') { const ctrl = window.Adsgram.init({ blockId: "int-28543" }); await ctrl.show(); } 
-        else if(type==='monetag') await window.showGiga("main");   // swapped: monetag uses giga
-        else if(type==='giga') await window.show_10541383();        // swapped: giga uses monetag
+        else if(type==='monetag') await window.showGiga("main");   // swapped
+        else if(type==='giga') await window.show_10541383();        // swapped
         else if(type==='adexora') await window.showAdexora(); 
     }
     const PERIOD_MS = 8*60*60*1000, MAX_CLAIMS_PER_PERIOD = 10;
+    const DAILY_SUBMISSION_LIMIT = 4;
     function getCurrentPeriodStart() { return Math.floor(Date.now()/PERIOD_MS)*PERIOD_MS; }
     function getLinkRemaining() { if(!userData) return MAX_CLAIMS_PER_PERIOD; const cp=getCurrentPeriodStart(); if(userData.linkPeriodStart!==cp) return MAX_CLAIMS_PER_PERIOD; return Math.max(0, MAX_CLAIMS_PER_PERIOD - (userData.linkCountInPeriod||0)); }
     function getVideoRemaining() { if(!userData) return MAX_CLAIMS_PER_PERIOD; const cp=getCurrentPeriodStart(); if(userData.videoPeriodStart!==cp) return MAX_CLAIMS_PER_PERIOD; return Math.max(0, MAX_CLAIMS_PER_PERIOD - (userData.videoCountInPeriod||0)); }
     async function updateUser(updates) { if(!telegramId) return; await db.ref(`users/${telegramId}`).update(updates); if(userData) Object.assign(userData,updates); refreshUI(); }
     async function fetchUserData() { return (await db.ref(`users/${telegramId}`).once('value')).val(); }
     
-    // Level task submit with hide-on-submit & reappear after admin resolution
+    // Reset daily counters if date changed
+    function resetDailyCountersIfNeeded() {
+        const today = new Date().toDateString();
+        if(!userData) return;
+        if(userData.lastSubmissionDate !== today) {
+            const updates = {
+                lastSubmissionDate: today,
+                levelTask1SubmissionsToday: 0,
+                levelTask2SubmissionsToday: 0
+            };
+            updateUser(updates);
+        }
+    }
+    
+    // Level task: submit code, increment daily counter, no pending lock, reward given only on admin approval
     async function submitLevelTask(taskId, rewardAmount) {
+        resetDailyCountersIfNeeded();
         const codeInput = document.getElementById(`${taskId}Code`);
         const code = codeInput.value.trim();
         if(!code) { alert("Please enter reward code."); return; }
-        const pendingKey = `${taskId}Pending`;
-        const hiddenKey = `${taskId}Hidden`;
-        if(userData[pendingKey]) { alert("You already have a pending submission. Wait for admin approval/rejection."); return; }
+        
+        const submissionsTodayKey = `${taskId}SubmissionsToday`;
+        let submissionsToday = userData[submissionsTodayKey] || 0;
+        if(submissionsToday >= DAILY_SUBMISSION_LIMIT) {
+            alert(`Daily limit reached (${DAILY_SUBMISSION_LIMIT} per day). Come back tomorrow.`);
+            return;
+        }
+        
+        // Create submission record (pending)
         const submissionId = `${telegramId}_${taskId}_${Date.now()}`;
-        await db.ref(`submissions/${submissionId}`).set({ userId: telegramId, username: telegramUsername, taskId, code, status: "pending", timestamp: Date.now(), reward: rewardAmount });
-        // Hide the task card immediately
-        await updateUser({ [pendingKey]: true, [hiddenKey]: true });
-        alert("✅ Code submitted! The task is now hidden. Admin will review. After approval/rejection, the task will reappear and you can submit again.");
+        await db.ref(`submissions/${submissionId}`).set({ 
+            userId: telegramId, 
+            username: telegramUsername, 
+            taskId, 
+            code, 
+            status: "pending", 
+            timestamp: Date.now(), 
+            reward: rewardAmount 
+        });
+        
+        // Update user: increment daily counter, DO NOT set any pending flag
+        await updateUser({ 
+            [submissionsTodayKey]: submissionsToday + 1,
+            lastSubmissionDate: new Date().toDateString()
+        });
+        
+        alert(`✅ Code submitted for approval! (${submissionsToday+1}/${DAILY_SUBMISSION_LIMIT} today). Admin will review. You can submit another code now.`);
         codeInput.value = "";
         renderTaskHistory();
         refreshUI();
     }
     
-    // Admin panel with approve/reject that clears pending & hidden flags
+    // Admin panel: approve adds reward, reject does nothing (daily counter already used)
     async function loadAdminPanel() {
         const ADMIN_IDS = ["123456789"]; // ⚠️ REPLACE WITH YOUR TELEGRAM ID
         if(!ADMIN_IDS.includes(telegramId)) { alert("Admin only."); return; }
@@ -717,26 +754,26 @@
         const subs = snap.val() || {};
         const container = document.getElementById('adminSubmissionsList');
         container.innerHTML = "";
+        if(Object.keys(subs).length === 0) {
+            container.innerHTML = "<div style='padding:10px;'>No pending submissions.</div>";
+        }
         for(let [id, sub] of Object.entries(subs)){
             const div = document.createElement('div'); div.className = "admin-submission";
-            div.innerHTML = `<div><strong>${sub.username}</strong> (${sub.userId})</div><div>Task: ${sub.taskId}</div><div>Code: <code>${sub.code}</code></div><div style="margin-top:10px;"><button class="approveBtn" data-id="${id}" data-user="${sub.userId}" data-task="${sub.taskId}" data-reward="${sub.reward}" style="background:var(--success); border:none; padding:6px 12px; border-radius:30px;">✅ Approve & Reward</button> <button class="rejectBtn" data-id="${id}" data-user="${sub.userId}" data-task="${sub.taskId}" style="background:var(--error); border:none; padding:6px 12px; border-radius:30px;">❌ Reject</button></div>`;
+            div.style.cssText = "background:#2a2a2a; border-radius:16px; padding:12px; margin-bottom:12px;";
+            div.innerHTML = `<div><strong>${sub.username}</strong> (${sub.userId})</div><div>Task: ${sub.taskId}</div><div>Code: <code>${sub.code}</code></div><div style="margin-top:10px;"><button class="approveBtn" data-id="${id}" data-user="${sub.userId}" data-reward="${sub.reward}" style="background:var(--success); border:none; padding:6px 12px; border-radius:30px; cursor:pointer;">✅ Approve & Reward</button> <button class="rejectBtn" data-id="${id}" data-user="${sub.userId}" style="background:var(--error); border:none; padding:6px 12px; border-radius:30px; cursor:pointer;">❌ Reject</button></div>`;
             container.appendChild(div);
         }
         document.querySelectorAll('.approveBtn').forEach(btn => {
             btn.onclick = async () => {
-                const id = btn.dataset.id, userId = btn.dataset.user, taskKey = btn.dataset.task, reward = parseInt(btn.dataset.reward);
+                const id = btn.dataset.id, userId = btn.dataset.user, reward = parseInt(btn.dataset.reward);
                 await db.ref(`submissions/${id}`).update({ status: "approved" });
                 const userSnap = await db.ref(`users/${userId}`).once('value');
                 const user = userSnap.val();
                 if(user){
-                    const pendingKey = `${taskKey}Pending`;
-                    const hiddenKey = `${taskKey}Hidden`;
                     const updates = { 
                         balance: (user.balance||0) + reward, 
                         totalEarned: (user.totalEarned||0) + reward, 
-                        tasksCompleted: (user.tasksCompleted||0) + 1,
-                        [pendingKey]: null,
-                        [hiddenKey]: null
+                        tasksCompleted: (user.tasksCompleted||0) + 1
                     };
                     await db.ref(`users/${userId}`).update(updates);
                 }
@@ -747,12 +784,9 @@
         });
         document.querySelectorAll('.rejectBtn').forEach(btn => {
             btn.onclick = async () => { 
-                const id = btn.dataset.id, userId = btn.dataset.user, taskKey = btn.dataset.task;
+                const id = btn.dataset.id, userId = btn.dataset.user;
                 await db.ref(`submissions/${id}`).update({ status: "rejected" });
-                const pendingKey = `${taskKey}Pending`;
-                const hiddenKey = `${taskKey}Hidden`;
-                await db.ref(`users/${userId}`).update({ [pendingKey]: null, [hiddenKey]: null });
-                alert("Rejected. User can submit a new code now.");
+                alert("Rejected. No reward given.");
                 loadAdminPanel();
                 if(userId === telegramId) refreshUI();
             };
@@ -999,7 +1033,13 @@
     
     function renderReferralsList(){ const refs=userData?.referrals||[]; document.getElementById('referralsList').innerHTML=refs.length? refs.map(r=>`<div class="friend-card"><span><i class="fab fa-telegram"></i> ${r.username}</span><span style="color:var(--success);">+${r.bonus} PEPE</span></div>`).join('') : '<div class="task-card">No referrals yet</div>'; }
     
-    function renderTaskHistory(){ db.ref(`submissions`).orderByChild('userId').equalTo(telegramId).once('value', snap=>{ const subs=snap.val()||{}; const arr=Object.entries(subs).map(([id,sub])=>({...sub,id})).sort((a,b)=>b.timestamp-a.timestamp); document.getElementById('taskHistoryContainer').innerHTML=arr.length? arr.map(sub=>`<div class="history-item"><div><strong>${sub.taskId==='levelTask1'?'10 Levels #1':sub.taskId==='levelTask2'?'10 Levels #2':sub.taskId}</strong> <span class="history-status ${sub.status==='approved'?'status-approved':'status-pending'}">${sub.status==='approved'?'Approved ✓':'Pending ⌛'}</span></div><div><code>${sub.code}</code></div><div><small>${new Date(sub.timestamp).toLocaleString()}</small></div></div>`).join('') : '<div class="task-card">No submissions yet.</div>'; }); }
+    function renderTaskHistory(){ 
+        db.ref(`submissions`).orderByChild('userId').equalTo(telegramId).once('value', snap=>{ 
+            const subs=snap.val()||{}; 
+            const arr=Object.entries(subs).map(([id,sub])=>({...sub,id})).sort((a,b)=>b.timestamp-a.timestamp); 
+            document.getElementById('taskHistoryContainer').innerHTML=arr.length? arr.map(sub=>`<div class="history-item"><div><strong>${sub.taskId==='levelTask1'?'10 Levels #1':sub.taskId==='levelTask2'?'10 Levels #2':sub.taskId}</strong> <span class="history-status ${sub.status==='approved'?'status-approved':'status-pending'}">${sub.status==='approved'?'Approved ✓':'Pending ⌛'}</span></div><div><code>${sub.code}</code></div><div><small>${new Date(sub.timestamp).toLocaleString()}</small></div></div>`).join('') : '<div class="task-card">No submissions yet.</div>'; 
+        }); 
+    }
     
     function updateLimitUI(){ const linkRem=getLinkRemaining(), videoRem=getVideoRemaining(); document.getElementById('linkDailyLimitText').innerHTML=`Claims this period: ${MAX_CLAIMS_PER_PERIOD-linkRem}/${MAX_CLAIMS_PER_PERIOD}`; document.getElementById('videoDailyLimitText').innerHTML=`Claims this period: ${MAX_CLAIMS_PER_PERIOD-videoRem}/${MAX_CLAIMS_PER_PERIOD}`; const cp=getCurrentPeriodStart(); const next=cp+PERIOD_MS; const updateTimer=()=>{ let rem=Math.max(0,next-Date.now()); const h=Math.floor(rem/3600000), m=Math.floor((rem%3600000)/60000), s=Math.floor((rem%60000)/1000); document.getElementById('linkResetTimer').innerHTML=`Reset in: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; document.getElementById('videoResetTimer').innerHTML=`Reset in: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }; updateTimer(); if(window.limitInterval) clearInterval(window.limitInterval); window.limitInterval=setInterval(updateTimer,1000); }
     
@@ -1011,6 +1051,7 @@
     
     function refreshUI(){ 
         if(!userData) return; 
+        resetDailyCountersIfNeeded();
         document.getElementById('balanceAmount').innerText=(userData.balance||0).toFixed(0); 
         document.getElementById('tasksCompletedCount').innerText=(userData.tasksCompleted||0); 
         document.getElementById('refBonusEarned').innerText=(userData.referralBonusEarned||0).toFixed(0); 
@@ -1031,17 +1072,27 @@
         const usdtClaimed=userData.usdtMinerClaimed||false; 
         document.getElementById('usdtMinerStatus').innerHTML=usdtClaimed?'✅ Claimed (2,500 PEPE)':'⚡ Click Start to claim 2,500 PEPE'; 
         document.getElementById('usdtMinerJoinBtn').disabled=usdtClaimed; 
-        document.getElementById('levelTask1Status').innerHTML=userData.levelTask1Pending?'⏳ Pending approval... Task hidden.':'✅ Ready – submit new code.'; 
-        document.getElementById('levelTask2Status').innerHTML=userData.levelTask2Pending?'⏳ Pending approval... Task hidden.':'✅ Ready – submit new code.'; 
-        document.getElementById('submitLevelTask1Btn').disabled=!!userData.levelTask1Pending; 
-        document.getElementById('submitLevelTask2Btn').disabled=!!userData.levelTask2Pending;
-        // Hide task cards if hidden flag is true
-        const hide1 = userData.levelTask1Hidden || userData.levelTask1Pending;
-        const hide2 = userData.levelTask2Hidden || userData.levelTask2Pending;
-        const card1 = document.getElementById('levelTask1Card');
-        const card2 = document.getElementById('levelTask2Card');
-        if(card1) card1.style.display = hide1 ? 'none' : 'block';
-        if(card2) card2.style.display = hide2 ? 'none' : 'block';
+        
+        // Level tasks - show daily limit info (no pending lock)
+        const submissions1 = userData.levelTask1SubmissionsToday || 0;
+        const limit = DAILY_SUBMISSION_LIMIT;
+        if(submissions1 >= limit) {
+            document.getElementById('levelTask1Status').innerHTML = '⚠️ Daily limit reached (4/4). Come back tomorrow.';
+        } else {
+            document.getElementById('levelTask1Status').innerHTML = `✅ You can submit ${limit - submissions1} more code(s) today. Reward given after admin approval.`;
+        }
+        document.getElementById('levelTask1LimitInfo').innerHTML = `📊 Today's submissions: ${submissions1}/${limit}`;
+        document.getElementById('submitLevelTask1Btn').disabled = (submissions1 >= limit);
+        
+        const submissions2 = userData.levelTask2SubmissionsToday || 0;
+        if(submissions2 >= limit) {
+            document.getElementById('levelTask2Status').innerHTML = '⚠️ Daily limit reached (4/4). Come back tomorrow.';
+        } else {
+            document.getElementById('levelTask2Status').innerHTML = `✅ You can submit ${limit - submissions2} more code(s) today. Reward given after admin approval.`;
+        }
+        document.getElementById('levelTask2LimitInfo').innerHTML = `📊 Today's submissions: ${submissions2}/${limit}`;
+        document.getElementById('submitLevelTask2Btn').disabled = (submissions2 >= limit);
+        
         renderTaskHistory(); 
     }
     
@@ -1073,7 +1124,7 @@
         let data=await fetchUserData(); 
         if(!data){ 
             const refCode=telegramUsername.slice(0,4).toUpperCase()+Math.random().toString(36).substr(2,5).toUpperCase(); 
-            const newUser={ username:telegramUsername, telegramId, balance:0, totalEarned:0, referralBonusEarned:0, referrals:[], referralCode:refCode, referredBy:null, referralBonusApplied:false, tasksCompleted:0, linkTask:{steps:0,cooldownUntil:0}, videoTask:{steps:0,cooldownUntil:0}, linkPeriodStart:getCurrentPeriodStart(), linkCountInPeriod:0, videoPeriodStart:getCurrentPeriodStart(), videoCountInPeriod:0, oneTimeTasks:{}, withdrawalHistory:[], levelTask1Pending:false, levelTask1Hidden:false, levelTask2Pending:false, levelTask2Hidden:false }; 
+            const newUser={ username:telegramUsername, telegramId, balance:0, totalEarned:0, referralBonusEarned:0, referrals:[], referralCode:refCode, referredBy:null, referralBonusApplied:false, tasksCompleted:0, linkTask:{steps:0,cooldownUntil:0}, videoTask:{steps:0,cooldownUntil:0}, linkPeriodStart:getCurrentPeriodStart(), linkCountInPeriod:0, videoPeriodStart:getCurrentPeriodStart(), videoCountInPeriod:0, oneTimeTasks:{}, withdrawalHistory:[], levelTask1SubmissionsToday:0, levelTask2SubmissionsToday:0, lastSubmissionDate: new Date().toDateString(), usdtMinerClaimed:false }; 
             await db.ref(`users/${telegramId}`).set(newUser); 
             data=newUser; 
         } 
