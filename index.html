@@ -601,10 +601,10 @@
                 <div id="usdtMinerStatus" class="info-note"></div>
             </div>
 
-            <!-- 10 Levels Challenge #1 (Daily limit 4, no pending lock, admin approval gives reward) -->
+            <!-- 10 Levels Challenge #1 (Daily limit 4, reward 7000) -->
             <div class="task-card" id="levelTask1Card">
-                <div class="task-header"><span><i class="fas fa-code-branch"></i> 10 Levels Challenge #1</span><span class="task-reward">6,000 PEPE</span></div>
-                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +6,000 PEPE. Max 4 submissions per day. Submit multiple codes anytime.</div>
+                <div class="task-header"><span><i class="fas fa-code-branch"></i> 10 Levels Challenge #1</span><span class="task-reward">7,000 PEPE</span></div>
+                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +7,000 PEPE. Max 4 submissions per day. Submit multiple codes anytime.</div>
                 <div style="margin: 16px 0; background: #131313; border-radius: 24px; padding: 16px;">
                     <div><i class="fas fa-check-circle"></i> <strong>Step 1:</strong> Open bot: <button id="levelTaskInstallBtn1" class="claim-btn" style="background:#2c3e50; margin-top:8px; padding:8px;">📲 Install / Open Bot</button></div>
                     <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 10 levels → receive Reward Code.</div>
@@ -616,10 +616,10 @@
                 <div id="levelTask1LimitInfo" style="margin-top:8px; font-size:0.8rem; color:var(--text-secondary);"></div>
             </div>
 
-            <!-- 10 Levels Challenge #2 (Daily limit 4, no pending lock) -->
+            <!-- 10 Levels Challenge #2 (Daily limit 4, reward 7000) -->
             <div class="task-card" id="levelTask2Card">
-                <div class="task-header"><span><i class="fas fa-code-branch"></i> 10 Levels Challenge #2</span><span class="task-reward">6,000 PEPE</span></div>
-                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +6,000 PEPE. Max 4 submissions per day.</div>
+                <div class="task-header"><span><i class="fas fa-code-branch"></i> 10 Levels Challenge #2</span><span class="task-reward">7,000 PEPE</span></div>
+                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +7,000 PEPE. Max 4 submissions per day.</div>
                 <div style="margin: 16px 0; background: #131313; border-radius: 24px; padding: 16px;">
                     <div><i class="fas fa-check-circle"></i> <strong>Step 1:</strong> Open bot: <button id="levelTaskInstallBtn2" class="claim-btn" style="background:#2c3e50; margin-top:8px; padding:8px;">📲 Install / Open Bot</button></div>
                     <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 10 levels → receive Reward Code.</div>
@@ -648,7 +648,7 @@
             <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
             <div class="info-card info-highlight"><h4><i class="fas fa-headset"></i> Official Support</h4><p>📱 Telegram: <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a><br>📧 Email: earnforearnsuportteam@gmail.com<br>⏱️ Response time: usually within 24h</p></div>
             <div class="info-card"><h4><i class="fas fa-chart-line"></i> Withdrawal Conditions</h4><div class="info-grid"><div>✅ Minimum balance: 300,000 PEPE</div><div>👥 Minimum referrals: 3 active referrals</div><div>💰 Service fee: 5%</div><div>📅 Monthly limit: max 2 withdrawals</div></div></div>
-            <div class="info-card"><h4><i class="fas fa-tasks"></i> All Tasks & Rewards Overview</h4><div class="info-grid"><div>🔗 10-Link Challenge: <strong>1,500 PEPE</strong> (repeatable every 8h)</div><div>📺 10-Video Ads: <strong>1,500 PEPE</strong></div><div>📢 Telegram Channels: 1,500 PEPE each</div><div>🤖 USDT Miner Bot: 2,500 PEPE</div><div>🎮 10 Levels Challenges: <strong>6,000 PEPE each</strong> (admin approval, max 4 submissions per day, no waiting)</div><div>📧 Gmail Creation: 20,000 PEPE (manual admin)</div></div></div>
+            <div class="info-card"><h4><i class="fas fa-tasks"></i> All Tasks & Rewards Overview</h4><div class="info-grid"><div>🔗 10-Link Challenge: <strong>1,500 PEPE</strong> (repeatable every 8h)</div><div>📺 10-Video Ads: <strong>1,500 PEPE</strong></div><div>📢 Telegram Channels: 1,500 PEPE each</div><div>🤖 USDT Miner Bot: 2,500 PEPE</div><div>🎮 10 Levels Challenges: <strong>7,000 PEPE each</strong> (admin approval, max 4 submissions per day, no waiting)</div><div>📧 Gmail Creation: 20,000 PEPE (manual admin)</div></div></div>
         </div>
     </div>
     <div class="bottom-nav"><button class="nav-btn active" id="navHome"><i class="fas fa-home"></i><span>Home</span></button><button class="nav-btn" id="navTasks"><i class="fas fa-tasks"></i><span>Tasks</span></button><button class="nav-btn" id="navCashout"><i class="fas fa-wallet"></i><span>Cashout</span></button><button class="nav-btn" id="navReferral"><i class="fas fa-user-friends"></i><span>Referral</span></button><button class="nav-btn" id="navInfo"><i class="fas fa-info"></i><span>Info</span></button></div>
@@ -675,6 +675,8 @@
     if(!telegramId) { telegramId = "guest_"+Date.now(); telegramUsername = "guest_"+Date.now(); }
     let userData = null, linkStepsDone = 0, videoStepsDone = 0;
     let processingVideo = false;
+    let processingLinkStep = false;
+    let processingVideoLinkStep = false;
     const LINK_URLS = ["https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757","https://earnforearnlinksads2.vercel.app/","https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://earnforearnlinksads2.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757"];
     const VIDEO_LINK_URL = "https://earnforearnlinksads.vercel.app/";
     // SWAPPED: Monetag ⇄ Giga Pub
@@ -694,7 +696,6 @@
     async function updateUser(updates) { if(!telegramId) return; await db.ref(`users/${telegramId}`).update(updates); if(userData) Object.assign(userData,updates); refreshUI(); }
     async function fetchUserData() { return (await db.ref(`users/${telegramId}`).once('value')).val(); }
     
-    // Reset daily counters if date changed
     function resetDailyCountersIfNeeded() {
         const today = new Date().toDateString();
         if(!userData) return;
@@ -708,7 +709,6 @@
         }
     }
     
-    // Level task: submit code, increment daily counter, no pending lock, reward given only on admin approval
     async function submitLevelTask(taskId, rewardAmount) {
         resetDailyCountersIfNeeded();
         const codeInput = document.getElementById(`${taskId}Code`);
@@ -722,7 +722,6 @@
             return;
         }
         
-        // Create submission record (pending)
         const submissionId = `${telegramId}_${taskId}_${Date.now()}`;
         await db.ref(`submissions/${submissionId}`).set({ 
             userId: telegramId, 
@@ -734,7 +733,6 @@
             reward: rewardAmount 
         });
         
-        // Update user: increment daily counter, DO NOT set any pending flag
         await updateUser({ 
             [submissionsTodayKey]: submissionsToday + 1,
             lastSubmissionDate: new Date().toDateString()
@@ -746,7 +744,6 @@
         refreshUI();
     }
     
-    // Admin panel: approve adds reward, reject does nothing (daily counter already used)
     async function loadAdminPanel() {
         const ADMIN_IDS = ["123456789"]; // ⚠️ REPLACE WITH YOUR TELEGRAM ID
         if(!ADMIN_IDS.includes(telegramId)) { alert("Admin only."); return; }
@@ -794,7 +791,6 @@
         document.getElementById('adminModal').classList.add('active');
     }
     
-    // ---------- UI Rendering ----------
     function showStatus(msg,type){ let el=document.getElementById('homeStatusMessage'); if(!el){ el=document.createElement('div'); el.id='homeStatusMessage'; el.className='status-message'; document.getElementById('homeSection')?.prepend(el); } el.style.display='block'; el.className=`status-message status-${type}`; el.innerHTML=msg; setTimeout(()=>el.style.display='none',4000); }
     
     async function claimLinkReward() { 
@@ -903,10 +899,22 @@
     }
     
     async function completeLinkStep(step){ 
-        await updateUser({ linkTask:{ steps:linkStepsDone+1, cooldownUntil:userData.linkTask?.cooldownUntil||0 } }); 
-        linkStepsDone++; 
-        refreshUI(); 
-        showStatus(`Link ${step} completed!`,'success'); 
+        if(processingLinkStep) return;
+        processingLinkStep = true;
+        try {
+            const currentSteps = userData.linkTask?.steps || 0;
+            if(currentSteps !== linkStepsDone) {
+                processingLinkStep = false;
+                return;
+            }
+            const newSteps = currentSteps + 1;
+            await updateUser({ linkTask:{ steps:newSteps, cooldownUntil:userData.linkTask?.cooldownUntil||0 } });
+            linkStepsDone = newSteps;
+            refreshUI();
+            showStatus(`Link ${step} completed!`,'success');
+        } finally {
+            processingLinkStep = false;
+        }
     }
     
     function showRiskWarning(retryFn){ 
@@ -1014,11 +1022,22 @@
     }
     
     async function completeVideoLinkStep(step){ 
-        const newSteps = videoStepsDone + 1;
-        await updateUser({ videoTask:{ steps:newSteps, cooldownUntil:userData.videoTask?.cooldownUntil||0 } }); 
-        videoStepsDone = newSteps; 
-        refreshUI(); 
-        showStatus(`Link step ${step} completed!`,'success'); 
+        if(processingVideoLinkStep) return;
+        processingVideoLinkStep = true;
+        try {
+            const currentSteps = userData.videoTask?.steps || 0;
+            if(currentSteps !== videoStepsDone) {
+                processingVideoLinkStep = false;
+                return;
+            }
+            const newSteps = currentSteps + 1;
+            await updateUser({ videoTask:{ steps:newSteps, cooldownUntil:userData.videoTask?.cooldownUntil||0 } }); 
+            videoStepsDone = newSteps; 
+            refreshUI(); 
+            showStatus(`Link step ${step} completed!`,'success');
+        } finally {
+            processingVideoLinkStep = false;
+        }
     }
     
     function renderTelegramTasks(){ 
@@ -1073,7 +1092,6 @@
         document.getElementById('usdtMinerStatus').innerHTML=usdtClaimed?'✅ Claimed (2,500 PEPE)':'⚡ Click Start to claim 2,500 PEPE'; 
         document.getElementById('usdtMinerJoinBtn').disabled=usdtClaimed; 
         
-        // Level tasks - show daily limit info (no pending lock)
         const submissions1 = userData.levelTask1SubmissionsToday || 0;
         const limit = DAILY_SUBMISSION_LIMIT;
         if(submissions1 >= limit) {
@@ -1168,12 +1186,11 @@
     document.getElementById('sendGmailRequestBtn').onclick=()=>{ navigator.clipboard.writeText(document.getElementById('gmailMessageInput').value); window.open('https://t.me/earnforearneamilinformation','_blank'); document.getElementById('gmailRequestModal').style.display='none'; }; 
     document.getElementById('closeGmailModalBtn').onclick=()=>document.getElementById('gmailRequestModal').style.display='none'; 
     document.getElementById('usdtMinerJoinBtn')?.addEventListener('click', async ()=>{ if(userData.usdtMinerClaimed) return showStatus('Already claimed','error'); window.open('https://t.me/USDTTurboMinerBot/App?startapp=6797948163','_blank'); if(confirm("Started the bot? OK to claim 2,500 PEPE.")){ await updateUser({ usdtMinerClaimed:true, balance:(userData.balance||0)+2500, totalEarned:(userData.totalEarned||0)+2500, tasksCompleted:(userData.tasksCompleted||0)+1 }); refreshUI(); showStatus('+2,500 PEPE!','success'); } }); 
-    document.getElementById('submitLevelTask1Btn').onclick=()=>submitLevelTask('levelTask1',6000); 
-    document.getElementById('submitLevelTask2Btn').onclick=()=>submitLevelTask('levelTask2',6000); 
+    document.getElementById('submitLevelTask1Btn').onclick=()=>submitLevelTask('levelTask1',7000); 
+    document.getElementById('submitLevelTask2Btn').onclick=()=>submitLevelTask('levelTask2',7000); 
     document.getElementById('levelTaskInstallBtn1').onclick=()=>window.open('https://t.me/earnforearn_bot','_blank'); 
     document.getElementById('levelTaskInstallBtn2').onclick=()=>window.open('https://t.me/earnforearn_bot','_blank');
     
-    // Secret admin trigger (double‑click profile picture)
     let adminClickCount = 0;
     document.getElementById('profileBtn').addEventListener('dblclick', () => {
         adminClickCount++;
@@ -1183,7 +1200,6 @@
         }
     });
     
-    // Loading animation
     const loadingFill=document.getElementById('loadingFill'); 
     let progress=0; 
     const interval=setInterval(()=>{ progress+=10; loadingFill.style.width=progress+'%'; if(progress>=100){ clearInterval(interval); initUser().catch(e=>{ console.error(e); document.getElementById('loadingStep').innerText='Error loading, retrying...'; setTimeout(()=>{ location.reload(); },2000); }).finally(()=>{ setTimeout(()=>{ document.getElementById('loadingScreen').classList.add('hidden'); document.getElementById('mainApp').style.display='block'; },300); }); } },200);
