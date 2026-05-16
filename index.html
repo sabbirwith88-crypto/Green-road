@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Nexus 10 | Smart Ad Fallback | Reward + Reset</title>
+  <title>Nexus 10 | 5s Delay after Link | Smart Ad Fallback</title>
   <style>
     * {
       margin: 0;
@@ -103,7 +103,6 @@
     .task-item.completed { background: #0f2a1f; border-left: 5px solid #2ecc71; }
     .task-item.completed .task-text { text-decoration: line-through; color: #8fbc9a; }
 
-    /* Modal progress chain */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -226,13 +225,10 @@
       border-radius: 2rem;
     }
   </style>
-  <!-- GIGAPUB SDK (ID 6331) -->
+  <!-- AD SDKs -->
   <script src="https://ad.gigapub.tech/script?id=6331" async></script>
-  <!-- Monetag SDK -->
   <script src='//libtl.com/sdk.js' data-zone='10675499' data-sdk='show_10675499' async></script>
-  <!-- Adexora SDK -->
   <script src="https://adexora.com/cdn/ads.js?id=1964" async></script>
-  <!-- Adsgram SDK -->
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body>
@@ -247,14 +243,13 @@
 
   <div class="tasks-section">
     <div class="tasks-header">
-      <h2>⚡ 10 LEVELS (SMART FALLBACK) ⚡</h2>
+      <h2>⚡ 10 LEVELS (5s DELAY AFTER LINK) ⚡</h2>
       <div class="progress" id="progressCounter">0 / 10</div>
     </div>
     <ul class="task-list" id="taskList"></ul>
     <div class="info">
-      🔥 EACH LEVEL (with fallback):<br>
-      1️⃣ Open initial link → 2️⃣ Giga (fallback: Adsgram→Monetag→Adexora) → 3️⃣ Adsgram (fallback: Giga→Monetag→Adexora) → 4️⃣ Monetag (fallback: Giga→Adsgram→Adexora) → 5️⃣ Adexora (fallback: Giga→Adsgram→Monetag) → 6️⃣ Open final link → return → ✅ Level complete<br>
-      🧩 Complete ALL 10 → unique reward code (30s to copy) → copy = full reset.
+      🔥 NEW FLOW: Open initial link → return → ⏳ 5 second wait → then ad chain starts (Giga → Adsgram → Monetag → Adexora with fallbacks) → open final link → return → ✅ Level complete instantly.<br>
+      🧩 Complete ALL 10 → reward code (30s to copy) → copy = full reset.
     </div>
   </div>
 
@@ -271,9 +266,8 @@
 
 <script>
   (function(){
-    // ---------- CONFIGURATION ----------
     const TOTAL_LEVELS = 10;
-    const STORAGE_KEY = 'nexus10_fallback_final';
+    const STORAGE_KEY = 'nexus10_5s_delay_final';
     const INITIAL_LINK = "https://www.effectivecpmnetwork.com/xan60uuv?key=369dc68341066c06e3d471f3785f73fb";
     const FINAL_SMART_LINK = "https://omg10.com/4/10883007";
     
@@ -284,7 +278,6 @@
     let rewardSeconds = 30;
     let currentRewardCode = '';
     
-    // DOM elements
     const taskListEl = document.getElementById('taskList');
     const progressSpan = document.getElementById('progressCounter');
     const globalStatusDiv = document.getElementById('globalStatus');
@@ -304,7 +297,6 @@
       setTimeout(() => toast.remove(), 2500);
     }
     
-    // ---------- Data persistence ----------
     function createFreshTasks() {
       return Array.from({ length: TOTAL_LEVELS }, (_, i) => ({ id: i+1, completed: false }));
     }
@@ -335,11 +327,11 @@
       return true;
     }
     
-    // ---------- REWARD SYSTEM ----------
     function generateRewardCode() {
       const now = new Date();
       return `NEXUS-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
     }
+    
     function activateReward() {
       if (rewardActive) return;
       if (rewardCountdown) clearInterval(rewardCountdown);
@@ -390,10 +382,10 @@
       timerDisplaySpan.innerText = '30s left';
       currentRewardCode = '';
       renderTasks();
-      showToast("🔄 Full reset! Complete 10 levels again.", "#f39c12");
+      showToast("🔄 Full reset! Start over.", "#f39c12");
     }
     
-    // ---------- INDIVIDUAL AD FUNCTIONS (with timeout) ----------
+    // ----- Ad functions with timeout -----
     async function showGiga() {
       return new Promise((resolve, reject) => {
         if (typeof window.showGiga !== 'function') return reject(new Error("Giga SDK missing"));
@@ -437,7 +429,6 @@
       });
     }
     
-    // Universal fallback: tries ad providers in given order until one succeeds
     async function tryAdFallback(adList, stepName) {
       for (let i = 0; i < adList.length; i++) {
         const { name, fn } = adList[i];
@@ -453,7 +444,6 @@
       throw new Error(`All ad networks failed for ${stepName}`);
     }
     
-    // open link and wait for return
     function waitForReturnAfterLink(linkUrl) {
       return new Promise((resolve, reject) => {
         const timeoutId = setTimeout(() => {
@@ -470,13 +460,22 @@
       });
     }
     
-    // ---------- LEVEL CHAIN WITH SMART FALLBACK PER STEP ----------
+    // ----- LEVEL CHAIN WITH 5s DELAY AFTER INITIAL LINK -----
     async function runLevelChain(levelId, updateStepCb, cancelSignal) {
-      // Step 0: initial link
+      // Step 0: open initial link
       updateStepCb(0, "active");
       await waitForReturnAfterLink(INITIAL_LINK);
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(0, "done");
+      
+      // Step 0b: 5-second wait before ads start (as requested: "Link a jaoar por 5 second por baki ads cholbe")
+      updateStepCb(0.5, "active");
+      for (let i = 5; i > 0; i--) {
+        if (cancelSignal.cancelled) throw new Error("Cancelled");
+        updateStepCb(0.5, "countdown", i);
+        await new Promise(r => setTimeout(r, 1000));
+      }
+      updateStepCb(0.5, "done");
       
       // Step 1: Giga step (primary Giga, fallback Adsgram -> Monetag -> Adexora)
       updateStepCb(1, "active");
@@ -531,19 +530,21 @@
       return true;
     }
     
-    // Modal UI
     function showChainModal(levelId, onComplete, onCancel) {
       const overlay = document.createElement('div');
       overlay.className = 'modal-overlay';
+      // Steps display (including the 5s wait as separate)
       const steps = [
         "🔗 1. Open initial tracking link & return",
-        "🎮 2. Ad Step 1 (Giga → fallbacks)",
-        "📢 3. Ad Step 2 (Adsgram → fallbacks)",
-        "📺 4. Ad Step 3 (Monetag → fallbacks)",
-        "🎬 5. Ad Step 4 (Adexora → fallbacks)",
-        "🔗 6. Open final smart link & return → Complete"
+        "⏳ 2. Wait 5 seconds before ads start",
+        "🎮 3. Ad Step 1 (Giga → fallbacks)",
+        "📢 4. Ad Step 2 (Adsgram → fallbacks)",
+        "📺 5. Ad Step 3 (Monetag → fallbacks)",
+        "🎬 6. Ad Step 4 (Adexora → fallbacks)",
+        "🔗 7. Open final smart link & return → Complete"
       ];
       let stepStatuses = steps.map(() => "pending");
+      let countdownValue = null;
       
       const modalDiv = document.createElement('div');
       modalDiv.className = 'modal-card';
@@ -551,19 +552,21 @@
         <h3>⚡ LEVEL ${levelId} PROGRESS</h3>
         <div class="step-status" id="stepStatusContainer"></div>
         <button class="cancel-chain-btn" id="cancelChainBtn">✖ CANCEL & ABORT LEVEL</button>
-        <p style="font-size:12px; margin-top:12px; color:#aaa;">⚠️ If an ad fails, fallback network will auto-start. Do not close tab.</p>
+        <p style="font-size:12px; margin-top:12px; color:#aaa;">⚠️ After returning from link, 5s delay then ads with fallbacks.</p>
       `;
       overlay.appendChild(modalDiv);
       document.body.appendChild(overlay);
       const container = modalDiv.querySelector('#stepStatusContainer');
       
-      function renderSteps(activeStepIdx = -1) {
+      function renderSteps(activeStepIdx = -1, special = null, countdownVal = null) {
         container.innerHTML = '';
         steps.forEach((label, idx) => {
           const div = document.createElement('div');
           div.className = 'step-item';
           let displayLabel = label;
-          if (stepStatuses[idx] === 'done') displayLabel = "✓ " + label;
+          if (idx === 1 && special === 'countdown' && countdownVal !== null) {
+            displayLabel = `⏳ 2. Wait ${countdownVal} seconds before ads start`;
+          }
           div.innerText = displayLabel;
           if (stepStatuses[idx] === 'done') div.classList.add('step-done');
           else if (idx === activeStepIdx && stepStatuses[idx] !== 'done') div.classList.add('step-active');
@@ -575,14 +578,29 @@
       let cancelRequested = false;
       const cancelSignal = { cancelled: false };
       
-      const updateStep = (stepIndex, state) => {
+      // Map step indices (0: initial link, 0.5: wait, 1: Giga, 2: Adsgram, 3: Monetag, 4: Adexora, 5: final link)
+      const updateStep = (stepKey, state, countdownVal = null) => {
         if (cancelRequested) return;
+        let idx;
+        if (stepKey === 0) idx = 0;
+        else if (stepKey === 0.5) idx = 1;
+        else if (stepKey === 1) idx = 2;
+        else if (stepKey === 2) idx = 3;
+        else if (stepKey === 3) idx = 4;
+        else if (stepKey === 4) idx = 5;
+        else if (stepKey === 5) idx = 6;
+        else return;
+        
         if (state === 'active') {
-          stepStatuses[stepIndex] = "pending";
-          renderSteps(stepIndex);
+          stepStatuses[idx] = "pending";
+          if (idx === 1 && countdownVal) countdownValue = countdownVal;
+          renderSteps(idx, (idx === 1 && countdownVal) ? 'countdown' : null, countdownVal);
         } else if (state === 'done') {
-          stepStatuses[stepIndex] = "done";
+          stepStatuses[idx] = "done";
           renderSteps(-1);
+        } else if (state === 'countdown' && idx === 1) {
+          countdownValue = countdownVal;
+          renderSteps(1, 'countdown', countdownVal);
         }
       };
       
@@ -618,7 +636,6 @@
       return { cancel: () => { cancelRequested = true; cancelSignal.cancelled = true; overlay.remove(); } };
     }
     
-    // ---------- LEVEL START ----------
     async function startLevel(levelId) {
       if (isLevelCompleted(levelId)) {
         showToast(`Level ${levelId} already completed!`, "#f5b042");
@@ -649,7 +666,6 @@
       };
     }
     
-    // ---------- RENDER 10 LEVELS ----------
     function renderTasks() {
       if (!taskListEl) return;
       taskListEl.innerHTML = '';
@@ -681,7 +697,7 @@
         iconSpan.innerText = completed ? "✓ DONE" : "▶ START CHAIN";
         const textSpan = document.createElement('span');
         textSpan.className = 'task-text';
-        textSpan.innerText = `Level ${i} – ${completed ? 'finished' : 'Link → Giga(fallback) → Adsgram(fallback) → Monetag(fallback) → Adexora(fallback) → Link → complete'}`;
+        textSpan.innerText = `Level ${i} – ${completed ? 'finished' : 'Link → 5s wait → Giga(fallback) → Adsgram(fallback) → Monetag(fallback) → Adexora(fallback) → final link → complete'}`;
         li.appendChild(iconSpan);
         li.appendChild(textSpan);
         taskListEl.appendChild(li);
@@ -696,7 +712,6 @@
       startLevel(levelId);
     }
     
-    // ---------- COPY & RESET ----------
     async function handleCopyAndReset() {
       if (!rewardActive || rewardSeconds <= 0) {
         showToast("❌ No active reward code or expired. Complete all 10 levels again.", "#e74c3c");
@@ -711,7 +726,6 @@
       }
     }
     
-    // ---------- CLOCK ----------
     function updateDateTime() {
       const now = new Date();
       const dateStr = now.toLocaleDateString(undefined, { weekday:'long', year:'numeric', month:'long', day:'numeric' });
@@ -722,7 +736,6 @@
       if (timeEl) timeEl.innerText = timeStr;
     }
     
-    // ---------- EVENT BINDING ----------
     function bindEvents() {
       taskListEl.addEventListener('click', (e) => {
         const li = e.target.closest('.task-item');
@@ -733,7 +746,6 @@
       copyBtn.addEventListener('click', handleCopyAndReset);
     }
     
-    // ---------- INIT ----------
     function init() {
       tasks = loadTasks();
       renderTasks();
@@ -744,7 +756,6 @@
       }
       setInterval(updateDateTime, 1000);
       updateDateTime();
-      // warm check
       setTimeout(() => {
         if (typeof window.showGiga !== 'function') console.warn("Giga not loaded yet, fallback ready");
         else console.log("✅ Giga SDK ready");
