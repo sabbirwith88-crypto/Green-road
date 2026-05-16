@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Nexus 10 | Telegram Mini App | Manual Continue after Link</title>
+  <title>Nexus 10 | Exact Ad Order | Telegram Mini App</title>
   <style>
     * {
       margin: 0;
@@ -247,13 +247,14 @@
 
   <div class="tasks-section">
     <div class="tasks-header">
-      <h2>⚡ 10 LEVELS (Telegram Mini App) ⚡</h2>
+      <h2>⚡ 10 LEVELS (EXACT ORDER) ⚡</h2>
       <div class="progress" id="progressCounter">0 / 10</div>
     </div>
     <ul class="task-list" id="taskList"></ul>
     <div class="info">
-      🔥 For Telegram Mini App: After opening any link, you will need to tap <strong>"Continue"</strong> to proceed (because automatic detection may not work).<br>
-      Order: Link → tap Continue → 5s wait → Giga (fallback) → Adsgram (fallback) → Monetag (fallback) → Adexora (fallback) → final link → tap Continue → ✅ Level complete.
+      🔥 EXACT FLOW (Telegram Mini App ready):<br>
+      1️⃣ Open initial link → tap Continue → 2️⃣ GigaPub ad (fallback) → 3️⃣ Adsgram ad (fallback) → 4️⃣ Monetag ad (fallback) → 5️⃣ Adexora ad (fallback) → 6️⃣ Open final link → tap Continue → ✅ Level complete instantly<br>
+      🧩 Complete ALL 10 → unique reward code (30s to copy) → copy = full reset.
     </div>
   </div>
 
@@ -271,7 +272,7 @@
 <script>
   (function(){
     const TOTAL_LEVELS = 10;
-    const STORAGE_KEY = 'nexus10_telegram_fixed';
+    const STORAGE_KEY = 'nexus10_exact_order_telegram';
     const INITIAL_LINK = "https://www.effectivecpmnetwork.com/xan60uuv?key=369dc68341066c06e3d471f3785f73fb";
     const FINAL_SMART_LINK = "https://omg10.com/4/10883007";
     
@@ -388,7 +389,7 @@
       showToast("🔄 Full reset! Start over.", "#f39c12");
     }
     
-    // Ad functions (same as before)
+    // Ad functions with timeout
     async function showGiga() {
       return new Promise((resolve, reject) => {
         if (typeof window.showGiga !== 'function') return reject(new Error("Giga SDK missing"));
@@ -428,6 +429,8 @@
           .catch(e => { clearTimeout(timeout); reject(e); });
       });
     }
+    
+    // Universal fallback: tries ad providers in given order until one succeeds
     async function tryAdFallback(adList, stepName) {
       for (let i = 0; i < adList.length; i++) {
         const { name, fn } = adList[i];
@@ -443,16 +446,16 @@
       throw new Error(`All ad networks failed for ${stepName}`);
     }
     
-    // Manual continue helper: returns promise that resolves when user taps Continue
+    // Manual continue helper for Telegram (replaces focus detection)
     function waitForManualContinue(message) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         overlay.style.zIndex = '2100';
         const card = document.createElement('div');
         card.className = 'modal-card';
         card.innerHTML = `
-          <h3>⏸️ Action Required</h3>
+          <h3>⏸️ Continue Required</h3>
           <p style="color:#ddd; margin:1rem 0;">${message}</p>
           <button class="continue-btn" id="manualContinueBtn">✅ Continue</button>
           <button class="cancel-chain-btn" id="manualCancelBtn" style="margin-left:0.5rem;">❌ Cancel Level</button>
@@ -472,101 +475,94 @@
           if (resolved) return;
           resolved = true;
           cleanup();
-          resolve(new Error("Cancelled by user"));
+          reject(new Error("Cancelled by user"));
         };
         card.querySelector('#manualContinueBtn').addEventListener('click', onContinue);
         card.querySelector('#manualCancelBtn').addEventListener('click', onCancel);
       });
     }
     
-    // open link with manual continue
+    // Open link and wait for manual continue (Telegram friendly)
     async function openLinkAndWait(linkUrl, instruction) {
       window.open(linkUrl, '_blank');
       await waitForManualContinue(instruction + " Tap Continue after returning to this tab/app.");
     }
     
-    // Level chain with manual continuation after each link (Telegram friendly)
+    // ---------- EXACT ORDER CHAIN ----------
+    // Steps: 0: initial link, 1: GigaPub, 2: Adsgram, 3: Monetag, 4: Adexora, 5: final link
     async function runLevelChain(levelId, updateStepCb, cancelSignal) {
       // Step 0: initial link with manual continue
       updateStepCb(0, "active");
-      await openLinkAndWait(INITIAL_LINK, "Open the initial tracking link, then come back.");
+      await openLinkAndWait(INITIAL_LINK, "Open the initial tracking link.");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(0, "done");
       
-      // 5 second wait (auto)
-      updateStepCb(0.5, "active");
-      for (let i = 5; i > 0; i--) {
-        if (cancelSignal.cancelled) throw new Error("Cancelled");
-        updateStepCb(0.5, "countdown", i);
-        await new Promise(r => setTimeout(r, 1000));
-      }
-      updateStepCb(0.5, "done");
-      
-      // Ad steps (no manual continue needed because ads show automatically)
+      // Step 1: GigaPub (primary, fallbacks: Adsgram -> Monetag -> Adexora)
       updateStepCb(1, "active");
       await tryAdFallback([
         { name: "GigaPub", fn: showGiga },
         { name: "Adsgram", fn: showAdsgram },
         { name: "Monetag", fn: showMonetag },
         { name: "Adexora", fn: showAdexora }
-      ], "Ad Step 1");
+      ], "GigaPub step");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(1, "done");
       
+      // Step 2: Adsgram (primary, fallbacks: Giga -> Monetag -> Adexora)
       updateStepCb(2, "active");
       await tryAdFallback([
         { name: "Adsgram", fn: showAdsgram },
         { name: "GigaPub", fn: showGiga },
         { name: "Monetag", fn: showMonetag },
         { name: "Adexora", fn: showAdexora }
-      ], "Ad Step 2");
+      ], "Adsgram step");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(2, "done");
       
+      // Step 3: Monetag (primary, fallbacks: Giga -> Adsgram -> Adexora)
       updateStepCb(3, "active");
       await tryAdFallback([
         { name: "Monetag", fn: showMonetag },
         { name: "GigaPub", fn: showGiga },
         { name: "Adsgram", fn: showAdsgram },
         { name: "Adexora", fn: showAdexora }
-      ], "Ad Step 3");
+      ], "Monetag step");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(3, "done");
       
+      // Step 4: Adexora (primary, fallbacks: Giga -> Adsgram -> Monetag)
       updateStepCb(4, "active");
       await tryAdFallback([
         { name: "Adexora", fn: showAdexora },
         { name: "GigaPub", fn: showGiga },
         { name: "Adsgram", fn: showAdsgram },
         { name: "Monetag", fn: showMonetag }
-      ], "Ad Step 4");
+      ], "Adexora step");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(4, "done");
       
-      // Final link with manual continue
+      // Step 5: final link with manual continue
       updateStepCb(5, "active");
-      await openLinkAndWait(FINAL_SMART_LINK, "Open the final smart link, then come back.");
+      await openLinkAndWait(FINAL_SMART_LINK, "Open the final smart link.");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(5, "done");
       
       return true;
     }
     
-    // Modal UI (same as before, but steps include manual continue info)
+    // Modal UI
     function showChainModal(levelId, onComplete, onCancel) {
       const overlay = document.createElement('div');
       overlay.className = 'modal-overlay';
       const steps = [
-        "🔗 1. Open initial link → Tap Continue after return",
-        "⏳ 2. Wait 5 seconds",
-        "🎮 3. Ad Step 1 (Giga → fallbacks)",
-        "📢 4. Ad Step 2 (Adsgram → fallbacks)",
-        "📺 5. Ad Step 3 (Monetag → fallbacks)",
-        "🎬 6. Ad Step 4 (Adexora → fallbacks)",
-        "🔗 7. Open final link → Tap Continue → Complete"
+        "🔗 1. Open initial link → tap Continue",
+        "🎮 2. Watch GigaPub ad (fallback ready)",
+        "📢 3. Watch Adsgram ad (fallback ready)",
+        "📺 4. Watch Monetag ad (fallback ready)",
+        "🎬 5. Watch Adexora ad (fallback ready)",
+        "🔗 6. Open final link → tap Continue → Complete"
       ];
       let stepStatuses = steps.map(() => "pending");
-      let countdownVal = null;
       
       const modalDiv = document.createElement('div');
       modalDiv.className = 'modal-card';
@@ -574,22 +570,18 @@
         <h3>⚡ LEVEL ${levelId} PROGRESS</h3>
         <div class="step-status" id="stepStatusContainer"></div>
         <button class="cancel-chain-btn" id="cancelChainBtn">✖ CANCEL LEVEL</button>
-        <p style="font-size:12px; margin-top:12px; color:#aaa;">For Telegram: after opening a link, you must tap "Continue" when prompted.</p>
+        <p style="font-size:12px; margin-top:12px; color:#aaa;">For Telegram: after each link, tap "Continue" to proceed.</p>
       `;
       overlay.appendChild(modalDiv);
       document.body.appendChild(overlay);
       const container = modalDiv.querySelector('#stepStatusContainer');
       
-      function renderSteps(activeStepIdx = -1, special = null, countdown = null) {
+      function renderSteps(activeStepIdx = -1) {
         container.innerHTML = '';
         steps.forEach((label, idx) => {
           const div = document.createElement('div');
           div.className = 'step-item';
-          let displayLabel = label;
-          if (idx === 1 && special === 'countdown' && countdown !== null) {
-            displayLabel = `⏳ 2. Wait ${countdown} seconds`;
-          }
-          div.innerText = displayLabel;
+          div.innerText = label;
           if (stepStatuses[idx] === 'done') div.classList.add('step-done');
           else if (idx === activeStepIdx && stepStatuses[idx] !== 'done') div.classList.add('step-active');
           else div.classList.add('step-pending');
@@ -600,27 +592,14 @@
       let cancelRequested = false;
       const cancelSignal = { cancelled: false };
       
-      const updateStep = (stepKey, state, countdown = null) => {
+      const updateStep = (stepIndex, state) => {
         if (cancelRequested) return;
-        let idx;
-        if (stepKey === 0) idx = 0;
-        else if (stepKey === 0.5) idx = 1;
-        else if (stepKey === 1) idx = 2;
-        else if (stepKey === 2) idx = 3;
-        else if (stepKey === 3) idx = 4;
-        else if (stepKey === 4) idx = 5;
-        else if (stepKey === 5) idx = 6;
-        else return;
-        
         if (state === 'active') {
-          stepStatuses[idx] = "pending";
-          if (idx === 1 && countdown) countdownVal = countdown;
-          renderSteps(idx, (idx === 1 && countdown) ? 'countdown' : null, countdown);
+          stepStatuses[stepIndex] = "pending";
+          renderSteps(stepIndex);
         } else if (state === 'done') {
-          stepStatuses[idx] = "done";
+          stepStatuses[stepIndex] = "done";
           renderSteps(-1);
-        } else if (state === 'countdown' && idx === 1) {
-          renderSteps(1, 'countdown', countdown);
         }
       };
       
@@ -643,7 +622,7 @@
         .catch(err => {
           if (!cancelRequested && err.message !== "Cancelled" && err.message !== "Cancelled by user") {
             overlay.remove();
-            showToast(`❌ Chain error: ${err.message}. Retry level.`, "#e74c3c");
+            showToast(`❌ Chain error: ${err.message}. Please retry level.`, "#e74c3c");
             if (onCancel) onCancel();
           } else if (cancelRequested) {
             overlay.remove();
@@ -717,7 +696,7 @@
         iconSpan.innerText = completed ? "✓ DONE" : "▶ START";
         const textSpan = document.createElement('span');
         textSpan.className = 'task-text';
-        textSpan.innerText = `Level ${i} – ${completed ? 'finished' : 'Link (tap Continue) → 5s → Ads (fallback) → final link (tap Continue)'}`;
+        textSpan.innerText = `Level ${i} – ${completed ? 'finished' : 'Link → Giga → Adsgram → Monetag → Adexora → Link → complete'}`;
         li.appendChild(iconSpan);
         li.appendChild(textSpan);
         taskListEl.appendChild(li);
@@ -776,7 +755,7 @@
       }
       setInterval(updateDateTime, 1000);
       updateDateTime();
-      showToast("✅ Telegram Mini App mode: Use Continue buttons after links.", "#2ecc71");
+      showToast("✅ Telegram mode: Use Continue buttons after links.", "#2ecc71");
     }
     
     init();
