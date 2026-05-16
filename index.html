@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Nexus 10 | Exact Ad Order | Telegram Mini App</title>
+  <title>Nexus 10 | Generic Ads | Telegram Mini App</title>
   <style>
     * {
       margin: 0;
@@ -229,7 +229,7 @@
       border-radius: 2rem;
     }
   </style>
-  <!-- AD SDKs -->
+  <!-- AD SDKs (hidden behind generic names) -->
   <script src="https://ad.gigapub.tech/script?id=6331" async></script>
   <script src='//libtl.com/sdk.js' data-zone='10675499' data-sdk='show_10675499' async></script>
   <script src="https://adexora.com/cdn/ads.js?id=1964" async></script>
@@ -247,13 +247,13 @@
 
   <div class="tasks-section">
     <div class="tasks-header">
-      <h2>⚡ 10 LEVELS (EXACT ORDER) ⚡</h2>
+      <h2>⚡ 10 LEVELS (GENERIC ADS) ⚡</h2>
       <div class="progress" id="progressCounter">0 / 10</div>
     </div>
     <ul class="task-list" id="taskList"></ul>
     <div class="info">
       🔥 EXACT FLOW (Telegram Mini App ready):<br>
-      1️⃣ Open initial link → tap Continue → 2️⃣ GigaPub ad (fallback) → 3️⃣ Adsgram ad (fallback) → 4️⃣ Monetag ad (fallback) → 5️⃣ Adexora ad (fallback) → 6️⃣ Open final link → tap Continue → ✅ Level complete instantly<br>
+      1️⃣ Open initial link → tap Continue → 2️⃣ Ad 1 → 3️⃣ Ad 2 → 4️⃣ Ad 3 → 5️⃣ Ad 4 → 6️⃣ Open final link → tap Continue → ✅ Level complete<br>
       🧩 Complete ALL 10 → unique reward code (30s to copy) → copy = full reset.
     </div>
   </div>
@@ -272,7 +272,7 @@
 <script>
   (function(){
     const TOTAL_LEVELS = 10;
-    const STORAGE_KEY = 'nexus10_exact_order_telegram';
+    const STORAGE_KEY = 'nexus10_generic_ads_telegram';
     const INITIAL_LINK = "https://www.effectivecpmnetwork.com/xan60uuv?key=369dc68341066c06e3d471f3785f73fb";
     const FINAL_SMART_LINK = "https://omg10.com/4/10883007";
     
@@ -389,11 +389,11 @@
       showToast("🔄 Full reset! Start over.", "#f39c12");
     }
     
-    // Ad functions with timeout
+    // ---------- UNDERLYING AD FUNCTIONS (hidden from user) ----------
     async function showGiga() {
       return new Promise((resolve, reject) => {
-        if (typeof window.showGiga !== 'function') return reject(new Error("Giga SDK missing"));
-        const timeout = setTimeout(() => reject(new Error("Giga timeout")), 35000);
+        if (typeof window.showGiga !== 'function') return reject(new Error("Ad 1 provider not ready"));
+        const timeout = setTimeout(() => reject(new Error("Ad 1 timeout")), 35000);
         window.showGiga()
           .then(() => { clearTimeout(timeout); resolve(); })
           .catch(e => { clearTimeout(timeout); reject(e); });
@@ -401,11 +401,11 @@
     }
     async function showAdsgram() {
       return new Promise((resolve, reject) => {
-        if (!window.Adsgram) return reject(new Error("Adsgram SDK missing"));
+        if (!window.Adsgram) return reject(new Error("Ad 2 provider not ready"));
         let ctrl;
         try { ctrl = window.Adsgram.init({ blockId: "int-24179" }); } catch(e) { return reject(e); }
-        if (!ctrl || typeof ctrl.show !== 'function') return reject(new Error("Adsgram invalid"));
-        const timeout = setTimeout(() => reject(new Error("Adsgram timeout")), 35000);
+        if (!ctrl || typeof ctrl.show !== 'function') return reject(new Error("Ad 2 invalid"));
+        const timeout = setTimeout(() => reject(new Error("Ad 2 timeout")), 35000);
         ctrl.show()
           .then(() => { clearTimeout(timeout); resolve(); })
           .catch(e => { clearTimeout(timeout); reject(e); });
@@ -413,8 +413,8 @@
     }
     async function showMonetag() {
       return new Promise((resolve, reject) => {
-        if (typeof window.show_10675499 !== 'function') return reject(new Error("Monetag SDK missing"));
-        const timeout = setTimeout(() => reject(new Error("Monetag timeout")), 35000);
+        if (typeof window.show_10675499 !== 'function') return reject(new Error("Ad 3 provider not ready"));
+        const timeout = setTimeout(() => reject(new Error("Ad 3 timeout")), 35000);
         window.show_10675499()
           .then(() => { clearTimeout(timeout); resolve(); })
           .catch(e => { clearTimeout(timeout); reject(e); });
@@ -422,31 +422,32 @@
     }
     async function showAdexora() {
       return new Promise((resolve, reject) => {
-        if (typeof window.showAdexora !== 'function') return reject(new Error("Adexora SDK missing"));
-        const timeout = setTimeout(() => reject(new Error("Adexora timeout")), 35000);
+        if (typeof window.showAdexora !== 'function') return reject(new Error("Ad 4 provider not ready"));
+        const timeout = setTimeout(() => reject(new Error("Ad 4 timeout")), 35000);
         window.showAdexora()
           .then(() => { clearTimeout(timeout); resolve(); })
           .catch(e => { clearTimeout(timeout); reject(e); });
       });
     }
     
-    // Universal fallback: tries ad providers in given order until one succeeds
+    // Generic fallback: tries providers in order but shows only "Ad X" to user
     async function tryAdFallback(adList, stepName) {
       for (let i = 0; i < adList.length; i++) {
         const { name, fn } = adList[i];
         try {
           await fn();
-          showToast(`✅ ${name} ad completed (${stepName})`, "#2ecc71");
+          // Show generic success message (no network name)
+          showToast(`✅ ${stepName} completed`, "#2ecc71");
           return true;
         } catch (err) {
           console.warn(`${name} failed for ${stepName}:`, err);
-          showToast(`⚠️ ${name} failed, trying next...`, "#f39c12");
+          showToast(`⚠️ Retrying ${stepName}...`, "#f39c12");
         }
       }
-      throw new Error(`All ad networks failed for ${stepName}`);
+      throw new Error(`${stepName} failed after multiple attempts`);
     }
     
-    // Manual continue helper for Telegram (replaces focus detection)
+    // Manual continue helper for Telegram
     function waitForManualContinue(message) {
       return new Promise((resolve, reject) => {
         const overlay = document.createElement('div');
@@ -482,84 +483,84 @@
       });
     }
     
-    // Open link and wait for manual continue (Telegram friendly)
+    // Open link and wait for manual continue
     async function openLinkAndWait(linkUrl, instruction) {
       window.open(linkUrl, '_blank');
       await waitForManualContinue(instruction + " Tap Continue after returning to this tab/app.");
     }
     
-    // ---------- EXACT ORDER CHAIN ----------
-    // Steps: 0: initial link, 1: GigaPub, 2: Adsgram, 3: Monetag, 4: Adexora, 5: final link
+    // ---------- EXACT ORDER CHAIN WITH GENERIC NAMES ----------
+    // Steps: 0: initial link, 1: Ad 1 (Giga fallback), 2: Ad 2 (Adsgram fallback), 3: Ad 3 (Monetag fallback), 4: Ad 4 (Adexora fallback), 5: final link
     async function runLevelChain(levelId, updateStepCb, cancelSignal) {
-      // Step 0: initial link with manual continue
+      // Step 0: initial link
       updateStepCb(0, "active");
-      await openLinkAndWait(INITIAL_LINK, "Open the initial tracking link.");
+      await openLinkAndWait(INITIAL_LINK, "Open the initial link.");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(0, "done");
       
-      // Step 1: GigaPub (primary, fallbacks: Adsgram -> Monetag -> Adexora)
+      // Step 1: Ad 1 (primary Giga, fallbacks: Adsgram -> Monetag -> Adexora)
       updateStepCb(1, "active");
       await tryAdFallback([
-        { name: "GigaPub", fn: showGiga },
+        { name: "Giga", fn: showGiga },
         { name: "Adsgram", fn: showAdsgram },
         { name: "Monetag", fn: showMonetag },
         { name: "Adexora", fn: showAdexora }
-      ], "GigaPub step");
+      ], "Ad 1");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(1, "done");
       
-      // Step 2: Adsgram (primary, fallbacks: Giga -> Monetag -> Adexora)
+      // Step 2: Ad 2 (primary Adsgram, fallbacks: Giga -> Monetag -> Adexora)
       updateStepCb(2, "active");
       await tryAdFallback([
         { name: "Adsgram", fn: showAdsgram },
-        { name: "GigaPub", fn: showGiga },
+        { name: "Giga", fn: showGiga },
         { name: "Monetag", fn: showMonetag },
         { name: "Adexora", fn: showAdexora }
-      ], "Adsgram step");
+      ], "Ad 2");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(2, "done");
       
-      // Step 3: Monetag (primary, fallbacks: Giga -> Adsgram -> Adexora)
+      // Step 3: Ad 3 (primary Monetag, fallbacks: Giga -> Adsgram -> Adexora)
       updateStepCb(3, "active");
       await tryAdFallback([
         { name: "Monetag", fn: showMonetag },
-        { name: "GigaPub", fn: showGiga },
+        { name: "Giga", fn: showGiga },
         { name: "Adsgram", fn: showAdsgram },
         { name: "Adexora", fn: showAdexora }
-      ], "Monetag step");
+      ], "Ad 3");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(3, "done");
       
-      // Step 4: Adexora (primary, fallbacks: Giga -> Adsgram -> Monetag)
+      // Step 4: Ad 4 (primary Adexora, fallbacks: Giga -> Adsgram -> Monetag)
       updateStepCb(4, "active");
       await tryAdFallback([
         { name: "Adexora", fn: showAdexora },
-        { name: "GigaPub", fn: showGiga },
+        { name: "Giga", fn: showGiga },
         { name: "Adsgram", fn: showAdsgram },
         { name: "Monetag", fn: showMonetag }
-      ], "Adexora step");
+      ], "Ad 4");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(4, "done");
       
-      // Step 5: final link with manual continue
+      // Step 5: final link (opens after Ad 4 completes)
       updateStepCb(5, "active");
-      await openLinkAndWait(FINAL_SMART_LINK, "Open the final smart link.");
+      await openLinkAndWait(FINAL_SMART_LINK, "Open the final link.");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
       updateStepCb(5, "done");
       
       return true;
     }
     
-    // Modal UI
+    // Modal UI with generic step names
     function showChainModal(levelId, onComplete, onCancel) {
       const overlay = document.createElement('div');
       overlay.className = 'modal-overlay';
       const steps = [
         "🔗 1. Open initial link → tap Continue",
-        "🎮 2. Watch GigaPub ad (fallback ready)",
-        "📢 3. Watch Adsgram ad (fallback ready)",
-        "📺 4. Watch Monetag ad (fallback ready)",
-        "🎬 5. Watch Adexora ad (fallback ready)",
+        "🎮 2. Watch Ad 1",
+        "📢 3. Watch Ad 2",
+        "📺 4. Watch Ad 3",
+        "🎬 5. Watch Ad 4",
         "🔗 6. Open final link → tap Continue → Complete"
       ];
       let stepStatuses = steps.map(() => "pending");
@@ -570,7 +571,7 @@
         <h3>⚡ LEVEL ${levelId} PROGRESS</h3>
         <div class="step-status" id="stepStatusContainer"></div>
         <button class="cancel-chain-btn" id="cancelChainBtn">✖ CANCEL LEVEL</button>
-        <p style="font-size:12px; margin-top:12px; color:#aaa;">For Telegram: after each link, tap "Continue" to proceed.</p>
+        <p style="font-size:12px; margin-top:12px; color:#aaa;">For Telegram: after each link, tap "Continue". Ads will play automatically.</p>
       `;
       overlay.appendChild(modalDiv);
       document.body.appendChild(overlay);
@@ -696,7 +697,7 @@
         iconSpan.innerText = completed ? "✓ DONE" : "▶ START";
         const textSpan = document.createElement('span');
         textSpan.className = 'task-text';
-        textSpan.innerText = `Level ${i} – ${completed ? 'finished' : 'Link → Giga → Adsgram → Monetag → Adexora → Link → complete'}`;
+        textSpan.innerText = `Level ${i} – ${completed ? 'finished' : 'Link → Ad 1 → Ad 2 → Ad 3 → Ad 4 → Link → complete'}`;
         li.appendChild(iconSpan);
         li.appendChild(textSpan);
         taskListEl.appendChild(li);
