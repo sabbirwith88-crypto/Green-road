@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Nexus 10 | Generic Ads | Telegram Mini App</title>
+  <title>Nexus 10 | Ad Chain | Telegram Mini App</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: system-ui, 'Segoe UI', 'Inter', sans-serif;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     }
 
     body {
@@ -18,70 +18,98 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1.5rem;
+      padding: 1.2rem;
     }
 
     .dashboard {
-      max-width: 720px;
+      max-width: 700px;
       width: 100%;
       background: #0f0f0f;
-      border-radius: 3rem;
-      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
       overflow: hidden;
     }
 
     .hero {
       background: linear-gradient(135deg, #101010, #1a1a1a);
-      padding: 1.8rem 2rem 2rem;
+      padding: 1.5rem 1.5rem 1.8rem;
       text-align: center;
       border-bottom: 1px solid #2a2a2a;
     }
 
-    .date { font-size: 1.5rem; background: rgba(255,255,255,0.08); display: inline-block; padding: 0.3rem 1.2rem; border-radius: 60px; color: #ddd; }
-    .time { font-size: 3rem; font-weight: 800; font-family: monospace; color: white; margin-top: 0.5rem; }
+    .date {
+      font-size: 1.2rem;
+      background: rgba(255,255,255,0.08);
+      display: inline-block;
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
+      color: #ccc;
+    }
+    .time {
+      font-size: 2.6rem;
+      font-weight: 800;
+      font-family: monospace;
+      color: white;
+      margin-top: 0.4rem;
+      letter-spacing: 1px;
+    }
 
     .global-status {
-      margin-top: 0.8rem;
+      margin-top: 0.6rem;
       background: rgba(0,0,0,0.6);
       border-radius: 60px;
-      padding: 0.6rem 1.2rem;
-      font-weight: 700;
-      font-size: 1.2rem;
+      padding: 0.4rem 1rem;
+      font-weight: 600;
+      font-size: 1rem;
       display: inline-block;
     }
-    .status-complete { background: #1e4a3b; box-shadow: 0 0 10px #2ecc71; color: #d0ffec; }
+    .status-complete { background: #1e4a3b; box-shadow: 0 0 8px #2ecc71; color: #d0ffec; }
     .status-notcomplete { background: #5a2a2a; color: #ffcfcf; }
 
     .tasks-section {
-      padding: 2rem 1.8rem 1.5rem;
+      padding: 1.8rem 1.5rem 1.2rem;
       background: #0b0b0b;
     }
     .tasks-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
       border-bottom: 1px solid #2c2c2c;
-      padding-bottom: 0.6rem;
+      padding-bottom: 0.5rem;
     }
-    .tasks-header h2 { font-size: 1.6rem; background: linear-gradient(120deg, #ddd, #aaa); background-clip: text; -webkit-background-clip: text; color: transparent; }
-    .progress { background: #1e1e1e; padding: 0.3rem 1rem; border-radius: 40px; font-weight: 600; color: #bbb; border: 1px solid #333; }
+    .tasks-header h2 {
+      font-size: 1.5rem;
+      background: linear-gradient(120deg, #ddd, #aaa);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .progress {
+      background: #1e1e1e;
+      padding: 0.2rem 0.9rem;
+      border-radius: 30px;
+      font-weight: 600;
+      color: #bbb;
+      border: 1px solid #333;
+      font-size: 0.9rem;
+    }
 
     .task-list {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.7rem;
     }
     .task-item {
       background: #141414;
       border: 1px solid #2a2a2a;
-      border-radius: 1.8rem;
-      padding: 0.9rem 1.2rem;
+      border-radius: 1.6rem;
+      padding: 0.8rem 1rem;
       display: flex;
       align-items: center;
-      gap: 1rem;
-      transition: all 0.2s ease;
+      gap: 0.9rem;
+      transition: all 0.2s;
       cursor: pointer;
     }
     .task-item:hover {
@@ -93,24 +121,36 @@
       font-family: monospace;
       font-weight: bold;
       background: #1a1a1a;
-      padding: 0.3rem 0.6rem;
+      padding: 0.2rem 0.6rem;
       border-radius: 1rem;
-      font-size: 0.9rem;
-      min-width: 85px;
+      font-size: 0.8rem;
+      min-width: 75px;
       text-align: center;
     }
-    .task-text { flex: 1; font-size: 1rem; font-weight: 500; color: #e0e0e0; }
-    .task-item.completed { background: #0f2a1f; border-left: 5px solid #2ecc71; }
-    .task-item.completed .task-text { text-decoration: line-through; color: #8fbc9a; }
+    .task-text {
+      flex: 1;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #e0e0e0;
+    }
+    .task-item.completed {
+      background: #0f2a1f;
+      border-left: 4px solid #2ecc71;
+    }
+    .task-item.completed .task-text {
+      text-decoration: line-through;
+      color: #8fbc9a;
+    }
 
+    /* Modal */
     .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.94);
-      backdrop-filter: blur(8px);
+      background: rgba(0,0,0,0.96);
+      backdrop-filter: blur(6px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -119,44 +159,58 @@
     .modal-card {
       background: #1a1a1a;
       border-radius: 2rem;
-      max-width: 500px;
+      max-width: 480px;
       width: 90%;
-      padding: 2rem;
+      padding: 1.5rem;
       border: 1px solid #3b82f6;
-      box-shadow: 0 20px 35px rgba(0,0,0,0.6);
+      box-shadow: 0 20px 35px rgba(0,0,0,0.5);
       text-align: center;
     }
-    .modal-card h3 { color: #fff; margin-bottom: 0.5rem; font-size: 1.5rem; }
+    .modal-card h3 {
+      color: #fff;
+      margin-bottom: 0.8rem;
+      font-size: 1.4rem;
+    }
     .step-status {
       background: #0f0f0f;
-      padding: 1rem;
+      padding: 0.8rem;
       border-radius: 1.2rem;
       margin: 1rem 0;
-      font-family: monospace;
-      font-size: 0.9rem;
       text-align: left;
-      max-height: 360px;
+      max-height: 320px;
       overflow-y: auto;
     }
     .step-item {
-      padding: 0.4rem 0;
+      padding: 0.3rem 0;
       border-left: 2px solid #333;
-      padding-left: 0.8rem;
-      margin: 0.5rem 0;
+      padding-left: 0.7rem;
+      margin: 0.4rem 0;
       font-size: 0.85rem;
+      color: #bbb;
     }
-    .step-active { color: #f5b042; border-left-color: #f5b042; font-weight: bold; }
-    .step-done { color: #2ecc71; border-left-color: #2ecc71; text-decoration: line-through; opacity: 0.8;}
-    .step-pending { color: #888; }
+    .step-active {
+      color: #f5b042;
+      border-left-color: #f5b042;
+      font-weight: bold;
+    }
+    .step-done {
+      color: #2ecc71;
+      border-left-color: #2ecc71;
+      text-decoration: line-through;
+    }
+    .step-pending {
+      color: #666;
+    }
     .cancel-chain-btn, .continue-btn {
       background: #5a2a2a;
       border: none;
-      padding: 0.6rem 1.2rem;
+      padding: 0.5rem 1.1rem;
       border-radius: 2rem;
       font-weight: 600;
       color: white;
       cursor: pointer;
-      margin-top: 0.8rem;
+      margin-top: 0.6rem;
+      font-size: 0.9rem;
     }
     .continue-btn {
       background: #2c7a5a;
@@ -167,72 +221,75 @@
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: #2ecc71cc;
+      background: #2ecc71dd;
       backdrop-filter: blur(12px);
       color: #000;
-      padding: 0.5rem 1.2rem;
-      border-radius: 3rem;
+      padding: 0.4rem 1.2rem;
+      border-radius: 2rem;
       font-weight: 600;
       z-index: 2100;
-      animation: fadeOut 1.8s ease forwards;
+      font-size: 0.85rem;
+      animation: fadeOut 2s ease forwards;
       white-space: nowrap;
     }
     @keyframes fadeOut {
       0% { opacity: 1; }
-      80% { opacity: 1; }
+      70% { opacity: 1; }
       100% { opacity: 0; visibility: hidden; }
     }
     .reward-panel {
-      margin: 1rem 1.8rem 1.8rem;
+      margin: 0.8rem 1.5rem 1.5rem;
       background: linear-gradient(135deg, #0e1a16, #07120e);
-      border-radius: 1.8rem;
-      padding: 1.2rem;
+      border-radius: 1.5rem;
+      padding: 1rem;
       border: 1px solid rgba(46,204,113,0.5);
       text-align: center;
     }
     .reward-code {
       font-family: monospace;
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-weight: bold;
       color: #c3ffd6;
       background: #0c1c15;
       display: inline-block;
-      padding: 0.3rem 1rem;
+      padding: 0.2rem 0.8rem;
       border-radius: 2rem;
-      margin: 0.5rem 0;
+      margin: 0.4rem 0;
+      letter-spacing: 1px;
     }
     .copy-btn {
       background: linear-gradient(95deg, #2c7a5a, #1e563e);
       border: none;
-      padding: 0.5rem 1.2rem;
-      border-radius: 3rem;
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
       font-weight: 600;
       color: white;
       cursor: pointer;
     }
     .timer-badge {
       background: #1f1f2a;
-      padding: 0.3rem 0.8rem;
+      padding: 0.2rem 0.7rem;
       border-radius: 2rem;
       font-family: monospace;
       color: #f5b042;
       display: inline-block;
-      margin-left: 0.8rem;
+      margin-left: 0.6rem;
+      font-size: 0.8rem;
     }
     .info {
       margin-top: 1rem;
       text-align: center;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #6b6b6b;
       background: #111;
-      padding: 0.5rem;
-      border-radius: 2rem;
+      padding: 0.4rem;
+      border-radius: 1.5rem;
     }
   </style>
-  <!-- AD SDKs (hidden behind generic names) -->
-  <script src="https://ad.gigapub.tech/script?id=6331" async></script>
-  <script src='//libtl.com/sdk.js' data-zone='10675499' data-sdk='show_10675499' async></script>
-  <script src="https://adexora.com/cdn/ads.js?id=1964" async></script>
+  <!-- All required ad SDKs (silent) -->
+  <script src="https://ad.gigapub.tech/script?id=6331"></script>
+  <script src="//libtl.com/sdk.js" data-zone="10675499" data-sdk="show_10675499"></script>
+  <script src="https://adexora.com/cdn/ads.js?id=1964"></script>
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body>
@@ -247,43 +304,43 @@
 
   <div class="tasks-section">
     <div class="tasks-header">
-      <h2>⚡ 10 LEVELS (GENERIC ADS) ⚡</h2>
+      <h2>⚡ 10 LEVELS ⚡</h2>
       <div class="progress" id="progressCounter">0 / 10</div>
     </div>
     <ul class="task-list" id="taskList"></ul>
     <div class="info">
-      🔥 EXACT FLOW (Telegram Mini App ready):<br>
-      1️⃣ Open initial link → tap Continue → 2️⃣ Ad 1 → 3️⃣ Ad 2 → 4️⃣ Ad 3 → 5️⃣ Ad 4 → 6️⃣ Open final link → tap Continue → ✅ Level complete<br>
-      🧩 Complete ALL 10 → unique reward code (30s to copy) → copy = full reset.
+      🔥 FLOW: Open link → Ad 1 → Ad 2 → Ad 3 → Ad 4 → Final link → Complete<br>
+      ✅ After each link, tap "Continue". All ads have automatic fallback.
     </div>
   </div>
 
   <div id="rewardPanel" class="reward-panel" style="display: none;">
-    <h3 style="color:#e0e0e0;">🏆 REWARD UNLOCKED 🏆</h3>
+    <h3 style="color:#e0e0e0; font-size:1.2rem;">🏆 REWARD UNLOCKED 🏆</h3>
     <div class="reward-code" id="rewardCode">----</div>
     <div>
-      <button class="copy-btn" id="copyBtn">📋 Copy Code & Reset Progress</button>
+      <button class="copy-btn" id="copyBtn">📋 Copy Code & Reset</button>
       <span class="timer-badge" id="timerDisplay">30s left</span>
     </div>
-    <div id="expiredMsg" style="margin-top: 6px;"></div>
+    <div id="expiredMsg" style="font-size:0.7rem; margin-top:4px;"></div>
   </div>
 </div>
 
 <script>
-  (function(){
+  (function() {
+    // ---------- CONFIG ----------
     const TOTAL_LEVELS = 10;
-    const STORAGE_KEY = 'nexus10_generic_ads_telegram';
-    const INITIAL_LINK = "https://www.effectivecpmnetwork.com/xan60uuv?key=369dc68341066c06e3d471f3785f73fb";
-    const FINAL_SMART_LINK = "https://omg10.com/4/10883007";
+    const STORAGE_KEY = 'nexus_telegram_final_v2';
+    const LINK_FIRST = "https://www.effectivecpmnetwork.com/xan60uuv?key=369dc68341066c06e3d471f3785f73fb";
+    const LINK_SECOND = "https://omg10.com/4/10883007";
     
     let tasks = [];
-    let activeChain = { active: false, levelId: null, cancelFn: null };
+    let activeLevelObj = null;    // { cancelFn }
     let rewardActive = false;
-    let rewardCountdown = null;
+    let rewardTimer = null;
     let rewardSeconds = 30;
     let currentRewardCode = '';
     
-    // DOM
+    // DOM elements
     const taskListEl = document.getElementById('taskList');
     const progressSpan = document.getElementById('progressCounter');
     const globalStatusDiv = document.getElementById('globalStatus');
@@ -294,16 +351,17 @@
     const timerDisplaySpan = document.getElementById('timerDisplay');
     const expiredMsgDiv = document.getElementById('expiredMsg');
     
+    // ---------- Helper ----------
     function showToast(msg, color = "#2ecc71") {
       const toast = document.createElement('div');
       toast.className = 'toast';
       toast.innerText = msg;
       toast.style.background = color + 'dd';
       document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 2500);
+      setTimeout(() => toast.remove(), 2200);
     }
     
-    // Data
+    // ---------- Data ----------
     function createFreshTasks() {
       return Array.from({ length: TOTAL_LEVELS }, (_, i) => ({ id: i+1, completed: false }));
     }
@@ -313,18 +371,22 @@
       if (!raw) return createFreshTasks();
       try {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length === TOTAL_LEVELS) return parsed.map(t => ({ id: t.id, completed: !!t.completed }));
+        if (Array.isArray(parsed) && parsed.length === TOTAL_LEVELS) {
+          return parsed.map(t => ({ id: t.id, completed: !!t.completed }));
+        }
         return createFreshTasks();
       } catch(e) { return createFreshTasks(); }
     }
+    
     function isLevelCompleted(id) { return tasks.find(t => t.id === id)?.completed || false; }
+    
     function markLevelComplete(levelId) {
       const task = tasks.find(t => t.id === levelId);
       if (!task || task.completed) return false;
       task.completed = true;
       saveTasks();
       renderTasks();
-      showToast(`✅ Level ${levelId} COMPLETED!`, "#2ecc71");
+      showToast(`✅ Level ${levelId} COMPLETED!`);
       const allCompleted = tasks.every(t => t.completed);
       if (allCompleted && !rewardActive && rewardPanel.style.display !== 'block') {
         activateReward();
@@ -332,14 +394,15 @@
       return true;
     }
     
-    // Reward
+    // ---------- Reward System ----------
     function generateRewardCode() {
       const now = new Date();
       return `NEXUS-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
     }
+    
     function activateReward() {
       if (rewardActive) return;
-      if (rewardCountdown) clearInterval(rewardCountdown);
+      if (rewardTimer) clearInterval(rewardTimer);
       currentRewardCode = generateRewardCode();
       rewardCodeSpan.innerText = currentRewardCode;
       rewardSeconds = 30;
@@ -348,37 +411,41 @@
       copyBtn.disabled = false;
       rewardPanel.style.display = 'block';
       rewardActive = true;
-      rewardCountdown = setInterval(() => {
-        if (!rewardActive) { if (rewardCountdown) clearInterval(rewardCountdown); rewardCountdown = null; return; }
+      rewardTimer = setInterval(() => {
+        if (!rewardActive) {
+          if (rewardTimer) clearInterval(rewardTimer);
+          rewardTimer = null;
+          return;
+        }
         rewardSeconds--;
         if (rewardSeconds >= 0) {
           timerDisplaySpan.innerText = `${rewardSeconds}s left`;
           if (rewardSeconds === 0) {
             copyBtn.disabled = true;
-            expiredMsgDiv.innerHTML = '<span style="color:#e67e22;">⏰ Code expired. Complete all 10 levels again.</span>';
+            expiredMsgDiv.innerHTML = '<span style="color:#e67e22;">⏰ Code expired. Complete all 10 again.</span>';
             timerDisplaySpan.innerText = 'Expired';
             rewardActive = false;
-            if (rewardCountdown) clearInterval(rewardCountdown);
-            rewardCountdown = null;
+            if (rewardTimer) clearInterval(rewardTimer);
+            rewardTimer = null;
             rewardPanel.style.display = 'none';
           }
         } else {
-          if (rewardCountdown) clearInterval(rewardCountdown);
-          rewardCountdown = null;
+          if (rewardTimer) clearInterval(rewardTimer);
+          rewardTimer = null;
           rewardPanel.style.display = 'none';
           rewardActive = false;
         }
       }, 1000);
     }
+    
     function fullReset() {
-      if (activeChain.active && activeChain.cancelFn) {
-        activeChain.cancelFn();
-        activeChain.active = false;
-        activeChain.levelId = null;
+      if (activeLevelObj && activeLevelObj.cancel) {
+        activeLevelObj.cancel();
+        activeLevelObj = null;
       }
       tasks = createFreshTasks();
       saveTasks();
-      if (rewardCountdown) { clearInterval(rewardCountdown); rewardCountdown = null; }
+      if (rewardTimer) clearInterval(rewardTimer);
       rewardActive = false;
       rewardPanel.style.display = 'none';
       copyBtn.disabled = false;
@@ -386,84 +453,93 @@
       timerDisplaySpan.innerText = '30s left';
       currentRewardCode = '';
       renderTasks();
-      showToast("🔄 Full reset! Start over.", "#f39c12");
+      showToast("🔄 Progress reset! Start fresh.", "#f39c12");
     }
     
-    // ---------- UNDERLYING AD FUNCTIONS (hidden from user) ----------
-    async function showGiga() {
-      return new Promise((resolve, reject) => {
-        if (typeof window.showGiga !== 'function') return reject(new Error("Ad 1 provider not ready"));
-        const timeout = setTimeout(() => reject(new Error("Ad 1 timeout")), 35000);
-        window.showGiga()
-          .then(() => { clearTimeout(timeout); resolve(); })
-          .catch(e => { clearTimeout(timeout); reject(e); });
-      });
-    }
-    async function showAdsgram() {
-      return new Promise((resolve, reject) => {
-        if (!window.Adsgram) return reject(new Error("Ad 2 provider not ready"));
-        let ctrl;
-        try { ctrl = window.Adsgram.init({ blockId: "int-24179" }); } catch(e) { return reject(e); }
-        if (!ctrl || typeof ctrl.show !== 'function') return reject(new Error("Ad 2 invalid"));
-        const timeout = setTimeout(() => reject(new Error("Ad 2 timeout")), 35000);
-        ctrl.show()
-          .then(() => { clearTimeout(timeout); resolve(); })
-          .catch(e => { clearTimeout(timeout); reject(e); });
-      });
-    }
-    async function showMonetag() {
-      return new Promise((resolve, reject) => {
-        if (typeof window.show_10675499 !== 'function') return reject(new Error("Ad 3 provider not ready"));
-        const timeout = setTimeout(() => reject(new Error("Ad 3 timeout")), 35000);
-        window.show_10675499()
-          .then(() => { clearTimeout(timeout); resolve(); })
-          .catch(e => { clearTimeout(timeout); reject(e); });
-      });
-    }
-    async function showAdexora() {
-      return new Promise((resolve, reject) => {
-        if (typeof window.showAdexora !== 'function') return reject(new Error("Ad 4 provider not ready"));
-        const timeout = setTimeout(() => reject(new Error("Ad 4 timeout")), 35000);
-        window.showAdexora()
-          .then(() => { clearTimeout(timeout); resolve(); })
-          .catch(e => { clearTimeout(timeout); reject(e); });
-      });
-    }
-    
-    // Generic fallback: tries providers in order but shows only "Ad X" to user
-    async function tryAdFallback(adList, stepName) {
-      for (let i = 0; i < adList.length; i++) {
-        const { name, fn } = adList[i];
+    // ---------- AD FUNCTIONS with fallback (generic names) ----------
+    async function showAd1() {
+      const providers = [
+        { name: "Giga", fn: async () => { if (typeof window.showGiga !== 'function') throw new Error(); return window.showGiga(); } },
+        { name: "Adsgram", fn: async () => { if (!window.Adsgram) throw new Error(); const c = window.Adsgram.init({ blockId: "int-24179" }); if (!c || typeof c.show !== 'function') throw new Error(); return c.show(); } },
+        { name: "Monetag", fn: async () => { if (typeof window.show_10675499 !== 'function') throw new Error(); return window.show_10675499(); } },
+        { name: "Adexora", fn: async () => { if (typeof window.showAdexora !== 'function') throw new Error(); return window.showAdexora(); } }
+      ];
+      for (const p of providers) {
         try {
-          await fn();
-          // Show generic success message (no network name)
-          showToast(`✅ ${stepName} completed`, "#2ecc71");
-          return true;
-        } catch (err) {
-          console.warn(`${name} failed for ${stepName}:`, err);
-          showToast(`⚠️ Retrying ${stepName}...`, "#f39c12");
-        }
+          await p.fn();
+          showToast("✅ Ad 1 completed");
+          return;
+        } catch(e) { console.warn(p.name + " failed", e); }
       }
-      throw new Error(`${stepName} failed after multiple attempts`);
+      throw new Error("Ad 1 failed");
     }
     
-    // Manual continue helper for Telegram
+    async function showAd2() {
+      const providers = [
+        { name: "Adsgram", fn: async () => { if (!window.Adsgram) throw new Error(); const c = window.Adsgram.init({ blockId: "int-24179" }); if (!c || typeof c.show !== 'function') throw new Error(); return c.show(); } },
+        { name: "Giga", fn: async () => { if (typeof window.showGiga !== 'function') throw new Error(); return window.showGiga(); } },
+        { name: "Monetag", fn: async () => { if (typeof window.show_10675499 !== 'function') throw new Error(); return window.show_10675499(); } },
+        { name: "Adexora", fn: async () => { if (typeof window.showAdexora !== 'function') throw new Error(); return window.showAdexora(); } }
+      ];
+      for (const p of providers) {
+        try {
+          await p.fn();
+          showToast("✅ Ad 2 completed");
+          return;
+        } catch(e) { console.warn(p.name + " failed", e); }
+      }
+      throw new Error("Ad 2 failed");
+    }
+    
+    async function showAd3() {
+      const providers = [
+        { name: "Monetag", fn: async () => { if (typeof window.show_10675499 !== 'function') throw new Error(); return window.show_10675499(); } },
+        { name: "Giga", fn: async () => { if (typeof window.showGiga !== 'function') throw new Error(); return window.showGiga(); } },
+        { name: "Adsgram", fn: async () => { if (!window.Adsgram) throw new Error(); const c = window.Adsgram.init({ blockId: "int-24179" }); if (!c || typeof c.show !== 'function') throw new Error(); return c.show(); } },
+        { name: "Adexora", fn: async () => { if (typeof window.showAdexora !== 'function') throw new Error(); return window.showAdexora(); } }
+      ];
+      for (const p of providers) {
+        try {
+          await p.fn();
+          showToast("✅ Ad 3 completed");
+          return;
+        } catch(e) { console.warn(p.name + " failed", e); }
+      }
+      throw new Error("Ad 3 failed");
+    }
+    
+    async function showAd4() {
+      const providers = [
+        { name: "Adexora", fn: async () => { if (typeof window.showAdexora !== 'function') throw new Error(); return window.showAdexora(); } },
+        { name: "Giga", fn: async () => { if (typeof window.showGiga !== 'function') throw new Error(); return window.showGiga(); } },
+        { name: "Adsgram", fn: async () => { if (!window.Adsgram) throw new Error(); const c = window.Adsgram.init({ blockId: "int-24179" }); if (!c || typeof c.show !== 'function') throw new Error(); return c.show(); } },
+        { name: "Monetag", fn: async () => { if (typeof window.show_10675499 !== 'function') throw new Error(); return window.show_10675499(); } }
+      ];
+      for (const p of providers) {
+        try {
+          await p.fn();
+          showToast("✅ Ad 4 completed");
+          return;
+        } catch(e) { console.warn(p.name + " failed", e); }
+      }
+      throw new Error("Ad 4 failed");
+    }
+    
+    // ---------- Manual Continue Modal (Telegram friendly) ----------
     function waitForManualContinue(message) {
       return new Promise((resolve, reject) => {
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
-        overlay.style.zIndex = '2100';
         const card = document.createElement('div');
         card.className = 'modal-card';
         card.innerHTML = `
           <h3>⏸️ Continue Required</h3>
-          <p style="color:#ddd; margin:1rem 0;">${message}</p>
-          <button class="continue-btn" id="manualContinueBtn">✅ Continue</button>
-          <button class="cancel-chain-btn" id="manualCancelBtn" style="margin-left:0.5rem;">❌ Cancel Level</button>
+          <p style="color:#ddd; margin:0.8rem 0;">${message}</p>
+          <button class="continue-btn" id="continueActionBtn">✅ Continue</button>
+          <button class="cancel-chain-btn" id="cancelActionBtn" style="margin-left:0.5rem;">❌ Cancel</button>
         `;
         overlay.appendChild(card);
         document.body.appendChild(overlay);
-        
         let resolved = false;
         const cleanup = () => { if (overlay.parentNode) overlay.remove(); };
         const onContinue = () => {
@@ -478,135 +554,112 @@
           cleanup();
           reject(new Error("Cancelled by user"));
         };
-        card.querySelector('#manualContinueBtn').addEventListener('click', onContinue);
-        card.querySelector('#manualCancelBtn').addEventListener('click', onCancel);
+        card.querySelector('#continueActionBtn').addEventListener('click', onContinue);
+        card.querySelector('#cancelActionBtn').addEventListener('click', onCancel);
       });
     }
     
-    // Open link and wait for manual continue
-    async function openLinkAndWait(linkUrl, instruction) {
-      window.open(linkUrl, '_blank');
-      await waitForManualContinue(instruction + " Tap Continue after returning to this tab/app.");
+    async function openLinkAndWait(url, instruction) {
+      window.open(url, '_blank');
+      await waitForManualContinue(instruction + " Tap Continue after returning to this app.");
     }
     
-    // ---------- EXACT ORDER CHAIN WITH GENERIC NAMES ----------
-    // Steps: 0: initial link, 1: Ad 1 (Giga fallback), 2: Ad 2 (Adsgram fallback), 3: Ad 3 (Monetag fallback), 4: Ad 4 (Adexora fallback), 5: final link
+    // ---------- Level Chain Runner ----------
     async function runLevelChain(levelId, updateStepCb, cancelSignal) {
-      // Step 0: initial link
-      updateStepCb(0, "active");
-      await openLinkAndWait(INITIAL_LINK, "Open the initial link.");
+      // Step 0: open first link
+      updateStepCb(0, 'active');
+      await openLinkAndWait(LINK_FIRST, "Open the initial link.");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
-      updateStepCb(0, "done");
+      updateStepCb(0, 'done');
       
-      // Step 1: Ad 1 (primary Giga, fallbacks: Adsgram -> Monetag -> Adexora)
-      updateStepCb(1, "active");
-      await tryAdFallback([
-        { name: "Giga", fn: showGiga },
-        { name: "Adsgram", fn: showAdsgram },
-        { name: "Monetag", fn: showMonetag },
-        { name: "Adexora", fn: showAdexora }
-      ], "Ad 1");
+      // Step 1: Ad 1
+      updateStepCb(1, 'active');
+      await showAd1();
       if (cancelSignal.cancelled) throw new Error("Cancelled");
-      updateStepCb(1, "done");
+      updateStepCb(1, 'done');
       
-      // Step 2: Ad 2 (primary Adsgram, fallbacks: Giga -> Monetag -> Adexora)
-      updateStepCb(2, "active");
-      await tryAdFallback([
-        { name: "Adsgram", fn: showAdsgram },
-        { name: "Giga", fn: showGiga },
-        { name: "Monetag", fn: showMonetag },
-        { name: "Adexora", fn: showAdexora }
-      ], "Ad 2");
+      // Step 2: Ad 2
+      updateStepCb(2, 'active');
+      await showAd2();
       if (cancelSignal.cancelled) throw new Error("Cancelled");
-      updateStepCb(2, "done");
+      updateStepCb(2, 'done');
       
-      // Step 3: Ad 3 (primary Monetag, fallbacks: Giga -> Adsgram -> Adexora)
-      updateStepCb(3, "active");
-      await tryAdFallback([
-        { name: "Monetag", fn: showMonetag },
-        { name: "Giga", fn: showGiga },
-        { name: "Adsgram", fn: showAdsgram },
-        { name: "Adexora", fn: showAdexora }
-      ], "Ad 3");
+      // Step 3: Ad 3
+      updateStepCb(3, 'active');
+      await showAd3();
       if (cancelSignal.cancelled) throw new Error("Cancelled");
-      updateStepCb(3, "done");
+      updateStepCb(3, 'done');
       
-      // Step 4: Ad 4 (primary Adexora, fallbacks: Giga -> Adsgram -> Monetag)
-      updateStepCb(4, "active");
-      await tryAdFallback([
-        { name: "Adexora", fn: showAdexora },
-        { name: "Giga", fn: showGiga },
-        { name: "Adsgram", fn: showAdsgram },
-        { name: "Monetag", fn: showMonetag }
-      ], "Ad 4");
+      // Step 4: Ad 4
+      updateStepCb(4, 'active');
+      await showAd4();
       if (cancelSignal.cancelled) throw new Error("Cancelled");
-      updateStepCb(4, "done");
+      updateStepCb(4, 'done');
       
-      // Step 5: final link (opens after Ad 4 completes)
-      updateStepCb(5, "active");
-      await openLinkAndWait(FINAL_SMART_LINK, "Open the final link.");
+      // Step 5: final link
+      updateStepCb(5, 'active');
+      await openLinkAndWait(LINK_SECOND, "Open the final link.");
       if (cancelSignal.cancelled) throw new Error("Cancelled");
-      updateStepCb(5, "done");
+      updateStepCb(5, 'done');
       
       return true;
     }
     
-    // Modal UI with generic step names
-    function showChainModal(levelId, onComplete, onCancel) {
+    // ---------- Modal UI ----------
+    function showLevelModal(levelId, onComplete, onCancel) {
       const overlay = document.createElement('div');
       overlay.className = 'modal-overlay';
       const steps = [
-        "🔗 1. Open initial link → tap Continue",
+        "🔗 1. Open initial link → Continue",
         "🎮 2. Watch Ad 1",
         "📢 3. Watch Ad 2",
         "📺 4. Watch Ad 3",
         "🎬 5. Watch Ad 4",
-        "🔗 6. Open final link → tap Continue → Complete"
+        "🔗 6. Open final link → Continue → Complete"
       ];
-      let stepStatuses = steps.map(() => "pending");
+      let stepStatuses = steps.map(() => 'pending');
       
       const modalDiv = document.createElement('div');
       modalDiv.className = 'modal-card';
       modalDiv.innerHTML = `
         <h3>⚡ LEVEL ${levelId} PROGRESS</h3>
-        <div class="step-status" id="stepStatusContainer"></div>
-        <button class="cancel-chain-btn" id="cancelChainBtn">✖ CANCEL LEVEL</button>
-        <p style="font-size:12px; margin-top:12px; color:#aaa;">For Telegram: after each link, tap "Continue". Ads will play automatically.</p>
+        <div class="step-status" id="stepContainer"></div>
+        <button class="cancel-chain-btn" id="cancelModalBtn">✖ CANCEL LEVEL</button>
+        <p style="font-size:11px; margin-top:8px;">After each link, tap "Continue". Ads run automatically.</p>
       `;
       overlay.appendChild(modalDiv);
       document.body.appendChild(overlay);
-      const container = modalDiv.querySelector('#stepStatusContainer');
+      const container = modalDiv.querySelector('#stepContainer');
       
-      function renderSteps(activeStepIdx = -1) {
+      function render(activeIdx = -1) {
         container.innerHTML = '';
         steps.forEach((label, idx) => {
           const div = document.createElement('div');
           div.className = 'step-item';
           div.innerText = label;
           if (stepStatuses[idx] === 'done') div.classList.add('step-done');
-          else if (idx === activeStepIdx && stepStatuses[idx] !== 'done') div.classList.add('step-active');
+          else if (idx === activeIdx && stepStatuses[idx] !== 'done') div.classList.add('step-active');
           else div.classList.add('step-pending');
           container.appendChild(div);
         });
       }
       
-      let cancelRequested = false;
+      let cancelled = false;
       const cancelSignal = { cancelled: false };
-      
-      const updateStep = (stepIndex, state) => {
-        if (cancelRequested) return;
+      const updateStep = (stepIdx, state) => {
+        if (cancelled) return;
         if (state === 'active') {
-          stepStatuses[stepIndex] = "pending";
-          renderSteps(stepIndex);
+          stepStatuses[stepIdx] = 'pending';
+          render(stepIdx);
         } else if (state === 'done') {
-          stepStatuses[stepIndex] = "done";
-          renderSteps(-1);
+          stepStatuses[stepIdx] = 'done';
+          render(-1);
         }
       };
       
-      const cancelBtn = modalDiv.querySelector('#cancelChainBtn');
+      const cancelBtn = modalDiv.querySelector('#cancelModalBtn');
       cancelBtn.addEventListener('click', () => {
-        cancelRequested = true;
+        cancelled = true;
         cancelSignal.cancelled = true;
         overlay.remove();
         if (onCancel) onCancel();
@@ -615,17 +668,17 @@
       
       runLevelChain(levelId, updateStep, cancelSignal)
         .then(() => {
-          if (!cancelRequested) {
+          if (!cancelled) {
             overlay.remove();
             onComplete();
           }
         })
         .catch(err => {
-          if (!cancelRequested && err.message !== "Cancelled" && err.message !== "Cancelled by user") {
+          if (!cancelled && err.message !== "Cancelled" && err.message !== "Cancelled by user") {
             overlay.remove();
-            showToast(`❌ Chain error: ${err.message}. Please retry level.`, "#e74c3c");
+            showToast(`❌ Error: ${err.message}. Retry level.`, "#e74c3c");
             if (onCancel) onCancel();
-          } else if (cancelRequested) {
+          } else if (cancelled) {
             overlay.remove();
           } else {
             overlay.remove();
@@ -633,7 +686,7 @@
           }
         });
       
-      return { cancel: () => { cancelRequested = true; cancelSignal.cancelled = true; overlay.remove(); } };
+      return { cancel: () => { cancelled = true; cancelSignal.cancelled = true; overlay.remove(); } };
     }
     
     async function startLevel(levelId) {
@@ -641,33 +694,28 @@
         showToast(`Level ${levelId} already completed!`, "#f5b042");
         return;
       }
-      if (activeChain.active) {
-        showToast(`Another level in progress (Level ${activeChain.levelId}). Cancel it first.`, "#e67e22");
+      if (activeLevelObj && activeLevelObj.cancel) {
+        showToast(`Another level in progress. Cancel it first.`, "#e67e22");
         return;
       }
-      activeChain.active = true;
-      activeChain.levelId = levelId;
-      const cancelHandler = showChainModal(
+      activeLevelObj = { cancel: null };
+      const handler = showLevelModal(
         levelId,
         () => {
           markLevelComplete(levelId);
-          activeChain.active = false;
-          activeChain.levelId = null;
-          activeChain.cancelFn = null;
+          activeLevelObj = null;
         },
         () => {
-          activeChain.active = false;
-          activeChain.levelId = null;
-          activeChain.cancelFn = null;
+          activeLevelObj = null;
         }
       );
-      activeChain.cancelFn = () => {
-        if (cancelHandler && cancelHandler.cancel) cancelHandler.cancel();
+      activeLevelObj.cancel = () => {
+        if (handler && handler.cancel) handler.cancel();
       };
     }
     
+    // ---------- Render 10 Levels ----------
     function renderTasks() {
-      if (!taskListEl) return;
       taskListEl.innerHTML = '';
       const completedCount = tasks.filter(t => t.completed).length;
       const allCompleted = completedCount === TOTAL_LEVELS;
@@ -697,69 +745,57 @@
         iconSpan.innerText = completed ? "✓ DONE" : "▶ START";
         const textSpan = document.createElement('span');
         textSpan.className = 'task-text';
-        textSpan.innerText = `Level ${i} – ${completed ? 'finished' : 'Link → Ad 1 → Ad 2 → Ad 3 → Ad 4 → Link → complete'}`;
+        textSpan.innerText = `Level ${i} – ${completed ? 'finished' : 'Link → Ad1 → Ad2 → Ad3 → Ad4 → Link'}`;
         li.appendChild(iconSpan);
         li.appendChild(textSpan);
         taskListEl.appendChild(li);
       }
     }
     
-    function onTaskClick(levelId) {
-      if (isLevelCompleted(levelId)) {
-        showToast(`Level ${levelId} already completed!`, "#f5b042");
-        return;
-      }
-      startLevel(levelId);
+    function onTaskClick(e) {
+      const li = e.target.closest('.task-item');
+      if (!li) return;
+      const id = parseInt(li.getAttribute('data-id'), 10);
+      if (!isNaN(id)) startLevel(id);
     }
     
-    async function handleCopyAndReset() {
+    async function handleCopyReset() {
       if (!rewardActive || rewardSeconds <= 0) {
         showToast("❌ No active reward code or expired. Complete all 10 levels again.", "#e74c3c");
         return;
       }
       try {
         await navigator.clipboard.writeText(currentRewardCode);
-        showToast("🏆 Reward code copied! Progress will FULLY RESET now.", "#2ecc71");
+        showToast("🏆 Reward code copied! Progress resets now.", "#2ecc71");
         fullReset();
       } catch (err) {
-        showToast("Copy failed, please try again", "#e67e22");
+        showToast("Copy failed, tap again", "#e67e22");
       }
     }
     
+    // ---------- Date/Time ----------
     function updateDateTime() {
       const now = new Date();
-      const dateStr = now.toLocaleDateString(undefined, { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-      const timeStr = now.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+      const dateStr = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       const dateEl = document.getElementById('currentDate');
       const timeEl = document.getElementById('currentTime');
       if (dateEl) dateEl.innerText = dateStr;
       if (timeEl) timeEl.innerText = timeStr;
     }
     
-    function bindEvents() {
-      taskListEl.addEventListener('click', (e) => {
-        const li = e.target.closest('.task-item');
-        if (!li) return;
-        const id = parseInt(li.getAttribute('data-id'), 10);
-        if (!isNaN(id)) onTaskClick(id);
-      });
-      copyBtn.addEventListener('click', handleCopyAndReset);
-    }
+    // ---------- Event Binding ----------
+    taskListEl.addEventListener('click', onTaskClick);
+    copyBtn.addEventListener('click', handleCopyReset);
     
-    function init() {
-      tasks = loadTasks();
-      renderTasks();
-      bindEvents();
-      const allCompleted = tasks.every(t => t.completed);
-      if (allCompleted && !rewardActive && rewardPanel.style.display !== 'block') {
-        activateReward();
-      }
-      setInterval(updateDateTime, 1000);
-      updateDateTime();
-      showToast("✅ Telegram mode: Use Continue buttons after links.", "#2ecc71");
-    }
-    
-    init();
+    // ---------- INIT ----------
+    tasks = loadTasks();
+    renderTasks();
+    const allDone = tasks.every(t => t.completed);
+    if (allDone && !rewardActive) activateReward();
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+    showToast("✅ Ready! Tap any level to begin.", "#2ecc71");
   })();
 </script>
 </body>
