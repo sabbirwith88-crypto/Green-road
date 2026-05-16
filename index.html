@@ -1,908 +1,758 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Earn For Earn – Pepe Rewards</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Telegram WebApp SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <!-- Firebase (Realtime DB) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-    
-    <!-- Monetag SDK (will be used as Giga after swap) -->
-    <script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
-    
-    <!-- Adsgram SDK -->
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    
-    <!-- Giga Pub Ads SDK (will be used as Monetag after swap) -->
-    <script src="https://ad.gigapub.tech/script?id=6432"></script>
-    
-    <!-- Adexora SDK -->
-    <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-        :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #121212;
-            --bg-card: #1e1e1e;
-            --bg-elevated: #2a2a2a;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --border: #2c2c2c;
-            --purple: #6c5ce7;
-            --purple-dark: #5b4bc4;
-            --blue: #0984e3;
-            --success: #00b894;
-            --error: #d63031;
-            --warning: #fdcb6e;
-            --gold: #f9ca24;
-            --bkash: #e2136e;
-        }
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        .app-container {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            min-height: 100vh;
-            background: radial-gradient(circle at 10% 20%, #0f0f0f, #000);
-            position: relative;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg-primary);
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(20px);
-        }
-        .loading-screen.hidden { display: none; }
-        .loading-logo {
-            width: 100px;
-            height: 100px;
-            border-radius: 30px;
-            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(108,92,231,0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(108,92,231,0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(108,92,231,0); }
-        }
-        .loading-logo i { font-size: 3rem; color: white; }
-        .loading-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, var(--purple), var(--blue));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .loading-progress { width: 250px; height: 4px; background: #333; border-radius: 4px; margin: 20px 0; overflow: hidden; }
-        .loading-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); transition: width 0.3s; }
-        .header {
-            background: rgba(18,18,18,0.95);
-            backdrop-filter: blur(15px);
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .app-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--purple), var(--blue));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .header-right { display: flex; gap: 12px; align-items: center; }
-        .user-profile {
-            width: 40px;
-            height: 40px;
-            border-radius: 60px;
-            background: var(--bg-elevated);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            cursor: pointer;
-            border: 1px solid var(--border);
-        }
-        .user-menu {
-            position: absolute;
-            top: 60px;
-            right: 15px;
-            background: rgba(30,30,30,0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 12px;
-            min-width: 220px;
-            border: 1px solid rgba(108,92,231,0.3);
-            display: none;
-            z-index: 150;
-        }
-        .user-menu.active { display: block; }
-        .menu-item {
-            padding: 12px 16px;
-            border-radius: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: 0.2s;
-        }
-        .menu-item:hover { background: rgba(255,255,255,0.05); }
-        .balance-card {
-            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
-            border-radius: 36px;
-            padding: 28px;
-            margin-bottom: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-        .balance-amount { font-size: 2.5rem; font-weight: 700; margin: 8px 0; }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        .stat-card {
-            background: var(--bg-card);
-            border-radius: 28px;
-            padding: 16px;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-        .stat-value { font-size: 1.6rem; font-weight: 700; }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(18,18,18,0.96);
-            backdrop-filter: blur(12px);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 20px;
-            border-top: 1px solid var(--border);
-            max-width: 500px;
-            margin: 0 auto;
-            z-index: 100;
-        }
-        .nav-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.7rem;
-            padding: 8px;
-            flex: 1;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-        .nav-btn i { font-size: 1.4rem; }
-        .nav-btn.active { color: white; background: var(--bg-elevated); }
-        .content-section {
-            display: none;
-            padding: 18px;
-            padding-bottom: 90px;
-            animation: fade 0.3s;
-        }
-        .content-section.active { display: block; }
-        @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .task-card {
-            background: var(--bg-card);
-            border-radius: 32px;
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .task-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        .task-reward {
-            background: var(--gold);
-            padding: 4px 16px;
-            border-radius: 40px;
-            font-weight: 600;
-            color: #000;
-        }
-        .steps-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-            margin: 20px 0;
-            justify-items: center;
-        }
-        .step-btn {
-            width: 100%;
-            max-width: 70px;
-            height: 70px;
-            border-radius: 60px;
-            background: #222;
-            border: 1px solid #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.75rem;
-            cursor: pointer;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-        .step-btn i { font-size: 1.2rem; }
-        .step-btn.completed { background: var(--success); border-color: var(--success); color: white; }
-        .step-btn.locked { opacity: 0.3; cursor: not-allowed; }
-        .step-btn.active-step { border: 2px solid var(--warning); box-shadow: 0 0 8px var(--warning); background: #2a2a2a; }
-        .claim-btn {
-            background: linear-gradient(90deg, var(--gold), #e6b422);
-            color: #000;
-            font-weight: bold;
-            padding: 14px;
-            border-radius: 60px;
-            width: 100%;
-            border: none;
-            margin-top: 16px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 1rem;
-        }
-        .claim-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .cooldown-timer {
-            background: #1a1a1a;
-            border-radius: 60px;
-            padding: 10px;
-            text-align: center;
-            margin: 12px 0;
-            color: var(--warning);
-            font-size: 0.9rem;
-        }
-        .chrome-required {
-            background: rgba(9,132,227,0.2);
-            padding: 12px;
-            border-radius: 24px;
-            margin-bottom: 15px;
-            font-size: 0.85rem;
-            color: var(--blue);
-            border-left: 3px solid var(--blue);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .warning-text {
-            background: rgba(231,76,60,0.15);
-            padding: 12px;
-            border-radius: 24px;
-            margin-bottom: 15px;
-            font-size: 0.85rem;
-            color: #e74c3c;
-            border-left: 3px solid #e74c3c;
-        }
-        .info-note {
-            background: rgba(253,203,110,0.1);
-            padding: 10px;
-            border-radius: 20px;
-            margin-top: 10px;
-            font-size: 0.8rem;
-            color: var(--warning);
-        }
-        .history-item {
-            background: var(--bg-elevated);
-            border-radius: 24px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--purple);
-        }
-        .history-status {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
-        .status-pending { background: #f39c12; color: black; }
-        .status-approved { background: var(--success); color: black; }
-        .requirement-list {
-            background: var(--bg-elevated);
-            border-radius: 28px;
-            padding: 20px;
-            margin: 15px 0;
-        }
-        .requirement-item-serial {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .req-check { width: 28px; text-align: center; }
-        .fee-breakdown {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .form-input {
-            width: 100%;
-            padding: 14px 18px;
-            background: #000;
-            border: 1px solid var(--border);
-            border-radius: 60px;
-            color: white;
-            margin: 10px 0;
-        }
-        .withdraw-btn {
-            background: linear-gradient(90deg, var(--purple), var(--blue));
-            color: white;
-            font-weight: bold;
-            padding: 16px;
-            border-radius: 60px;
-            width: 100%;
-            border: none;
-            margin-top: 20px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: 0.2s;
-        }
-        .withdraw-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .referral-professional {
-            background: linear-gradient(145deg, #141414, #0c0c0c);
-            border-radius: 32px;
-            padding: 28px;
-            text-align: center;
-        }
-        .referral-code-display {
-            background: #000;
-            padding: 14px;
-            border-radius: 60px;
-            margin: 20px 0;
-            word-break: break-all;
-            font-family: monospace;
-        }
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-        .btn-primary {
-            background: var(--purple);
-            padding: 12px 20px;
-            border-radius: 60px;
-            border: none;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .friend-card {
-            background: var(--bg-elevated);
-            border-radius: 24px;
-            padding: 16px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .status-message {
-            padding: 12px 16px;
-            border-radius: 60px;
-            margin: 10px 0;
-            font-size: 0.85rem;
-            text-align: center;
-        }
-        .status-success { background: rgba(0,184,148,0.15); color: var(--success); border-left: 3px solid var(--success); }
-        .status-error { background: rgba(214,48,49,0.15); color: var(--error); border-left: 3px solid var(--error); }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.95);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: var(--bg-card);
-            border-radius: 48px;
-            padding: 32px;
-            width: 90%;
-            max-width: 340px;
-            text-align: center;
-        }
-        .loading-spinner {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: #000000cc;
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            color: var(--text-secondary);
-        }
-        .withdrawal-history-card {
-            background: var(--bg-elevated);
-            border-radius: 24px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--purple);
-        }
-        .payment-option {
-            background: var(--bg-elevated);
-            border-radius: 60px;
-            padding: 10px 20px;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: 0.2s;
-        }
-        .payment-option.selected {
-            border-color: var(--purple);
-            background: rgba(108,92,231,0.2);
-        }
-        .payment-option i { font-size: 1.6rem; }
-        .payment-option span { font-weight: 500; }
-        .referral-code-modal {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.96);
-            backdrop-filter: blur(20px);
-            z-index: 2500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .referral-code-card {
-            background: var(--bg-card);
-            border-radius: 48px;
-            padding: 32px;
-            width: 100%;
-            max-width: 360px;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-        .gmail-modal {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: #000000dd;
-            backdrop-filter: blur(10px);
-            z-index: 2600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .gmail-card {
-            background: var(--bg-card);
-            border-radius: 48px;
-            padding: 28px;
-            width: 90%;
-            max-width: 380px;
-            border: 1px solid var(--purple);
-        }
-        .gmail-card textarea {
-            width: 100%;
-            background: #000;
-            border: 1px solid var(--border);
-            border-radius: 32px;
-            padding: 14px;
-            color: white;
-            margin: 16px 0;
-            resize: vertical;
-            font-size: 0.9rem;
-        }
-        .rules-box {
-            background: var(--bg-card);
-            border-radius: 28px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 1px solid var(--border);
-        }
-        .rules-box h4 {
-            margin-bottom: 16px;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .rule-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        .info-card {
-            background: var(--bg-card);
-            border-radius: 28px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border);
-        }
-        .info-card .support-link { color: var(--blue); text-decoration: none; cursor: pointer; }
-        @media (max-width:480px) { .step-btn { max-width: 60px; height: 65px; } .steps-container { gap: 8px; } }
-        .info-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .info-highlight {
-            background: rgba(108,92,231,0.15);
-            border-left: 3px solid var(--purple);
-        }
-        .small-text { font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Nexus 10 | Smart Ad Fallback | Reward + Reset</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Inter', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at 10% 20%, #0a0a0a, #000000);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .dashboard {
+      max-width: 720px;
+      width: 100%;
+      background: #0f0f0f;
+      border-radius: 3rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #101010, #1a1a1a);
+      padding: 1.8rem 2rem 2rem;
+      text-align: center;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .date { font-size: 1.5rem; background: rgba(255,255,255,0.08); display: inline-block; padding: 0.3rem 1.2rem; border-radius: 60px; color: #ddd; }
+    .time { font-size: 3rem; font-weight: 800; font-family: monospace; color: white; margin-top: 0.5rem; }
+
+    .global-status {
+      margin-top: 0.8rem;
+      background: rgba(0,0,0,0.6);
+      border-radius: 60px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 700;
+      font-size: 1.2rem;
+      display: inline-block;
+    }
+    .status-complete { background: #1e4a3b; box-shadow: 0 0 10px #2ecc71; color: #d0ffec; }
+    .status-notcomplete { background: #5a2a2a; color: #ffcfcf; }
+
+    .tasks-section {
+      padding: 2rem 1.8rem 1.5rem;
+      background: #0b0b0b;
+    }
+    .tasks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #2c2c2c;
+      padding-bottom: 0.6rem;
+    }
+    .tasks-header h2 { font-size: 1.6rem; background: linear-gradient(120deg, #ddd, #aaa); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .progress { background: #1e1e1e; padding: 0.3rem 1rem; border-radius: 40px; font-weight: 600; color: #bbb; border: 1px solid #333; }
+
+    .task-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .task-item {
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 1.8rem;
+      padding: 0.9rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .task-item:hover {
+      transform: translateY(-2px);
+      background: #1f1f1f;
+      border-color: #3b82f6;
+    }
+    .task-icon {
+      font-family: monospace;
+      font-weight: bold;
+      background: #1a1a1a;
+      padding: 0.3rem 0.6rem;
+      border-radius: 1rem;
+      font-size: 0.9rem;
+      min-width: 85px;
+      text-align: center;
+    }
+    .task-text { flex: 1; font-size: 1rem; font-weight: 500; color: #e0e0e0; }
+    .task-item.completed { background: #0f2a1f; border-left: 5px solid #2ecc71; }
+    .task-item.completed .task-text { text-decoration: line-through; color: #8fbc9a; }
+
+    /* Modal progress chain */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.94);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .modal-card {
+      background: #1a1a1a;
+      border-radius: 2rem;
+      max-width: 500px;
+      width: 90%;
+      padding: 2rem;
+      border: 1px solid #3b82f6;
+      box-shadow: 0 20px 35px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+    .modal-card h3 { color: #fff; margin-bottom: 0.5rem; font-size: 1.5rem; }
+    .step-status {
+      background: #0f0f0f;
+      padding: 1rem;
+      border-radius: 1.2rem;
+      margin: 1rem 0;
+      font-family: monospace;
+      font-size: 0.9rem;
+      text-align: left;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+    .step-item {
+      padding: 0.4rem 0;
+      border-left: 2px solid #333;
+      padding-left: 0.8rem;
+      margin: 0.5rem 0;
+      font-size: 0.85rem;
+    }
+    .step-active { color: #f5b042; border-left-color: #f5b042; font-weight: bold; }
+    .step-done { color: #2ecc71; border-left-color: #2ecc71; text-decoration: line-through; opacity: 0.8;}
+    .step-pending { color: #888; }
+    .cancel-chain-btn {
+      background: #5a2a2a;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      margin-top: 0.8rem;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2ecc71cc;
+      backdrop-filter: blur(12px);
+      color: #000;
+      padding: 0.5rem 1.2rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      z-index: 2100;
+      animation: fadeOut 1.8s ease forwards;
+      white-space: nowrap;
+    }
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
+    }
+    .reward-panel {
+      margin: 1rem 1.8rem 1.8rem;
+      background: linear-gradient(135deg, #0e1a16, #07120e);
+      border-radius: 1.8rem;
+      padding: 1.2rem;
+      border: 1px solid rgba(46,204,113,0.5);
+      text-align: center;
+    }
+    .reward-code {
+      font-family: monospace;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #c3ffd6;
+      background: #0c1c15;
+      display: inline-block;
+      padding: 0.3rem 1rem;
+      border-radius: 2rem;
+      margin: 0.5rem 0;
+    }
+    .copy-btn {
+      background: linear-gradient(95deg, #2c7a5a, #1e563e);
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+    }
+    .timer-badge {
+      background: #1f1f2a;
+      padding: 0.3rem 0.8rem;
+      border-radius: 2rem;
+      font-family: monospace;
+      color: #f5b042;
+      display: inline-block;
+      margin-left: 0.8rem;
+    }
+    .info {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #6b6b6b;
+      background: #111;
+      padding: 0.5rem;
+      border-radius: 2rem;
+    }
+  </style>
+  <!-- GIGAPUB SDK (ID 6331) -->
+  <script src="https://ad.gigapub.tech/script?id=6331" async></script>
+  <!-- Monetag SDK -->
+  <script src='//libtl.com/sdk.js' data-zone='10675499' data-sdk='show_10675499' async></script>
+  <!-- Adexora SDK -->
+  <script src="https://adexora.com/cdn/ads.js?id=1964" async></script>
+  <!-- Adsgram SDK -->
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body>
-<div class="loading-screen" id="loadingScreen"><div class="loading-logo"><i class="fas fa-wallet"></i></div><div class="loading-title">Earn For Earn</div><div class="loading-progress"><div class="loading-progress-fill" id="loadingFill"></div></div><div class="loading-steps" id="loadingStep">Initializing system...</div></div>
-<div class="app-container" id="mainApp" style="display:none;">
-    <div class="header"><div class="app-title">Earn For Earn</div><div class="header-right"><div class="user-profile" id="profileBtn"><span id="userInitial">U</span></div></div></div>
-    <div class="user-menu" id="userMenu"><div class="menu-item"><i class="fab fa-telegram"></i> <span id="menuUsername">Username</span></div><div class="menu-item" id="menuReferralCode"><i class="fas fa-qrcode"></i> <span>My Referral Code</span></div><div class="menu-item" id="menuInfo"><i class="fas fa-info-circle"></i> <span>Information</span></div><div class="menu-item" id="menuPrivacy"><i class="fas fa-shield-alt"></i> <span>Privacy Policy</span></div><div class="menu-item" id="menuTerms"><i class="fas fa-file-contract"></i> <span>Terms & Conditions</span></div></div>
-    <div class="main-content">
-        <!-- Home Section -->
-        <div id="homeSection" class="content-section active">
-            <div class="balance-card"><div>Your Balance (PEPE)</div><div class="balance-amount" id="balanceAmount">0</div><div>PEPE | 0 decimals</div></div>
-            <div class="stats-grid"><div class="stat-card"><div class="stat-value" id="refCount">0</div><div>Referrals</div></div><div class="stat-card"><div class="stat-value" id="tasksCompletedCount">0</div><div>Tasks Done</div></div><div class="stat-card"><div class="stat-value" id="refBonusEarned">0</div><div>Referral Bonus</div></div></div>
-            <div class="rules-box"><h4><i class="fas fa-gavel"></i> Platform Rules</h4><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> No automated tools – permanent ban</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Minimum age 18 for withdrawals</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Withdraw requires 300,000 PEPE + 3 referrals + monthly limit (2/month)</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> 5% service fee applies</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Each link step: stay 10 seconds → auto-unlock next</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Chrome browser mandatory for link tasks</div><div class="rule-item"><i class="fas fa-check-circle" style="color:var(--success);"></i> Each challenge limit resets every 8 hours (max 10 claims)</div></div>
-        </div>
-        <!-- Tasks Section -->
-        <div id="tasksSection" class="content-section">
-            <div class="back-button" id="tasksBackBtn"><i class="fas fa-arrow-left"></i> Back to Home</div>
-            <h3 style="margin-bottom:20px;">High Value Tasks</h3>
-            <!-- Link Challenge -->
-            <div class="task-card"><div class="task-header"><span><i class="fas fa-link"></i> 10‑Link Challenge</span><span class="task-reward">1,500 PEPE</span></div><div class="chrome-required"><i class="fab fa-chrome"></i> MUST open with Chrome browser.</div><div class="warning-text"><i class="fas fa-exclamation-triangle"></i> Stay on each link 10 seconds to unlock next.</div><div class="steps-container" id="linkStepsContainer"></div><div id="linkCooldownArea"></div><button id="claimLinkRewardBtn" class="claim-btn">Claim 1,500 PEPE</button><div id="linkProgress" class="cooldown-timer"></div><div class="daily-limit-text" id="linkDailyLimitText">Claims this period: 0/10</div><div class="reset-timer" id="linkResetTimer">Reset in: --:--:--</div></div>
-            <!-- Video Challenge -->
-            <div class="task-card"><div class="task-header"><span><i class="fas fa-video"></i> 10‑Video Ads</span><span class="task-reward">1,500 PEPE</span></div><div class="warning-text">Watch each rewarded ad. Link step: open & stay 10s.</div><div class="steps-container" id="videoStepsContainer"></div><div id="videoCooldownArea"></div><button id="claimVideoRewardBtn" class="claim-btn">Claim 1,500 PEPE</button><div id="videoProgress" class="cooldown-timer"></div><div class="daily-limit-text" id="videoDailyLimitText">Claims this period: 0/10</div><div class="reset-timer" id="videoResetTimer">Reset in: --:--:--</div></div>
-            
-            <div style="margin:20px 0 10px;"><h4>One‑Time Telegram Rewards (1,500 PEPE each)</h4></div>
-            <div id="telegramTasksArea"></div>
-            
-            <div class="task-card" id="usdtMinerTaskCard">
-                <div class="task-header"><span><i class="fab fa-telegram-plane"></i> Join USDT Miner Bot</span><span class="task-reward">2,500 PEPE</span></div>
-                <p>Start the bot and complete the setup to claim instant reward.</p>
-                <button id="usdtMinerJoinBtn" class="claim-btn" style="background:#0088cc;">🚀 Start Bot & Claim 2,500 PEPE</button>
-                <div id="usdtMinerStatus" class="info-note"></div>
-            </div>
-
-            <div class="task-card" id="levelTask1Card">
-                <div class="task-header"><span><i class="fas fa-code-branch"></i> 10 Levels Challenge #1</span><span class="task-reward">7,000 PEPE</span></div>
-                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +7,000 PEPE. Max 4 submissions per day.</div>
-                <div style="margin: 16px 0; background: #131313; border-radius: 24px; padding: 16px;">
-                    <div><i class="fas fa-check-circle"></i> <strong>Step 1:</strong> Open bot: <button id="levelTaskInstallBtn1" class="claim-btn" style="background:#2c3e50; margin-top:8px; padding:8px;">➡️ Open Bot</button></div>
-                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 10 levels → receive Reward Code.</div>
-                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Paste code & submit. Up to 4 submissions per day.</div>
-                </div>
-                <input type="text" id="levelTask1Code" class="form-input" placeholder="Enter reward code" maxlength="50">
-                <button id="submitLevelTask1Btn" class="claim-btn code-submit-btn">📝 Submit Code for Admin Approval</button>
-                <div id="levelTask1Status" class="info-note"></div>
-                <div id="levelTask1LimitInfo" style="margin-top:8px; font-size:0.8rem; color:var(--text-secondary);"></div>
-            </div>
-
-            <div class="task-card" id="levelTask2Card">
-                <div class="task-header"><span><i class="fas fa-code-branch"></i> 10 Levels Challenge #2</span><span class="task-reward">7,000 PEPE</span></div>
-                <div class="warning-text"><i class="fas fa-star-of-life"></i> Complete 10 levels inside the game, get reward code, submit here → Admin approves → +7,000 PEPE. Max 4 submissions per day.</div>
-                <div style="margin: 16px 0; background: #131313; border-radius: 24px; padding: 16px;">
-                    <div><i class="fas fa-check-circle"></i> <strong>Step 1:</strong> Open bot: <button id="levelTaskInstallBtn2" class="claim-btn" style="background:#2c3e50; margin-top:8px; padding:8px;">➡️ Open Bot</button></div>
-                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 2:</strong> Complete 10 levels → receive Reward Code.</div>
-                    <div style="margin-top:16px;"><i class="fas fa-check-circle"></i> <strong>Step 3:</strong> Submit code for approval.</div>
-                </div>
-                <input type="text" id="levelTask2Code" class="form-input" placeholder="Enter reward code" maxlength="50">
-                <button id="submitLevelTask2Btn" class="claim-btn code-submit-btn">📝 Submit Code for Admin Approval</button>
-                <div id="levelTask2Status" class="info-note"></div>
-                <div id="levelTask2LimitInfo" style="margin-top:8px; font-size:0.8rem; color:var(--text-secondary);"></div>
-            </div>
-
-            <div class="task-card"><div class="task-header"><span><i class="fas fa-envelope"></i> Create Gmail Account</span><span class="task-reward">20,000 PEPE</span></div><div>Support will provide Gmail details. Create account as instructed → Admin rewards 20,000 PEPE manually.</div><button id="openGmailTaskBtn" class="claim-btn" style="background:#4285f4; color:white; margin-top:16px;">📩 Contact Support & Request Details</button><div class="info-note">⚠️ Reward is given manually by admin after successful account creation.</div></div>
-
-            <div style="margin-top:30px; margin-bottom:20px;"><h3><i class="fas fa-history"></i> Task History</h3><p>Here you can see all your submitted codes and their approval status.</p></div>
-            <div id="taskHistoryContainer"></div>
-        </div>
-        <!-- Cashout Section with bKash option -->
-        <div id="cashoutSection" class="content-section">
-            <div class="back-button" id="cashoutBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
-            <div class="balance-card" style="background:linear-gradient(135deg,#1a2a3a,#0f1720);"><div>Available Balance</div><div class="balance-amount" id="withdrawBalance">0</div><div>PEPE</div></div>
-            <div class="requirement-list"><h4><i class="fas fa-clipboard-list"></i> Withdrawal Requirements (All must be met)</h4>
-                <div class="requirement-item-serial" id="reqSerial1"><div class="req-check" id="reqCheck1"><i class="fas fa-circle" style="color:#555;"></i></div><div><strong>Minimum Balance:</strong> 300,000 PEPE</div></div>
-                <div class="requirement-item-serial" id="reqSerial2"><div class="req-check" id="reqCheck2"><i class="fas fa-circle" style="color:#555;"></i></div><div><strong>Minimum Referrals:</strong> 3 active referrals</div></div>
-                <div class="requirement-item-serial" id="reqSerial3"><div class="req-check" id="reqCheck3"><i class="fas fa-circle" style="color:#555;"></i></div><div><strong>Monthly Withdrawal Limit:</strong> 2 per month</div></div>
-            </div>
-            <!-- Payment Method Selection (Binance + bKash) -->
-            <div style="background:var(--bg-card); border-radius:28px; padding:20px; margin-bottom:16px;">
-                <h4 style="margin-bottom:12px;"><i class="fas fa-credit-card"></i> Select Payment Method</h4>
-                <div id="paymentMethodBinance" class="payment-option selected" data-method="binance">
-                    <i class="fab fa-bitcoin"></i> <span>Binance (Email/UID)</span>
-                </div>
-                <div id="paymentMethodBkash" class="payment-option" data-method="bkash">
-                    <i class="fas fa-mobile-alt" style="color:#e2136e;"></i> <span>bKash (Mobile Number)</span>
-                </div>
-            </div>
-            <!-- Dynamic input field -->
-            <div id="accountInputContainer">
-                <input type="text" id="paymentAccount" class="form-input" placeholder="Binance Email or UID">
-            </div>
-            <input type="number" id="withdrawAmount" step="1000" min="300000" class="form-input" placeholder="Amount (PEPE)">
-            <div class="withdraw-details" style="background:var(--bg-card); border-radius:28px; padding:20px; margin-bottom:16px;">
-                <div class="fee-breakdown"><span>Amount</span><span id="wdAmount">0 PEPE</span></div>
-                <div class="fee-breakdown"><span>Fee (5%)</span><span id="wdFee">0 PEPE</span></div>
-                <div class="fee-breakdown"><span>You Receive</span><span id="wdNet">0 PEPE</span></div>
-            </div>
-            <button id="submitWithdrawBtn" class="withdraw-btn">Request Withdrawal</button>
-            <div style="margin-top:30px;"><h4>Withdrawal History</h4><div id="historyList"></div></div>
-        </div>
-        <!-- Referral Section -->
-        <div id="referralSection" class="content-section"><div class="back-button" id="referralBackBtn"><i class="fas fa-arrow-left"></i> Back</div><div class="referral-professional"><i class="fas fa-user-plus" style="font-size:2.5rem; color:var(--purple);"></i><h3>Your Referral Code</h3><p>Share this code with friends. When they join using your code, <strong>BOTH get 1,600 PEPE bonus!</strong></p><div class="referral-code-display" id="referralCodeDisplay"></div><div class="btn-group"><button class="btn-primary" id="copyReferralCodeBtn"><i class="fas fa-copy"></i> Copy Code</button><button class="btn-primary" id="shareTelegramCodeBtn" style="background:#0088cc;"><i class="fab fa-telegram"></i> Share</button></div></div><div style="margin-top:25px;"><h4>Your Referrals (Earned 1,600 each)</h4><div id="referralsList"></div><div style="margin-top:15px; background:var(--bg-elevated); border-radius:24px; padding:16px;"><strong>Total Referral Bonus Earned:</strong> <span id="referralBonusTotal">0</span> PEPE</div></div></div>
-        
-        <div id="infoSection" class="content-section">
-            <div class="back-button" id="infoBackBtn"><i class="fas fa-arrow-left"></i> Back</div>
-            <div class="info-card info-highlight"><h4><i class="fas fa-headset"></i> Official Support</h4><p>📱 Telegram: <a class="support-link" id="telegramSupportLink">@earnforearnsupport</a><br>📧 Email: earnforearnsuportteam@gmail.com<br>⏱️ Response time: usually within 24h</p></div>
-            <div class="info-card"><h4><i class="fas fa-chart-line"></i> Withdrawal Conditions</h4><div class="info-grid"><div>✅ Minimum balance: 300,000 PEPE</div><div>👥 Minimum referrals: 3 active referrals</div><div>💰 Service fee: 5%</div><div>📅 Monthly limit: max 2 withdrawals</div><div>🇧🇩 bKash / Binance supported</div></div></div>
-            <div class="info-card"><h4><i class="fas fa-tasks"></i> All Tasks & Rewards Overview</h4><div class="info-grid"><div>🔗 10-Link Challenge: <strong>1,500 PEPE</strong> (repeatable every 8h)</div><div>📺 10-Video Ads: <strong>1,500 PEPE</strong></div><div>📢 Telegram Channels: 1,500 PEPE each</div><div>🤖 USDT Miner Bot: 2,500 PEPE</div><div>🎮 10 Levels Challenges: <strong>7,000 PEPE each</strong> (admin approval, max 4 submissions per day)</div><div>📧 Gmail Creation: 20,000 PEPE (manual admin)</div></div></div>
-        </div>
+<div class="dashboard">
+  <div class="hero">
+    <div class="date" id="currentDate"></div>
+    <div class="time" id="currentTime"></div>
+    <div class="global-status" id="globalStatus">
+      <span id="statusText">0 / 10 levels</span>
     </div>
-    <div class="bottom-nav"><button class="nav-btn active" id="navHome"><i class="fas fa-home"></i><span>Home</span></button><button class="nav-btn" id="navTasks"><i class="fas fa-tasks"></i><span>Tasks</span></button><button class="nav-btn" id="navCashout"><i class="fas fa-wallet"></i><span>Cashout</span></button><button class="nav-btn" id="navReferral"><i class="fas fa-user-friends"></i><span>Referral</span></button><button class="nav-btn" id="navInfo"><i class="fas fa-info"></i><span>Info</span></button></div>
+  </div>
+
+  <div class="tasks-section">
+    <div class="tasks-header">
+      <h2>⚡ 10 LEVELS (SMART FALLBACK) ⚡</h2>
+      <div class="progress" id="progressCounter">0 / 10</div>
+    </div>
+    <ul class="task-list" id="taskList"></ul>
+    <div class="info">
+      🔥 EACH LEVEL (with fallback):<br>
+      1️⃣ Open initial link → 2️⃣ Giga (fallback: Adsgram→Monetag→Adexora) → 3️⃣ Adsgram (fallback: Giga→Monetag→Adexora) → 4️⃣ Monetag (fallback: Giga→Adsgram→Adexora) → 5️⃣ Adexora (fallback: Giga→Adsgram→Monetag) → 6️⃣ Open final link → return → ✅ Level complete<br>
+      🧩 Complete ALL 10 → unique reward code (30s to copy) → copy = full reset.
+    </div>
+  </div>
+
+  <div id="rewardPanel" class="reward-panel" style="display: none;">
+    <h3 style="color:#e0e0e0;">🏆 REWARD UNLOCKED 🏆</h3>
+    <div class="reward-code" id="rewardCode">----</div>
+    <div>
+      <button class="copy-btn" id="copyBtn">📋 Copy Code & Reset Progress</button>
+      <span class="timer-badge" id="timerDisplay">30s left</span>
+    </div>
+    <div id="expiredMsg" style="margin-top: 6px;"></div>
+  </div>
 </div>
 
-<!-- Modals -->
-<div id="gmailRequestModal" class="gmail-modal" style="display:none;"><div class="gmail-card"><i class="fas fa-envelope-open-text" style="font-size:2.5rem; color:#4285f4;"></i><h3 style="margin:15px 0;">Request Gmail Details</h3><textarea id="gmailMessageInput" rows="3">I want to create Gmail account, give me all details.</textarea><button id="sendGmailRequestBtn" class="claim-btn" style="background:#4285f4;">📨 Copy & Open Support Chat</button><button id="closeGmailModalBtn" class="claim-btn skip-btn" style="background:transparent;">Cancel</button></div></div>
-<div id="referralCodeModal" class="referral-code-modal" style="display:none;"><div class="referral-code-card"><i class="fas fa-gift" style="font-size:3rem; color:var(--gold);"></i><h2>Welcome!</h2><p>Enter a referral code (if you have one). <strong>Both you and your referrer will get 1,600 PEPE bonus!</strong> You can also skip.</p><input type="text" id="referralCodeInput" placeholder="Referral code" maxlength="20"><button id="submitReferralCodeBtn" class="claim-btn">Claim Bonus</button><button id="skipReferralCodeBtn" class="claim-btn skip-btn">Skip for now</button></div></div>
-<div class="modal" id="timerModal"><div class="modal-content"><h3>⏳ Stay on Link Page</h3><div id="timerCountdown" style="font-size:3rem;">10</div><p>After 10 seconds, return to unlock step.</p><button class="modal-btn" id="cancelTimerBtn">Cancel Task</button></div></div>
-<div class="modal" id="tryAgainModal"><div class="modal-content"><i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:#e74c3c;"></i><h3>⚠️ Account Risk Warning</h3><p>You returned too early. Stay on link for full 10 seconds.</p><button class="modal-btn" id="tryAgainRetryBtn">Try Again</button><button class="modal-btn" id="tryAgainCancelBtn">Cancel</button></div></div>
-<div class="modal" id="withdrawSuccessModal"><div class="modal-content"><i class="fas fa-check-circle" style="font-size:3rem; color:var(--success);"></i><h3>Withdrawal Requested!</h3><div id="withdrawSuccessDetails"></div><button class="modal-btn" id="closeSuccessModal">OK</button></div></div>
-<div class="modal" id="adminModal"><div class="modal-content" style="max-width:500px; width:90%; max-height:80vh; overflow-y:auto;"><h3>Admin Panel - Pending Code Submissions</h3><div id="adminSubmissionsList"></div><button id="closeAdminModal" class="claim-btn" style="margin-top:15px;">Close</button></div></div>
-<div class="loading-spinner" id="spinner"><div style="border:3px solid #333; border-top:3px solid var(--purple); width:45px; height:45px; border-radius:50%; animation:spin 1s linear infinite;"></div><p>Loading ad...</p></div>
-
 <script>
-    // ---------- FIREBASE CONFIG ----------
-    const firebaseConfig = { apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM", authDomain: "earn-for-earn-55d3e.firebaseapp.com", databaseURL: "https://earn-for-earn-55d3e-default-rtdb.firebaseio.com", projectId: "earn-for-earn-55d3e", storageBucket: "earn-for-earn-55d3e.firebasestorage.app", messagingSenderId: "109416949734", appId: "1:109416949734:web:53f52de7899d65a04c9827" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    let webApp = window.Telegram?.WebApp; if(webApp) webApp.expand();
-    let tgUser = webApp?.initDataUnsafe?.user;
-    let telegramId = tgUser?.id ? tgUser.id.toString() : null;
-    let telegramUsername = tgUser?.username || tgUser?.first_name || (telegramId ? "user_"+telegramId : "guest_"+Date.now());
-    if(!telegramId) { telegramId = "guest_"+Date.now(); telegramUsername = "guest_"+Date.now(); }
-    let userData = null, linkStepsDone = 0, videoStepsDone = 0;
-    let processingVideo = false;
-    let processingLinkStep = false;
-    let processingVideoLinkStep = false;
-    const LINK_URLS = ["https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757","https://earnforearnlinksads2.vercel.app/","https://www.profitablecpmratenetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d","https://omg10.com/4/10686606","https://earnforearnlinksads.vercel.app/","https://earnforearnlinksads2.vercel.app/","https://narilyhukelpfulin.com?hTTVD=1246757"];
-    const VIDEO_LINK_URL = "https://earnforearnlinksads.vercel.app/";
-    const videoAdSequence = ['adsgram','giga','monetag','adexora','link','adsgram','giga','monetag','adexora','link'];
-    const FALLBACK_NETWORKS = ['adsgram','giga','monetag','adexora'];
-    async function showAdByType(type) { 
-        if(type==='adsgram') { const ctrl = window.Adsgram.init({ blockId: "int-28543" }); await ctrl.show(); } 
-        else if(type==='monetag') await window.showGiga("main"); 
-        else if(type==='giga') await window.show_10541383(); 
-        else if(type==='adexora') await window.showAdexora(); 
-    }
-    const PERIOD_MS = 8*60*60*1000, MAX_CLAIMS_PER_PERIOD = 10;
-    const DAILY_SUBMISSION_LIMIT = 4;
-    function getCurrentPeriodStart() { return Math.floor(Date.now()/PERIOD_MS)*PERIOD_MS; }
-    function getLinkRemaining() { if(!userData) return MAX_CLAIMS_PER_PERIOD; const cp=getCurrentPeriodStart(); if(userData.linkPeriodStart!==cp) return MAX_CLAIMS_PER_PERIOD; return Math.max(0, MAX_CLAIMS_PER_PERIOD - (userData.linkCountInPeriod||0)); }
-    function getVideoRemaining() { if(!userData) return MAX_CLAIMS_PER_PERIOD; const cp=getCurrentPeriodStart(); if(userData.videoPeriodStart!==cp) return MAX_CLAIMS_PER_PERIOD; return Math.max(0, MAX_CLAIMS_PER_PERIOD - (userData.videoCountInPeriod||0)); }
-    async function updateUser(updates) { if(!telegramId) return; await db.ref(`users/${telegramId}`).update(updates); if(userData) Object.assign(userData,updates); refreshUI(); }
-    async function fetchUserData() { return (await db.ref(`users/${telegramId}`).once('value')).val(); }
+  (function(){
+    // ---------- CONFIGURATION ----------
+    const TOTAL_LEVELS = 10;
+    const STORAGE_KEY = 'nexus10_fallback_final';
+    const INITIAL_LINK = "https://www.effectivecpmnetwork.com/xan60uuv?key=369dc68341066c06e3d471f3785f73fb";
+    const FINAL_SMART_LINK = "https://omg10.com/4/10883007";
     
-    function resetDailyCountersIfNeeded() {
-        const today = new Date().toDateString();
-        if(!userData) return;
-        if(userData.lastSubmissionDate !== today) {
-            const updates = { lastSubmissionDate: today, levelTask1SubmissionsToday: 0, levelTask2SubmissionsToday: 0 };
-            updateUser(updates);
-        }
+    let tasks = [];
+    let activeChain = { active: false, levelId: null, cancelFn: null };
+    let rewardActive = false;
+    let rewardCountdown = null;
+    let rewardSeconds = 30;
+    let currentRewardCode = '';
+    
+    // DOM elements
+    const taskListEl = document.getElementById('taskList');
+    const progressSpan = document.getElementById('progressCounter');
+    const globalStatusDiv = document.getElementById('globalStatus');
+    const statusTextSpan = document.getElementById('statusText');
+    const rewardPanel = document.getElementById('rewardPanel');
+    const rewardCodeSpan = document.getElementById('rewardCode');
+    const copyBtn = document.getElementById('copyBtn');
+    const timerDisplaySpan = document.getElementById('timerDisplay');
+    const expiredMsgDiv = document.getElementById('expiredMsg');
+    
+    function showToast(msg, color = "#2ecc71") {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerText = msg;
+      toast.style.background = color + 'dd';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
     }
     
-    async function submitLevelTask(taskId, rewardAmount) {
-        resetDailyCountersIfNeeded();
-        const codeInput = document.getElementById(`${taskId}Code`);
-        const code = codeInput.value.trim();
-        if(!code) { alert("Please enter reward code."); return; }
-        const submissionsTodayKey = `${taskId}SubmissionsToday`;
-        let submissionsToday = userData[submissionsTodayKey] || 0;
-        if(submissionsToday >= DAILY_SUBMISSION_LIMIT) { alert(`Daily limit reached (${DAILY_SUBMISSION_LIMIT} per day). Come back tomorrow.`); return; }
-        const submissionId = `${telegramId}_${taskId}_${Date.now()}`;
-        await db.ref(`submissions/${submissionId}`).set({ userId: telegramId, username: telegramUsername, taskId, code, status: "pending", timestamp: Date.now(), reward: rewardAmount });
-        await updateUser({ [submissionsTodayKey]: submissionsToday + 1, lastSubmissionDate: new Date().toDateString() });
-        alert(`✅ Code submitted for approval! (${submissionsToday+1}/${DAILY_SUBMISSION_LIMIT} today). Admin will review.`);
-        codeInput.value = "";
-        renderTaskHistory();
-        refreshUI();
+    // ---------- Data persistence ----------
+    function createFreshTasks() {
+      return Array.from({ length: TOTAL_LEVELS }, (_, i) => ({ id: i+1, completed: false }));
+    }
+    function saveTasks() { localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }
+    function loadTasks() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return createFreshTasks();
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length === TOTAL_LEVELS) return parsed.map(t => ({ id: t.id, completed: !!t.completed }));
+        return createFreshTasks();
+      } catch(e) { return createFreshTasks(); }
     }
     
-    async function loadAdminPanel() {
-        const ADMIN_IDS = ["123456789"]; // REPLACE WITH YOUR TELEGRAM ID
-        if(!ADMIN_IDS.includes(telegramId)) { alert("Admin only."); return; }
-        const snap = await db.ref('submissions').orderByChild('status').equalTo('pending').once('value');
-        const subs = snap.val() || {};
-        const container = document.getElementById('adminSubmissionsList');
-        container.innerHTML = "";
-        if(Object.keys(subs).length === 0) { container.innerHTML = "<div style='padding:10px;'>No pending submissions.</div>"; }
-        for(let [id, sub] of Object.entries(subs)){
-            const div = document.createElement('div'); div.className = "admin-submission";
-            div.style.cssText = "background:#2a2a2a; border-radius:16px; padding:12px; margin-bottom:12px;";
-            div.innerHTML = `<div><strong>${sub.username}</strong> (${sub.userId})</div><div>Task: ${sub.taskId}</div><div>Code: <code>${sub.code}</code></div><div style="margin-top:10px;"><button class="approveBtn" data-id="${id}" data-user="${sub.userId}" data-reward="${sub.reward}" style="background:var(--success); border:none; padding:6px 12px; border-radius:30px; cursor:pointer;">✅ Approve & Reward</button> <button class="rejectBtn" data-id="${id}" data-user="${sub.userId}" style="background:var(--error); border:none; padding:6px 12px; border-radius:30px; cursor:pointer;">❌ Reject</button></div>`;
-            container.appendChild(div);
-        }
-        document.querySelectorAll('.approveBtn').forEach(btn => { btn.onclick = async () => { const id = btn.dataset.id, userId = btn.dataset.user, reward = parseInt(btn.dataset.reward); await db.ref(`submissions/${id}`).update({ status: "approved" }); const userSnap = await db.ref(`users/${userId}`).once('value'); const user = userSnap.val(); if(user){ const updates = { balance: (user.balance||0) + reward, totalEarned: (user.totalEarned||0) + reward, tasksCompleted: (user.tasksCompleted||0) + 1 }; await db.ref(`users/${userId}`).update(updates); } alert(`Approved! +${reward} PEPE sent.`); loadAdminPanel(); if(userId === telegramId) refreshUI(); }; });
-        document.querySelectorAll('.rejectBtn').forEach(btn => { btn.onclick = async () => { const id = btn.dataset.id, userId = btn.dataset.user; await db.ref(`submissions/${id}`).update({ status: "rejected" }); alert("Rejected. No reward given."); loadAdminPanel(); if(userId === telegramId) refreshUI(); }; });
-        document.getElementById('adminModal').classList.add('active');
+    function isLevelCompleted(id) { return tasks.find(t => t.id === id)?.completed || false; }
+    
+    function markLevelComplete(levelId) {
+      const task = tasks.find(t => t.id === levelId);
+      if (!task || task.completed) return false;
+      task.completed = true;
+      saveTasks();
+      renderTasks();
+      showToast(`✅ Level ${levelId} COMPLETED!`, "#2ecc71");
+      const allCompleted = tasks.every(t => t.completed);
+      if (allCompleted && !rewardActive && rewardPanel.style.display !== 'block') {
+        activateReward();
+      }
+      return true;
     }
     
-    function showStatus(msg,type){ let el=document.getElementById('homeStatusMessage'); if(!el){ el=document.createElement('div'); el.id='homeStatusMessage'; el.className='status-message'; document.getElementById('homeSection')?.prepend(el); } el.style.display='block'; el.className=`status-message status-${type}`; el.innerHTML=msg; setTimeout(()=>el.style.display='none',4000); }
-    
-    async function claimLinkReward() { if(linkStepsDone<10) return showStatus('Complete all links','error'); if((userData.linkTask?.cooldownUntil||0)>Date.now()) return showStatus('Cooldown active','error'); if(getLinkRemaining()<=0) return showStatus('Limit reached','error'); const reward=1500; await updateUser({ linkPeriodStart:getCurrentPeriodStart(), linkCountInPeriod:(userData.linkCountInPeriod||0)+1, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1, linkTask:{ steps:0, cooldownUntil:Date.now()+40000 } }); linkStepsDone=0; showStatus(`+${reward} PEPE!`,'success'); refreshUI(); startCooldownDisplay('linkCooldownArea', Date.now()+40000); }
-    async function claimVideoReward() { if(videoStepsDone<10) return showStatus('Complete all steps','error'); if((userData.videoTask?.cooldownUntil||0)>Date.now()) return showStatus('Cooldown active','error'); if(getVideoRemaining()<=0) return showStatus('Limit reached','error'); const reward=1500; await updateUser({ videoPeriodStart:getCurrentPeriodStart(), videoCountInPeriod:(userData.videoCountInPeriod||0)+1, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1, videoTask:{ steps:0, cooldownUntil:Date.now()+40000 } }); videoStepsDone=0; showStatus(`+${reward} PEPE!`,'success'); refreshUI(); startCooldownDisplay('videoCooldownArea', Date.now()+40000); }
-    function startCooldownDisplay(elementId, endTime) { const el = document.getElementById(elementId); if(!el) return; const interval = setInterval(() => { const remaining = Math.max(0, endTime - Date.now()); if(remaining <= 0) { clearInterval(interval); el.innerHTML = ''; return; } const seconds = Math.ceil(remaining / 1000); el.innerHTML = `<div class="cooldown-timer">Cooldown: ${seconds} seconds left...</div>`; }, 1000); }
-    function renderLinkTaskUI(){ const cooldown=Math.max(0,(userData.linkTask?.cooldownUntil||0)-Date.now()); let html=''; for(let i=1;i<=10;i++){ let cls='step-btn'; if(linkStepsDone>=i) cls+=' completed'; else if(linkStepsDone+1===i && cooldown<=0) cls+=' active-step'; else if(cooldown>0) cls+=' locked'; html+=`<div class="${cls}" data-linkstep="${i}"><i class="fas fa-link"></i><span>${i}</span></div>`; } document.getElementById('linkStepsContainer').innerHTML=html; document.getElementById('linkProgress').innerHTML=`${linkStepsDone}/10 links`; const claimBtn = document.getElementById('claimLinkRewardBtn'); if(linkStepsDone>=10 && cooldown<=0 && getLinkRemaining()>0) claimBtn.style.display='block'; else claimBtn.style.display='none'; claimBtn.onclick=claimLinkReward; attachLinkStepEvents(); if(cooldown>0) startCooldownDisplay('linkCooldownArea', userData.linkTask.cooldownUntil); else document.getElementById('linkCooldownArea').innerHTML = ''; }
-    function attachLinkStepEvents(){ document.querySelectorAll('#linkStepsContainer .step-btn').forEach(btn=>{ btn.onclick=()=>{ let step=parseInt(btn.dataset.linkstep); if(linkStepsDone>=step) return; if(linkStepsDone+1!==step) return showStatus('Complete previous steps first','error'); if((userData.linkTask?.cooldownUntil||0)>Date.now()) return showStatus('Cooldown active','error'); startLinkStep(step); }; }); }
-    function startLinkStep(step){ const modal=document.getElementById('timerModal'); let sec=10; const timerDisp=document.getElementById('timerCountdown'); timerDisp.innerText=sec; const interval=setInterval(()=>{ sec--; timerDisp.innerText=sec; if(sec<=0) clearInterval(interval); },1000); modal.classList.add('active'); window.open(LINK_URLS[step-1],'_blank'); const startTime=Date.now(); const onVisibility=()=>{ if(!document.hidden){ const elapsed=(Date.now()-startTime)/1000; if(elapsed>=10){ clearInterval(interval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); completeLinkStep(step); } else { clearInterval(interval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showRiskWarning(()=>startLinkStep(step)); } } }; document.addEventListener('visibilitychange',onVisibility); document.getElementById('cancelTimerBtn').onclick=()=>{ clearInterval(interval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showStatus('Cancelled','error'); }; }
-    async function completeLinkStep(step){ if(processingLinkStep) return; processingLinkStep=true; try { const currentSteps = userData.linkTask?.steps || 0; if(currentSteps !== linkStepsDone) { processingLinkStep=false; return; } const newSteps = currentSteps + 1; await updateUser({ linkTask:{ steps:newSteps, cooldownUntil:userData.linkTask?.cooldownUntil||0 } }); linkStepsDone = newSteps; refreshUI(); showStatus(`Link ${step} completed!`,'success'); } finally { processingLinkStep=false; } }
-    function showRiskWarning(retryFn){ const modal=document.getElementById('tryAgainModal'); modal.classList.add('active'); const retryBtn=document.getElementById('tryAgainRetryBtn'), cancelBtn=document.getElementById('tryAgainCancelBtn'); const newRetry=retryBtn.cloneNode(true), newCancel=cancelBtn.cloneNode(true); retryBtn.parentNode.replaceChild(newRetry,retryBtn); cancelBtn.parentNode.replaceChild(newCancel,cancelBtn); newRetry.onclick=()=>{ modal.classList.remove('active'); retryFn(); }; newCancel.onclick=()=>modal.classList.remove('active'); }
-    function renderVideoTaskUI(){ const cooldown=Math.max(0,(userData.videoTask?.cooldownUntil||0)-Date.now()); let html=''; for(let i=1;i<=10;i++){ let cls='step-btn'; if(videoStepsDone>=i) cls+=' completed'; else if(videoStepsDone+1===i && cooldown<=0) cls+=' active-step'; else if(cooldown>0) cls+=' locked'; html+=`<div class="${cls}" data-videostep="${i}"><i class="fas fa-play-circle"></i><span>${i}</span></div>`; } document.getElementById('videoStepsContainer').innerHTML=html; document.getElementById('videoProgress').innerHTML=`${videoStepsDone}/10 ads`; const claimBtn = document.getElementById('claimVideoRewardBtn'); if(videoStepsDone>=10 && cooldown<=0 && getVideoRemaining()>0) claimBtn.style.display='block'; else claimBtn.style.display='none'; claimBtn.onclick=claimVideoReward; attachVideoStepEvents(); if(cooldown>0) startCooldownDisplay('videoCooldownArea', userData.videoTask.cooldownUntil); else document.getElementById('videoCooldownArea').innerHTML = ''; }
-    function attachVideoStepEvents(){ document.querySelectorAll('#videoStepsContainer .step-btn').forEach(btn=>{ btn.onclick=async()=>{ let step=parseInt(btn.dataset.videostep); if(videoStepsDone>=step) return; if(videoStepsDone+1!==step) return showStatus('Complete previous ad','error'); if((userData.videoTask?.cooldownUntil||0)>Date.now()) return showStatus('Cooldown active','error'); if(processingVideo) return showStatus('Please wait, ad is loading...','error'); const adType=videoAdSequence[step-1]; if(adType==='link') startVideoLinkStep(step); else await startVideoAdWithFallback(step,adType); }; }); }
-    async function startVideoAdWithFallback(step,preferred){ if(processingVideo) return; processingVideo=true; showSpinner(true); let success=false; for(let net of [preferred,...FALLBACK_NETWORKS.filter(n=>n!==preferred)]){ try{ await showAdByType(net); success=true; break; } catch(e){} } showSpinner(false); processingVideo=false; if(success){ const newSteps = videoStepsDone + 1; await updateUser({ videoTask:{ steps:newSteps, cooldownUntil:userData.videoTask?.cooldownUntil||0 } }); videoStepsDone = newSteps; refreshUI(); showStatus(`Ad ${step} completed! +1 step`,'success'); } else { showStatus('Ad failed, retry','error'); } }
-    function startVideoLinkStep(step){ const modal=document.getElementById('timerModal'); let sec=10; document.getElementById('timerCountdown').innerText=sec; const interval=setInterval(()=>{ sec--; document.getElementById('timerCountdown').innerText=sec; if(sec<=0) clearInterval(interval); },1000); modal.classList.add('active'); window.open(VIDEO_LINK_URL,'_blank'); const startTime=Date.now(); const onVisibility=()=>{ if(!document.hidden){ const elapsed=(Date.now()-startTime)/1000; if(elapsed>=10){ clearInterval(interval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); completeVideoLinkStep(step); } else { clearInterval(interval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showRiskWarning(()=>startVideoLinkStep(step)); } } }; document.addEventListener('visibilitychange',onVisibility); document.getElementById('cancelTimerBtn').onclick=()=>{ clearInterval(interval); modal.classList.remove('active'); document.removeEventListener('visibilitychange',onVisibility); showStatus('Cancelled','error'); }; }
-    async function completeVideoLinkStep(step){ if(processingVideoLinkStep) return; processingVideoLinkStep=true; try { const currentSteps = userData.videoTask?.steps || 0; if(currentSteps !== videoStepsDone) { processingVideoLinkStep=false; return; } const newSteps = currentSteps + 1; await updateUser({ videoTask:{ steps:newSteps, cooldownUntil:userData.videoTask?.cooldownUntil||0 } }); videoStepsDone = newSteps; refreshUI(); showStatus(`Link step ${step} completed!`,'success'); } finally { processingVideoLinkStep=false; } }
-    function renderTelegramTasks(){ const cont=document.getElementById('telegramTasksArea'); if(!cont) return; const comp=userData?.oneTimeTasks||{}; cont.innerHTML=''; const tasks=[{id:'telegramUpdate',title:'Join Update Channel',reward:1500,link:'https://t.me/earnforearnupdate',key:'telegramUpdate'},{id:'telegramProof',title:'Join Payment Proof Channel',reward:1500,link:'https://t.me/earnforearnpaymentproof',key:'telegramProof'}]; tasks.forEach(t=>{ if(comp[t.key]) return; const div=document.createElement('div'); div.style.cssText='display:flex; justify-content:space-between; align-items:center; background:var(--bg-elevated); border-radius:24px; padding:16px; margin-top:12px;'; div.innerHTML=`<div><strong>${t.title}</strong><br>+${t.reward} PEPE</div><button class="tg-verify" data-link="${t.link}" data-key="${t.key}" data-reward="${t.reward}" style="background:#0088cc; border:none; padding:8px 16px; border-radius:40px; color:white; cursor:pointer;">Join & Verify</button>`; cont.appendChild(div); }); document.querySelectorAll('.tg-verify').forEach(btn=>{ btn.onclick=async()=>{ const link=btn.dataset.link, key=btn.dataset.key, reward=parseInt(btn.dataset.reward); window.open(link,'_blank'); if(confirm(`Claim ${reward} PEPE after joining?`)){ if(userData.oneTimeTasks?.[key]) return showStatus('Already claimed','error'); const one={...(userData.oneTimeTasks||{})}; one[key]=true; await updateUser({ oneTimeTasks:one, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1 }); showStatus(`+${reward} PEPE!`,'success'); refreshUI(); } }; }); }
-    function renderReferralsList(){ const refs=userData?.referrals||[]; document.getElementById('referralsList').innerHTML=refs.length? refs.map(r=>`<div class="friend-card"><span><i class="fab fa-telegram"></i> ${r.username}</span><span style="color:var(--success);">+${r.bonus} PEPE</span></div>`).join('') : '<div class="task-card">No referrals yet</div>'; }
-    function renderTaskHistory(){ db.ref(`submissions`).orderByChild('userId').equalTo(telegramId).once('value', snap=>{ const subs=snap.val()||{}; const arr=Object.entries(subs).map(([id,sub])=>({...sub,id})).sort((a,b)=>b.timestamp-a.timestamp); document.getElementById('taskHistoryContainer').innerHTML=arr.length? arr.map(sub=>`<div class="history-item"><div><strong>${sub.taskId==='levelTask1'?'10 Levels #1':sub.taskId==='levelTask2'?'10 Levels #2':sub.taskId}</strong> <span class="history-status ${sub.status==='approved'?'status-approved':'status-pending'}">${sub.status==='approved'?'Approved ✓':'Pending ⌛'}</span></div><div><code>${sub.code}</code></div><div><small>${new Date(sub.timestamp).toLocaleString()}</small></div></div>`).join('') : '<div class="task-card">No submissions yet.</div>'; }); }
-    function updateLimitUI(){ const linkRem=getLinkRemaining(), videoRem=getVideoRemaining(); document.getElementById('linkDailyLimitText').innerHTML=`Claims this period: ${MAX_CLAIMS_PER_PERIOD-linkRem}/${MAX_CLAIMS_PER_PERIOD}`; document.getElementById('videoDailyLimitText').innerHTML=`Claims this period: ${MAX_CLAIMS_PER_PERIOD-videoRem}/${MAX_CLAIMS_PER_PERIOD}`; const cp=getCurrentPeriodStart(); const next=cp+PERIOD_MS; const updateTimer=()=>{ let rem=Math.max(0,next-Date.now()); const h=Math.floor(rem/3600000), m=Math.floor((rem%3600000)/60000), s=Math.floor((rem%60000)/1000); document.getElementById('linkResetTimer').innerHTML=`Reset in: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; document.getElementById('videoResetTimer').innerHTML=`Reset in: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }; updateTimer(); if(window.limitInterval) clearInterval(window.limitInterval); window.limitInterval=setInterval(updateTimer,1000); }
-    function updateWithdrawalRequirements(){ const bal=userData?.balance||0, refs=userData?.referrals?.length||0, wdCount=userData?.withdrawalHistory?.filter(w=>{let d=new Date(w.date); let now=new Date(); return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();}).length||0; document.getElementById('reqCheck1').innerHTML=bal>=300000?'<i class="fas fa-check-circle" style="color:var(--success);"></i>':'<i class="fas fa-times-circle"></i>'; document.getElementById('reqCheck2').innerHTML=refs>=3?'<i class="fas fa-check-circle" style="color:var(--success);"></i>':'<i class="fas fa-times-circle"></i>'; document.getElementById('reqCheck3').innerHTML=wdCount<2?'<i class="fas fa-check-circle" style="color:var(--success);"></i>':'<i class="fas fa-times-circle"></i>'; document.getElementById('submitWithdrawBtn').disabled=!(bal>=300000 && refs>=3 && wdCount<2); }
-    function updateWithdrawCalc(){ let amt=parseInt(document.getElementById('withdrawAmount').value)||0; let fee=Math.floor(amt*0.05); document.getElementById('wdAmount').innerText=`${amt} PEPE`; document.getElementById('wdFee').innerText=`${fee} PEPE`; document.getElementById('wdNet').innerText=`${amt-fee} PEPE`; }
-    
-    let selectedMethod = 'binance';
-    function updatePaymentInput() {
-        const accountField = document.getElementById('paymentAccount');
-        if(selectedMethod === 'binance') {
-            accountField.placeholder = "Binance Email or UID";
+    // ---------- REWARD SYSTEM ----------
+    function generateRewardCode() {
+      const now = new Date();
+      return `NEXUS-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
+    }
+    function activateReward() {
+      if (rewardActive) return;
+      if (rewardCountdown) clearInterval(rewardCountdown);
+      currentRewardCode = generateRewardCode();
+      rewardCodeSpan.innerText = currentRewardCode;
+      rewardSeconds = 30;
+      timerDisplaySpan.innerText = `${rewardSeconds}s left`;
+      expiredMsgDiv.innerHTML = '';
+      copyBtn.disabled = false;
+      rewardPanel.style.display = 'block';
+      rewardActive = true;
+      rewardCountdown = setInterval(() => {
+        if (!rewardActive) { if (rewardCountdown) clearInterval(rewardCountdown); rewardCountdown = null; return; }
+        rewardSeconds--;
+        if (rewardSeconds >= 0) {
+          timerDisplaySpan.innerText = `${rewardSeconds}s left`;
+          if (rewardSeconds === 0) {
+            copyBtn.disabled = true;
+            expiredMsgDiv.innerHTML = '<span style="color:#e67e22;">⏰ Code expired. Complete all 10 levels again.</span>';
+            timerDisplaySpan.innerText = 'Expired';
+            rewardActive = false;
+            if (rewardCountdown) clearInterval(rewardCountdown);
+            rewardCountdown = null;
+            rewardPanel.style.display = 'none';
+          }
         } else {
-            accountField.placeholder = "bKash Mobile Number (e.g., 01XXXXXXXXX)";
+          if (rewardCountdown) clearInterval(rewardCountdown);
+          rewardCountdown = null;
+          rewardPanel.style.display = 'none';
+          rewardActive = false;
         }
-    }
-    async function submitWithdrawal(){ 
-        let amt=parseInt(document.getElementById('withdrawAmount').value);
-        let accountVal = document.getElementById('paymentAccount').value.trim();
-        if(!accountVal) return showStatus(`Enter ${selectedMethod === 'binance' ? 'Binance account' : 'bKash number'}`, 'error');
-        if(selectedMethod === 'bkash' && !/^01[3-9]\d{8}$/.test(accountVal)) return showStatus('Invalid bKash number (BD mobile 11 digits)', 'error');
-        if(amt<300000) return showStatus('Minimum 300,000 PEPE','error');
-        if((userData.balance||0)<amt) return showStatus('Insufficient balance','error');
-        if((userData.referrals||[]).length<3) return showStatus('Need 3 referrals','error');
-        let wdCount=userData?.withdrawalHistory?.filter(w=>{let d=new Date(w.date); let now=new Date(); return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();}).length||0;
-        if(wdCount>=2) return showStatus('Monthly limit reached','error');
-        let fee=Math.floor(amt*0.05), net=amt-fee;
-        let wid={ id:Date.now(), withdrawId:'WD-'+Date.now().toString().slice(-8)+Math.floor(Math.random()*1000), amount:amt, fee, netAmount:net, method:selectedMethod === 'binance' ? 'Binance' : 'bKash', account:accountVal, status:'pending', date:Date.now() };
-        await updateUser({ balance:(userData.balance||0)-amt, withdrawalHistory:[...(userData.withdrawalHistory||[]), wid] });
-        document.getElementById('withdrawSuccessDetails').innerHTML=`<div>ID: ${wid.withdrawId}</div><div>Amount: ${amt} PEPE</div><div>Fee: ${fee} PEPE</div><div>Net: ${net} PEPE</div><div>Method: ${wid.method}</div><div>Account: ${accountVal}</div>`;
-        document.getElementById('withdrawSuccessModal').classList.add('active');
-        document.getElementById('paymentAccount').value='';
-        document.getElementById('withdrawAmount').value='';
-        refreshUI();
-    }
-    function displayWithdrawalHistory(){ const hist=userData?.withdrawalHistory||[]; document.getElementById('historyList').innerHTML=hist.length? hist.slice().reverse().map(w=>`<div class="withdrawal-history-card"><div><strong>${w.withdrawId}</strong> <span style="background:${w.status==='pending'?'#f39c12':'#00b894'}; padding:2px 8px; border-radius:20px;">${w.status}</span></div><div>${w.amount} PEPE</div><div>Method: ${w.method} | ${w.account}</div><small>${new Date(w.date).toLocaleString()}</small></div>`).join('') : '<div class="task-card">No withdrawals</div>'; }
-    function showSpinner(show){ document.getElementById('spinner').style.display=show?'flex':'none'; }
-    
-    function refreshUI(){ 
-        if(!userData) return; 
-        resetDailyCountersIfNeeded();
-        document.getElementById('balanceAmount').innerText=(userData.balance||0).toFixed(0); 
-        document.getElementById('tasksCompletedCount').innerText=(userData.tasksCompleted||0); 
-        document.getElementById('refBonusEarned').innerText=(userData.referralBonusEarned||0).toFixed(0); 
-        document.getElementById('refCount').innerText=(userData.referrals?.length||0); 
-        document.getElementById('withdrawBalance').innerText=(userData.balance||0).toFixed(0); 
-        document.getElementById('userInitial').innerText=telegramUsername.charAt(0).toUpperCase(); 
-        document.getElementById('menuUsername').innerText=telegramUsername; 
-        document.getElementById('referralCodeDisplay').innerHTML=userData.referralCode||''; 
-        document.getElementById('referralBonusTotal').innerText=(userData.referralBonusEarned||0).toFixed(0); 
-        renderLinkTaskUI(); renderVideoTaskUI(); renderTelegramTasks(); renderReferralsList(); updateLimitUI(); updateWithdrawalRequirements(); updateWithdrawCalc(); displayWithdrawalHistory(); 
-        const usdtClaimed=userData.usdtMinerClaimed||false; document.getElementById('usdtMinerStatus').innerHTML=usdtClaimed?'✅ Claimed (2,500 PEPE)':'⚡ Click Start to claim 2,500 PEPE'; document.getElementById('usdtMinerJoinBtn').disabled=usdtClaimed; 
-        const submissions1 = userData.levelTask1SubmissionsToday || 0; const limit = DAILY_SUBMISSION_LIMIT; if(submissions1 >= limit) document.getElementById('levelTask1Status').innerHTML = '⚠️ Daily limit reached (4/4). Come back tomorrow.'; else document.getElementById('levelTask1Status').innerHTML = `✅ You can submit ${limit - submissions1} more code(s) today. Reward given after admin approval.`; document.getElementById('levelTask1LimitInfo').innerHTML = `📊 Today's submissions: ${submissions1}/${limit}`; document.getElementById('submitLevelTask1Btn').disabled = (submissions1 >= limit);
-        const submissions2 = userData.levelTask2SubmissionsToday || 0; if(submissions2 >= limit) document.getElementById('levelTask2Status').innerHTML = '⚠️ Daily limit reached (4/4). Come back tomorrow.'; else document.getElementById('levelTask2Status').innerHTML = `✅ You can submit ${limit - submissions2} more code(s) today. Reward given after admin approval.`; document.getElementById('levelTask2LimitInfo').innerHTML = `📊 Today's submissions: ${submissions2}/${limit}`; document.getElementById('submitLevelTask2Btn').disabled = (submissions2 >= limit);
-        renderTaskHistory(); 
+      }, 1000);
     }
     
-    function switchSection(id){ document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); if(id==='homeSection') document.getElementById('navHome').classList.add('active'); else if(id==='tasksSection') document.getElementById('navTasks').classList.add('active'); else if(id==='cashoutSection') document.getElementById('navCashout').classList.add('active'); else if(id==='referralSection') document.getElementById('navReferral').classList.add('active'); else if(id==='infoSection') document.getElementById('navInfo').classList.add('active'); }
+    function fullReset() {
+      if (activeChain.active && activeChain.cancelFn) {
+        activeChain.cancelFn();
+        activeChain.active = false;
+        activeChain.levelId = null;
+      }
+      tasks = createFreshTasks();
+      saveTasks();
+      if (rewardCountdown) { clearInterval(rewardCountdown); rewardCountdown = null; }
+      rewardActive = false;
+      rewardPanel.style.display = 'none';
+      copyBtn.disabled = false;
+      expiredMsgDiv.innerHTML = '';
+      timerDisplaySpan.innerText = '30s left';
+      currentRewardCode = '';
+      renderTasks();
+      showToast("🔄 Full reset! Complete 10 levels again.", "#f39c12");
+    }
     
-    async function applyReferralBonus(referralCode){ if(!referralCode || userData.referredBy) return false; const refSnap=await db.ref('users').orderByChild('referralCode').equalTo(referralCode).once('value'); if(!refSnap.exists()){ alert('Invalid referral code'); return false; } const referrerId=Object.keys(refSnap.val())[0]; if(referrerId===telegramId){ alert('Cannot use your own code'); return false; } await updateUser({ referredBy:referrerId, referralBonusApplied:true, balance:(userData.balance||0)+1600, totalEarned:(userData.totalEarned||0)+1600, referralBonusEarned:(userData.referralBonusEarned||0)+1600 }); const referrer=await db.ref(`users/${referrerId}`).once('value'); if(referrer.exists()){ let refs=referrer.val().referrals||[]; if(!refs.some(r=>r.id===telegramId)) refs.push({ id:telegramId, username:telegramUsername, bonus:1600 }); await db.ref(`users/${referrerId}`).update({ referrals:refs, referralBonusEarned:(referrer.val().referralBonusEarned||0)+1600, balance:(referrer.val().balance||0)+1600, totalEarned:(referrer.val().totalEarned||0)+1600 }); } showStatus('+1,600 PEPE bonus from referral!','success'); return true; }
+    // ---------- INDIVIDUAL AD FUNCTIONS (with timeout) ----------
+    async function showGiga() {
+      return new Promise((resolve, reject) => {
+        if (typeof window.showGiga !== 'function') return reject(new Error("Giga SDK missing"));
+        const timeout = setTimeout(() => reject(new Error("Giga timeout")), 35000);
+        window.showGiga()
+          .then(() => { clearTimeout(timeout); resolve(); })
+          .catch(e => { clearTimeout(timeout); reject(e); });
+      });
+    }
     
-    async function initUser(){ let data=await fetchUserData(); if(!data){ const refCode=telegramUsername.slice(0,4).toUpperCase()+Math.random().toString(36).substr(2,5).toUpperCase(); const newUser={ username:telegramUsername, telegramId, balance:0, totalEarned:0, referralBonusEarned:0, referrals:[], referralCode:refCode, referredBy:null, referralBonusApplied:false, tasksCompleted:0, linkTask:{steps:0,cooldownUntil:0}, videoTask:{steps:0,cooldownUntil:0}, linkPeriodStart:getCurrentPeriodStart(), linkCountInPeriod:0, videoPeriodStart:getCurrentPeriodStart(), videoCountInPeriod:0, oneTimeTasks:{}, withdrawalHistory:[], levelTask1SubmissionsToday:0, levelTask2SubmissionsToday:0, lastSubmissionDate: new Date().toDateString(), usdtMinerClaimed:false }; await db.ref(`users/${telegramId}`).set(newUser); data=newUser; } userData=data; linkStepsDone=userData.linkTask?.steps||0; videoStepsDone=userData.videoTask?.steps||0; if(!userData.referralBonusApplied) document.getElementById('referralCodeModal').style.display='flex'; else proceedToApp(); }
-    function proceedToApp(){ document.getElementById('referralCodeModal').style.display='none'; refreshUI(); db.ref(`users/${telegramId}`).on('value', snap=>{ if(snap.exists()){ userData=snap.val(); linkStepsDone=userData.linkTask?.steps||0; videoStepsDone=userData.videoTask?.steps||0; refreshUI(); } }); }
+    async function showAdsgram() {
+      return new Promise((resolve, reject) => {
+        if (!window.Adsgram) return reject(new Error("Adsgram SDK missing"));
+        let ctrl;
+        try { ctrl = window.Adsgram.init({ blockId: "int-24179" }); } catch(e) { return reject(e); }
+        if (!ctrl || typeof ctrl.show !== 'function') return reject(new Error("Adsgram invalid"));
+        const timeout = setTimeout(() => reject(new Error("Adsgram timeout")), 35000);
+        ctrl.show()
+          .then(() => { clearTimeout(timeout); resolve(); })
+          .catch(e => { clearTimeout(timeout); reject(e); });
+      });
+    }
     
-    document.getElementById('navHome').onclick=()=>switchSection('homeSection'); 
-    document.getElementById('navTasks').onclick=()=>switchSection('tasksSection'); 
-    document.getElementById('navCashout').onclick=()=>switchSection('cashoutSection'); 
-    document.getElementById('navReferral').onclick=()=>switchSection('referralSection'); 
-    document.getElementById('navInfo').onclick=()=>switchSection('infoSection'); 
-    document.getElementById('tasksBackBtn').onclick=()=>switchSection('homeSection'); 
-    document.getElementById('cashoutBackBtn').onclick=()=>switchSection('homeSection'); 
-    document.getElementById('referralBackBtn').onclick=()=>switchSection('homeSection'); 
-    document.getElementById('infoBackBtn').onclick=()=>switchSection('homeSection'); 
-    document.getElementById('copyReferralCodeBtn').onclick=()=>{ navigator.clipboard.writeText(userData.referralCode); showStatus('Code copied!','success'); }; 
-    document.getElementById('shareTelegramCodeBtn').onclick=()=>{ window.open(`https://t.me/share/url?url=Join%20Earn%20For%20Earn%20using%20my%20code%3A%20${userData.referralCode}`,'_blank'); }; 
-    document.getElementById('profileBtn').onclick=()=>document.getElementById('userMenu').classList.toggle('active'); 
-    document.getElementById('menuReferralCode').onclick=()=>{ navigator.clipboard.writeText(userData.referralCode); showStatus('Code copied','success'); }; 
-    document.getElementById('menuInfo').onclick=()=>{ document.getElementById('userMenu').classList.remove('active'); switchSection('infoSection'); };
-    document.getElementById('menuPrivacy').onclick=()=>window.open('https://earn-for-earn-privacy-police.vercel.app/','_blank'); 
-    document.getElementById('menuTerms').onclick=()=>window.open('https://earn-for-earn-terms-condition.vercel.app/','_blank'); 
-    document.getElementById('telegramSupportLink').onclick=()=>window.open('https://t.me/earnforearnsupport','_blank'); 
-    document.getElementById('withdrawAmount').addEventListener('input',updateWithdrawCalc); 
-    document.getElementById('submitWithdrawBtn').onclick=submitWithdrawal; 
-    document.getElementById('closeSuccessModal').onclick=()=>document.getElementById('withdrawSuccessModal').classList.remove('active'); 
-    document.getElementById('submitReferralCodeBtn').onclick=async()=>{ let code=document.getElementById('referralCodeInput').value.trim().toUpperCase(); if(code) await applyReferralBonus(code); if(!userData.referralBonusApplied) await updateUser({ referralBonusApplied:true }); proceedToApp(); }; 
-    document.getElementById('skipReferralCodeBtn').onclick=async()=>{ if(!userData.referralBonusApplied) await updateUser({ referralBonusApplied:true }); proceedToApp(); }; 
-    document.getElementById('openGmailTaskBtn').onclick=()=>document.getElementById('gmailRequestModal').style.display='flex'; 
-    document.getElementById('sendGmailRequestBtn').onclick=()=>{ navigator.clipboard.writeText(document.getElementById('gmailMessageInput').value); window.open('https://t.me/earnforearneamilinformation','_blank'); document.getElementById('gmailRequestModal').style.display='none'; }; 
-    document.getElementById('closeGmailModalBtn').onclick=()=>document.getElementById('gmailRequestModal').style.display='none'; 
-    document.getElementById('usdtMinerJoinBtn')?.addEventListener('click', async ()=>{ if(userData.usdtMinerClaimed) return showStatus('Already claimed','error'); window.open('https://t.me/USDTTurboMinerBot/App?startapp=6797948163','_blank'); if(confirm("Started the bot? OK to claim 2,500 PEPE.")){ await updateUser({ usdtMinerClaimed:true, balance:(userData.balance||0)+2500, totalEarned:(userData.totalEarned||0)+2500, tasksCompleted:(userData.tasksCompleted||0)+1 }); refreshUI(); showStatus('+2,500 PEPE!','success'); } }); 
-    document.getElementById('submitLevelTask1Btn').onclick=()=>submitLevelTask('levelTask1',7000); 
-    document.getElementById('submitLevelTask2Btn').onclick=()=>submitLevelTask('levelTask2',7000); 
-    document.getElementById('levelTaskInstallBtn1').onclick=()=>window.open('https://t.me/earnforearn_bot','_blank'); 
-    document.getElementById('levelTaskInstallBtn2').onclick=()=>window.open('https://t.me/earnforearn_bot','_blank');
+    async function showMonetag() {
+      return new Promise((resolve, reject) => {
+        if (typeof window.show_10675499 !== 'function') return reject(new Error("Monetag SDK missing"));
+        const timeout = setTimeout(() => reject(new Error("Monetag timeout")), 35000);
+        window.show_10675499()
+          .then(() => { clearTimeout(timeout); resolve(); })
+          .catch(e => { clearTimeout(timeout); reject(e); });
+      });
+    }
     
-    // Payment method selection
-    const binanceOpt = document.getElementById('paymentMethodBinance');
-    const bkashOpt = document.getElementById('paymentMethodBkash');
-    binanceOpt.onclick = () => { selectedMethod = 'binance'; binanceOpt.classList.add('selected'); bkashOpt.classList.remove('selected'); updatePaymentInput(); };
-    bkashOpt.onclick = () => { selectedMethod = 'bkash'; bkashOpt.classList.add('selected'); binanceOpt.classList.remove('selected'); updatePaymentInput(); };
-    updatePaymentInput();
+    async function showAdexora() {
+      return new Promise((resolve, reject) => {
+        if (typeof window.showAdexora !== 'function') return reject(new Error("Adexora SDK missing"));
+        const timeout = setTimeout(() => reject(new Error("Adexora timeout")), 35000);
+        window.showAdexora()
+          .then(() => { clearTimeout(timeout); resolve(); })
+          .catch(e => { clearTimeout(timeout); reject(e); });
+      });
+    }
     
-    let adminClickCount = 0;
-    document.getElementById('profileBtn').addEventListener('dblclick', () => { adminClickCount++; if(adminClickCount >= 2) { loadAdminPanel(); adminClickCount = 0; } });
+    // Universal fallback: tries ad providers in given order until one succeeds
+    async function tryAdFallback(adList, stepName) {
+      for (let i = 0; i < adList.length; i++) {
+        const { name, fn } = adList[i];
+        try {
+          await fn();
+          showToast(`✅ ${name} ad completed (${stepName})`, "#2ecc71");
+          return true;
+        } catch (err) {
+          console.warn(`${name} failed for ${stepName}:`, err);
+          showToast(`⚠️ ${name} failed, trying next...`, "#f39c12");
+        }
+      }
+      throw new Error(`All ad networks failed for ${stepName}`);
+    }
     
-    const loadingFill=document.getElementById('loadingFill'); let progress=0; const interval=setInterval(()=>{ progress+=10; loadingFill.style.width=progress+'%'; if(progress>=100){ clearInterval(interval); initUser().catch(e=>{ console.error(e); document.getElementById('loadingStep').innerText='Error loading, retrying...'; setTimeout(()=>{ location.reload(); },2000); }).finally(()=>{ setTimeout(()=>{ document.getElementById('loadingScreen').classList.add('hidden'); document.getElementById('mainApp').style.display='block'; },300); }); } },200);
+    // open link and wait for return
+    function waitForReturnAfterLink(linkUrl) {
+      return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+          window.removeEventListener('focus', onFocus);
+          reject(new Error("Return timeout (2 min)"));
+        }, 120000);
+        const onFocus = () => {
+          clearTimeout(timeoutId);
+          window.removeEventListener('focus', onFocus);
+          resolve();
+        };
+        window.addEventListener('focus', onFocus);
+        window.open(linkUrl, '_blank');
+      });
+    }
+    
+    // ---------- LEVEL CHAIN WITH SMART FALLBACK PER STEP ----------
+    async function runLevelChain(levelId, updateStepCb, cancelSignal) {
+      // Step 0: initial link
+      updateStepCb(0, "active");
+      await waitForReturnAfterLink(INITIAL_LINK);
+      if (cancelSignal.cancelled) throw new Error("Cancelled");
+      updateStepCb(0, "done");
+      
+      // Step 1: Giga step (primary Giga, fallback Adsgram -> Monetag -> Adexora)
+      updateStepCb(1, "active");
+      await tryAdFallback([
+        { name: "GigaPub", fn: showGiga },
+        { name: "Adsgram", fn: showAdsgram },
+        { name: "Monetag", fn: showMonetag },
+        { name: "Adexora", fn: showAdexora }
+      ], "Ad Step 1");
+      if (cancelSignal.cancelled) throw new Error("Cancelled");
+      updateStepCb(1, "done");
+      
+      // Step 2: Adsgram step (primary Adsgram, fallback Giga -> Monetag -> Adexora)
+      updateStepCb(2, "active");
+      await tryAdFallback([
+        { name: "Adsgram", fn: showAdsgram },
+        { name: "GigaPub", fn: showGiga },
+        { name: "Monetag", fn: showMonetag },
+        { name: "Adexora", fn: showAdexora }
+      ], "Ad Step 2");
+      if (cancelSignal.cancelled) throw new Error("Cancelled");
+      updateStepCb(2, "done");
+      
+      // Step 3: Monetag step (primary Monetag, fallback Giga -> Adsgram -> Adexora)
+      updateStepCb(3, "active");
+      await tryAdFallback([
+        { name: "Monetag", fn: showMonetag },
+        { name: "GigaPub", fn: showGiga },
+        { name: "Adsgram", fn: showAdsgram },
+        { name: "Adexora", fn: showAdexora }
+      ], "Ad Step 3");
+      if (cancelSignal.cancelled) throw new Error("Cancelled");
+      updateStepCb(3, "done");
+      
+      // Step 4: Adexora step (primary Adexora, fallback Giga -> Adsgram -> Monetag)
+      updateStepCb(4, "active");
+      await tryAdFallback([
+        { name: "Adexora", fn: showAdexora },
+        { name: "GigaPub", fn: showGiga },
+        { name: "Adsgram", fn: showAdsgram },
+        { name: "Monetag", fn: showMonetag }
+      ], "Ad Step 4");
+      if (cancelSignal.cancelled) throw new Error("Cancelled");
+      updateStepCb(4, "done");
+      
+      // Step 5: final smart link
+      updateStepCb(5, "active");
+      await waitForReturnAfterLink(FINAL_SMART_LINK);
+      if (cancelSignal.cancelled) throw new Error("Cancelled");
+      updateStepCb(5, "done");
+      
+      return true;
+    }
+    
+    // Modal UI
+    function showChainModal(levelId, onComplete, onCancel) {
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      const steps = [
+        "🔗 1. Open initial tracking link & return",
+        "🎮 2. Ad Step 1 (Giga → fallbacks)",
+        "📢 3. Ad Step 2 (Adsgram → fallbacks)",
+        "📺 4. Ad Step 3 (Monetag → fallbacks)",
+        "🎬 5. Ad Step 4 (Adexora → fallbacks)",
+        "🔗 6. Open final smart link & return → Complete"
+      ];
+      let stepStatuses = steps.map(() => "pending");
+      
+      const modalDiv = document.createElement('div');
+      modalDiv.className = 'modal-card';
+      modalDiv.innerHTML = `
+        <h3>⚡ LEVEL ${levelId} PROGRESS</h3>
+        <div class="step-status" id="stepStatusContainer"></div>
+        <button class="cancel-chain-btn" id="cancelChainBtn">✖ CANCEL & ABORT LEVEL</button>
+        <p style="font-size:12px; margin-top:12px; color:#aaa;">⚠️ If an ad fails, fallback network will auto-start. Do not close tab.</p>
+      `;
+      overlay.appendChild(modalDiv);
+      document.body.appendChild(overlay);
+      const container = modalDiv.querySelector('#stepStatusContainer');
+      
+      function renderSteps(activeStepIdx = -1) {
+        container.innerHTML = '';
+        steps.forEach((label, idx) => {
+          const div = document.createElement('div');
+          div.className = 'step-item';
+          let displayLabel = label;
+          if (stepStatuses[idx] === 'done') displayLabel = "✓ " + label;
+          div.innerText = displayLabel;
+          if (stepStatuses[idx] === 'done') div.classList.add('step-done');
+          else if (idx === activeStepIdx && stepStatuses[idx] !== 'done') div.classList.add('step-active');
+          else div.classList.add('step-pending');
+          container.appendChild(div);
+        });
+      }
+      
+      let cancelRequested = false;
+      const cancelSignal = { cancelled: false };
+      
+      const updateStep = (stepIndex, state) => {
+        if (cancelRequested) return;
+        if (state === 'active') {
+          stepStatuses[stepIndex] = "pending";
+          renderSteps(stepIndex);
+        } else if (state === 'done') {
+          stepStatuses[stepIndex] = "done";
+          renderSteps(-1);
+        }
+      };
+      
+      const cancelBtn = modalDiv.querySelector('#cancelChainBtn');
+      cancelBtn.addEventListener('click', () => {
+        cancelRequested = true;
+        cancelSignal.cancelled = true;
+        overlay.remove();
+        if (onCancel) onCancel();
+        showToast(`❌ Level ${levelId} cancelled`, "#e67e22");
+      });
+      
+      runLevelChain(levelId, updateStep, cancelSignal)
+        .then(() => {
+          if (!cancelRequested) {
+            overlay.remove();
+            onComplete();
+          }
+        })
+        .catch(err => {
+          if (!cancelRequested && err.message !== "Cancelled") {
+            overlay.remove();
+            showToast(`❌ Chain error: ${err.message}. Please retry level.`, "#e74c3c");
+            if (onCancel) onCancel();
+          } else if (cancelRequested) {
+            overlay.remove();
+          } else {
+            overlay.remove();
+            if (onCancel) onCancel();
+          }
+        });
+      
+      return { cancel: () => { cancelRequested = true; cancelSignal.cancelled = true; overlay.remove(); } };
+    }
+    
+    // ---------- LEVEL START ----------
+    async function startLevel(levelId) {
+      if (isLevelCompleted(levelId)) {
+        showToast(`Level ${levelId} already completed!`, "#f5b042");
+        return;
+      }
+      if (activeChain.active) {
+        showToast(`Another level in progress (Level ${activeChain.levelId}). Cancel it first.`, "#e67e22");
+        return;
+      }
+      activeChain.active = true;
+      activeChain.levelId = levelId;
+      const cancelHandler = showChainModal(
+        levelId,
+        () => {
+          markLevelComplete(levelId);
+          activeChain.active = false;
+          activeChain.levelId = null;
+          activeChain.cancelFn = null;
+        },
+        () => {
+          activeChain.active = false;
+          activeChain.levelId = null;
+          activeChain.cancelFn = null;
+        }
+      );
+      activeChain.cancelFn = () => {
+        if (cancelHandler && cancelHandler.cancel) cancelHandler.cancel();
+      };
+    }
+    
+    // ---------- RENDER 10 LEVELS ----------
+    function renderTasks() {
+      if (!taskListEl) return;
+      taskListEl.innerHTML = '';
+      const completedCount = tasks.filter(t => t.completed).length;
+      const allCompleted = completedCount === TOTAL_LEVELS;
+      progressSpan.innerText = `${completedCount} / ${TOTAL_LEVELS}`;
+      
+      if (allCompleted && rewardActive) {
+        statusTextSpan.innerText = "🎉 ALL 10 DONE! Copy reward code 🎉";
+        globalStatusDiv.classList.remove('status-notcomplete');
+        globalStatusDiv.classList.add('status-complete');
+      } else if (allCompleted) {
+        statusTextSpan.innerText = "✨ 10/10! Activating reward ✨";
+        globalStatusDiv.classList.add('status-complete');
+      } else {
+        statusTextSpan.innerText = `${completedCount} / 10 levels completed`;
+        globalStatusDiv.classList.remove('status-complete');
+        globalStatusDiv.classList.add('status-notcomplete');
+      }
+      
+      for (let i = 1; i <= TOTAL_LEVELS; i++) {
+        const completed = tasks.find(t => t.id === i)?.completed || false;
+        const li = document.createElement('li');
+        li.className = 'task-item';
+        if (completed) li.classList.add('completed');
+        li.setAttribute('data-id', i);
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'task-icon';
+        iconSpan.innerText = completed ? "✓ DONE" : "▶ START CHAIN";
+        const textSpan = document.createElement('span');
+        textSpan.className = 'task-text';
+        textSpan.innerText = `Level ${i} – ${completed ? 'finished' : 'Link → Giga(fallback) → Adsgram(fallback) → Monetag(fallback) → Adexora(fallback) → Link → complete'}`;
+        li.appendChild(iconSpan);
+        li.appendChild(textSpan);
+        taskListEl.appendChild(li);
+      }
+    }
+    
+    function onTaskClick(levelId) {
+      if (isLevelCompleted(levelId)) {
+        showToast(`Level ${levelId} already completed!`, "#f5b042");
+        return;
+      }
+      startLevel(levelId);
+    }
+    
+    // ---------- COPY & RESET ----------
+    async function handleCopyAndReset() {
+      if (!rewardActive || rewardSeconds <= 0) {
+        showToast("❌ No active reward code or expired. Complete all 10 levels again.", "#e74c3c");
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(currentRewardCode);
+        showToast("🏆 Reward code copied! Progress will FULLY RESET now.", "#2ecc71");
+        fullReset();
+      } catch (err) {
+        showToast("Copy failed, please try again", "#e67e22");
+      }
+    }
+    
+    // ---------- CLOCK ----------
+    function updateDateTime() {
+      const now = new Date();
+      const dateStr = now.toLocaleDateString(undefined, { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+      const timeStr = now.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+      const dateEl = document.getElementById('currentDate');
+      const timeEl = document.getElementById('currentTime');
+      if (dateEl) dateEl.innerText = dateStr;
+      if (timeEl) timeEl.innerText = timeStr;
+    }
+    
+    // ---------- EVENT BINDING ----------
+    function bindEvents() {
+      taskListEl.addEventListener('click', (e) => {
+        const li = e.target.closest('.task-item');
+        if (!li) return;
+        const id = parseInt(li.getAttribute('data-id'), 10);
+        if (!isNaN(id)) onTaskClick(id);
+      });
+      copyBtn.addEventListener('click', handleCopyAndReset);
+    }
+    
+    // ---------- INIT ----------
+    function init() {
+      tasks = loadTasks();
+      renderTasks();
+      bindEvents();
+      const allCompleted = tasks.every(t => t.completed);
+      if (allCompleted && !rewardActive && rewardPanel.style.display !== 'block') {
+        activateReward();
+      }
+      setInterval(updateDateTime, 1000);
+      updateDateTime();
+      // warm check
+      setTimeout(() => {
+        if (typeof window.showGiga !== 'function') console.warn("Giga not loaded yet, fallback ready");
+        else console.log("✅ Giga SDK ready");
+      }, 2000);
+    }
+    
+    init();
+  })();
 </script>
 </body>
 </html>
