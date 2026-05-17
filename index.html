@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Telegram Ads Test</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
 
   <style>
     body{
-      background:#121212;
+      background:#111;
       display:flex;
       justify-content:center;
       align-items:center;
@@ -20,19 +19,18 @@
     }
 
     button{
-      padding:16px 40px;
-      font-size:22px;
+      padding:15px 35px;
       border:none;
       border-radius:12px;
+      font-size:22px;
       background:#00c853;
-      color:#fff;
-      cursor:pointer;
+      color:white;
     }
   </style>
 </head>
 <body>
 
-<button onclick="startAd()">Start</button>
+<button onclick="watchAd()">Start</button>
 
 <script>
   Telegram.WebApp.ready();
@@ -44,23 +42,22 @@
     appId: "7019",
   });
 
-  async function startAd() {
-    try {
+  async function watchAd() {
 
-      // wait little
-      await new Promise(r => setTimeout(r, 1000));
+    try {
 
       await ads.showAd();
 
-      alert("Reward Received");
+      alert("Reward Claimed");
 
     } catch(err) {
 
       console.log(err);
 
-      alert("No ads available now");
+      alert("No rewarded ads available");
 
     }
+
   }
 </script>
 
