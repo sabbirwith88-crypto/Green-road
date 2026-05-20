@@ -593,7 +593,6 @@
 
 <div class="app-container" id="mainApp" style="display:none;">
     <div class="main-content">
-        <!-- HOME SECTION -->
         <div id="homeSection" class="content-section active">
             <div class="section-header"><div></div><div class="support-icon" id="supportIconHome"><i class="fas fa-headset"></i></div></div>
             <div class="balance-card"><div style="font-weight:500;">YOUR BALANCE</div><div class="balance-amount" id="balanceAmount">0</div><div class="small-text">PEPE</div></div>
@@ -601,7 +600,6 @@
             <div class="earn-history-box"><h4><i class="fas fa-history"></i> Earn History</h4><div id="earnHistoryList"><div class="empty-history">No earnings yet.</div></div></div>
         </div>
 
-        <!-- EARN SECTION -->
         <div id="earnSection" class="content-section">
             <div class="section-header"><div class="back-button" id="earnBackBtn"><span>←</span> Back</div><div class="support-icon" id="supportIconEarn"><i class="fas fa-headset"></i></div></div>
             <div class="task-card"><div class="task-header"><span class="task-title">📺 Ads 1 (Monetag)</span><span class="task-reward">+230 PEPE</span></div><div class="task-desc">Watch ad to earn 230 PEPE. Max 20 times.</div><div class="progress-container"><div class="progress-label"><span>Progress</span><span id="ads1Percent">0%</span></div><div class="progress-bar-bg"><div class="progress-fill" id="ads1Fill"></div></div><div class="completion-stats" id="ads1Stats">0 / 20</div></div><button id="ads1Btn" class="task-btn">Claim 230 PEPE (Watch Ad)</button></div>
@@ -613,7 +611,6 @@
             <div class="stats-box"><div class="stats-box-title">💰 PEPE Earned from Ads</div><div class="stats-box-value" id="totalAdsEarned">0</div></div>
         </div>
 
-        <!-- EARNING SECTION -->
         <div id="earningSection" class="content-section">
             <div class="section-header"><div class="back-button" id="earningBackBtn"><span>←</span> Back</div><div class="support-icon" id="supportIconEarning"><i class="fas fa-headset"></i></div></div>
             <div id="oneTimeTaskContainer"><div class="task-card one-time-task"><div class="task-header"><span class="task-title">⛏️ Join USDT Turbo Miner</span><span class="task-reward">+500 PEPE</span></div><div class="task-desc">Open bot & verify to get 500 PEPE one-time.</div><button id="openBotBtn" class="task-btn" style="background:#f59e0b;">🚀 Start & Open Bot</button><button id="verifyOneTimeBtn" class="task-btn" style="background:#10b981; margin-top:8px;" disabled>Verify & Claim</button></div></div>
@@ -625,7 +622,6 @@
             <div id="adminTrigger" style="text-align:center; margin-top:20px; cursor:pointer; opacity:0.4; font-size:12px;">🔧 Admin</div>
         </div>
 
-        <!-- CASHOUT SECTION -->
         <div id="cashoutSection" class="content-section">
             <div class="section-header"><div class="back-button" id="cashoutBackBtn"><span>←</span> Back</div><div class="support-icon" id="supportIconCashout"><i class="fas fa-headset"></i></div></div>
             <div class="balance-card"><div style="font-weight:500;">Available Balance</div><div class="balance-amount" id="withdrawBalance">0</div><div class="small-text">PEPE</div></div>
@@ -638,7 +634,6 @@
             <div style="margin-top:35px;"><h4>Withdrawal History</h4><div id="historyList"></div></div>
         </div>
 
-        <!-- REFERRAL SECTION -->
         <div id="referralSection" class="content-section">
             <div class="section-header"><div class="back-button" id="referralBackBtn"><span>←</span> Back</div><div class="support-icon" id="supportIconReferral"><i class="fas fa-headset"></i></div></div>
             <div class="referral-professional"><i class="fas fa-user-friends" style="font-size:2.5rem;"></i><h3>Invite Friends</h3><p>Share your code → each friend gets 167 PEPE, you earn 167 PEPE too!</p><div class="referral-code-display" id="referralCodeDisplay"></div><div class="btn-group"><button class="btn-primary" id="copyReferralCodeBtn">Copy Code</button><button class="btn-primary" id="shareTelegramCodeBtn">Share</button></div></div>
@@ -655,7 +650,6 @@
     </div>
 </div>
 
-<!-- REFERRAL MODAL (ONLY ONCE - FIRST LAUNCH) -->
 <div id="referralCodeModal" class="referral-code-modal">
     <div class="referral-code-card"><i class="fas fa-gift" style="font-size:2.5rem;"></i><h2>Welcome to Pepe Earn</h2><p>Enter referral code to get 167 PEPE bonus.</p><input type="text" id="referralCodeInput" class="form-input" placeholder="Referral code"><button id="submitReferralCodeBtn" class="claim-btn">Claim</button><button id="skipReferralCodeBtn" class="claim-btn skip-btn">Skip</button></div>
 </div>
@@ -676,11 +670,11 @@
 
     // Helper functions
     function showToast(amount, task) { const toast = document.createElement('div'); toast.className = 'toast-notification'; toast.innerHTML = `<i class="fas fa-gift"></i> +${amount} PEPE from ${task}`; document.body.appendChild(toast); setTimeout(()=>toast.remove(),2500); }
-    async function addEarningEntry(type, amount, description) { 
+    async function addEarningEntry(amount, description) { 
         if(!userData) return; 
-        const newEntry = { id:Date.now(), type, amount, description, date:Date.now() }; 
+        const newEntry = { id: Date.now(), amount, description, date: Date.now() }; 
         const currentHistory = userData.earningsHistory || [];
-        const updatedHistory = [newEntry, ...currentHistory].slice(0, 100);
+        const updatedHistory = [newEntry, ...currentHistory].slice(0, 200);
         await updateUser({ earningsHistory: updatedHistory }); 
     }
     async function updateUser(updates) { if(!telegramId) return; await db.ref(`users/${telegramId}`).update(updates); if(userData) Object.assign(userData,updates); refreshUI(); }
@@ -688,99 +682,34 @@
     function showStatus(msg,type) { let el=document.getElementById('homeStatusMessage'); if(!el){ el=document.createElement('div'); el.id='homeStatusMessage'; el.className='status-message'; document.getElementById('homeSection')?.prepend(el); } el.style.display='block'; el.className=`status-message status-${type}`; el.innerHTML=msg; setTimeout(()=>el.style.display='none',4000); }
     function applyCooldown(btn, seconds = 8) { if (!btn) return; const originalText = btn.innerHTML; btn.disabled = true; let remaining = seconds; const interval = setInterval(() => { remaining--; if (remaining <= 0) { clearInterval(interval); btn.disabled = false; btn.innerHTML = originalText; } else { btn.innerHTML = `Wait ${remaining}s`; } }, 1000); }
 
-    // ---------- ADS 1 (Monetag) ----------
-    async function completeAds1() {
-        let prog = userData?.ads1Progress || 0;
-        if(prog >= 20) { showStatus("Ads 1 fully completed!","error"); return; }
-        const btn = document.getElementById('ads1Btn');
-        if (typeof show_11031831 === 'function') {
-            try {
-                await show_11031831();
-                window.open('https://omg10.com/4/10686606', '_blank');
-                const reward = 230;
-                const newProg = prog + 1;
-                await updateUser({ ads1Progress: newProg, balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: (userData.tasksCompleted||0)+1 });
-                await addEarningEntry('ads', reward, `Ads 1 (+${reward} PEPE) - ${newProg}/20`);
-                showToast(reward, "Ads 1");
-                renderAdsUI('ads1Progress', 20, 230);
-                updateTotalAdsStats();
-                applyCooldown(btn,8);
-            } catch(e) { showStatus("Ad failed","error"); }
-        } else { showStatus("SDK loading...","error"); }
-    }
-
-    // ---------- ADS 2 (Adsgram - FIXED) ----------
-    async function completeAds2() {
-        let prog = userData?.ads2Progress || 0;
-        if(prog >= 20) { showStatus("Ads 2 completed!","error"); return; }
-        const btn = document.getElementById('ads2Btn');
-        if (typeof window.Adsgram === 'undefined') {
-            showStatus("Ad system initializing, please wait...","error");
-            return;
-        }
+    // Ads implementations (same as before but with proper history)
+    async function completeAds(adKey, reward, adName, showAdFunc) {
+        let prog = userData?.[adKey] || 0;
+        if(prog >= 20) { showStatus(`${adName} fully completed!`,"error"); return; }
+        const btn = document.getElementById(adKey === 'ads1Progress' ? 'ads1Btn' : adKey === 'ads2Progress' ? 'ads2Btn' : adKey === 'ads3Progress' ? 'ads3Btn' : 'ads4Btn');
+        if (typeof showAdFunc !== 'function') { showStatus(`${adName} SDK not ready`,"error"); return; }
         try {
-            const AdController = window.Adsgram.init({ blockId: "30645" });
-            const result = await AdController.show();
-            if (result && result.done) {
-                const reward = 230;
-                const newProg = prog + 1;
-                await updateUser({ ads2Progress: newProg, balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: (userData.tasksCompleted||0)+1 });
-                await addEarningEntry('ads', reward, `Ads 2 (+${reward} PEPE) - ${newProg}/20`);
-                showToast(reward, "Ads 2");
-                renderAdsUI('ads2Progress', 20, 230);
-                updateTotalAdsStats();
-                applyCooldown(btn,8);
-            } else { showStatus("Ad not completed","error"); }
-        } catch(e) { console.error(e); showStatus("Ad error, try again","error"); }
-    }
-
-    // ---------- ADS 3 (Adexora) ----------
-    async function completeAds3() {
-        let prog = userData?.ads3Progress || 0;
-        if(prog >= 20) { showStatus("Ads 3 completed!","error"); return; }
-        const btn = document.getElementById('ads3Btn');
-        if (typeof window.showAdexora !== 'function') {
-            showStatus("Adexora not ready","error");
-            return;
-        }
-        try {
-            await window.showAdexora();
-            window.open('https://www.effectivecpmnetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d', '_blank');
-            const reward = 230;
+            await showAdFunc();
+            if(adKey !== 'ads2Progress') window.open('https://omg10.com/4/10686606', '_blank');
             const newProg = prog + 1;
-            await updateUser({ ads3Progress: newProg, balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: (userData.tasksCompleted||0)+1 });
-            await addEarningEntry('ads', reward, `Ads 3 (+${reward} PEPE) - ${newProg}/20`);
-            showToast(reward, "Ads 3");
-            renderAdsUI('ads3Progress', 20, 230);
+            await updateUser({ [adKey]: newProg, balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: (userData.tasksCompleted||0)+1 });
+            await addEarningEntry(reward, `${adName} (+${reward} PEPE) - ${newProg}/20`);
+            showToast(reward, adName);
+            renderAdsUI(adKey, 20, reward);
             updateTotalAdsStats();
             applyCooldown(btn,8);
-        } catch(e) { showStatus("Adexora error","error"); }
+        } catch(e) { showStatus("Ad failed, try again","error"); }
     }
-
-    // ---------- ADS 4 (Giga Pub) ----------
-    async function completeAds4() {
-        let prog = userData?.ads4Progress || 0;
-        if(prog >= 20) { showStatus("Ads 4 completed!","error"); return; }
-        const btn = document.getElementById('ads4Btn');
-        if (typeof window.showGiga === 'undefined') {
-            showStatus("Giga Pub not ready","error");
-            return;
-        }
-        try {
-            await window.showGiga();
-            window.open('https://link.gigapub.tech/l/9jfxp27o6m', '_blank');
-            const reward = 230;
-            const newProg = prog + 1;
-            await updateUser({ ads4Progress: newProg, balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: (userData.tasksCompleted||0)+1 });
-            await addEarningEntry('ads', reward, `Ads 4 (+${reward} PEPE) - ${newProg}/20`);
-            showToast(reward, "Ads 4");
-            renderAdsUI('ads4Progress', 20, 230);
-            updateTotalAdsStats();
-            applyCooldown(btn,8);
-        } catch(e) { showStatus("Giga error","error"); }
+    async function completeAds1() { await completeAds('ads1Progress', 230, 'Ads 1 (Monetag)', show_11031831); }
+    async function completeAds2() { 
+        if (typeof window.Adsgram === 'undefined') { showStatus("Adsgram initializing...","error"); return; }
+        const controller = window.Adsgram.init({ blockId: "30645" });
+        const result = await controller.show();
+        if(result && result.done) await completeAds('ads2Progress', 230, 'Ads 2 (Adsgram)', ()=>Promise.resolve());
+        else showStatus("Ad not completed","error");
     }
-
-    // ---------- ADS 5 (Quick Visit, reward 40 PEPE) ----------
+    async function completeAds3() { await completeAds('ads3Progress', 230, 'Ads 3 (Adexora)', window.showAdexora); }
+    async function completeAds4() { await completeAds('ads4Progress', 230, 'Ads 4 (Giga Pub)', window.showGiga); }
     let ads5Pending = false;
     async function startAds5() {
         let prog = userData?.ads5Progress || 0;
@@ -800,7 +729,7 @@
             const reward = 40;
             const newProg = prog+1;
             await updateUser({ ads5Progress: newProg, balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: (userData.tasksCompleted||0)+1 });
-            await addEarningEntry('ads', reward, `Ads 5 (+${reward} PEPE) - ${newProg}/5`);
+            await addEarningEntry(reward, `Ads 5 (Quick Visit) (+${reward} PEPE) - ${newProg}/5`);
             showToast(reward, "Ads 5");
             renderAdsUI('ads5Progress', 5, 40);
             updateTotalAdsStats();
@@ -811,20 +740,13 @@
 
     function renderAdsUI(key, limit, reward) { 
         let prog = userData[key]||0; 
-        let fill = document.getElementById(key.replace('Progress','Fill')); 
-        if(fill) fill.style.width = (prog/limit)*100+'%'; 
-        let perc = document.getElementById(key.replace('Progress','Percent')); 
-        if(perc) perc.innerText = Math.floor((prog/limit)*100)+'%'; 
-        let stats = document.getElementById(key.replace('Progress','Stats')); 
-        if(stats) stats.innerText = `${prog}/${limit}`; 
+        let fill = document.getElementById(key.replace('Progress','Fill')); if(fill) fill.style.width = (prog/limit)*100+'%'; 
+        let perc = document.getElementById(key.replace('Progress','Percent')); if(perc) perc.innerText = Math.floor((prog/limit)*100)+'%'; 
+        let stats = document.getElementById(key.replace('Progress','Stats')); if(stats) stats.innerText = `${prog}/${limit}`; 
         let btnId = key==='ads1Progress'?'ads1Btn':key==='ads2Progress'?'ads2Btn':key==='ads3Progress'?'ads3Btn':(key==='ads4Progress'?'ads4Btn':'ads5Btn');
         let btn = document.getElementById(btnId); 
-        if(btn){ 
-            if(prog>=limit){ btn.disabled=true; btn.innerHTML='✓ Completed'; btn.classList.add('completed'); } 
-            else { btn.disabled=false; if(key!=='ads5Progress') btn.innerHTML=`Claim ${reward} PEPE (Watch Ad)`; else btn.innerHTML=`Claim ${reward} PEPE`; }
-        } 
+        if(btn){ if(prog>=limit){ btn.disabled=true; btn.innerHTML='✓ Completed'; btn.classList.add('completed'); } else btn.disabled=false; } 
     }
-
     function updateTotalAdsStats() { 
         const total = (userData?.ads1Progress||0)+(userData?.ads2Progress||0)+(userData?.ads3Progress||0)+(userData?.ads4Progress||0)+(userData?.ads5Progress||0);
         const earned = (userData?.ads1Progress||0)*230 + (userData?.ads2Progress||0)*230 + (userData?.ads3Progress||0)*230 + (userData?.ads4Progress||0)*230 + (userData?.ads5Progress||0)*40;
@@ -832,29 +754,23 @@
         if(document.getElementById('totalAdsEarned')) document.getElementById('totalAdsEarned').innerText = earned;
     }
 
-    // Other tasks (unchanged but functional)
     let botOpened = false, youtubeOpened = false;
-    async function verifyTurbo() { if(!botOpened) return; if(userData.turboMinerClaimed) return; const reward=500; await updateUser({ turboMinerClaimed:true, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1 }); await addEarningEntry('one_time',reward,'USDT Turbo Miner (+500 PEPE)'); showToast(reward,"Turbo Miner"); document.getElementById('oneTimeTaskContainer')?.remove(); }
-    async function verifyYoutube() { if(!youtubeOpened) return; if(userData.youtubeSubClaimed) return; const reward=500; await updateUser({ youtubeSubClaimed:true, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1 }); await addEarningEntry('one_time',reward,'YouTube Subscribe (+500 PEPE)'); showToast(reward,"YouTube Subscribe"); document.getElementById('youtubeTaskContainer')?.remove(); }
+    async function verifyTurbo() { if(!botOpened) return; if(userData.turboMinerClaimed) return; const reward=500; await updateUser({ turboMinerClaimed:true, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1 }); await addEarningEntry(reward, 'USDT Turbo Miner (+500 PEPE)'); showToast(reward,"Turbo Miner"); document.getElementById('oneTimeTaskContainer')?.remove(); }
+    async function verifyYoutube() { if(!youtubeOpened) return; if(userData.youtubeSubClaimed) return; const reward=500; await updateUser({ youtubeSubClaimed:true, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1 }); await addEarningEntry(reward, 'YouTube Subscribe (+500 PEPE)'); showToast(reward,"YouTube Subscribe"); document.getElementById('youtubeTaskContainer')?.remove(); }
     async function submitSpecialTask1() { const referralId = document.getElementById('referralIdInput').value.trim(); if(!/^\d{10}$/.test(referralId)) { showStatus("Enter valid 10-digit ID","error"); return; } if(userData.specialTaskSubmission1) { showStatus("Already submitted","error"); return; } const submission = { id: Date.now(), userId: telegramId, referralId, status: 'pending', timestamp: Date.now(), type: 'special1' }; await db.ref(`specialSubmissions/${submission.id}`).set(submission); await updateUser({ specialTaskSubmission1: { id: submission.id, status: 'pending', referralId } }); showStatus("Submitted! Wait for admin.","success"); document.getElementById('specialTaskContainer1')?.remove(); renderPendingHistory(); }
     async function submitCpmTask() { const username = document.getElementById('cpmUsernameInput').value.trim(); if(!username.startsWith('@')) { showStatus("Valid @username","error"); return; } const now = Date.now(); if(userData.lastCpmSubmission && (now - userData.lastCpmSubmission) < 48*60*60*1000) { showStatus("Cooldown 2 days","error"); return; } const submission = { id: Date.now(), userId: telegramId, username, status: 'pending', timestamp: now, type: 'cpm' }; await db.ref(`specialSubmissions/${submission.id}`).set(submission); await updateUser({ cpmSubmission: { id: submission.id, status: 'pending', username, timestamp: now }, lastCpmSubmission: now, cpmPending: 'pending' }); showStatus("CPM Task submitted!","success"); renderPendingHistory(); document.getElementById('specialTaskContainer2').style.display = 'none'; }
     async function submitGmailTask() { const gmail = document.getElementById('gmailAddressInput').value.trim(); if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gmail)) { showStatus("Valid email","error"); return; } const now = Date.now(); if(userData.lastGmailSubmission && (now - userData.lastGmailSubmission) < 2*60*60*1000) { showStatus("Cooldown 2 hours","error"); return; } const submission = { id: Date.now(), userId: telegramId, gmail, status: 'pending', timestamp: now, type: 'gmail' }; await db.ref(`specialSubmissions/${submission.id}`).set(submission); await updateUser({ gmailSubmission: { id: submission.id, status: 'pending', gmail, timestamp: now }, lastGmailSubmission: now, gmailPending: 'pending' }); showStatus("Gmail submitted!","success"); renderPendingHistory(); document.getElementById('gmailTaskContainer').style.display = 'none'; }
     async function renderPendingHistory() { let subs=[]; if(userData?.specialTaskSubmission1) subs.push({ type:'Special Code Task', ...userData.specialTaskSubmission1 }); if(userData?.cpmSubmission) subs.push({ type:'CPM Task', ...userData.cpmSubmission }); if(userData?.gmailSubmission) subs.push({ type:'Gmail Task', ...userData.gmailSubmission }); const container=document.getElementById('pendingHistoryList'); if(!subs.length) { container.innerHTML='<div class="empty-history">No pending submissions.</div>'; return; } container.innerHTML=subs.map(s=>`<div class="pending-card"><div><strong>${s.type}</strong></div><div>Status: ${s.status==='pending'?'⏳ Pending':(s.status==='approved'?'✅ Approved':'❌ Rejected')}</div><div><small>${new Date(s.id).toLocaleString()}</small></div></div>`).join(''); }
 
-    // Admin panel
     let isAdmin=false;
     function showAdminPanel() { if(!isAdmin) { let pwd=prompt("Admin password:"); if(pwd!=="admin123") return; isAdmin=true; } db.ref('specialSubmissions').once('value',snap=>{ let subs=[]; snap.forEach(c=>subs.push({id:c.key,...c.val()})); let container=document.getElementById('adminSubmissionsList'); container.innerHTML=subs.map(s=>`<div style="border-bottom:1px solid #eee;padding:10px;"><div><strong>User:</strong> ${s.userId}</div><div><strong>Type:</strong> ${s.type}</div>${s.gmail?`<div>Gmail:${s.gmail}</div>`:(s.username?`<div>User:${s.username}</div>`:`<div>ID:${s.referralId}</div>`)}<div>Status:${s.status}</div><div><button onclick="window.approveSubmission('${s.id}','${s.userId}','${s.type}')" style="background:green;color:white;border:none;padding:5px 12px;border-radius:20px;">Approve</button><button onclick="window.rejectSubmission('${s.id}','${s.userId}','${s.type}')" style="background:red;color:white;border:none;padding:5px 12px;border-radius:20px;">Reject</button></div></div>`).join(''); document.getElementById('adminModal').classList.add('active'); }); }
-    window.approveSubmission = async (subId, userId, type) => { const subSnap = await db.ref(`specialSubmissions/${subId}`).once('value'); const sub = subSnap.val(); if(!sub || sub.status !== 'pending') return; await db.ref(`specialSubmissions/${subId}`).update({ status: 'approved' }); let reward = type==='special1'?600:10000; const userSnap = await db.ref(`users/${userId}`).once('value'); if(userSnap.exists()) { let user=userSnap.val(); let newBalance=(user.balance||0)+reward; let updates={balance:newBalance,totalEarned:(user.totalEarned||0)+reward,tasksCompleted:(user.tasksCompleted||0)+1}; if(type==='special1') updates['specialTaskSubmission1/status']='approved'; else if(type==='cpm') {updates['cpmSubmission/status']='approved';updates.cpmPending=null;} else {updates['gmailSubmission/status']='approved';updates.gmailPending=null;} await db.ref(`users/${userId}`).update(updates); // also add history entry
-        await db.ref(`users/${userId}/earningsHistory`).push({ id:Date.now(), type:'special_task', amount:reward, description:`${type==='special1'?'Special Code Task':(type==='cpm'?'CPM Task':'Gmail Task')} approved (+${reward} PEPE)`, date:Date.now() });
-        if(userId === telegramId) { userData = await fetchUserData(); refreshUI(); }
-    } alert(`Approved! +${reward} PEPE`); showAdminPanel(); };
+    window.approveSubmission = async (subId, userId, type) => { const subSnap = await db.ref(`specialSubmissions/${subId}`).once('value'); const sub = subSnap.val(); if(!sub || sub.status !== 'pending') return; await db.ref(`specialSubmissions/${subId}`).update({ status: 'approved' }); let reward = type==='special1'?600:10000; const userRef = db.ref(`users/${userId}`); const userSnap = await userRef.once('value'); if(userSnap.exists()) { let user=userSnap.val(); let newBalance=(user.balance||0)+reward; let updates={balance:newBalance,totalEarned:(user.totalEarned||0)+reward,tasksCompleted:(user.tasksCompleted||0)+1}; if(type==='special1') updates['specialTaskSubmission1/status']='approved'; else if(type==='cpm') {updates['cpmSubmission/status']='approved';updates.cpmPending=null;} else {updates['gmailSubmission/status']='approved';updates.gmailPending=null;} await userRef.update(updates); const historyEntry = { id: Date.now(), amount: reward, description: `${type==='special1'?'Special Code Task':(type==='cpm'?'CPM Task':'Gmail Task')} approved (+${reward} PEPE)`, date: Date.now() }; const currentHistory = user.earningsHistory || []; await userRef.update({ earningsHistory: [historyEntry, ...currentHistory].slice(0,200) }); if(userId === telegramId) { userData = await fetchUserData(); refreshUI(); } } alert(`Approved! +${reward} PEPE`); showAdminPanel(); };
     window.rejectSubmission = async (subId, userId, type) => { await db.ref(`specialSubmissions/${subId}`).update({ status: 'rejected' }); const userRef = db.ref(`users/${userId}`); if(type==='special1') await userRef.update({ 'specialTaskSubmission1/status': 'rejected' }); else if(type==='cpm') await userRef.update({ 'cpmSubmission/status': 'rejected', cpmPending: null }); else await userRef.update({ 'gmailSubmission/status': 'rejected', gmailPending: null }); alert("Rejected."); if(userId===telegramId) refreshUI(); };
 
-    // Withdrawal logic
     async function submitWithdrawal() { let amt = parseInt(document.getElementById('withdrawAmount').value); let accountVal = document.getElementById('paymentAccount').value.trim(); if(amt < 90000) { showStatus("Minimum 90,000 PEPE","error"); return; } if((userData.balance||0) < amt) { showStatus("Insufficient balance","error"); return; } if((userData.referrals||[]).length < 3) { showStatus("Need 3 referrals","error"); return; } let fee = Math.floor(amt*0.1), net=amt-fee; let wid = { id:Date.now(), withdrawId:'WD-'+Date.now().toString().slice(-8), amount:amt, fee, netAmount:net, method:window.selectedMethod==='binance'?'Binance':(window.selectedMethod==='bkash'?'bKash':'Nagad'), account:accountVal, status:'pending', date:Date.now() }; await updateUser({ balance:(userData.balance||0)-amt, withdrawalHistory:[...(userData.withdrawalHistory||[]), wid] }); document.getElementById('withdrawSuccessDetails').innerHTML = `<div>ID: ${wid.withdrawId}</div><div>Amount: ${amt} PEPE</div><div>Net: ${net} PEPE</div>`; document.getElementById('withdrawSuccessModal').classList.add('active'); refreshUI(); }
     function updateWithdrawReq() { let bal = userData?.balance||0, refs = userData?.referrals?.length||0; document.getElementById('reqCheck1').innerHTML = bal>=90000 ? '✓' : '○'; document.getElementById('reqCheck2').innerHTML = refs>=3 ? '✓' : '○'; document.getElementById('submitWithdrawBtn').disabled = !(bal>=90000 && refs>=3); }
     function displayWithdrawHistory() { let hist = userData?.withdrawalHistory||[]; document.getElementById('historyList').innerHTML = hist.length ? hist.slice().reverse().map(w=>`<div class="withdrawal-history-card"><div><strong>${w.withdrawId}</strong> <span>${w.status}</span></div><div>${w.amount} PEPE</div><div>${w.method}</div><small>${new Date(w.date).toLocaleString()}</small></div>`).join('') : '<div>No withdrawals</div>'; }
-    async function applyReferralBonus(code) { if(!code || userData.referredBy) return false; const snap = await db.ref('users').orderByChild('referralCode').equalTo(code).once('value'); if(!snap.exists()) { alert('Invalid code'); return false; } const referrerId = Object.keys(snap.val())[0]; if(referrerId === telegramId) { alert('Cannot use own'); return false; } await updateUser({ referredBy:referrerId, referralBonusApplied:true, balance:(userData.balance||0)+167, totalEarned:(userData.totalEarned||0)+167, referralBonusEarned:(userData.referralBonusEarned||0)+167 }); await addEarningEntry('referral',167,'Referral bonus (+167 PEPE)'); const referrer = await db.ref(`users/${referrerId}`).once('value'); if(referrer.exists()){ let refs = referrer.val().referrals||[]; if(!refs.some(r=>r.id===telegramId)) refs.push({ id:telegramId, username:telegramUsername, bonus:167 }); await db.ref(`users/${referrerId}`).update({ referrals:refs, referralBonusEarned:(referrer.val().referralBonusEarned||0)+167, balance:(referrer.val().balance||0)+167, totalEarned:(referrer.val().totalEarned||0)+167 }); await db.ref(`users/${referrerId}/earningsHistory`).push({ id:Date.now(), type:'referral', amount:167, description:`Referral from ${telegramUsername} (+167 PEPE)`, date:Date.now() }); } showStatus('+167 PEPE!','success'); return true; }
+    async function applyReferralBonus(code) { if(!code || userData.referredBy) return false; const snap = await db.ref('users').orderByChild('referralCode').equalTo(code).once('value'); if(!snap.exists()) { alert('Invalid code'); return false; } const referrerId = Object.keys(snap.val())[0]; if(referrerId === telegramId) { alert('Cannot use own'); return false; } await updateUser({ referredBy:referrerId, referralBonusApplied:true, balance:(userData.balance||0)+167, totalEarned:(userData.totalEarned||0)+167, referralBonusEarned:(userData.referralBonusEarned||0)+167 }); await addEarningEntry(167, 'Referral bonus (+167 PEPE)'); const referrer = await db.ref(`users/${referrerId}`).once('value'); if(referrer.exists()){ let refs = referrer.val().referrals||[]; if(!refs.some(r=>r.id===telegramId)) refs.push({ id:telegramId, username:telegramUsername, bonus:167 }); await db.ref(`users/${referrerId}`).update({ referrals:refs, referralBonusEarned:(referrer.val().referralBonusEarned||0)+167, balance:(referrer.val().balance||0)+167, totalEarned:(referrer.val().totalEarned||0)+167 }); await db.ref(`users/${referrerId}/earningsHistory`).push({ id:Date.now(), amount:167, description:`Referral from ${telegramUsername} (+167 PEPE)`, date:Date.now() }); } showStatus('+167 PEPE!','success'); return true; }
 
     function refreshUI() { if(!userData) return; document.getElementById('balanceAmount').innerText = (userData.balance||0).toFixed(0); document.getElementById('tasksCompletedCount').innerText = (userData.tasksCompleted||0); document.getElementById('refCount').innerText = (userData.referrals?.length||0); document.getElementById('totalWithdrawalsCount').innerText = (userData.withdrawalHistory||[]).length; document.getElementById('withdrawBalance').innerText = (userData.balance||0).toFixed(0); document.getElementById('referralCodeDisplay').innerHTML = userData.referralCode||''; document.getElementById('referralBonusTotal').innerText = (userData.referralBonusEarned||0).toFixed(0); updateWithdrawReq(); let amt = parseInt(document.getElementById('withdrawAmount')?.value)||0; let fee = Math.floor(amt*0.1); document.getElementById('wdAmount').innerText = `${amt} PEPE`; document.getElementById('wdFee').innerText = `${fee} PEPE`; document.getElementById('wdNet').innerText = `${amt-fee} PEPE`; displayWithdrawHistory(); renderReferrals(); renderEarnHistory(); renderAdsUI('ads1Progress',20,230); renderAdsUI('ads2Progress',20,230); renderAdsUI('ads3Progress',20,230); renderAdsUI('ads4Progress',20,230); renderAdsUI('ads5Progress',5,40); updateTotalAdsStats(); if(userData.turboMinerClaimed && document.getElementById('oneTimeTaskContainer')) document.getElementById('oneTimeTaskContainer').remove(); if(userData.youtubeSubClaimed && document.getElementById('youtubeTaskContainer')) document.getElementById('youtubeTaskContainer').remove(); if(userData.specialTaskSubmission1 && document.getElementById('specialTaskContainer1')) document.getElementById('specialTaskContainer1').remove(); renderPendingHistory(); }
     function renderReferrals() { let refs = userData?.referrals||[]; document.getElementById('referralsList').innerHTML = refs.length ? refs.map(r=>`<div class="friend-card"><span>${r.username}</span><span>+${r.bonus} PEPE</span></div>`).join('') : '<div class="small-text">No referrals</div>'; }
@@ -862,13 +778,12 @@
         let history = userData?.earningsHistory || [];
         const container = document.getElementById('earnHistoryList');
         if(!history.length) { container.innerHTML = '<div class="empty-history">No earnings yet.</div>'; return; }
-        container.innerHTML = history.map(h => `<div class="history-item"><div><div class="history-desc">${h.description || `${h.type} earning`}</div><div class="history-date">${new Date(h.date).toLocaleString()}</div></div><div class="history-amount">+${h.amount} PEPE</div></div>`).join('');
+        container.innerHTML = history.map(h => `<div class="history-item"><div><div class="history-desc">${h.description || 'Earned'}</div><div class="history-date">${new Date(h.date).toLocaleString()}</div></div><div class="history-amount">+${h.amount} PEPE</div></div>`).join('');
     }
 
     async function initUser() { let data=await fetchUserData(); if(!data){ const refCode=telegramUsername.slice(0,4).toUpperCase()+Math.random().toString(36).substr(2,5).toUpperCase(); const newUser={ username:telegramUsername, telegramId, balance:0, totalEarned:0, referralBonusEarned:0, referrals:[], referralCode:refCode, referredBy:null, referralBonusApplied:false, tasksCompleted:0, withdrawalHistory:[], earningsHistory:[], ads1Progress:0, ads2Progress:0, ads3Progress:0, ads4Progress:0, ads5Progress:0, turboMinerClaimed:false, youtubeSubClaimed:false, specialTaskSubmission1: null, cpmSubmission: null, lastCpmSubmission: 0, gmailSubmission: null, lastGmailSubmission: 0, gmailPending: null }; await db.ref(`users/${telegramId}`).set(newUser); data=newUser; } userData=data; if(userData.ads1Progress===undefined) await updateUser({ ads1Progress:0, ads2Progress:0, ads3Progress:0, ads4Progress:0, ads5Progress:0, turboMinerClaimed:false, youtubeSubClaimed:false }); if(!userData.earningsHistory) await updateUser({ earningsHistory:[] }); if(!userData.referralBonusApplied) document.getElementById('referralCodeModal').style.display='flex'; else proceedToApp(); }
     function proceedToApp() { document.getElementById('referralCodeModal').style.display='none'; refreshUI(); db.ref(`users/${telegramId}`).on('value', snap=>{ if(snap.exists()){ userData=snap.val(); refreshUI(); } }); }
 
-    // Navigation and event bindings (same as before, omitted for brevity but fully functional)
     function switchSection(id) { document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); if(id==='homeSection') document.getElementById('navHome').classList.add('active'); else if(id==='earnSection') document.getElementById('navEarn').classList.add('active'); else if(id==='earningSection') document.getElementById('navEarning').classList.add('active'); else if(id==='cashoutSection') document.getElementById('navCashout').classList.add('active'); else if(id==='referralSection') document.getElementById('navReferral').classList.add('active'); }
     document.getElementById('navHome').onclick=()=>switchSection('homeSection');
     document.getElementById('navEarn').onclick=()=>switchSection('earnSection');
@@ -914,8 +829,6 @@
     window.selectedMethod=selectedMethod;
     document.getElementById('adminTrigger').onclick=showAdminPanel;
     document.getElementById('closeAdminModal').onclick=()=>document.getElementById('adminModal').classList.remove('active');
-    
-    // Loading screen 5 secs
     let loadPercent = 0; const loadInterval = setInterval(() => { loadPercent++; document.getElementById('loadingFill').style.width = loadPercent + '%'; document.getElementById('loadingPercent').innerText = loadPercent + '%'; if (loadPercent >= 100) { clearInterval(loadInterval); initUser().catch(e=>{ console.error(e); document.getElementById('loadingStep').innerText='Retrying...'; setTimeout(()=>location.reload(),1500); }).finally(()=>{ setTimeout(()=>{ document.getElementById('loadingScreen').classList.add('hidden'); document.getElementById('mainApp').style.display='block'; }, 300); }); } }, 50);
 </script>
 </body>
