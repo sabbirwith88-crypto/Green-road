@@ -1,39 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Telegram Ads Demo</title>
-</head>
-<body>
+  <meta charset="UTF-8">
+  <title>Telegram Ads App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<button id="startBtn">Start</button>
-
-<script src="https://telegram.org/js/telegram-web-app.js?62"></script>
-
-<script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-<script>
-window.TelegramAdsController = new TelegramAdsController();
-
-window.TelegramAdsController.initialize({
-    pubId: "1008310",
-    appId: "7019",
-});
-
-document.getElementById("startBtn").addEventListener("click", function () {
-
-    if (window.TelegramAdsController) {
-
-        // Ad Show
-        window.TelegramAdsController.showAd();
-
-        // Ad শেষ হওয়ার পর যা করতে চাও
-        setTimeout(() => {
-            alert("Ad Finished");
-        }, 3000);
-
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding-top: 80px;
     }
 
-});
-</script>
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #22c55e;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .box {
+      margin-top: 30px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Earn App</h2>
+
+  <button onclick="startApp()">Start</button>
+
+  <div class="box" id="status">Click Start to continue</div>
+
+  <!-- Telegram WebApp -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- RichInfo Ads SDK -->
+  <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
+
+  <script>
+    // Telegram init
+    if (window.Telegram && Telegram.WebApp) {
+      Telegram.WebApp.ready();
+    }
+
+    // Ads init (ONLY ONCE)
+    window.TelegramAdsController = new TelegramAdsController();
+
+    window.TelegramAdsController.initialize({
+      pubId: "1008310",
+      appId: "7019",
+      onReady: function () {
+        console.log("Ads Ready");
+        document.getElementById("status").innerText = "Ads loaded successfully";
+      },
+      onError: function (err) {
+        console.log("Ads Error", err);
+        document.getElementById("status").innerText = "Ads failed to load";
+      }
+    });
+
+    function startApp() {
+      document.getElementById("status").innerText = "Loading Ad...";
+
+      try {
+        if (window.TelegramAdsController) {
+
+          // Try show ad (depends on SDK support)
+          if (typeof window.TelegramAdsController.showAd === "function") {
+            window.TelegramAdsController.showAd();
+          } else {
+            console.log("showAd not supported in this SDK version");
+          }
+
+          // simulate reward after delay
+          setTimeout(() => {
+            document.getElementById("status").innerText = "You earned reward!";
+          }, 3000);
+        }
+      } catch (e) {
+        console.log(e);
+        document.getElementById("status").innerText = "Error showing ad";
+      }
+    }
+  </script>
 
 </body>
 </html>
