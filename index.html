@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <!-- Monetag SDK for Ads 1 -->
     <script src='//libtl.com/sdk.js' data-zone='11031831' data-sdk='show_11031831'></script>
-    <!-- Adsgram SDK for Ads 2 (FIXED - using a more reliable block ID) -->
+    <!-- Adsgram SDK for Ads 2 -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Adexora SDK for Ads 3 -->
     <script src="https://adexora.com/cdn/ads.js?id=1963"></script>
@@ -631,15 +631,13 @@
             <div class="section-header"><div></div><div class="support-icon" id="supportIconHome"><i class="fas fa-headset"></i></div></div>
             <div class="balance-card"><div style="font-weight:500;">YOUR BALANCE</div><div class="balance-amount" id="balanceAmount">0</div><div class="small-text">PEPE</div></div>
             <div class="stats-grid"><div class="stat-card"><div class="stat-value" id="refCount">0</div><div class="stat-label">Referrals</div></div><div class="stat-card"><div class="stat-value" id="tasksCompletedCount">0</div><div class="stat-label">Tasks Done</div></div><div class="stat-card"><div class="stat-value" id="totalWithdrawalsCount">0</div><div class="stat-label">Withdrawals</div></div></div>
-            
-            <!-- 6 RULES as requested -->
             <div class="rules-box">
                 <h4><i class="fas fa-gavel"></i> Platform Rules</h4>
                 <div class="rule-item"><i class="fas fa-check-circle"></i> <span>1. You must be 18+ to use this platform.</span></div>
                 <div class="rule-item"><i class="fas fa-check-circle"></i> <span>2. Work honestly; any cheating or fake activities will lead to permanent ban.</span></div>
                 <div class="rule-item"><i class="fas fa-check-circle"></i> <span>3. Minimum withdrawal: 90,000 PEPE.</span></div>
                 <div class="rule-item"><i class="fas fa-check-circle"></i> <span>4. You need at least 3 active referrals to withdraw.</span></div>
-                <div class="rule-item"><i class="fas fa-check-circle"></i> <span>5. Ads can be watched up to 20 times each (230 PEPE per ad).</span></div>
+                <div class="rule-item"><i class="fas fa-check-circle"></i> <span>5. Ads can be watched 20 times per day (Ads 1-4) and 5 times per day (Ad5). Daily reset at 00:00 UTC.</span></div>
                 <div class="rule-item"><i class="fas fa-check-circle"></i> <span>6. One-time tasks are limited to once per user; special tasks reviewed by admin within 24-48 hours.</span></div>
             </div>
         </div>
@@ -647,13 +645,13 @@
         <!-- EARN SECTION -->
         <div id="earnSection" class="content-section">
             <div class="section-header"><div class="back-button" id="earnBackBtn"><span>←</span> Back</div><div class="support-icon" id="supportIconEarn"><i class="fas fa-headset"></i></div></div>
-            <div class="task-card"><div class="task-header"><span class="task-title">📺 Ads 1 (Monetag)</span><span class="task-reward">+230 PEPE</span></div><div class="task-desc">Watch ad to earn 230 PEPE. Max 20 times.</div><div class="progress-container"><div class="progress-label"><span>Progress</span><span id="ads1Percent">0%</span></div><div class="progress-bar-bg"><div class="progress-fill" id="ads1Fill"></div></div><div class="completion-stats" id="ads1Stats">0 / 20</div></div><button id="ads1Btn" class="task-btn">Claim 230 PEPE (Watch Ad)</button></div>
-            <div class="task-card"><div class="task-header"><span class="task-title">📺 Ads 2 (Adsgram - Fixed)</span><span class="task-reward">+230 PEPE</span></div><div class="task-desc">Watch ad to earn 230 PEPE. Max 20 times.</div><div class="progress-container"><div class="progress-label"><span>Progress</span><span id="ads2Percent">0%</span></div><div class="progress-bar-bg"><div class="progress-fill" id="ads2Fill"></div></div><div class="completion-stats" id="ads2Stats">0 / 20</div></div><button id="ads2Btn" class="task-btn">Claim 230 PEPE (Watch Ad)</button></div>
-            <div class="task-card"><div class="task-header"><span class="task-title">📺 Ads 3 (Adexora)</span><span class="task-reward">+230 PEPE</span></div><div class="task-desc">Watch ad to earn 230 PEPE. Max 20 times.</div><div class="progress-container"><div class="progress-label"><span>Progress</span><span id="ads3Percent">0%</span></div><div class="progress-bar-bg"><div class="progress-fill" id="ads3Fill"></div></div><div class="completion-stats" id="ads3Stats">0 / 20</div></div><button id="ads3Btn" class="task-btn">Claim 230 PEPE (Watch Ad)</button></div>
-            <div class="task-card"><div class="task-header"><span class="task-title">📺 Ads 4 (Giga Pub)</span><span class="task-reward">+230 PEPE</span></div><div class="task-desc">Watch ad to earn 230 PEPE. Max 20 times.</div><div class="progress-container"><div class="progress-label"><span>Progress</span><span id="ads4Percent">0%</span></div><div class="progress-bar-bg"><div class="progress-fill" id="ads4Fill"></div></div><div class="completion-stats" id="ads4Stats">0 / 20</div></div><button id="ads4Btn" class="task-btn">Claim 230 PEPE (Watch Ad)</button></div>
-            <div class="task-card"><div class="task-header"><span class="task-title">📺 Ads 5 (Quick Visit)</span><span class="task-reward">+40 PEPE</span></div><div class="task-desc">Click to open link – when you come back, 40 PEPE credited automatically. Max 5 times.</div><div class="progress-container"><div class="progress-label"><span>Progress</span><span id="ads5Percent">0%</span></div><div class="progress-bar-bg"><div class="progress-fill" id="ads5Fill"></div></div><div class="completion-stats" id="ads5Stats">0 / 5</div></div><button id="ads5Btn" class="task-btn">Claim 40 PEPE</button></div>
-            <div class="stats-box"><div class="stats-box-title">📺 Total Ads Watched</div><div class="stats-box-value" id="totalAdsCount">0</div></div>
-            <div class="stats-box"><div class="stats-box-title">💰 PEPE Earned from Ads</div><div class="stats-box-value" id="totalAdsEarned">0</div></div>
+            <div class="task-card"><div class="task-header"><span class="task-title">📺 Ads 1 (Monetag)</span><span class="task-reward">+230 PEPE</span></div><div class="task-desc">Watch ad to earn 230 PEPE. Max 20 times per day (resets daily).</div><div class="progress-container"><div class="progress-label"><span>Today's Progress</span><span id="ads1Percent">0%</span></div><div class="progress-bar-bg"><div class="progress-fill" id="ads1Fill"></div></div><div class="completion-stats" id="ads1Stats">0 / 20 today</div></div><button id="ads1Btn" class="task-btn">Claim 230 PEPE (Watch Ad)</button></div>
+            <div class="task-card"><div class="task-header"><span class="task-title">📺 Ads 2 (Adsgram - Fixed)</span><span class="task-reward">+230 PEPE</span></div><div class="task-desc">Watch ad to earn 230 PEPE. Max 20 times per day (resets daily).</div><div class="progress-container"><div class="progress-label"><span>Today's Progress</span><span id="ads2Percent">0%</span></div><div class="progress-bar-bg"><div class="progress-fill" id="ads2Fill"></div></div><div class="completion-stats" id="ads2Stats">0 / 20 today</div></div><button id="ads2Btn" class="task-btn">Claim 230 PEPE (Watch Ad)</button></div>
+            <div class="task-card"><div class="task-header"><span class="task-title">📺 Ads 3 (Adexora)</span><span class="task-reward">+230 PEPE</span></div><div class="task-desc">Watch ad to earn 230 PEPE. Max 20 times per day (resets daily).</div><div class="progress-container"><div class="progress-label"><span>Today's Progress</span><span id="ads3Percent">0%</span></div><div class="progress-bar-bg"><div class="progress-fill" id="ads3Fill"></div></div><div class="completion-stats" id="ads3Stats">0 / 20 today</div></div><button id="ads3Btn" class="task-btn">Claim 230 PEPE (Watch Ad)</button></div>
+            <div class="task-card"><div class="task-header"><span class="task-title">📺 Ads 4 (Giga Pub)</span><span class="task-reward">+230 PEPE</span></div><div class="task-desc">Watch ad to earn 230 PEPE. Max 20 times per day (resets daily).</div><div class="progress-container"><div class="progress-label"><span>Today's Progress</span><span id="ads4Percent">0%</span></div><div class="progress-bar-bg"><div class="progress-fill" id="ads4Fill"></div></div><div class="completion-stats" id="ads4Stats">0 / 20 today</div></div><button id="ads4Btn" class="task-btn">Claim 230 PEPE (Watch Ad)</button></div>
+            <div class="task-card"><div class="task-header"><span class="task-title">📺 Ads 5 (Quick Visit)</span><span class="task-reward">+40 PEPE</span></div><div class="task-desc">Click to open link – when you come back, 40 PEPE credited. Max 5 times per day (resets daily).</div><div class="progress-container"><div class="progress-label"><span>Today's Progress</span><span id="ads5Percent">0%</span></div><div class="progress-bar-bg"><div class="progress-fill" id="ads5Fill"></div></div><div class="completion-stats" id="ads5Stats">0 / 5 today</div></div><button id="ads5Btn" class="task-btn">Claim 40 PEPE</button></div>
+            <div class="stats-box"><div class="stats-box-title">📺 Total Ads Watched (Lifetime)</div><div class="stats-box-value" id="totalAdsCount">0</div></div>
+            <div class="stats-box"><div class="stats-box-title">💰 PEPE Earned from Ads (Lifetime)</div><div class="stats-box-value" id="totalAdsEarned">0</div></div>
         </div>
 
         <!-- EARNING SECTION -->
@@ -662,7 +660,6 @@
             <div id="oneTimeTaskContainer"><div class="task-card one-time-task"><div class="task-header"><span class="task-title">⛏️ Join USDT Turbo Miner</span><span class="task-reward">+500 PEPE</span></div><div class="task-desc">Open bot & verify to get 500 PEPE one-time.</div><button id="openBotBtn" class="task-btn" style="background:#f59e0b;">🚀 Start & Open Bot</button><button id="verifyOneTimeBtn" class="task-btn" style="background:#10b981; margin-top:8px;" disabled>Verify & Claim</button></div></div>
             <div id="youtubeTaskContainer"><div class="task-card one-time-task"><div class="task-header"><span class="task-title">📺 Subscribe Earn Viu Official</span><span class="task-reward">+500 PEPE</span></div><div class="task-desc">Subscribe to our YouTube channel and get 500 PEPE one-time.</div><button id="openYoutubeBtn" class="task-btn" style="background:#f59e0b;">🔔 Open Channel</button><button id="verifyYoutubeBtn" class="task-btn" style="background:#10b981; margin-top:8px;" disabled>Verify & Claim</button></div></div>
             
-            <!-- TG Channel Task (Reward 500) -->
             <div id="tgChannelTaskContainer" class="task-card one-time-task">
                 <div class="task-header"><span class="task-title">📢 Join Earn Viu Official TG Channel</span><span class="task-reward">+500 PEPE</span></div>
                 <div class="task-desc">Join our Telegram channel to get 500 PEPE one-time.</div>
@@ -670,7 +667,6 @@
                 <button id="verifyTgChannelBtn" class="task-btn" style="background:#10b981; margin-top:8px;" disabled>Verify & Claim</button>
             </div>
             
-            <!-- Wood Rush Bot Task (Reward 500) -->
             <div id="woodRushTaskContainer" class="task-card one-time-task">
                 <div class="task-header"><span class="task-title">🌲 Join Wood Rush Bot</span><span class="task-reward">+500 PEPE</span></div>
                 <div class="task-desc">Start the Wood Rush bot and get 500 PEPE one-time.</div>
@@ -678,7 +674,6 @@
                 <button id="verifyWoodRushBtn" class="task-btn" style="background:#10b981; margin-top:8px;" disabled>Verify & Claim</button>
             </div>
 
-            <!-- Special 3-Step Task (Code) reward 800 PEPE -->
             <div id="specialTaskContainer1"><div class="task-card"><div class="task-header"><span class="task-title">⭐ Special 3-Step Task (Code)</span><span class="task-reward">+800 PEPE (admin approval)</span><button class="howto-btn" id="howtoSpecial1Btn"><i class="fab fa-youtube"></i> How to do</button></div><div class="task-desc">Complete steps and submit your 10-digit referral ID. Reward after admin review. Removes permanently.</div><div style="margin: 15px 0;"><strong>Step 1:</strong> Open the bot below</div><button id="openTrustBotBtn" class="task-btn" style="background:#3b82f6;">🔗 Open Trust Bot</button><div style="margin: 15px 0;"><strong>Step 2:</strong> Use this referral code</div><div style="display: flex; gap:10px;"><input type="text" id="refCodeDisplay" value="LMNxAAE5C0CA" readonly style="flex:1; padding:12px; border-radius:40px; border:1px solid #cbd5e1; background:#f8fafc;"><button id="copyRefCodeBtn" class="btn-primary" style="padding:12px 20px;">Copy</button></div><div style="margin: 15px 0;"><strong>Step 3:</strong> Enter your 10-digit referral ID (not code)</div><input type="text" id="referralIdInput" class="form-input" placeholder="e.g., 1234567890" maxlength="10"><button id="submitSpecialTaskBtn" class="task-btn" style="background:#8b5cf6;">📤 Submit for Review</button><div id="specialTaskStatus1" class="small-text"></div></div></div>
             
             <div id="specialTaskContainer2"><div class="task-card" id="cpmTaskCard"><div class="task-header"><span class="task-title">🎯 Special 3-Step Task (CPM)</span><span class="task-reward">+10,000 PEPE (admin approval)</span><button class="howto-btn" id="howtoSpecial2Btn"><i class="fab fa-youtube"></i> How to do</button></div><div class="task-desc">Complete steps, screen record, send to admin with your Telegram username. Reappears every 2 days.</div><div style="margin: 15px 0;"><strong>Step 1:</strong> Open the website and click 2-3 times</div><button id="openCpmLinkBtn" class="task-btn" style="background:#3b82f6;">🌐 Open CPM Website</button><div style="margin: 15px 0;"><strong>Step 2 & 3:</strong> Install the app, create account, screen record your process</div><div style="margin: 15px 0;"><strong>Submit:</strong> Send the screen recording to admin via Telegram</div><div style="display: flex; gap:10px; margin: 15px 0;"><button id="contactAdminBtn" class="task-btn" style="background:#1e293b;">📩 Contact Admin</button></div><div style="margin: 15px 0;"><strong>Your Telegram Username:</strong></div><input type="text" id="cpmUsernameInput" class="form-input" placeholder="e.g., @username" value="@"><button id="submitCpmTaskBtn" class="task-btn" style="background:#8b5cf6;">✅ Submit Task</button><div id="cpmTaskStatus" class="small-text"></div><div id="cpmCooldown" class="cooldown-text"></div></div></div>
@@ -750,66 +745,123 @@
     function showStatus(msg,type) { let el=document.getElementById('homeStatusMessage'); if(!el){ el=document.createElement('div'); el.id='homeStatusMessage'; el.className='status-message'; document.getElementById('homeSection')?.prepend(el); } el.style.display='block'; el.className=`status-message status-${type}`; el.innerHTML=msg; setTimeout(()=>el.style.display='none',4000); }
     function applyCooldown(btn, seconds = 8) { if (!btn) return; const originalText = btn.innerHTML; btn.disabled = true; let remaining = seconds; const interval = setInterval(() => { remaining--; if (remaining <= 0) { clearInterval(interval); btn.disabled = false; btn.innerHTML = originalText; } else { btn.innerHTML = `Wait ${remaining}s`; } }, 1000); }
 
-    // ---------- ADS (complete implementations) ----------
-    async function completeAds1() { let prog = userData?.ads1Progress || 0; if(prog >= 20) { showStatus("Ads 1 fully completed!","error"); return; } const btn = document.getElementById('ads1Btn'); if (typeof show_11031831 === 'function') { try { await show_11031831(); window.open('https://omg10.com/4/10686606', '_blank'); const reward = 230; const newProg = prog + 1; await updateUser({ ads1Progress: newProg, balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: (userData.tasksCompleted||0)+1 }); await addEarningEntry('ads', reward, `Ads 1 (+${reward} PEPE) - ${newProg}/20`); showToast(reward, "Ads 1"); renderAdsUI('ads1Progress', 20, 230); updateTotalAdsStats(); applyCooldown(btn,8); } catch(e) { showStatus("Ad failed","error"); } } else { showStatus("SDK loading...","error"); } }
-    
-    // FIXED ADSGRAM IMPLEMENTATION - more robust
-    async function completeAds2() {
-        let prog = userData?.ads2Progress || 0;
-        if(prog >= 20) { showStatus("Ads 2 fully completed!","error"); return; }
-        const btn = document.getElementById('ads2Btn');
-        // Wait for Adsgram to be available
-        if (typeof window.Adsgram === 'undefined') {
-            showStatus("Ad system loading, please wait a moment...", "error");
-            // Retry after 1 second
-            setTimeout(() => completeAds2(), 1000);
-            return;
-        }
-        try {
-            // Initialize with correct block ID (using a known working test block or the one provided)
-            // Note: blockId "30645" is a test block from Adsgram documentation
-            const adController = window.Adsgram.init({ 
-                blockId: "30645",
-                debug: false
-            });
-            const result = await adController.show();
-            if (result && result.done === true) {
-                const reward = 230;
-                const newProg = prog + 1;
-                await updateUser({ 
-                    ads2Progress: newProg, 
-                    balance: (userData.balance||0) + reward, 
-                    totalEarned: (userData.totalEarned||0) + reward, 
-                    tasksCompleted: (userData.tasksCompleted||0) + 1 
-                });
-                await addEarningEntry('ads', reward, `Ads 2 (+${reward} PEPE) - ${newProg}/20`);
-                showToast(reward, "Ads 2");
-                renderAdsUI('ads2Progress', 20, 230);
-                updateTotalAdsStats();
-                applyCooldown(btn, 8);
-            } else {
-                showStatus("Ad was not completed properly", "error");
-            }
-        } catch(e) {
-            console.error("Adsgram error:", e);
-            showStatus("Ad error: " + (e.message || "unknown error"), "error");
+    // Daily reset logic
+    function isSameDay(timestamp1, timestamp2) {
+        const d1 = new Date(timestamp1);
+        const d2 = new Date(timestamp2);
+        return d1.getUTCFullYear() === d2.getUTCFullYear() &&
+               d1.getUTCMonth() === d2.getUTCMonth() &&
+               d1.getUTCDate() === d2.getUTCDate();
+    }
+    async function checkAndResetDaily() {
+        const now = Date.now();
+        const lastReset = userData?.lastDailyReset || 0;
+        if (!isSameDay(now, lastReset)) {
+            // Reset all daily counters
+            const updates = {
+                ads1DailyCount: 0,
+                ads2DailyCount: 0,
+                ads3DailyCount: 0,
+                ads4DailyCount: 0,
+                ads5DailyCount: 0,
+                lastDailyReset: now
+            };
+            await updateUser(updates);
         }
     }
-    
-    async function completeAds3() { let prog = userData?.ads3Progress || 0; if(prog >= 20) { showStatus("Ads 3 completed!","error"); return; } const btn = document.getElementById('ads3Btn'); if (typeof window.showAdexora !== 'function') { showStatus("Adexora not ready","error"); return; } try { await window.showAdexora(); window.open('https://www.effectivecpmnetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d', '_blank'); const reward = 230; const newProg = prog + 1; await updateUser({ ads3Progress: newProg, balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: (userData.tasksCompleted||0)+1 }); await addEarningEntry('ads', reward, `Ads 3 (+${reward} PEPE) - ${newProg}/20`); showToast(reward, "Ads 3"); renderAdsUI('ads3Progress', 20, 230); updateTotalAdsStats(); applyCooldown(btn,8); } catch(e) { showStatus("Adexora error","error"); } }
-    async function completeAds4() { let prog = userData?.ads4Progress || 0; if(prog >= 20) { showStatus("Ads 4 completed!","error"); return; } const btn = document.getElementById('ads4Btn'); if (typeof window.showGiga === 'undefined') { showStatus("Giga Pub not ready","error"); return; } try { await window.showGiga(); window.open('https://link.gigapub.tech/l/9jfxp27o6m', '_blank'); const reward = 230; const newProg = prog + 1; await updateUser({ ads4Progress: newProg, balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: (userData.tasksCompleted||0)+1 }); await addEarningEntry('ads', reward, `Ads 4 (+${reward} PEPE) - ${newProg}/20`); showToast(reward, "Ads 4"); renderAdsUI('ads4Progress', 20, 230); updateTotalAdsStats(); applyCooldown(btn,8); } catch(e) { showStatus("Giga error","error"); } }
-    let ads5Pending = false; async function startAds5() { let prog = userData?.ads5Progress || 0; if(prog >= 5) { showStatus("Ads 5 max 5 times","error"); return; } const btn = document.getElementById('ads5Btn'); ads5Pending = true; window.open('https://www.effectivecpmnetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d', '_blank'); document.addEventListener('visibilitychange', onVisibilityChange); applyCooldown(btn,8); } async function onVisibilityChange() { if (!ads5Pending) return; if (document.visibilityState === 'visible') { document.removeEventListener('visibilitychange', onVisibilityChange); let prog = userData?.ads5Progress || 0; if(prog >= 5) { ads5Pending = false; return; } const reward = 40; const newProg = prog+1; await updateUser({ ads5Progress: newProg, balance: (userData.balance||0)+reward, totalEarned: (userData.totalEarned||0)+reward, tasksCompleted: (userData.tasksCompleted||0)+1 }); await addEarningEntry('ads', reward, `Ads 5 (+${reward} PEPE) - ${newProg}/5`); showToast(reward, "Ads 5"); renderAdsUI('ads5Progress', 5, 40); updateTotalAdsStats(); ads5Pending = false; showStatus("+40 PEPE credited!","success"); } }
-    function renderAdsUI(key, limit, reward) { let prog = userData[key]||0; let fill = document.getElementById(key.replace('Progress','Fill')); if(fill) fill.style.width = (prog/limit)*100+'%'; let perc = document.getElementById(key.replace('Progress','Percent')); if(perc) perc.innerText = Math.floor((prog/limit)*100)+'%'; let stats = document.getElementById(key.replace('Progress','Stats')); if(stats) stats.innerText = `${prog}/${limit}`; let btnId = key==='ads1Progress'?'ads1Btn':key==='ads2Progress'?'ads2Btn':key==='ads3Progress'?'ads3Btn':(key==='ads4Progress'?'ads4Btn':'ads5Btn'); let btn = document.getElementById(btnId); if(btn){ if(prog>=limit){ btn.disabled=true; btn.innerHTML='✓ Completed'; btn.classList.add('completed'); } else { btn.disabled=false; if(key!=='ads5Progress') btn.innerHTML=`Claim ${reward} PEPE (Watch Ad)`; else btn.innerHTML=`Claim ${reward} PEPE`; } } }
-    function updateTotalAdsStats() { const total = (userData?.ads1Progress||0)+(userData?.ads2Progress||0)+(userData?.ads3Progress||0)+(userData?.ads4Progress||0)+(userData?.ads5Progress||0); const earned = (userData?.ads1Progress||0)*230 + (userData?.ads2Progress||0)*230 + (userData?.ads3Progress||0)*230 + (userData?.ads4Progress||0)*230 + (userData?.ads5Progress||0)*40; if(document.getElementById('totalAdsCount')) document.getElementById('totalAdsCount').innerText = total; if(document.getElementById('totalAdsEarned')) document.getElementById('totalAdsEarned').innerText = earned; }
 
-    // One-time tasks
+    // Ad completion with daily limit
+    async function completeAd(adKey, limit, reward, adName, adFunction) {
+        await checkAndResetDaily();
+        const dailyCount = userData[`${adKey}DailyCount`] || 0;
+        if (dailyCount >= limit) {
+            showStatus(`You have reached today's limit (${limit}/${limit}) for ${adName}. Come back tomorrow!`, "error");
+            return;
+        }
+        const btn = document.getElementById(`${adKey}Btn`);
+        // Execute ad function (external SDK call)
+        let adSuccess = false;
+        try {
+            adSuccess = await adFunction();
+        } catch(e) {
+            showStatus(`Ad error: ${e.message}`, "error");
+            return;
+        }
+        if (!adSuccess) return;
+        
+        const newDaily = dailyCount + 1;
+        const updates = {
+            [`${adKey}DailyCount`]: newDaily,
+            balance: (userData.balance||0) + reward,
+            totalEarned: (userData.totalEarned||0) + reward,
+            tasksCompleted: (userData.tasksCompleted||0) + 1,
+            totalAdsWatched: (userData.totalAdsWatched||0) + 1,
+            totalAdsEarned: (userData.totalAdsEarned||0) + reward
+        };
+        await updateUser(updates);
+        await addEarningEntry('ads', reward, `${adName} (+${reward} PEPE) - ${newDaily}/${limit} today`);
+        showToast(reward, adName);
+        renderAdsUI(adKey, limit, reward);
+        updateTotalAdsStats();
+        applyCooldown(btn, 8);
+    }
+
+    // Individual ad functions (return promise)
+    function showMonetag() { return new Promise(async (resolve) => { if (typeof show_11031831 === 'function') { try { await show_11031831(); window.open('https://omg10.com/4/10686606', '_blank'); resolve(true); } catch(e) { resolve(false); } } else { resolve(false); } }); }
+    function showAdsgram() { return new Promise(async (resolve) => { if (typeof window.Adsgram === 'undefined') { resolve(false); return; } try { const controller = window.Adsgram.init({ blockId: "30645", debug: false }); const result = await controller.show(); resolve(result && result.done === true); } catch(e) { resolve(false); } }); }
+    function showAdexora() { return new Promise(async (resolve) => { if (typeof window.showAdexora === 'function') { try { await window.showAdexora(); window.open('https://www.effectivecpmnetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d', '_blank'); resolve(true); } catch(e) { resolve(false); } } else { resolve(false); } }); }
+    function showGiga() { return new Promise(async (resolve) => { if (typeof window.showGiga === 'function') { try { await window.showGiga(); window.open('https://link.gigapub.tech/l/9jfxp27o6m', '_blank'); resolve(true); } catch(e) { resolve(false); } } else { resolve(false); } }); }
+    let ads5Pending = false;
+    function showQuickVisit() { return new Promise((resolve) => { let prog = userData?.ads5DailyCount || 0; if(prog >= 5) { resolve(false); return; } ads5Pending = true; window.open('https://www.effectivecpmnetwork.com/gewesnb5e?key=d5843587772f12547c46a6d88d3f7d7d', '_blank'); const handler = () => { if (ads5Pending && document.visibilityState === 'visible') { document.removeEventListener('visibilitychange', handler); ads5Pending = false; resolve(true); } }; document.addEventListener('visibilitychange', handler); setTimeout(() => { document.removeEventListener('visibilitychange', handler); if (ads5Pending) { ads5Pending = false; resolve(false); } }, 30000); }); }
+
+    // Wrapper functions for each ad
+    async function completeAds1() { await completeAd('ads1', 20, 230, 'Ads 1', showMonetag); }
+    async function completeAds2() { await completeAd('ads2', 20, 230, 'Ads 2', showAdsgram); }
+    async function completeAds3() { await completeAd('ads3', 20, 230, 'Ads 3', showAdexora); }
+    async function completeAds4() { await completeAd('ads4', 20, 230, 'Ads 4', showGiga); }
+    async function completeAds5() { await completeAd('ads5', 5, 40, 'Ads 5', showQuickVisit); }
+
+    function renderAdsUI(adKey, limit, reward) {
+        const dailyCount = userData?.[`${adKey}DailyCount`] || 0;
+        const percent = (dailyCount / limit) * 100;
+        const fillId = adKey.replace('ads', 'ads') + 'Fill';
+        const fillEl = document.getElementById(fillId);
+        if (fillEl) fillEl.style.width = percent + '%';
+        const percentId = adKey.replace('ads', 'ads') + 'Percent';
+        const percentEl = document.getElementById(percentId);
+        if (percentEl) percentEl.innerText = Math.floor(percent) + '%';
+        const statsId = adKey.replace('ads', 'ads') + 'Stats';
+        const statsEl = document.getElementById(statsId);
+        if (statsEl) statsEl.innerText = `${dailyCount} / ${limit} today`;
+        const btn = document.getElementById(`${adKey}Btn`);
+        if (btn) {
+            if (dailyCount >= limit) {
+                btn.disabled = true;
+                btn.innerHTML = '✓ Daily limit reached';
+                btn.classList.add('completed');
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = `Claim ${reward} PEPE (Watch Ad)`;
+                btn.classList.remove('completed');
+            }
+        }
+    }
+
+    function updateTotalAdsStats() {
+        const totalWatched = userData?.totalAdsWatched || 0;
+        const totalEarned = userData?.totalAdsEarned || 0;
+        if (document.getElementById('totalAdsCount')) document.getElementById('totalAdsCount').innerText = totalWatched;
+        if (document.getElementById('totalAdsEarned')) document.getElementById('totalAdsEarned').innerText = totalEarned;
+    }
+
+    // One-time tasks (unchanged)
     let botOpened = false, youtubeOpened = false, tgChannelOpened = false, woodRushOpened = false;
     async function verifyTurbo() { if(!botOpened) return; if(userData.turboMinerClaimed) return; const reward=500; await updateUser({ turboMinerClaimed:true, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1 }); await addEarningEntry('one_time',reward,'USDT Turbo Miner (+500 PEPE)'); showToast(reward,"Turbo Miner"); document.getElementById('oneTimeTaskContainer')?.remove(); }
     async function verifyYoutube() { if(!youtubeOpened) return; if(userData.youtubeSubClaimed) return; const reward=500; await updateUser({ youtubeSubClaimed:true, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1 }); await addEarningEntry('one_time',reward,'YouTube Subscribe (+500 PEPE)'); showToast(reward,"YouTube Subscribe"); document.getElementById('youtubeTaskContainer')?.remove(); }
     async function verifyTgChannel() { if(!tgChannelOpened) { showStatus("Please open the channel first", "error"); return; } if(userData.tgChannelClaimed) { showStatus("Already claimed", "error"); return; } const reward=500; await updateUser({ tgChannelClaimed:true, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1 }); await addEarningEntry('one_time',reward,'Joined TG Channel (+500 PEPE)'); showToast(reward,"TG Channel"); document.getElementById('tgChannelTaskContainer')?.remove(); }
     async function verifyWoodRush() { if(!woodRushOpened) { showStatus("Please open the bot first", "error"); return; } if(userData.woodRushClaimed) { showStatus("Already claimed", "error"); return; } const reward=500; await updateUser({ woodRushClaimed:true, balance:(userData.balance||0)+reward, totalEarned:(userData.totalEarned||0)+reward, tasksCompleted:(userData.tasksCompleted||0)+1 }); await addEarningEntry('one_time',reward,'Joined Wood Rush Bot (+500 PEPE)'); showToast(reward,"Wood Rush Bot"); document.getElementById('woodRushTaskContainer')?.remove(); }
 
-    // Special task submissions
+    // Special tasks (unchanged)
     async function submitSpecialTask1() { const referralId = document.getElementById('referralIdInput').value.trim(); if(!/^\d{10}$/.test(referralId)) { showStatus("Enter valid 10-digit ID","error"); return; } if(userData.specialTaskSubmission1) { showStatus("Already submitted","error"); return; } const submission = { id: Date.now(), userId: telegramId, referralId, status: 'pending', timestamp: Date.now(), type: 'special1' }; await db.ref(`specialSubmissions/${submission.id}`).set(submission); await updateUser({ specialTaskSubmission1: { id: submission.id, status: 'pending', referralId } }); showStatus("Submitted! Wait for admin.","success"); document.getElementById('specialTaskContainer1')?.remove(); renderPendingHistory(); }
     async function submitCpmTask() { const username = document.getElementById('cpmUsernameInput').value.trim(); if(!username.startsWith('@')) { showStatus("Valid @username","error"); return; } const now = Date.now(); if(userData.lastCpmSubmission && (now - userData.lastCpmSubmission) < 48*60*60*1000) { showStatus("Cooldown 2 days","error"); return; } const submission = { id: Date.now(), userId: telegramId, username, status: 'pending', timestamp: now, type: 'cpm' }; await db.ref(`specialSubmissions/${submission.id}`).set(submission); await updateUser({ cpmSubmission: { id: submission.id, status: 'pending', username, timestamp: now }, lastCpmSubmission: now, cpmPending: 'pending' }); showStatus("CPM Task submitted!","success"); renderPendingHistory(); document.getElementById('specialTaskContainer2').style.display = 'none'; }
     async function submitGmailTask() { const gmail = document.getElementById('gmailAddressInput').value.trim(); if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gmail)) { showStatus("Valid email","error"); return; } const now = Date.now(); if(userData.lastGmailSubmission && (now - userData.lastGmailSubmission) < 2*60*60*1000) { showStatus("Cooldown 2 hours","error"); return; } const submission = { id: Date.now(), userId: telegramId, gmail, status: 'pending', timestamp: now, type: 'gmail' }; await db.ref(`specialSubmissions/${submission.id}`).set(submission); await updateUser({ gmailSubmission: { id: submission.id, status: 'pending', gmail, timestamp: now }, lastGmailSubmission: now, gmailPending: 'pending' }); showStatus("Gmail submitted!","success"); renderPendingHistory(); document.getElementById('gmailTaskContainer').style.display = 'none'; }
@@ -821,19 +873,19 @@
     window.approveSubmission = async (subId, userId, type) => { const subSnap = await db.ref(`specialSubmissions/${subId}`).once('value'); const sub = subSnap.val(); if(!sub || sub.status !== 'pending') return; await db.ref(`specialSubmissions/${subId}`).update({ status: 'approved' }); let reward = type==='special1' ? 800 : (type==='cpm' ? 10000 : 10000); const userSnap = await db.ref(`users/${userId}`).once('value'); if(userSnap.exists()) { let user=userSnap.val(); let newBalance=(user.balance||0)+reward; let updates={balance:newBalance,totalEarned:(user.totalEarned||0)+reward,tasksCompleted:(user.tasksCompleted||0)+1}; if(type==='special1') updates['specialTaskSubmission1/status']='approved'; else if(type==='cpm') {updates['cpmSubmission/status']='approved';updates.cpmPending=null;} else {updates['gmailSubmission/status']='approved';updates.gmailPending=null;} await db.ref(`users/${userId}`).update(updates); await db.ref(`users/${userId}/earningsHistory`).push({ id:Date.now(), type:'special_task', amount:reward, description:`${type==='special1'?'Special Code Task':(type==='cpm'?'CPM Task':'Gmail Task')} approved (+${reward} PEPE)`, date:Date.now() }); if(userId === telegramId) { userData = await fetchUserData(); refreshUI(); } } alert(`Approved! +${reward} PEPE`); showAdminPanel(); };
     window.rejectSubmission = async (subId, userId, type) => { await db.ref(`specialSubmissions/${subId}`).update({ status: 'rejected' }); const userRef = db.ref(`users/${userId}`); if(type==='special1') await userRef.update({ 'specialTaskSubmission1/status': 'rejected' }); else if(type==='cpm') await userRef.update({ 'cpmSubmission/status': 'rejected', cpmPending: null }); else await userRef.update({ 'gmailSubmission/status': 'rejected', gmailPending: null }); alert("Rejected."); if(userId===telegramId) refreshUI(); };
 
-    // Withdrawal
+    // Withdrawal (unchanged)
     async function submitWithdrawal() { let amt = parseInt(document.getElementById('withdrawAmount').value); let accountVal = document.getElementById('paymentAccount').value.trim(); if(amt < 90000) { showStatus("Minimum 90,000 PEPE","error"); return; } if((userData.balance||0) < amt) { showStatus("Insufficient balance","error"); return; } if((userData.referrals||[]).length < 3) { showStatus("Need 3 referrals","error"); return; } let fee = Math.floor(amt*0.1), net=amt-fee; let wid = { id:Date.now(), withdrawId:'WD-'+Date.now().toString().slice(-8), amount:amt, fee, netAmount:net, method:window.selectedMethod==='binance'?'Binance':(window.selectedMethod==='bkash'?'bKash':'Nagad'), account:accountVal, status:'pending', date:Date.now() }; await updateUser({ balance:(userData.balance||0)-amt, withdrawalHistory:[...(userData.withdrawalHistory||[]), wid] }); document.getElementById('withdrawSuccessDetails').innerHTML = `<div>ID: ${wid.withdrawId}</div><div>Amount: ${amt} PEPE</div><div>Net: ${net} PEPE</div>`; document.getElementById('withdrawSuccessModal').classList.add('active'); refreshUI(); }
     function updateWithdrawReq() { let bal = userData?.balance||0, refs = userData?.referrals?.length||0; document.getElementById('reqCheck1').innerHTML = bal>=90000 ? '✓' : '○'; document.getElementById('reqCheck2').innerHTML = refs>=3 ? '✓' : '○'; document.getElementById('submitWithdrawBtn').disabled = !(bal>=90000 && refs>=3); }
     function displayWithdrawHistory() { let hist = userData?.withdrawalHistory||[]; document.getElementById('historyList').innerHTML = hist.length ? hist.slice().reverse().map(w=>`<div class="withdrawal-history-card"><div><strong>${w.withdrawId}</strong> <span>${w.status}</span></div><div>${w.amount} PEPE</div><div>${w.method}</div><small>${new Date(w.date).toLocaleString()}</small></div>`).join('') : '<div>No withdrawals</div>'; }
     async function applyReferralBonus(code) { if(!code || userData.referredBy) return false; const snap = await db.ref('users').orderByChild('referralCode').equalTo(code).once('value'); if(!snap.exists()) { alert('Invalid code'); return false; } const referrerId = Object.keys(snap.val())[0]; if(referrerId === telegramId) { alert('Cannot use own'); return false; } await updateUser({ referredBy:referrerId, referralBonusApplied:true, balance:(userData.balance||0)+167, totalEarned:(userData.totalEarned||0)+167, referralBonusEarned:(userData.referralBonusEarned||0)+167 }); await addEarningEntry('referral',167,'Referral bonus (+167 PEPE)'); const referrer = await db.ref(`users/${referrerId}`).once('value'); if(referrer.exists()){ let refs = referrer.val().referrals||[]; if(!refs.some(r=>r.id===telegramId)) refs.push({ id:telegramId, username:telegramUsername, bonus:167 }); await db.ref(`users/${referrerId}`).update({ referrals:refs, referralBonusEarned:(referrer.val().referralBonusEarned||0)+167, balance:(referrer.val().balance||0)+167, totalEarned:(referrer.val().totalEarned||0)+167 }); await db.ref(`users/${referrerId}/earningsHistory`).push({ id:Date.now(), type:'referral', amount:167, description:`Referral from ${telegramUsername} (+167 PEPE)`, date:Date.now() }); } showStatus('+167 PEPE!','success'); return true; }
 
-    function refreshUI() { if(!userData) return; document.getElementById('balanceAmount').innerText = (userData.balance||0).toFixed(0); document.getElementById('tasksCompletedCount').innerText = (userData.tasksCompleted||0); document.getElementById('refCount').innerText = (userData.referrals?.length||0); document.getElementById('totalWithdrawalsCount').innerText = (userData.withdrawalHistory||[]).length; document.getElementById('withdrawBalance').innerText = (userData.balance||0).toFixed(0); document.getElementById('referralCodeDisplay').innerHTML = userData.referralCode||''; document.getElementById('referralBonusTotal').innerText = (userData.referralBonusEarned||0).toFixed(0); updateWithdrawReq(); let amt = parseInt(document.getElementById('withdrawAmount')?.value)||0; let fee = Math.floor(amt*0.1); document.getElementById('wdAmount').innerText = `${amt} PEPE`; document.getElementById('wdFee').innerText = `${fee} PEPE`; document.getElementById('wdNet').innerText = `${amt-fee} PEPE`; displayWithdrawHistory(); renderReferrals(); renderAdsUI('ads1Progress',20,230); renderAdsUI('ads2Progress',20,230); renderAdsUI('ads3Progress',20,230); renderAdsUI('ads4Progress',20,230); renderAdsUI('ads5Progress',5,40); updateTotalAdsStats(); if(userData.turboMinerClaimed && document.getElementById('oneTimeTaskContainer')) document.getElementById('oneTimeTaskContainer').remove(); if(userData.youtubeSubClaimed && document.getElementById('youtubeTaskContainer')) document.getElementById('youtubeTaskContainer').remove(); if(userData.tgChannelClaimed && document.getElementById('tgChannelTaskContainer')) document.getElementById('tgChannelTaskContainer').remove(); if(userData.woodRushClaimed && document.getElementById('woodRushTaskContainer')) document.getElementById('woodRushTaskContainer').remove(); if(userData.specialTaskSubmission1 && document.getElementById('specialTaskContainer1')) document.getElementById('specialTaskContainer1').remove(); renderPendingHistory(); }
+    function refreshUI() { if(!userData) return; document.getElementById('balanceAmount').innerText = (userData.balance||0).toFixed(0); document.getElementById('tasksCompletedCount').innerText = (userData.tasksCompleted||0); document.getElementById('refCount').innerText = (userData.referrals?.length||0); document.getElementById('totalWithdrawalsCount').innerText = (userData.withdrawalHistory||[]).length; document.getElementById('withdrawBalance').innerText = (userData.balance||0).toFixed(0); document.getElementById('referralCodeDisplay').innerHTML = userData.referralCode||''; document.getElementById('referralBonusTotal').innerText = (userData.referralBonusEarned||0).toFixed(0); updateWithdrawReq(); let amt = parseInt(document.getElementById('withdrawAmount')?.value)||0; let fee = Math.floor(amt*0.1); document.getElementById('wdAmount').innerText = `${amt} PEPE`; document.getElementById('wdFee').innerText = `${fee} PEPE`; document.getElementById('wdNet').innerText = `${amt-fee} PEPE`; displayWithdrawHistory(); renderReferrals(); renderAdsUI('ads1',20,230); renderAdsUI('ads2',20,230); renderAdsUI('ads3',20,230); renderAdsUI('ads4',20,230); renderAdsUI('ads5',5,40); updateTotalAdsStats(); if(userData.turboMinerClaimed && document.getElementById('oneTimeTaskContainer')) document.getElementById('oneTimeTaskContainer').remove(); if(userData.youtubeSubClaimed && document.getElementById('youtubeTaskContainer')) document.getElementById('youtubeTaskContainer').remove(); if(userData.tgChannelClaimed && document.getElementById('tgChannelTaskContainer')) document.getElementById('tgChannelTaskContainer').remove(); if(userData.woodRushClaimed && document.getElementById('woodRushTaskContainer')) document.getElementById('woodRushTaskContainer').remove(); if(userData.specialTaskSubmission1 && document.getElementById('specialTaskContainer1')) document.getElementById('specialTaskContainer1').remove(); renderPendingHistory(); }
     function renderReferrals() { let refs = userData?.referrals||[]; document.getElementById('referralsList').innerHTML = refs.length ? refs.map(r=>`<div class="friend-card"><span>${r.username}</span><span>+${r.bonus} PEPE</span></div>`).join('') : '<div class="small-text">No referrals</div>'; }
 
-    async function initUser() { let data=await fetchUserData(); if(!data){ const refCode=telegramUsername.slice(0,4).toUpperCase()+Math.random().toString(36).substr(2,5).toUpperCase(); const newUser={ username:telegramUsername, telegramId, balance:0, totalEarned:0, referralBonusEarned:0, referrals:[], referralCode:refCode, referredBy:null, referralBonusApplied:false, tasksCompleted:0, withdrawalHistory:[], earningsHistory:[], ads1Progress:0, ads2Progress:0, ads3Progress:0, ads4Progress:0, ads5Progress:0, turboMinerClaimed:false, youtubeSubClaimed:false, tgChannelClaimed:false, woodRushClaimed:false, specialTaskSubmission1: null, cpmSubmission: null, lastCpmSubmission: 0, gmailSubmission: null, lastGmailSubmission: 0, gmailPending: null }; await db.ref(`users/${telegramId}`).set(newUser); data=newUser; } userData=data; if(userData.ads1Progress===undefined) await updateUser({ ads1Progress:0, ads2Progress:0, ads3Progress:0, ads4Progress:0, ads5Progress:0, turboMinerClaimed:false, youtubeSubClaimed:false, tgChannelClaimed:false, woodRushClaimed:false }); if(!userData.earningsHistory) await updateUser({ earningsHistory:[] }); if(!userData.referralBonusApplied) document.getElementById('referralCodeModal').style.display='flex'; else proceedToApp(); }
+    async function initUser() { let data=await fetchUserData(); if(!data){ const refCode=telegramUsername.slice(0,4).toUpperCase()+Math.random().toString(36).substr(2,5).toUpperCase(); const newUser={ username:telegramUsername, telegramId, balance:0, totalEarned:0, referralBonusEarned:0, referrals:[], referralCode:refCode, referredBy:null, referralBonusApplied:false, tasksCompleted:0, withdrawalHistory:[], earningsHistory:[], ads1DailyCount:0, ads2DailyCount:0, ads3DailyCount:0, ads4DailyCount:0, ads5DailyCount:0, lastDailyReset:Date.now(), totalAdsWatched:0, totalAdsEarned:0, turboMinerClaimed:false, youtubeSubClaimed:false, tgChannelClaimed:false, woodRushClaimed:false, specialTaskSubmission1: null, cpmSubmission: null, lastCpmSubmission: 0, gmailSubmission: null, lastGmailSubmission: 0, gmailPending: null }; await db.ref(`users/${telegramId}`).set(newUser); data=newUser; } userData=data; if(userData.ads1DailyCount===undefined) await updateUser({ ads1DailyCount:0, ads2DailyCount:0, ads3DailyCount:0, ads4DailyCount:0, ads5DailyCount:0, lastDailyReset:Date.now(), totalAdsWatched:0, totalAdsEarned:0, turboMinerClaimed:false, youtubeSubClaimed:false, tgChannelClaimed:false, woodRushClaimed:false }); if(!userData.earningsHistory) await updateUser({ earningsHistory:[] }); if(!userData.referralBonusApplied) document.getElementById('referralCodeModal').style.display='flex'; else proceedToApp(); }
     function proceedToApp() { document.getElementById('referralCodeModal').style.display='none'; refreshUI(); db.ref(`users/${telegramId}`).on('value', snap=>{ if(snap.exists()){ userData=snap.val(); refreshUI(); } }); }
 
-    // Navigation
+    // Navigation bindings (unchanged)
     function switchSection(id) { document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); if(id==='homeSection') document.getElementById('navHome').classList.add('active'); else if(id==='earnSection') document.getElementById('navEarn').classList.add('active'); else if(id==='earningSection') document.getElementById('navEarning').classList.add('active'); else if(id==='cashoutSection') document.getElementById('navCashout').classList.add('active'); else if(id==='referralSection') document.getElementById('navReferral').classList.add('active'); }
     document.getElementById('navHome').onclick=()=>switchSection('homeSection');
     document.getElementById('navEarn').onclick=()=>switchSection('earnSection');
@@ -855,7 +907,7 @@
     document.getElementById('ads2Btn').onclick=completeAds2;
     document.getElementById('ads3Btn').onclick=completeAds3;
     document.getElementById('ads4Btn').onclick=completeAds4;
-    document.getElementById('ads5Btn').onclick=startAds5;
+    document.getElementById('ads5Btn').onclick=completeAds5;
     document.getElementById('openBotBtn').onclick=()=>{ window.open('https://t.me/USDTTurboMinerBot/App?startapp=6797948163','_blank'); botOpened=true; document.getElementById('verifyOneTimeBtn').disabled=false; };
     document.getElementById('verifyOneTimeBtn').onclick=verifyTurbo;
     document.getElementById('openYoutubeBtn').onclick=()=>{ window.open('https://youtube.com/@earnviuofficial?si=BtFEDuvq2RTb7bQI','_blank'); youtubeOpened=true; document.getElementById('verifyYoutubeBtn').disabled=false; };
