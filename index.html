@@ -1,51 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Earn Viu</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-    <!-- Telegram Web App -->
-    <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
+<script src="https://telegram.org/js/telegram-web-app.js?56"></script>
 
-    <!-- Adexium -->
-    <script src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
+<script src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
 
-    <style>
-        body{
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-            background:#0f172a;
-            margin:0;
-        }
-
-        #startBtn{
-            padding:15px 40px;
-            font-size:20px;
-            border:none;
-            border-radius:12px;
-            background:#22c55e;
-            color:white;
-            cursor:pointer;
-            font-weight:bold;
-        }
-    </style>
+<title>Earn Viu</title>
 </head>
 <body>
 
-<button id="startBtn">🚀 Start</button>
+<h2>Earn Viu</h2>
+
+<button id="startBtn">Start</button>
 
 <script>
-document.getElementById("startBtn").addEventListener("click", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
     const adexiumWidget = new AdexiumWidget({
         wid: "2aafd995-61f3-4051-92cf-948579c692dc",
         adFormat: "interstitial"
     });
 
-    // Ad show
-    adexiumWidget.showAd();
+    document.getElementById("startBtn").addEventListener("click", () => {
+        try {
+
+            if (typeof adexiumWidget.showAd === "function") {
+                adexiumWidget.showAd();
+            } else if (typeof adexiumWidget.show === "function") {
+                adexiumWidget.show();
+            } else {
+                console.log("Ad show method not found");
+            }
+
+        } catch (e) {
+            console.error(e);
+        }
+    });
 
 });
 </script>
