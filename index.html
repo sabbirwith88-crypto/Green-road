@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Viu Earn • Pro Analytics</title>
+    <title>Viu Earn • Admin Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
@@ -13,7 +12,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
         }
         body {
             background: #f0f2f5;
@@ -170,58 +169,6 @@
             color: #000;
             margin-top: 8px;
         }
-        .chart-container {
-            background: #ffffff;
-            border-radius: 32px;
-            padding: 16px;
-            margin: 20px 0 16px;
-            border: 1px solid #edf2f7;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        }
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .chart-header h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .date-range-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        .range-btn {
-            background: #f1f5f9;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.15s;
-        }
-        .range-btn.active {
-            background: #000;
-            color: white;
-        }
-        canvas { max-height: 200px; width: 100%; margin-bottom: 8px; }
-        .insight-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #f1f5f9;
-            border-radius: 40px;
-            padding: 6px 14px;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
         .user-card, .withdraw-card, .submission-card {
             background: #ffffff;
             border-radius: 28px;
@@ -336,8 +283,12 @@
             display: none;
             font-size: 0.85rem;
         }
-        .trend-up { color: #10b981; }
-        .mini-stats { display: flex; justify-content: space-between; margin-top: 12px; gap: 8px; flex-wrap: wrap; }
+        .badge-count {
+            background: #e2e8f0;
+            border-radius: 40px;
+            padding: 2px 10px;
+            font-size: 0.7rem;
+        }
     </style>
 </head>
 <body>
@@ -346,88 +297,41 @@
     <div id="loginView" style="height: 100%; display: flex; align-items: center; justify-content: center;">
         <div class="login-container">
             <div class="login-card">
-                <i class="fas fa-chart-line"></i>
-                <h2>Viu Earn Pro</h2>
+                <i class="fas fa-crown"></i>
+                <h2>Admin Access</h2>
                 <input type="password" id="adminPassword" placeholder="Master password">
-                <button id="loginBtn" class="btn-primary"><i class="fas fa-lock-open"></i> Access Dashboard</button>
+                <button id="loginBtn" class="btn-primary"><i class="fas fa-key"></i> Unlock Panel</button>
             </div>
         </div>
     </div>
 
-    <!-- ADMIN PANEL WITH MULTIPLE GRAPHS -->
+    <!-- ADMIN PANEL -->
     <div id="adminPanelView" style="display: none; flex-direction: column; height: 100%; position: relative;">
         <div class="admin-header">
-            <div class="logo"><i class="fas fa-chart-simple"></i> Viu Earn | Analytics</div>
+            <div class="logo"><i class="fas fa-chart-line"></i> Viu Earn Admin</div>
             <button id="logoutBtn" class="exit-btn"><i class="fas fa-sign-out-alt"></i> Exit</button>
         </div>
         <div class="scroll-area" id="adminScrollArea">
             <div id="dashboardSection" class="admin-section active">
-                <!-- Key Stats Cards -->
                 <div class="stats-grid" id="dashboardStats"></div>
-                
-                <!-- Graph 1: User Growth -->
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <h3><i class="fas fa-user-plus trend-up"></i> Daily New Users</h3>
-                        <div class="date-range-buttons" data-for="user">
-                            <button class="range-btn user-range active" data-days="7">7D</button>
-                            <button class="range-btn user-range" data-days="14">14D</button>
-                            <button class="range-btn user-range" data-days="30">30D</button>
-                        </div>
-                    </div>
-                    <canvas id="userGrowthChart" width="400" height="180"></canvas>
-                    <div class="mini-stats">
-                        <span class="insight-badge"><i class="fas fa-calendar-day"></i> Today: <span id="newUsersToday">0</span></span>
-                        <span class="insight-badge"><i class="fas fa-chart-line"></i> Avg/day: <span id="weeklyAvg">0</span></span>
-                    </div>
-                </div>
-
-                <!-- Graph 2: Daily Earnings Added (Balance inflow) -->
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <h3><i class="fas fa-coins"></i> Daily Earnings Added (VIU)</h3>
-                        <div class="date-range-buttons" data-for="earn">
-                            <button class="range-btn earn-range active" data-days="7">7D</button>
-                            <button class="range-btn earn-range" data-days="14">14D</button>
-                            <button class="range-btn earn-range" data-days="30">30D</button>
-                        </div>
-                    </div>
-                    <canvas id="earningsChart" width="400" height="180"></canvas>
-                    <div class="mini-stats">
-                        <span class="insight-badge"><i class="fas fa-chart-line"></i> Total earned (all time): <span id="totalEarnedAllTime">0</span> VIU</span>
-                    </div>
-                </div>
-
-                <!-- Graph 3: Daily Withdrawal Requests -->
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <h3><i class="fas fa-hand-holding-usd"></i> Daily Withdrawal Requests (VIU)</h3>
-                        <div class="date-range-buttons" data-for="wd">
-                            <button class="range-btn wd-range active" data-days="7">7D</button>
-                            <button class="range-btn wd-range" data-days="14">14D</button>
-                            <button class="range-btn wd-range" data-days="30">30D</button>
-                        </div>
-                    </div>
-                    <canvas id="withdrawalsChart" width="400" height="180"></canvas>
-                    <div class="mini-stats">
-                        <span class="insight-badge"><i class="fas fa-clock"></i> Pending: <span id="pendingWithdrawalsAmount">0</span> VIU</span>
-                        <span class="insight-badge"><i class="fas fa-check-circle"></i> Approved total: <span id="approvedTotal">0</span> VIU</span>
-                    </div>
-                </div>
-
-                <!-- Platform Health Card -->
                 <div class="user-card" style="background: linear-gradient(145deg, #fafcff, #fff);">
-                    <div><i class="fas fa-chart-pie"></i> Platform Health</div>
+                    <div><i class="fas fa-info-circle"></i> System Live</div>
                     <div id="extraInsights" style="margin-top: 12px; font-size:0.85rem;"></div>
                 </div>
             </div>
 
-            <!-- Other admin sections (Users, Submissions, Withdrawals, Reset) unchanged but functional -->
             <div id="usersSection" class="admin-section">
-                <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="userSearchInput" placeholder="Search by username, ID"></div>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="userSearchInput" placeholder="Search by username, ID or referral code">
+                </div>
                 <div id="usersListContainer"></div>
             </div>
-            <div id="submissionsSection" class="admin-section"><div id="submissionsContainer"></div></div>
+
+            <div id="submissionsSection" class="admin-section">
+                <div id="submissionsContainer"></div>
+            </div>
+
             <div id="withdrawalsSection" class="admin-section">
                 <div class="flex-between" style="margin-bottom: 16px;">
                     <button id="filterPendingBtn" class="btn-icon btn-dark"><i class="fas fa-clock"></i> Pending only</button>
@@ -435,21 +339,22 @@
                 </div>
                 <div id="withdrawalsContainer"></div>
             </div>
+
             <div id="resetSection" class="admin-section">
                 <div class="user-card" style="border-left: 4px solid #ef4444;">
-                    <h3><i class="fas fa-database"></i> Factory Reset</h3>
-                    <p style="margin: 10px 0; color:#475569;">Reset EVERY user: balance = 0, progress cleared, submissions deleted.</p>
-                    <button id="fullResetBtn" class="btn-danger" style="width:100%; padding: 14px;"><i class="fas fa-trash-alt"></i> 🔥 RESET ALL DATA</button>
+                    <h3><i class="fas fa-radiation"></i> Danger Zone – Factory Reset</h3>
+                    <p style="margin: 10px 0; color:#475569;">Reset EVERY user: balance = 0, all ad progress cleared, one‑time tasks removed, submissions deleted.</p>
+                    <button id="fullResetBtn" class="btn-danger" style="width:100%; padding: 14px; margin-top: 8px;"><i class="fas fa-trash-alt"></i> 🔥 RESET ALL DATA (IRREVERSIBLE)</button>
                 </div>
                 <div class="user-card" style="margin-top: 20px;">
-                    <h4><i class="fas fa-key"></i> Security Settings</h4>
+                    <h4><i class="fas fa-lock"></i> Security Settings</h4>
                     <input type="password" id="newAdminPassword" placeholder="New admin password" style="width:100%; padding:12px; border-radius:60px; margin:12px 0; border:1px solid #ddd;">
                     <button id="changePasswordBtn" class="btn-primary" style="background:#1e293b;">Update Password</button>
                 </div>
             </div>
         </div>
         <div class="bottom-nav-admin">
-            <button class="nav-tab active" data-tab="dashboard"><i class="fas fa-chart-pie"></i><span>Analytics</span></button>
+            <button class="nav-tab active" data-tab="dashboard"><i class="fas fa-chart-pie"></i><span>Stats</span></button>
             <button class="nav-tab" data-tab="users"><i class="fas fa-users"></i><span>Users</span></button>
             <button class="nav-tab" data-tab="submissions"><i class="fas fa-code-branch"></i><span>Codes</span></button>
             <button class="nav-tab" data-tab="withdrawals"><i class="fas fa-hand-holding-usd"></i><span>Payouts</span></button>
@@ -459,10 +364,17 @@
 </div>
 
 <!-- User Profile Modal -->
-<div id="userProfileModal" class="modal-overlay"><div class="modal-box"><h3><i class="fas fa-id-card"></i> Player Profile</h3><div id="profileDetailContent"></div><button id="closeProfileModal" class="btn-icon" style="width:100%; margin-top:20px;">Close</button></div></div>
+<div id="userProfileModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3 style="margin-bottom: 16px;"><i class="fas fa-id-card"></i> Player Profile</h3>
+        <div id="profileDetailContent"></div>
+        <button id="closeProfileModal" class="btn-icon" style="width:100%; margin-top: 20px; background:#000; color:white;">Close</button>
+    </div>
+</div>
 <div id="toastMsg" class="toast"></div>
 
 <script>
+    // Firebase Config (same as your app)
     const firebaseConfig = {
         apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM",
         authDomain: "earn-for-earn-55d3e.firebaseapp.com",
@@ -474,11 +386,12 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+
     const ADMIN_PASS_KEY = "admin_pepe_secure";
-    let allUsers = [], allSubmissions = [], allWithdrawals = [];
+    let allUsers = [];
+    let allSubmissions = [];
+    let allWithdrawals = [];
     let withdrawFilterMode = "pending";
-    let charts = { user: null, earnings: null, withdrawals: null };
-    let currentRanges = { user: 7, earnings: 7, withdrawals: 7 };
 
     function showToast(msg, isError = false) {
         const toast = document.getElementById("toastMsg");
@@ -487,120 +400,18 @@
         toast.style.display = "block";
         setTimeout(() => toast.style.display = "none", 2500);
     }
-    function initAdminPass() { if (!localStorage.getItem(ADMIN_PASS_KEY)) localStorage.setItem(ADMIN_PASS_KEY, "Admin2025"); return localStorage.getItem(ADMIN_PASS_KEY); }
+
+    function initAdminPass() {
+        if (!localStorage.getItem(ADMIN_PASS_KEY)) localStorage.setItem(ADMIN_PASS_KEY, "Admin2025");
+        return localStorage.getItem(ADMIN_PASS_KEY);
+    }
     function isLoggedIn() { return sessionStorage.getItem("admin_logged") === "true"; }
     function setLogin(val) { val ? sessionStorage.setItem("admin_logged","true") : sessionStorage.removeItem("admin_logged"); }
     function showLoginUI() { document.getElementById("loginView").style.display = "flex"; document.getElementById("adminPanelView").style.display = "none"; }
     function showAdminUI() { document.getElementById("loginView").style.display = "none"; document.getElementById("adminPanelView").style.display = "flex"; loadAllData(); }
 
-    // Helper: get registration timestamp from user
-    function getUserRegDate(user) {
-        if (user.registeredAt) return user.registeredAt;
-        if (user.createdAt) return user.createdAt;
-        if (user.joinDate) return user.joinDate;
-        if (user.earningsHistory && Array.isArray(user.earningsHistory) && user.earningsHistory.length) {
-            let first = user.earningsHistory.reduce((e, tx) => (tx.date < e ? tx.date : e), Date.now());
-            return first;
-        }
-        return null;
-    }
-
-    // Aggregate daily data: new users, earnings added, withdrawal amounts
-    function getDailyAggregates(days) {
-        const now = new Date();
-        const dateMap = new Map();
-        for (let i = 0; i < days; i++) {
-            const d = new Date(now); d.setDate(now.getDate() - i); d.setHours(0,0,0,0);
-            const key = d.toISOString().split('T')[0];
-            dateMap.set(key, { newUsers: 0, earnings: 0, withdrawals: 0 });
-        }
-        // New users
-        allUsers.forEach(user => {
-            let regTs = getUserRegDate(user);
-            if (regTs) {
-                let d = new Date(regTs); d.setHours(0,0,0,0);
-                let key = d.toISOString().split('T')[0];
-                if (dateMap.has(key)) dateMap.get(key).newUsers += 1;
-            }
-        });
-        // Earnings from each user's earningsHistory
-        allUsers.forEach(user => {
-            if (user.earningsHistory && Array.isArray(user.earningsHistory)) {
-                user.earningsHistory.forEach(tx => {
-                    if (tx.date && tx.amount) {
-                        let d = new Date(tx.date); d.setHours(0,0,0,0);
-                        let key = d.toISOString().split('T')[0];
-                        if (dateMap.has(key)) dateMap.get(key).earnings += (tx.amount || 0);
-                    }
-                });
-            }
-        });
-        // Withdrawals from withdrawalHistory (amount requested)
-        allUsers.forEach(user => {
-            if (user.withdrawalHistory && Array.isArray(user.withdrawalHistory)) {
-                user.withdrawalHistory.forEach(wd => {
-                    if (wd.date && wd.amount) {
-                        let d = new Date(wd.date); d.setHours(0,0,0,0);
-                        let key = d.toISOString().split('T')[0];
-                        if (dateMap.has(key)) dateMap.get(key).withdrawals += (wd.amount || 0);
-                    }
-                });
-            }
-        });
-        const sortedDates = Array.from(dateMap.keys()).sort();
-        const labels = sortedDates.slice(-days);
-        const newUsersData = labels.map(l => dateMap.get(l).newUsers);
-        const earningsData = labels.map(l => dateMap.get(l).earnings);
-        const withdrawalsData = labels.map(l => dateMap.get(l).withdrawals);
-        return { labels, newUsersData, earningsData, withdrawalsData };
-    }
-
-    function renderAllGraphs() {
-        const daysUser = currentRanges.user;
-        const daysEarn = currentRanges.earnings;
-        const daysWd = currentRanges.withdrawals;
-        const aggUser = getDailyAggregates(daysUser);
-        const aggEarn = getDailyAggregates(daysEarn);
-        const aggWd = getDailyAggregates(daysWd);
-
-        // User growth chart
-        if (charts.user) charts.user.destroy();
-        charts.user = new Chart(document.getElementById('userGrowthChart'), {
-            type: 'line', data: { labels: aggUser.labels, datasets: [{ label: 'New Users', data: aggUser.newUsersData, borderColor: '#000', backgroundColor: 'rgba(0,0,0,0.05)', fill: true, tension: 0.2, pointRadius: 3 }] },
-            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
-        });
-        // Earnings chart
-        if (charts.earnings) charts.earnings.destroy();
-        charts.earnings = new Chart(document.getElementById('earningsChart'), {
-            type: 'bar', data: { labels: aggEarn.labels, datasets: [{ label: 'Earnings (VIU)', data: aggEarn.earningsData, backgroundColor: '#10b981', borderRadius: 8 }] },
-            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
-        });
-        // Withdrawals chart
-        if (charts.withdrawals) charts.withdrawals.destroy();
-        charts.withdrawals = new Chart(document.getElementById('withdrawalsChart'), {
-            type: 'bar', data: { labels: aggWd.labels, datasets: [{ label: 'Withdrawals (VIU)', data: aggWd.withdrawalsData, backgroundColor: '#f59e0b', borderRadius: 8 }] },
-            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
-        });
-
-        // Update mini stats
-        const todayKey = new Date().toISOString().split('T')[0];
-        const todayData = getDailyAggregates(1);
-        document.getElementById("newUsersToday").innerText = todayData.newUsersData[0] || 0;
-        const avg = aggUser.newUsersData.length ? (aggUser.newUsersData.reduce((a,b)=>a+b,0)/aggUser.newUsersData.length).toFixed(1) : 0;
-        document.getElementById("weeklyAvg").innerText = avg;
-        
-        let totalEarnedAll = 0;
-        allUsers.forEach(u => totalEarnedAll += (u.totalEarned || 0));
-        document.getElementById("totalEarnedAllTime").innerText = totalEarnedAll.toLocaleString();
-        
-        let pendingWdAmount = 0, approvedTotal = 0;
-        allWithdrawals.forEach(w => { if(w.status === 'pending') pendingWdAmount += w.amount; if(w.status === 'approved') approvedTotal += w.amount; });
-        document.getElementById("pendingWithdrawalsAmount").innerText = pendingWdAmount.toLocaleString();
-        document.getElementById("approvedTotal").innerText = approvedTotal.toLocaleString();
-    }
-
     async function loadAllData() {
-        showToast("Syncing full analytics...");
+        showToast("Syncing data...");
         const usersSnap = await db.ref("users").once("value");
         allUsers = [];
         usersSnap.forEach(child => { allUsers.push({ uid: child.key, ...child.val() }); });
@@ -609,21 +420,26 @@
         subsSnap.forEach(child => { allSubmissions.push({ id: child.key, ...child.val() }); });
         allWithdrawals = [];
         allUsers.forEach(user => {
-            (user.withdrawalHistory || []).forEach(w => { allWithdrawals.push({ ...w, username: user.username || "unknown", userId: user.uid }); });
+            (user.withdrawalHistory || []).forEach(w => {
+                allWithdrawals.push({ ...w, username: user.username || "unknown", userId: user.uid });
+            });
         });
         allWithdrawals.sort((a,b) => b.date - a.date);
-        renderDashboardStats();
-        renderAllGraphs();
+        renderDashboard();
         renderUsersList();
         renderSubmissionsList();
         renderWithdrawalsList();
-        showToast("Dashboard ready with multi-graphs", false);
+        showToast("Ready", false);
     }
 
-    function renderDashboardStats() {
+    function renderDashboard() {
         let totalBalance = 0, totalEarned = 0, totalRefs = 0;
-        allUsers.forEach(u => { totalBalance += u.balance || 0; totalEarned += u.totalEarned || 0; totalRefs += (u.referrals?.length || 0); });
-        const pendingSubs = allSubscriptionsFilter = allSubmissions.filter(s => s.status === "pending").length;
+        allUsers.forEach(u => {
+            totalBalance += u.balance || 0;
+            totalEarned += u.totalEarned || 0;
+            totalRefs += (u.referrals?.length || 0);
+        });
+        const pendingSubs = allSubmissions.filter(s => s.status === "pending").length;
         const pendingWd = allWithdrawals.filter(w => w.status === "pending").length;
         document.getElementById("dashboardStats").innerHTML = `
             <div class="stat-card"><i class="fas fa-users"></i><div class="stat-number">${allUsers.length}</div><div>Total Users</div></div>
@@ -635,42 +451,239 @@
             <div><i class="fas fa-trophy"></i> Total Earned: ${totalEarned.toLocaleString()} VIU</div>
             <div><i class="fas fa-user-plus"></i> Total Referrals: ${totalRefs}</div>
             <div><i class="fas fa-check-circle"></i> Approved Withdrawals: ${allWithdrawals.filter(w=>w.status==='approved').length}</div>
-            <div><i class="fas fa-chart-line"></i> Avg Daily Signups (7d): ${getDailyAggregates(7).newUsersData.reduce((a,b)=>a+b,0)/7}</div>
         `;
     }
 
-    // User management functions (same as before)
-    window.viewUserProfile = async (uid) => { /* keep original */ 
-        const user = allUsers.find(u => u.uid === uid); if(!user) return;
-        const html = `<div class="profile-detail-item"><span>Username</span><strong>${escapeHtml(user.username)}</strong></div><div class="profile-detail-item"><span>Balance</span><strong>${(user.balance||0).toLocaleString()} VIU</strong></div><div class="profile-detail-item"><span>Total Earned</span><strong>${(user.totalEarned||0).toLocaleString()}</strong></div><div class="profile-detail-item"><span>Referrals</span><strong>${user.referrals?.length||0}</strong></div>`;
-        document.getElementById("profileDetailContent").innerHTML = html; document.getElementById("userProfileModal").classList.add("active");
+    function renderUsersList() {
+        const searchTerm = document.getElementById("userSearchInput")?.value.toLowerCase() || "";
+        let filtered = allUsers.filter(u => 
+            u.username?.toLowerCase().includes(searchTerm) ||
+            u.uid?.toLowerCase().includes(searchTerm) ||
+            (u.referralCode || "").toLowerCase().includes(searchTerm)
+        );
+        const container = document.getElementById("usersListContainer");
+        if (!filtered.length) { container.innerHTML = '<div class="empty-state">No users found</div>'; return; }
+        container.innerHTML = filtered.map(u => `
+            <div class="user-card">
+                <div class="flex-between">
+                    <div>
+                        <strong><i class="fab fa-telegram"></i> ${escapeHtml(u.username || "No name")}</strong>
+                        <div style="font-size:0.7rem; color:#475569;">${u.uid.slice(0,10)}...</div>
+                    </div>
+                    <span class="status-pill" style="background:#000; color:white;">${(u.balance||0).toLocaleString()} VIU</span>
+                </div>
+                <div class="chip-group">
+                    <span><i class="fas fa-user-friends"></i> Refs: ${u.referrals?.length || 0}</span>
+                    <span><i class="fas fa-chart-simple"></i> Tasks: ${u.tasksCompleted || 0}</span>
+                    <span><i class="fas fa-ad"></i> Ads: ${(u.ads1Progress||0)+(u.ads2Progress||0)+(u.ads3Progress||0)+(u.ads4Progress||0)}</span>
+                </div>
+                <div class="chip-group">
+                    <button class="btn-icon" onclick="viewUserProfile('${u.uid}')"><i class="fas fa-eye"></i> Profile</button>
+                    <button class="btn-icon btn-success" onclick="addBalanceToUser('${u.uid}', 20000)"><i class="fas fa-plus"></i> +20k</button>
+                    <button class="btn-icon btn-warning" onclick="setUserBalance('${u.uid}')"><i class="fas fa-pen"></i> Set Bal</button>
+                    <button class="btn-icon btn-danger" onclick="resetSingleUser('${u.uid}')"><i class="fas fa-undo-alt"></i> Reset</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    window.viewUserProfile = async (uid) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (!user) return;
+        const referralCount = user.referrals?.length || 0;
+        const totalAdsWatched = (user.ads1Progress||0)+(user.ads2Progress||0)+(user.ads3Progress||0)+(user.ads4Progress||0);
+        const adsEarned = (user.ads1Progress||0)*10 + (user.ads2Progress||0)*10 + (user.ads3Progress||0)*7 + (user.ads4Progress||0)*10;
+        const oneTimeTasks = [];
+        if(user.turboMinerClaimed) oneTimeTasks.push("Turbo Miner");
+        if(user.youtubeSubClaimed) oneTimeTasks.push("YouTube Sub");
+        if(user.tgChannelClaimed) oneTimeTasks.push("TG Channel");
+        if(user.woodRushClaimed) oneTimeTasks.push("Wood Rush");
+        const pendingTasks = [];
+        if(user.specialTaskSubmission1?.status === "pending") pendingTasks.push("Code Task");
+        if(user.cpmSubmission?.status === "pending") pendingTasks.push("CPM Task");
+        if(user.cpm2Submission?.status === "pending") pendingTasks.push("CPM2 Task");
+        
+        const html = `
+            <div class="profile-detail-item"><span><i class="fas fa-user"></i> Username</span><strong>${escapeHtml(user.username)}</strong></div>
+            <div class="profile-detail-item"><span><i class="fas fa-id-badge"></i> User ID</span><span style="font-size:0.8rem;">${user.uid}</span></div>
+            <div class="profile-detail-item"><span><i class="fas fa-coins"></i> Balance</span><strong>${(user.balance||0).toLocaleString()} VIU</strong></div>
+            <div class="profile-detail-item"><span><i class="fas fa-chart-line"></i> Total Earned</span><strong>${(user.totalEarned||0).toLocaleString()} VIU</strong></div>
+            <div class="profile-detail-item"><span><i class="fas fa-user-friends"></i> Referrals</span><strong>${referralCount}</strong></div>
+            <div class="profile-detail-item"><span><i class="fas fa-tasks"></i> Tasks Completed</span><strong>${user.tasksCompleted || 0}</strong></div>
+            <div class="profile-detail-item"><span><i class="fas fa-ad"></i> Ads Watched</span><strong>${totalAdsWatched} (${adsEarned} VIU)</strong></div>
+            <div class="profile-detail-item"><span><i class="fas fa-gift"></i> One‑time tasks</span><strong>${oneTimeTasks.join(", ") || "None"}</strong></div>
+            <div class="profile-detail-item"><span><i class="fas fa-hourglass-half"></i> Pending approvals</span><strong>${pendingTasks.join(", ") || "None"}</strong></div>
+            <div class="profile-detail-item"><span><i class="fas fa-history"></i> Withdrawals</span><strong>${user.withdrawalHistory?.length || 0}</strong></div>
+            <div class="profile-detail-item"><span><i class="fas fa-code-branch"></i> Referral Code</span><code>${user.referralCode || "—"}</code></div>
+        `;
+        document.getElementById("profileDetailContent").innerHTML = html;
+        document.getElementById("userProfileModal").classList.add("active");
     };
-    window.addBalanceToUser = async (uid, amount) => { const u = allUsers.find(u=>u.uid===uid); if(u){ await db.ref(`users/${uid}`).update({ balance: (u.balance||0)+amount, totalEarned: (u.totalEarned||0)+amount }); showToast(`+${amount} VIU`); loadAllData(); } };
-    window.setUserBalance = async (uid) => { const u = allUsers.find(u=>u.uid===uid); const val = prompt("New balance:", u?.balance||0); if(val && !isNaN(parseInt(val))){ await db.ref(`users/${uid}`).update({ balance: parseInt(val) }); loadAllData(); } };
-    window.resetSingleUser = async (uid) => { if(confirm("Reset user?")){ await db.ref(`users/${uid}`).update({ balance:0, totalEarned:0, tasksCompleted:0, ads1Progress:0, ads2Progress:0, ads3Progress:0, ads4Progress:0, turboMinerClaimed:false, youtubeSubClaimed:false, tgChannelClaimed:false, woodRushClaimed:false, withdrawalHistory:[], earningsHistory:[], specialTaskSubmission1:null, cpmSubmission:null, cpm2Submission:null }); loadAllData(); } };
-    window.approveSubmission = async (subId, userId, reward) => { await db.ref(`specialSubmissions/${subId}`).update({ status:"approved" }); const us = (await db.ref(`users/${userId}`).once("value")).val(); if(us){ await db.ref(`users/${userId}`).update({ balance: (us.balance||0)+reward, totalEarned: (us.totalEarned||0)+reward, tasksCompleted: (us.tasksCompleted||0)+1 }); } showToast(`+${reward} VIU`); loadAllData(); };
-    window.rejectSubmission = async (subId) => { await db.ref(`specialSubmissions/${subId}`).update({ status:"rejected" }); loadAllData(); };
-    window.approveWithdrawal = async (uid, wdid) => { const u = allUsers.find(u=>u.uid===uid); if(u){ const hist = [...(u.withdrawalHistory||[])]; const idx = hist.findIndex(w=>w.id==wdid); if(idx!==-1){ hist[idx].status="approved"; await db.ref(`users/${uid}`).update({ withdrawalHistory: hist }); loadAllData(); } } };
-    window.rejectWithdrawal = async (uid, wdid, amount) => { const u = allUsers.find(u=>u.uid===uid); if(u){ const hist = [...(u.withdrawalHistory||[])]; const idx = hist.findIndex(w=>w.id==wdid); if(idx!==-1){ hist[idx].status="rejected"; await db.ref(`users/${uid}`).update({ withdrawalHistory: hist, balance: (u.balance||0)+amount }); loadAllData(); } } };
+    document.getElementById("closeProfileModal").onclick = () => document.getElementById("userProfileModal").classList.remove("active");
 
-    function renderUsersList() { /* simplified but functional */ const search = document.getElementById("userSearchInput")?.value.toLowerCase()||""; const filtered = allUsers.filter(u=>u.username?.toLowerCase().includes(search)||u.uid.includes(search)); const container = document.getElementById("usersListContainer"); if(!filtered.length){ container.innerHTML='<div class="empty-state">No users</div>'; return; } container.innerHTML = filtered.map(u=>`<div class="user-card"><div class="flex-between"><strong>${escapeHtml(u.username)}</strong><span>${(u.balance||0).toLocaleString()} VIU</span></div><div class="chip-group"><button class="btn-icon" onclick="viewUserProfile('${u.uid}')">Profile</button><button class="btn-icon btn-success" onclick="addBalanceToUser('${u.uid}',20000)">+20k</button><button class="btn-icon btn-danger" onclick="resetSingleUser('${u.uid}')">Reset</button></div></div>`).join(''); }
-    function renderSubmissionsList() { const pending = allSubmissions.filter(s=>s.status==="pending"); const container = document.getElementById("submissionsContainer"); if(!pending.length){ container.innerHTML='<div class="empty-state">No pending</div>'; return; } container.innerHTML = pending.map(sub=>`<div class="submission-card"><div>${sub.userId?.slice(0,12)}</div><div class="chip-group"><button class="btn-success" onclick="approveSubmission('${sub.id}','${sub.userId}', ${sub.type==='special1'?80:200})">Approve</button><button class="btn-danger" onclick="rejectSubmission('${sub.id}')">Reject</button></div></div>`).join(''); }
-    function renderWithdrawalsList() { let filtered = allWithdrawals; if(withdrawFilterMode==="pending") filtered = allWithdrawals.filter(w=>w.status==="pending"); const container = document.getElementById("withdrawalsContainer"); if(!filtered.length){ container.innerHTML='<div class="empty-state">No withdrawals</div>'; return; } container.innerHTML = filtered.map(w=>`<div class="withdraw-card"><div><strong>${escapeHtml(w.username)}</strong> - ${(w.amount||0).toLocaleString()} VIU</div><div>${w.method} ${w.account}</div>${w.status==="pending"?`<div class="chip-group"><button class="btn-success" onclick="approveWithdrawal('${w.userId}','${w.id}')">Approve</button><button class="btn-danger" onclick="rejectWithdrawal('${w.userId}','${w.id}',${w.amount})">Reject</button></div>`:''}</div>`).join(''); }
+    window.addBalanceToUser = async (uid, amount) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            const newBal = (user.balance || 0) + amount;
+            await db.ref(`users/${uid}`).update({ balance: newBal, totalEarned: (user.totalEarned || 0) + amount });
+            showToast(`+${amount.toLocaleString()} VIU added`);
+            loadAllData();
+        }
+    };
+    window.setUserBalance = async (uid) => {
+        const user = allUsers.find(u => u.uid === uid);
+        const newVal = prompt("Enter new balance (VIU):", user?.balance || 0);
+        if (newVal !== null && !isNaN(parseInt(newVal))) {
+            await db.ref(`users/${uid}`).update({ balance: parseInt(newVal) });
+            showToast(`Balance set to ${parseInt(newVal).toLocaleString()}`);
+            loadAllData();
+        }
+    };
+    window.resetSingleUser = async (uid) => {
+        if (confirm(`⚠️ Reset user? Balance → 0, ads progress → 0, tasks cleared.`)) {
+            await db.ref(`users/${uid}`).update({
+                balance: 0, totalEarned: 0, tasksCompleted: 0,
+                ads1Progress: 0, ads2Progress: 0, ads3Progress: 0, ads4Progress: 0,
+                turboMinerClaimed: false, youtubeSubClaimed: false, tgChannelClaimed: false, woodRushClaimed: false,
+                withdrawalHistory: [], earningsHistory: [],
+                specialTaskSubmission1: null, cpmSubmission: null, cpm2Submission: null
+            });
+            showToast("User reset complete");
+            loadAllData();
+        }
+    };
 
-    // Event listeners
-    document.getElementById("loginBtn")?.addEventListener("click", () => { const pwd = document.getElementById("adminPassword").value; if(pwd === initAdminPass()) { setLogin(true); showAdminUI(); } else showToast("Invalid password", true); });
-    document.getElementById("logoutBtn")?.addEventListener("click", () => { setLogin(false); showLoginUI(); });
-    document.getElementById("fullResetBtn")?.addEventListener("click", async () => { if(confirm("RESET ALL?")){ for(let u of allUsers){ await db.ref(`users/${u.uid}`).update({ balance:0, totalEarned:0, tasksCompleted:0, ads1Progress:0, ads2Progress:0, ads3Progress:0, ads4Progress:0, withdrawalHistory:[], earningsHistory:[], specialTaskSubmission1:null, cpmSubmission:null, cpm2Submission:null }); } await db.ref("specialSubmissions").remove(); loadAllData(); showToast("Factory reset done"); } });
-    document.getElementById("changePasswordBtn")?.addEventListener("click", () => { const newPass = document.getElementById("newAdminPassword").value; if(newPass.length>=4){ localStorage.setItem(ADMIN_PASS_KEY, newPass); showToast("Password updated"); } else showToast("Min 4 chars", true); });
-    document.getElementById("filterPendingBtn")?.addEventListener("click", () => { withdrawFilterMode="pending"; renderWithdrawalsList(); });
-    document.getElementById("filterAllBtn")?.addEventListener("click", () => { withdrawFilterMode="all"; renderWithdrawalsList(); });
+    function renderSubmissionsList() {
+        const pending = allSubmissions.filter(s => s.status === "pending");
+        const container = document.getElementById("submissionsContainer");
+        if (!pending.length) { container.innerHTML = '<div class="empty-state">No pending submissions</div>'; return; }
+        container.innerHTML = pending.map(sub => {
+            let reward = sub.type === 'special1' ? 80 : (sub.type === 'specialUsername' ? 200 : 800);
+            return `
+            <div class="submission-card">
+                <div class="flex-between">
+                    <div><strong>${escapeHtml(sub.userId?.slice(0,12))}</strong><br><span class="badge-count">${sub.type || "task"}</span></div>
+                    <span class="status-pill pill-pending">pending</span>
+                </div>
+                <div style="margin:8px 0;">📝 ${sub.referralId || sub.username || "submitted"}</div>
+                <div class="chip-group">
+                    <button class="btn-success" onclick="approveSubmission('${sub.id}', '${sub.userId}', ${reward})"><i class="fas fa-check"></i> Approve +${reward}</button>
+                    <button class="btn-danger" onclick="rejectSubmission('${sub.id}')"><i class="fas fa-times"></i> Reject</button>
+                </div>
+            </div>
+        `}).join('');
+    }
+    window.approveSubmission = async (subId, userId, reward) => {
+        await db.ref(`specialSubmissions/${subId}`).update({ status: "approved" });
+        const userSnap = await db.ref(`users/${userId}`).once("value");
+        const user = userSnap.val();
+        if (user) {
+            const newBal = (user.balance || 0) + reward;
+            await db.ref(`users/${userId}`).update({ balance: newBal, totalEarned: (user.totalEarned || 0) + reward, tasksCompleted: (user.tasksCompleted || 0) + 1 });
+            await db.ref(`users/${userId}/earningsHistory`).push({ id: Date.now(), amount: reward, description: `Admin approved task (+${reward})`, date: Date.now() });
+        }
+        showToast(`Approved! +${reward} VIU`);
+        loadAllData();
+    };
+    window.rejectSubmission = async (subId) => {
+        await db.ref(`specialSubmissions/${subId}`).update({ status: "rejected" });
+        showToast("Submission rejected");
+        loadAllData();
+    };
+
+    function renderWithdrawalsList() {
+        let filtered = allWithdrawals;
+        if (withdrawFilterMode === "pending") filtered = allWithdrawals.filter(w => w.status === "pending");
+        const container = document.getElementById("withdrawalsContainer");
+        if (!filtered.length) { container.innerHTML = '<div class="empty-state">No withdrawal requests</div>'; return; }
+        container.innerHTML = filtered.map(w => `
+            <div class="withdraw-card">
+                <div class="flex-between">
+                    <div><strong>${escapeHtml(w.username)}</strong><br><small>${w.withdrawId}</small></div>
+                    <span class="status-pill pill-${w.status}">${w.status}</span>
+                </div>
+                <div>💰 ${(w.amount||0).toLocaleString()} VIU (net: ${(w.netAmount||0).toLocaleString()})</div>
+                <div>📱 ${w.method} - ${w.account}</div>
+                ${w.status === "pending" ? `
+                    <div class="chip-group">
+                        <button class="btn-success" onclick="approveWithdrawal('${w.userId}', '${w.id}', ${w.amount})"><i class="fas fa-check"></i> Approve</button>
+                        <button class="btn-danger" onclick="rejectWithdrawal('${w.userId}', '${w.id}', ${w.amount})"><i class="fas fa-undo"></i> Reject & refund</button>
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+    }
+    window.approveWithdrawal = async (uid, wdid) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            const hist = [...(user.withdrawalHistory || [])];
+            const idx = hist.findIndex(w => w.id == wdid);
+            if (idx !== -1) { hist[idx].status = "approved"; await db.ref(`users/${uid}`).update({ withdrawalHistory: hist }); showToast("Withdrawal approved"); loadAllData(); }
+        }
+    };
+    window.rejectWithdrawal = async (uid, wdid, amount) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            const hist = [...(user.withdrawalHistory || [])];
+            const idx = hist.findIndex(w => w.id == wdid);
+            if (idx !== -1) {
+                hist[idx].status = "rejected";
+                await db.ref(`users/${uid}`).update({ withdrawalHistory: hist, balance: (user.balance || 0) + amount });
+                showToast(`Rejected, ${amount.toLocaleString()} refunded`);
+                loadAllData();
+            }
+        }
+    };
+
+    document.getElementById("fullResetBtn")?.addEventListener("click", async () => {
+        if (!confirm("⚠️ PERMANENT RESET: All users -> balance 0, ads 0, tasks 0. Continue?")) return;
+        const confirmText = prompt("Type 'RESET ALL' to confirm factory reset:");
+        if (confirmText !== "RESET ALL") { showToast("Reset cancelled", true); return; }
+        for (let user of allUsers) {
+            await db.ref(`users/${user.uid}`).update({
+                balance: 0, totalEarned: 0, tasksCompleted: 0,
+                ads1Progress: 0, ads2Progress: 0, ads3Progress: 0, ads4Progress: 0,
+                turboMinerClaimed: false, youtubeSubClaimed: false, tgChannelClaimed: false, woodRushClaimed: false,
+                withdrawalHistory: [], earningsHistory: [],
+                specialTaskSubmission1: null, cpmSubmission: null, cpm2Submission: null
+            });
+        }
+        await db.ref("specialSubmissions").remove();
+        showToast("✅ FULL FACTORY RESET COMPLETE");
+        loadAllData();
+    });
+
+    document.getElementById("filterPendingBtn")?.addEventListener("click", () => { withdrawFilterMode = "pending"; renderWithdrawalsList(); });
+    document.getElementById("filterAllBtn")?.addEventListener("click", () => { withdrawFilterMode = "all"; renderWithdrawalsList(); });
     document.getElementById("userSearchInput")?.addEventListener("input", () => renderUsersList());
-    document.getElementById("closeProfileModal")?.addEventListener("click", () => document.getElementById("userProfileModal").classList.remove("active"));
-    document.querySelectorAll(".range-btn.user-range").forEach(btn => btn.addEventListener("click", (e) => { currentRanges.user = parseInt(btn.dataset.days); document.querySelectorAll(".user-range").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); renderAllGraphs(); }));
-    document.querySelectorAll(".range-btn.earn-range").forEach(btn => btn.addEventListener("click", (e) => { currentRanges.earnings = parseInt(btn.dataset.days); document.querySelectorAll(".earn-range").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); renderAllGraphs(); }));
-    document.querySelectorAll(".range-btn.wd-range").forEach(btn => btn.addEventListener("click", (e) => { currentRanges.withdrawals = parseInt(btn.dataset.days); document.querySelectorAll(".wd-range").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); renderAllGraphs(); }));
-    document.querySelectorAll(".nav-tab").forEach(tab => tab.addEventListener("click", () => { const target = tab.dataset.tab; document.querySelectorAll(".admin-section").forEach(sec=>sec.classList.remove("active")); document.getElementById(`${target}Section`).classList.add("active"); document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active")); tab.classList.add("active"); if(target==="users") renderUsersList(); if(target==="submissions") renderSubmissionsList(); if(target==="withdrawals") renderWithdrawalsList(); if(target==="dashboard") { renderDashboardStats(); renderAllGraphs(); } }));
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+    document.getElementById("changePasswordBtn")?.addEventListener("click", () => {
+        const newPass = document.getElementById("newAdminPassword").value;
+        if (newPass.length < 4) { showToast("Min 4 characters", true); return; }
+        localStorage.setItem(ADMIN_PASS_KEY, newPass);
+        showToast("Admin password updated");
+        document.getElementById("newAdminPassword").value = "";
+    });
+    document.getElementById("loginBtn")?.addEventListener("click", () => {
+        const pwd = document.getElementById("adminPassword").value;
+        if (pwd === initAdminPass()) { setLogin(true); showAdminUI(); }
+        else showToast("Invalid password", true);
+    });
+    document.getElementById("logoutBtn")?.addEventListener("click", () => { setLogin(false); showLoginUI(); });
+    
+    document.querySelectorAll(".nav-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            const target = tab.dataset.tab;
+            document.querySelectorAll(".admin-section").forEach(sec => sec.classList.remove("active"));
+            document.getElementById(`${target}Section`).classList.add("active");
+            document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            if (target === "users") renderUsersList();
+            if (target === "submissions") renderSubmissionsList();
+            if (target === "withdrawals") renderWithdrawalsList();
+            if (target === "dashboard") renderDashboard();
+        });
+    });
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
     if (isLoggedIn()) showAdminUI(); else showLoginUI();
 </script>
 </body>
