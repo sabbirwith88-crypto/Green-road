@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Viu Earn • Admin Panel (Fixed)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { background: #eef2f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
+        .phone-frame { width: 100%; max-width: 420px; background: #ffffff; border-radius: 48px; box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35), 0 0 0 8px #dce3ec; overflow: hidden; position: relative; height: 780px; display: flex; flex-direction: column; }
+        .scroll-area { flex: 1; overflow-y: auto; padding-bottom: 80px; scrollbar-width: thin; }
+        .login-container, .login-card { display: flex; align-items: center; justify-content: center; height: 100%; }
+        .login-card { background: white; border-radius: 48px; padding: 40px 28px; text-align: center; box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1); width: 100%; margin: 20px; }
+        .login-card i { font-size: 3rem; color: #000; margin-bottom: 16px; }
+        .login-card h2 { font-weight: 800; letter-spacing: -0.5px; margin-bottom: 20px; }
+        .login-card input { width: 100%; padding: 16px 20px; border-radius: 60px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 1rem; margin: 16px 0; outline: none; }
+        .login-card input:focus { border-color: #000; box-shadow: 0 0 0 3px rgba(0,0,0,0.1); }
+        .btn-primary { background: #000; color: white; border: none; padding: 14px 20px; border-radius: 60px; font-weight: 700; width: 100%; cursor: pointer; transition: 0.2s; }
+        .admin-header { background: white; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edf2f7; position: sticky; top: 0; z-index: 10; }
+        .logo { font-weight: 800; font-size: 1.3rem; background: linear-gradient(135deg, #000, #2d2d2d); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .exit-btn { background: #f1f5f9; border: none; padding: 8px 16px; border-radius: 40px; font-weight: 600; cursor: pointer; }
+        .bottom-nav-admin { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 10px 12px 22px; border-top: 1px solid #edf2f7; z-index: 20; }
+        .nav-tab { background: transparent; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.7rem; padding: 6px 12px; border-radius: 40px; color: #64748b; font-weight: 500; flex: 1; cursor: pointer; }
+        .nav-tab i { font-size: 1.4rem; }
+        .nav-tab.active { background: #f1f5f9; color: #000; font-weight: 600; }
+        .admin-section { display: none; padding: 20px; animation: fadeIn 0.25s ease; }
+        .admin-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .stats-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 24px; }
+        .stat-card { background: #f8fafc; border-radius: 32px; padding: 20px; border: 1px solid #eef2f6; }
+        .stat-number { font-size: 2rem; font-weight: 800; color: #000; margin-top: 8px; }
+        .user-card, .withdraw-card, .submission-card { background: #ffffff; border-radius: 28px; padding: 18px; margin-bottom: 16px; border: 1px solid #edf2f7; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .chip-group { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+        .btn-icon { background: #f1f5f9; border: none; padding: 8px 16px; border-radius: 40px; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.15s; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn-dark { background: #1e293b; color: white; }
+        .status-pill { display: inline-block; padding: 4px 12px; border-radius: 40px; font-size: 0.7rem; font-weight: 700; }
+        .pill-pending { background: #fef3c7; color: #92400e; }
+        .pill-approved { background: #d1fae5; color: #065f46; }
+        .pill-rejected { background: #fee2e2; color: #991b1b; }
+        .search-bar { background: #fff; border-radius: 60px; padding: 8px 18px; display: flex; gap: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        .search-bar input { flex: 1; border: none; outline: none; background: transparent; }
+        .empty-state { text-align: center; padding: 48px 20px; color: #94a3b8; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: 0.2s; }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: white; border-radius: 48px; padding: 28px; width: 90%; max-width: 360px; max-height: 80vh; overflow-y: auto; }
+        .profile-detail-item { padding: 12px 0; border-bottom: 1px solid #eef2f6; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 60px; font-weight: 500; z-index: 2000; display: none; font-size: 0.85rem; }
+        .badge-count { background: #e2e8f0; border-radius: 40px; padding: 2px 10px; font-size: 0.7rem; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #ccc; border-top-color: #000; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+<div class="phone-frame">
+    <div id="loginView" style="height: 100%; display: flex; align-items: center; justify-content: center;">
+        <div class="login-container">
+            <div class="login-card">
+                <i class="fas fa-crown"></i>
+                <h2>Admin Access</h2>
+                <input type="password" id="adminPassword" placeholder="Master password">
+                <button id="loginBtn" class="btn-primary"><i class="fas fa-key"></i> Unlock Panel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminPanelView" style="display: none; flex-direction: column; height: 100%; position: relative;">
+        <div class="admin-header">
+            <div class="logo"><i class="fas fa-chart-line"></i> Viu Earn Admin</div>
+            <button id="logoutBtn" class="exit-btn"><i class="fas fa-sign-out-alt"></i> Exit</button>
+        </div>
+        <div class="scroll-area" id="adminScrollArea">
+            <div id="dashboardSection" class="admin-section active"><div class="stats-grid" id="dashboardStats"></div><div class="user-card" id="extraInsights"></div></div>
+            <div id="usersSection" class="admin-section"><div class="search-bar"><i class="fas fa-search"></i><input type="text" id="userSearchInput" placeholder="Search by username, ID or referral code"></div><div id="usersListContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading users...</div></div></div>
+            <div id="submissionsSection" class="admin-section"><div id="submissionsContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading submissions...</div></div></div>
+            <div id="withdrawalsSection" class="admin-section"><div class="flex-between" style="margin-bottom: 16px;"><button id="filterPendingBtn" class="btn-icon btn-dark"><i class="fas fa-clock"></i> Pending only</button><button id="filterAllBtn" class="btn-icon">All requests</button></div><div id="withdrawalsContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading withdrawals...</div></div></div>
+            <div id="resetSection" class="admin-section"><div class="user-card" style="border-left: 4px solid #ef4444;"><h3><i class="fas fa-radiation"></i> Danger Zone – Factory Reset</h3><p style="margin: 10px 0; color:#475569;">Reset EVERY user: balance = 0, all progress cleared, one‑time tasks removed, submissions deleted.</p><button id="fullResetBtn" class="btn-danger" style="width:100%; padding: 14px; margin-top: 8px;"><i class="fas fa-trash-alt"></i> 🔥 RESET ALL DATA (IRREVERSIBLE)</button></div><div class="user-card" style="margin-top: 20px;"><h4><i class="fas fa-lock"></i> Security Settings</h4><input type="password" id="newAdminPassword" placeholder="New admin password" style="width:100%; padding:12px; border-radius:60px; margin:12px 0; border:1px solid #ddd;"><button id="changePasswordBtn" class="btn-primary" style="background:#1e293b;">Update Password</button></div></div>
+        </div>
+        <div class="bottom-nav-admin">
+            <button class="nav-tab active" data-tab="dashboard"><i class="fas fa-chart-pie"></i><span>Stats</span></button>
+            <button class="nav-tab" data-tab="users"><i class="fas fa-users"></i><span>Users</span></button>
+            <button class="nav-tab" data-tab="submissions"><i class="fas fa-code-branch"></i><span>Tasks</span></button>
+            <button class="nav-tab" data-tab="withdrawals"><i class="fas fa-hand-holding-usd"></i><span>Payouts</span></button>
+            <button class="nav-tab" data-tab="reset"><i class="fas fa-sliders-h"></i><span>Reset</span></button>
+        </div>
+    </div>
+</div>
+<div id="userProfileModal" class="modal-overlay"><div class="modal-box"><h3 style="margin-bottom: 16px;"><i class="fas fa-id-card"></i> Player Profile</h3><div id="profileDetailContent"></div><button id="closeProfileModal" class="btn-icon" style="width:100%; margin-top: 20px; background:#000; color:white;">Close</button></div></div>
+<div id="toastMsg" class="toast"></div>
+
+<script>
+    // Firebase Config (same as your app)
+    const firebaseConfig = {
+        apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM",
+        authDomain: "earn-for-earn-55d3e.firebaseapp.com",
+        databaseURL: "https://earn-for-earn-55d3e-default-rtdb.firebaseio.com",
+        projectId: "earn-for-earn-55d3e",
+        storageBucket: "earn-for-earn-55d3e.firebasestorage.app",
+        messagingSenderId: "109416949734",
+        appId: "1:109416949734:web:53f52de7899d65a04c9827"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const ADMIN_PASS_KEY = "admin_pepe_secure";
+    let allUsers = [], allSubmissions = [], allWithdrawals = [];
+    let withdrawFilterMode = "pending";
+
+    function showToast(msg, isError = false) {
+        let t = document.getElementById("toastMsg");
+        t.textContent = msg;
+        t.style.background = isError ? "#dc2626" : "#0f172a";
+        t.style.display = "block";
+        setTimeout(() => t.style.display = "none", 3000);
+    }
+
+    function initAdminPass() {
+        if (!localStorage.getItem(ADMIN_PASS_KEY)) localStorage.setItem(ADMIN_PASS_KEY, "Admin2025");
+        return localStorage.getItem(ADMIN_PASS_KEY);
+    }
+    function isLoggedIn() { return sessionStorage.getItem("admin_logged") === "true"; }
+    function setLogin(val) { val ? sessionStorage.setItem("admin_logged","true") : sessionStorage.removeItem("admin_logged"); }
+    function showLoginUI() { document.getElementById("loginView").style.display = "flex"; document.getElementById("adminPanelView").style.display = "none"; }
+    function showAdminUI() { document.getElementById("loginView").style.display = "none"; document.getElementById("adminPanelView").style.display = "flex"; loadAllData(); }
+
+    async function loadAllData() {
+        showToast("Syncing data from Firebase...");
+        try {
+            // Load users
+            const usersSnap = await db.ref("users").once("value");
+            allUsers = [];
+            usersSnap.forEach(child => {
+                let user = child.val();
+                user.uid = child.key;
+                // Ensure arrays exist
+                if (!user.referrals) user.referrals = [];
+                if (!user.withdrawalHistory) user.withdrawalHistory = [];
+                if (!user.earningsHistory) user.earningsHistory = [];
+                allUsers.push(user);
+            });
+            console.log(`Loaded ${allUsers.length} users`);
+
+            // Load submissions
+            const subsSnap = await db.ref("specialSubmissions").once("value");
+            allSubmissions = [];
+            subsSnap.forEach(child => {
+                allSubmissions.push({ id: child.key, ...child.val() });
+            });
+            console.log(`Loaded ${allSubmissions.length} submissions`);
+
+            // Build withdrawals list from users
+            allWithdrawals = [];
+            allUsers.forEach(user => {
+                if (user.withdrawalHistory && Array.isArray(user.withdrawalHistory)) {
+                    user.withdrawalHistory.forEach(w => {
+                        allWithdrawals.push({
+                            ...w,
+                            username: user.username || "unknown",
+                            userId: user.uid
+                        });
+                    });
+                }
+            });
+            allWithdrawals.sort((a,b) => (b.date || 0) - (a.date || 0));
+
+            renderDashboard();
+            renderUsersList();
+            renderSubmissionsList();
+            renderWithdrawalsList();
+            showToast(`✅ Loaded ${allUsers.length} users, ${allSubmissions.length} pending tasks, ${allWithdrawals.length} withdrawals`);
+        } catch (err) {
+            console.error(err);
+            showToast("Error loading data: " + err.message, true);
+        }
+    }
+
+    function renderDashboard() {
+        let totalBalance = 0, totalEarned = 0, totalRefs = 0, totalAdsWatched = 0;
+        allUsers.forEach(u => {
+            totalBalance += u.balance || 0;
+            totalEarned += u.totalEarned || 0;
+            totalRefs += (u.referrals?.length || 0);
+            totalAdsWatched += (u.ads1Progress||0)+(u.ads2Progress||0)+(u.ads3Progress||0)+(u.ads4Progress||0)+(u.survey1Progress||0);
+        });
+        const pendingSubs = allSubmissions.filter(s => s.status === "pending").length;
+        const pendingWd = allWithdrawals.filter(w => w.status === "pending").length;
+        document.getElementById("dashboardStats").innerHTML = `
+            <div class="stat-card"><i class="fas fa-users"></i><div class="stat-number">${allUsers.length}</div><div>Total Users</div></div>
+            <div class="stat-card"><i class="fas fa-coins"></i><div class="stat-number">${totalBalance.toLocaleString()}</div><div>Total Balance</div></div>
+            <div class="stat-card"><i class="fas fa-clock"></i><div class="stat-number">${pendingWd}</div><div>Pending WD</div></div>
+            <div class="stat-card"><i class="fas fa-tasks"></i><div class="stat-number">${pendingSubs}</div><div>Task Pending</div></div>
+        `;
+        document.getElementById("extraInsights").innerHTML = `<div class="user-card"><i class="fas fa-chart-line"></i> Total Earned: ${totalEarned.toLocaleString()} VIU &nbsp;|&nbsp; <i class="fas fa-ad"></i> Ads watched: ${totalAdsWatched}<br><i class="fas fa-user-friends"></i> Referrals: ${totalRefs} &nbsp;|&nbsp; <i class="fas fa-check-circle"></i> Approved WD: ${allWithdrawals.filter(w=>w.status==='approved').length}</div>`;
+    }
+
+    function renderUsersList() {
+        const searchTerm = document.getElementById("userSearchInput")?.value.toLowerCase() || "";
+        let filtered = allUsers.filter(u => 
+            (u.username || "").toLowerCase().includes(searchTerm) ||
+            (u.uid || "").toLowerCase().includes(searchTerm) ||
+            (u.referralCode || "").toLowerCase().includes(searchTerm)
+        );
+        const container = document.getElementById("usersListContainer");
+        if (!filtered.length) { container.innerHTML = '<div class="empty-state">No users found</div>'; return; }
+        container.innerHTML = filtered.map(u => `
+            <div class="user-card">
+                <div class="flex-between">
+                    <div><strong><i class="fab fa-telegram"></i> ${escapeHtml(u.username || "No name")}</strong><div style="font-size:0.7rem;">${u.uid.slice(0,10)}...</div></div>
+                    <span class="status-pill" style="background:#000; color:white;">${(u.balance||0).toLocaleString()} VIU</span>
+                </div>
+                <div class="chip-group">
+                    <span><i class="fas fa-user-friends"></i> Refs: ${u.referrals?.length || 0}</span>
+                    <span><i class="fas fa-chart-simple"></i> Tasks: ${u.tasksCompleted || 0}</span>
+                    <span><i class="fas fa-ad"></i> Ads total: ${(u.ads1Progress||0)+(u.ads2Progress||0)+(u.ads3Progress||0)+(u.ads4Progress||0)}</span>
+                </div>
+                <div class="chip-group">
+                    <button class="btn-icon" onclick="viewUserProfile('${u.uid}')"><i class="fas fa-eye"></i> Profile</button>
+                    <button class="btn-icon btn-success" onclick="addBalanceToUser('${u.uid}', 20000)"><i class="fas fa-plus"></i> +20k</button>
+                    <button class="btn-icon btn-warning" onclick="setUserBalance('${u.uid}')"><i class="fas fa-pen"></i> Set Bal</button>
+                    <button class="btn-icon btn-danger" onclick="resetSingleUser('${u.uid}')"><i class="fas fa-undo-alt"></i> Reset</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    window.viewUserProfile = async (uid) => {
+        const u = allUsers.find(u => u.uid === uid);
+        if (!u) return;
+        const referralCount = u.referrals?.length || 0;
+        const totalAds = (u.ads1Progress||0)+(u.ads2Progress||0)+(u.ads3Progress||0)+(u.ads4Progress||0)+(u.survey1Progress||0);
+        const oneTime = [];
+        if(u.turboMinerClaimed) oneTime.push("Turbo Miner");
+        if(u.youtubeSubClaimed) oneTime.push("YouTube");
+        if(u.tgChannelClaimed) oneTime.push("TG Channel");
+        if(u.woodRushClaimed) oneTime.push("Wood Rush");
+        if(u.ninjagame50Claimed) oneTime.push("Ninja Game");
+        const pendingTasks = [];
+        if(u.specialTaskSubmission1?.status === "pending") pendingTasks.push("Code Task (80)");
+        if(u.cpmSubmission?.status === "pending") pendingTasks.push("CPM (800)");
+        if(u.cpm2Submission?.status === "pending") pendingTasks.push("CPM2 (800)");
+        if(u.specialUsernameSubmission?.status === "pending") pendingTasks.push("Username Task (200)");
+        if(u.gmailSubmission?.status === "pending") pendingTasks.push("Gmail (1000)");
+        const html = `
+            <div class="profile-detail-item"><span>Username</span><strong>${escapeHtml(u.username)}</strong></div>
+            <div class="profile-detail-item"><span>User ID</span><span style="font-size:0.8rem;">${u.uid}</span></div>
+            <div class="profile-detail-item"><span>Balance</span><strong>${(u.balance||0).toLocaleString()} VIU</strong></div>
+            <div class="profile-detail-item"><span>Total Earned</span><strong>${(u.totalEarned||0).toLocaleString()} VIU</strong></div>
+            <div class="profile-detail-item"><span>Referrals</span><strong>${referralCount}</strong></div>
+            <div class="profile-detail-item"><span>Tasks Done</span><strong>${u.tasksCompleted || 0}</strong></div>
+            <div class="profile-detail-item"><span>Ads watched</span><strong>${totalAds}</strong></div>
+            <div class="profile-detail-item"><span>One‑time completed</span><strong>${oneTime.join(", ") || "None"}</strong></div>
+            <div class="profile-detail-item"><span>Pending approvals</span><strong>${pendingTasks.join(", ") || "None"}</strong></div>
+            <div class="profile-detail-item"><span>Withdrawals</span><strong>${u.withdrawalHistory?.length || 0}</strong></div>
+            <div class="profile-detail-item"><span>Referral Code</span><code>${u.referralCode || "—"}</code></div>
+        `;
+        document.getElementById("profileDetailContent").innerHTML = html;
+        document.getElementById("userProfileModal").classList.add("active");
+    };
+    document.getElementById("closeProfileModal").onclick = () => document.getElementById("userProfileModal").classList.remove("active");
+
+    window.addBalanceToUser = async (uid, amount) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            await db.ref(`users/${uid}`).update({ balance: (user.balance||0)+amount, totalEarned: (user.totalEarned||0)+amount });
+            showToast(`+${amount.toLocaleString()} VIU added`);
+            loadAllData();
+        }
+    };
+    window.setUserBalance = async (uid) => {
+        const user = allUsers.find(u => u.uid === uid);
+        const newVal = prompt("New balance (VIU):", user?.balance || 0);
+        if (newVal !== null && !isNaN(parseInt(newVal))) {
+            await db.ref(`users/${uid}`).update({ balance: parseInt(newVal) });
+            showToast(`Balance set to ${parseInt(newVal).toLocaleString()}`);
+            loadAllData();
+        }
+    };
+    window.resetSingleUser = async (uid) => {
+        if (confirm("⚠️ Reset user: balance → 0, all ads & tasks cleared, one-time tasks reset?")) {
+            await db.ref(`users/${uid}`).update({
+                balance:0, totalEarned:0, tasksCompleted:0,
+                ads1Progress:0, ads2Progress:0, ads3Progress:0, ads4Progress:0, survey1Progress:0,
+                turboMinerClaimed:false, youtubeSubClaimed:false, tgChannelClaimed:false, woodRushClaimed:false, ninjagame50Claimed:false,
+                withdrawalHistory:[], earningsHistory:[],
+                specialTaskSubmission1:null, cpmSubmission:null, cpm2Submission:null, specialUsernameSubmission:null, gmailSubmission:null
+            });
+            showToast("User reset complete");
+            loadAllData();
+        }
+    };
+
+    function renderSubmissionsList() {
+        const pending = allSubmissions.filter(s => s.status === "pending");
+        const container = document.getElementById("submissionsContainer");
+        if (!pending.length) { container.innerHTML = '<div class="empty-state">No pending submissions ✅</div>'; return; }
+        container.innerHTML = pending.map(sub => {
+            let reward = 0;
+            if (sub.type === 'special1') reward = 80;
+            else if (sub.type === 'cpm' || sub.type === 'cpm2') reward = 800;
+            else if (sub.type === 'specialUsername') reward = 200;
+            else if (sub.type === 'gmail') reward = 1000;
+            const detail = sub.referralId || sub.username || (sub.email ? `${sub.email}` : "submitted");
+            return `<div class="submission-card"><div class="flex-between"><div><strong>${escapeHtml(sub.userId?.slice(0,12))}</strong><br><span class="badge-count">${sub.type || "task"}</span></div><span class="status-pill pill-pending">pending</span></div><div style="margin:8px 0;">📝 ${detail}</div><div class="chip-group"><button class="btn-success" onclick="approveSubmission('${sub.id}', '${sub.userId}', ${reward}, '${sub.type}')"><i class="fas fa-check"></i> Approve +${reward}</button><button class="btn-danger" onclick="rejectSubmission('${sub.id}')"><i class="fas fa-times"></i> Reject</button></div></div>`;
+        }).join('');
+    }
+
+    window.approveSubmission = async (subId, userId, reward, type) => {
+        await db.ref(`specialSubmissions/${subId}`).update({ status: "approved" });
+        const userSnap = await db.ref(`users/${userId}`).once("value");
+        const user = userSnap.val();
+        if (user) {
+            await db.ref(`users/${userId}`).update({
+                balance: (user.balance||0)+reward,
+                totalEarned: (user.totalEarned||0)+reward,
+                tasksCompleted: (user.tasksCompleted||0)+1
+            });
+            // Update submission status inside user object if exists
+            if (type === 'special1') await db.ref(`users/${userId}/specialTaskSubmission1/status`).set("approved");
+            else if (type === 'cpm') await db.ref(`users/${userId}/cpmSubmission/status`).set("approved");
+            else if (type === 'cpm2') await db.ref(`users/${userId}/cpm2Submission/status`).set("approved");
+            else if (type === 'specialUsername') await db.ref(`users/${userId}/specialUsernameSubmission/status`).set("approved");
+            else if (type === 'gmail') await db.ref(`users/${userId}/gmailSubmission/status`).set("approved");
+            // Add earning history entry
+            const newEntry = { id: Date.now(), amount: reward, description: `✅ Admin approved ${type} (+${reward} VIU)`, date: Date.now() };
+            const history = user.earningsHistory || [];
+            history.unshift(newEntry);
+            await db.ref(`users/${userId}/earningsHistory`).set(history.slice(0,200));
+        }
+        showToast(`Approved! +${reward} VIU`);
+        loadAllData();
+    };
+    window.rejectSubmission = async (subId) => {
+        await db.ref(`specialSubmissions/${subId}`).update({ status: "rejected" });
+        showToast("Submission rejected");
+        loadAllData();
+    };
+
+    function renderWithdrawalsList() {
+        let filtered = withdrawFilterMode === "pending" ? allWithdrawals.filter(w => w.status === "pending") : allWithdrawals;
+        const container = document.getElementById("withdrawalsContainer");
+        if (!filtered.length) { container.innerHTML = '<div class="empty-state">No withdrawal requests</div>'; return; }
+        container.innerHTML = filtered.map(w => `<div class="withdraw-card"><div class="flex-between"><div><strong>${escapeHtml(w.username)}</strong><br><small>${w.withdrawId}</small></div><span class="status-pill pill-${w.status}">${w.status}</span></div><div>💰 ${(w.amount||0).toLocaleString()} VIU (fee 10% → net ${(w.netAmount||0).toLocaleString()})</div><div>📱 ${w.method} - ${w.account}</div>${w.status === "pending" ? `<div class="chip-group"><button class="btn-success" onclick="approveWithdrawal('${w.userId}', '${w.id}', ${w.amount})"><i class="fas fa-check"></i> Approve</button><button class="btn-danger" onclick="rejectWithdrawal('${w.userId}', '${w.id}', ${w.amount})"><i class="fas fa-undo"></i> Reject & refund</button></div>` : ''}</div>`).join('');
+    }
+
+    window.approveWithdrawal = async (uid, wdid) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            const hist = [...(user.withdrawalHistory || [])];
+            const idx = hist.findIndex(w => w.id == wdid);
+            if (idx !== -1) {
+                hist[idx].status = "approved";
+                await db.ref(`users/${uid}`).update({ withdrawalHistory: hist });
+                showToast("Withdrawal approved");
+                loadAllData();
+            }
+        }
+    };
+    window.rejectWithdrawal = async (uid, wdid, amount) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            const hist = [...(user.withdrawalHistory || [])];
+            const idx = hist.findIndex(w => w.id == wdid);
+            if (idx !== -1) {
+                hist[idx].status = "rejected";
+                await db.ref(`users/${uid}`).update({ withdrawalHistory: hist, balance: (user.balance||0) + amount });
+                showToast(`Rejected, ${amount.toLocaleString()} refunded`);
+                loadAllData();
+            }
+        }
+    };
+
+    // Event listeners
+    document.getElementById("fullResetBtn")?.addEventListener("click", async () => {
+        if (!confirm("⚠️ PERMANENT RESET: All users -> balance 0, ads 0, tasks 0. Continue?")) return;
+        if (prompt("Type 'RESET ALL' to confirm:") !== "RESET ALL") { showToast("Reset cancelled", true); return; }
+        for (let user of allUsers) {
+            await db.ref(`users/${user.uid}`).update({
+                balance:0, totalEarned:0, tasksCompleted:0,
+                ads1Progress:0,ads2Progress:0,ads3Progress:0,ads4Progress:0,survey1Progress:0,
+                turboMinerClaimed:false, youtubeSubClaimed:false, tgChannelClaimed:false, woodRushClaimed:false, ninjagame50Claimed:false,
+                withdrawalHistory:[], earningsHistory:[],
+                specialTaskSubmission1:null, cpmSubmission:null, cpm2Submission:null, specialUsernameSubmission:null, gmailSubmission:null
+            });
+        }
+        await db.ref("specialSubmissions").remove();
+        showToast("✅ FULL FACTORY RESET COMPLETE");
+        loadAllData();
+    });
+    document.getElementById("filterPendingBtn")?.addEventListener("click", () => { withdrawFilterMode = "pending"; renderWithdrawalsList(); });
+    document.getElementById("filterAllBtn")?.addEventListener("click", () => { withdrawFilterMode = "all"; renderWithdrawalsList(); });
+    document.getElementById("userSearchInput")?.addEventListener("input", () => renderUsersList());
+    document.getElementById("changePasswordBtn")?.addEventListener("click", () => {
+        const newPass = document.getElementById("newAdminPassword").value;
+        if (newPass.length < 4) { showToast("Min 4 characters", true); return; }
+        localStorage.setItem(ADMIN_PASS_KEY, newPass);
+        showToast("Admin password updated");
+        document.getElementById("newAdminPassword").value = "";
+    });
+    document.getElementById("loginBtn")?.addEventListener("click", () => {
+        const pwd = document.getElementById("adminPassword").value;
+        if (pwd === initAdminPass()) { setLogin(true); showAdminUI(); }
+        else showToast("Invalid password", true);
+    });
+    document.getElementById("logoutBtn")?.addEventListener("click", () => { setLogin(false); showLoginUI(); });
+    document.querySelectorAll(".nav-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            const target = tab.dataset.tab;
+            document.querySelectorAll(".admin-section").forEach(sec => sec.classList.remove("active"));
+            document.getElementById(`${target}Section`).classList.add("active");
+            document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            if (target === "users") renderUsersList();
+            if (target === "submissions") renderSubmissionsList();
+            if (target === "withdrawals") renderWithdrawalsList();
+            if (target === "dashboard") renderDashboard();
+        });
+    });
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+    if (isLoggedIn()) showAdminUI(); else showLoginUI();
+</script>
+</body>
+</html>
