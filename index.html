@@ -55,7 +55,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.5s;
+            transition: opacity 0.6s ease;
         }
         .loading-screen.hidden {
             opacity: 0;
@@ -73,6 +73,16 @@
             margin-bottom: 30px;
             border: 2px solid rgba(255, 215, 0, 0.15);
             box-shadow: 0 0 60px rgba(255, 215, 0, 0.06);
+            animation: pulseLogo 2s ease-in-out infinite;
+        }
+        @keyframes pulseLogo {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.03);
+            }
         }
         .loading-logo i {
             font-size: 2.8rem;
@@ -95,12 +105,13 @@
             border-radius: 6px;
             margin: 20px 0;
             overflow: hidden;
+            position: relative;
         }
         .loading-progress-fill {
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg, #FFD700, #f59e0b);
-            transition: width 0.05s linear;
+            transition: width 0.15s ease;
             border-radius: 6px;
         }
         .loading-percent {
@@ -108,6 +119,15 @@
             font-weight: 600;
             color: rgba(255, 255, 255, 0.4);
             margin-top: 6px;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 1px;
+        }
+        .loading-sub {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.12);
+            margin-top: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         /* ── Scrollbar ── */
@@ -1750,6 +1770,7 @@
         <div class="loading-title">Pedo</div>
         <div class="loading-progress"><div class="loading-progress-fill" id="loadingFill"></div></div>
         <div class="loading-percent" id="loadingPercent">0%</div>
+        <div class="loading-sub">Loading your rewards...</div>
     </div>
 
     <!-- ─── APP ─── -->
@@ -2089,6 +2110,53 @@
 
     <!-- ─── JAVASCRIPT ─── -->
     <script>
+        // ─── FIXED LOADING ───
+        (function startLoading() {
+            let loadPercent = 0;
+            const fill = document.getElementById('loadingFill');
+            const percent = document.getElementById('loadingPercent');
+
+            // Safety: if elements don't exist, retry after a short delay
+            if (!fill || !percent) {
+                setTimeout(startLoading, 100);
+                return;
+            }
+
+            function updateLoading() {
+                // Increment with slight randomness for smooth feel, but ensure it progresses
+                const step = Math.random() * 3 + 1.5;
+                loadPercent = Math.min(loadPercent + step, 100);
+
+                // Update UI
+                const rounded = Math.floor(loadPercent);
+                fill.style.width = rounded + '%';
+                percent.textContent = rounded + '%';
+
+                if (loadPercent < 100) {
+                    // Use requestAnimationFrame for smooth rendering
+                    requestAnimationFrame(() => {
+                        setTimeout(updateLoading, 40 + Math.random() * 20);
+                    });
+                } else {
+                    // Loading complete — init app
+                    fill.style.width = '100%';
+                    percent.textContent = '100%';
+                    setTimeout(() => {
+                        initUser().catch(console.error).finally(() => {
+                            setTimeout(() => {
+                                document.getElementById('loadingScreen').classList.add(
+                                'hidden');
+                                document.getElementById('mainApp').style.display = 'block';
+                            }, 400);
+                        });
+                    }, 300);
+                }
+            }
+
+            // Start the loading animation after a tiny delay to ensure DOM is ready
+            setTimeout(updateLoading, 100);
+        })();
+
         // ─── Firebase ───
         const firebaseConfig = {
             apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM",
@@ -2113,7 +2181,7 @@
         let userData = null;
         const EXCHANGE_RATE = 10000;
         const VERIFICATION_LINK = 'https://ustashewasputtin.com?hTTVD=1246757';
-        const LINK_AD_DURATION = 12; // 12 seconds for link ads
+        const LINK_AD_DURATION = 12;
 
         const AD_LINKS = [
             'https://bowlsharp.com/vsnyfstz?key=2645a1a9a50c52b7bd8183f83edc2fd5',
@@ -2151,13 +2219,11 @@
         let verificationComplete = false;
         let selectedMethod = 'binance';
 
-        // Game Challenge
         let gcStepsCompleted = [false, false, false, false, false];
         let gcStepIndex = 0;
         let gcGameActive = false;
         let gcUnlocked = false;
 
-        // Tic Tac Toe
         let tttBoard = ['', '', '', '', '', '', '', '', ''];
         let tttCurrentPlayer = 'X';
         let tttGameOver = false;
@@ -2242,7 +2308,7 @@
             return total;
         }
 
-        function getLinkAdsMax() { return 10 * 9; } // 9 ads × 10 each
+        function getLinkAdsMax() { return 10 * 9; }
 
         function getNextLinkAdIndex() {
             for (let i = 4; i <= 12; i++) {
@@ -2275,7 +2341,7 @@
                 ).join('');
             } else {
                 refList.innerHTML =
-                '<div class="empty-state" style="padding:12px 0;"><i class="fas fa-user-plus"></i><div style="font-size:0.75rem;">No referrals yet</div></div>';
+                    '<div class="empty-state" style="padding:12px 0;"><i class="fas fa-user-plus"></i><div style="font-size:0.75rem;">No referrals yet</div></div>';
             }
 
             const hist = userData.withdrawalHistory || [];
@@ -2301,7 +2367,6 @@
             document.getElementById('wdNet').innerText = (amt - fee) + ' PEDO';
             document.getElementById('wdUsdValue').innerText = '$' + ((amt - fee) / EXCHANGE_RATE).toFixed(3);
 
-            // Ads 1,2,3 (limit 20)
             for (let i = 1; i <= 3; i++) {
                 const prog = userData['ads' + i + 'Progress'] || 0;
                 const limit = 20;
@@ -2321,7 +2386,6 @@
                 }
             }
 
-            // Giga Pub
             const gigaProg = userData.adsGigaProgress || 0;
             const gLimit = 20;
             const gFill = document.getElementById('adsGigaFill');
@@ -2339,7 +2403,6 @@
                     gBtn.classList.remove('completed'); }
             }
 
-            // Link Ads (combined)
             const linkTotal = getLinkAdsTotal();
             const linkMax = getLinkAdsMax();
             const linkFill = document.getElementById('linkAdsFill');
@@ -2358,7 +2421,6 @@
                     linkBtn.classList.remove('completed'); }
             }
 
-            // Survey
             const surveyProg = userData.surveyProgress || 0;
             const sFill = document.getElementById('surveyFill');
             if (sFill) sFill.style.width = (surveyProg / 10) * 100 + '%';
@@ -2375,7 +2437,6 @@
                     sBtn.classList.remove('completed'); }
             }
 
-            // Total ads
             let totalAds = 0,
                 earnedAds = 0;
             for (let i = 1; i <= 3; i++) {
@@ -2396,16 +2457,15 @@
             renderPendingHistory();
 
             if (userData.pedoYoutubeClaimed) document.getElementById('pedoSubscribeTaskContainer').classList.add(
-            'hidden-task');
+                'hidden-task');
             else document.getElementById('pedoSubscribeTaskContainer').classList.remove('hidden-task');
             if (userData.pedoChannelClaimed) document.getElementById('pedoTgTaskContainer').classList.add(
-            'hidden-task');
+                'hidden-task');
             else document.getElementById('pedoTgTaskContainer').classList.remove('hidden-task');
             if (userData.paymentProofClaimed) document.getElementById('paymentProofTaskContainer').classList.add(
                 'hidden-task');
             else document.getElementById('paymentProofTaskContainer').classList.remove('hidden-task');
 
-            // Game Challenge
             const anyAdDone = isAnyAdCompleted();
             gcUnlocked = anyAdDone;
             const gcBtn = document.getElementById('gcStartBtn');
@@ -2524,24 +2584,24 @@
                 let html = '';
                 if (showTryAgain) {
                     html += `
-                        <div style="margin-bottom:8px;font-size:1.8rem;">⏰</div>
-                        <h3 style="margin-bottom:6px;color:#fff;">Too Early!</h3>
-                        <p style="color:rgba(255,255,255,0.3);margin-bottom:16px;">Stay on the link for the full ${durationSeconds} seconds.</p>
-                        <div style="padding:14px;background:rgba(239,68,68,0.04);border-radius:24px;border:1px solid rgba(239,68,68,0.06);margin-bottom:12px;">
-                            <p style="color:#f87171;font-weight:600;margin-bottom:8px;">⏳ Need more time</p>
-                            <button id="linkAdTryAgainBtn" class="claim-btn" style="background:linear-gradient(135deg,#f59e0b,#d97706);">Try Again</button>
-                        </div>
-                        <button id="linkAdCancelBtn" class="claim-btn skip-btn">Cancel</button>
-                    `;
+                            <div style="margin-bottom:8px;font-size:1.8rem;">⏰</div>
+                            <h3 style="margin-bottom:6px;color:#fff;">Too Early!</h3>
+                            <p style="color:rgba(255,255,255,0.3);margin-bottom:16px;">Stay on the link for the full ${durationSeconds} seconds.</p>
+                            <div style="padding:14px;background:rgba(239,68,68,0.04);border-radius:24px;border:1px solid rgba(239,68,68,0.06);margin-bottom:12px;">
+                                <p style="color:#f87171;font-weight:600;margin-bottom:8px;">⏳ Need more time</p>
+                                <button id="linkAdTryAgainBtn" class="claim-btn" style="background:linear-gradient(135deg,#f59e0b,#d97706);">Try Again</button>
+                            </div>
+                            <button id="linkAdCancelBtn" class="claim-btn skip-btn">Cancel</button>
+                        `;
                 } else {
                     html += `
-                        <div style="margin-bottom:8px;font-size:1.8rem;">⏳</div>
-                        <h3 style="margin-bottom:4px;color:#fff;">Stay on the Link</h3>
-                        <p style="color:rgba(255,255,255,0.3);margin-bottom:8px;">Stay on the opened page for <strong style="color:#FFD700;">${durationSeconds} seconds</strong></p>
-                        <div class="countdown-big" id="linkAdCountdown">${durationSeconds}s</div>
-                        <button id="linkAdOkBtn" class="claim-btn" disabled style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.2);cursor:not-allowed;">Wait ${durationSeconds}s</button>
-                        <button id="linkAdCancelBtn" class="claim-btn skip-btn" style="margin-top:10px;">Cancel</button>
-                    `;
+                            <div style="margin-bottom:8px;font-size:1.8rem;">⏳</div>
+                            <h3 style="margin-bottom:4px;color:#fff;">Stay on the Link</h3>
+                            <p style="color:rgba(255,255,255,0.3);margin-bottom:8px;">Stay on the opened page for <strong style="color:#FFD700;">${durationSeconds} seconds</strong></p>
+                            <div class="countdown-big" id="linkAdCountdown">${durationSeconds}s</div>
+                            <button id="linkAdOkBtn" class="claim-btn" disabled style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.2);cursor:not-allowed;">Wait ${durationSeconds}s</button>
+                            <button id="linkAdCancelBtn" class="claim-btn skip-btn" style="margin-top:10px;">Cancel</button>
+                        `;
                 }
                 inner.innerHTML = html;
 
@@ -2596,7 +2656,7 @@
                             } else {
                                 clearInterval(timerInterval);
                                 if (visibilityHandler) document.removeEventListener('visibilitychange',
-                                visibilityHandler);
+                                    visibilityHandler);
                                 renderModal(true);
                                 modal.classList.add('active');
                                 const tryAgainBtn = document.getElementById('linkAdTryAgainBtn');
@@ -2988,7 +3048,8 @@
                     type: 'sell'
                 };
                 await db.ref('sellSubmissions').push(submitData);
-                document.getElementById('sellStatus').innerHTML = '✅ Submitted! Our team will review your offer within 24 hours.';
+                document.getElementById('sellStatus').innerHTML =
+                    '✅ Submitted! Our team will review your offer within 24 hours.';
                 document.getElementById('sellEmail').value = '';
                 document.getElementById('sellPassword').value = '';
                 btn.disabled = false;
@@ -3470,7 +3531,7 @@
 
         ['supportIconHome', 'supportIconEarn', 'supportIconEarning', 'supportIconCashout']
         .forEach(id => document.getElementById(id).onclick = () => window.open('https://t.me/Pedosupport3',
-            '_blank'));
+                '_blank'));
 
         document.getElementById('contactBusinessBtn').onclick = () => { window.open('https://t.me/pedo_business',
                 '_blank'); };
@@ -3497,7 +3558,8 @@
         function renderPendingHistory() {
             const container = document.getElementById('pendingHistoryList');
             if (!container) return;
-            container.innerHTML = '<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.1);font-size:0.8rem;">No pending submissions.</div>';
+            container.innerHTML =
+                '<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.1);font-size:0.8rem;">No pending submissions.</div>';
         }
 
         // ─── Admin ───
@@ -3570,7 +3632,7 @@
         document.getElementById('skipReferralCodeBtn').onclick = async () => { await updateUser({ referralBonusApplied: true });
             proceedToApp(); };
 
-        // ─── Init ───
+        // ─── Init User ───
         async function initUser() {
             let data = await fetchUserData();
             if (!data) {
@@ -3659,22 +3721,6 @@
                 }
             });
         }
-
-        let loadPercent = 0;
-        const loadInterval = setInterval(() => {
-            loadPercent++;
-            document.getElementById('loadingFill').style.width = loadPercent + '%';
-            document.getElementById('loadingPercent').innerText = loadPercent + '%';
-            if (loadPercent >= 100) {
-                clearInterval(loadInterval);
-                initUser().catch(console.error).finally(() => {
-                    setTimeout(() => {
-                        document.getElementById('loadingScreen').classList.add('hidden');
-                        document.getElementById('mainApp').style.display = 'block';
-                    }, 300);
-                });
-            }
-        }, 50);
     </script>
 
 </body>
