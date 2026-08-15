@@ -830,6 +830,7 @@
         // ADMIN AUTH
         // ============================================================
         const ADMIN_PASS_KEY = "gamil_admin_king_secure";
+        const REWARD_AMOUNT = 0.20;   // <-- UPDATED to $0.20 per approved email
 
         function getStoredPass() {
             if (!localStorage.getItem(ADMIN_PASS_KEY)) {
@@ -1038,7 +1039,7 @@
                             </div>
                             <div class="chip-group">
                                 <button class="btn-icon" onclick="viewUserProfile('${u.uid}')"><i class="fas fa-eye"></i> Profile</button>
-                                <button class="btn-icon btn-success" onclick="addBalance('${u.uid}', 0.11)"><i class="fas fa-plus"></i> +$0.11</button>
+                                <button class="btn-icon btn-success" onclick="addBalance('${u.uid}', ${REWARD_AMOUNT})"><i class="fas fa-plus"></i> +$${REWARD_AMOUNT.toFixed(2)}</button>
                                 <button class="btn-icon btn-warning" onclick="setBalancePrompt('${u.uid}')"><i class="fas fa-pen"></i> Set Bal</button>
                                 <button class="btn-icon btn-danger" onclick="resetSingleUser('${u.uid}')"><i class="fas fa-undo-alt"></i> Reset</button>
                             </div>
@@ -1083,7 +1084,7 @@
                             <div class="sub-detail"><span class="label">Submitted:</span> ${date}</div>
                             ${s.status === 'pending' ? `
                                 <div class="chip-group" style="margin-top:8px;">
-                                    <button class="btn-icon btn-success" onclick="approveSubmission('${s.userId}', '${s.id}')"><i class="fas fa-check"></i> Approve</button>
+                                    <button class="btn-icon btn-success" onclick="approveSubmission('${s.userId}', '${s.id}')"><i class="fas fa-check"></i> Approve ($${REWARD_AMOUNT.toFixed(2)})</button>
                                     <button class="btn-icon btn-danger" onclick="rejectSubmission('${s.userId}', '${s.id}')"><i class="fas fa-times"></i> Reject</button>
                                 </div>
                             ` : ''}
@@ -1137,11 +1138,11 @@
         }
 
         // ============================================================
-        // ACTIONS: SUBMISSIONS
+        // ACTIONS: SUBMISSIONS (uses REWARD_AMOUNT = 0.20)
         // ============================================================
         window.approveSubmission = async (userId, subId) => {
             if (!userId || !subId) return;
-            if (!confirm("Approve this submission? User will earn $0.11.")) return;
+            if (!confirm(`Approve this submission? User will earn $${REWARD_AMOUNT.toFixed(2)}.`)) return;
 
             try {
                 // Find the submission in the user's submissions
@@ -1167,7 +1168,7 @@
                 // Update user balance
                 const userData = await db.ref(`users/${userId}`).once("value");
                 const u = userData.val() || {};
-                const reward = 0.11;
+                const reward = REWARD_AMOUNT;
                 const newBalance = (u.balance || 0) + reward;
                 const newTotalEarned = (u.totalEarned || 0) + reward;
                 const newApproved = (u.approvedCount || 0) + 1;
@@ -1218,7 +1219,7 @@
                 const userData = await db.ref(`users/${userId}`).once("value");
                 const u = userData.val() || {};
                 const pendingCount = Object.values(subs).filter(s => s.status === 'pending' && s.id !== subId).length;
-                const newPendingRewards = pendingCount * 0.11;
+                const newPendingRewards = pendingCount * REWARD_AMOUNT;
 
                 await db.ref(`users/${userId}`).update({
                     rejectedCount: (u.rejectedCount || 0) + 1,
@@ -1537,7 +1538,7 @@
             }
         }, 45000);
 
-        console.log("🔐 Gamil Admin Panel initialized.");
+        console.log("🔐 Gamil Admin Panel initialized. Reward per approval = $0.20");
     </script>
 
 </body>
