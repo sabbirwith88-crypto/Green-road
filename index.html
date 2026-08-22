@@ -1,1545 +1,497 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>Gamil Admin Panel</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js">
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Ruttore Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-
-        :root {
-            --bg: #0b0e14;
-            --bg-card: rgba(255, 255, 255, 0.04);
-            --bg-card-hover: rgba(255, 255, 255, 0.08);
-            --border-glass: rgba(255, 255, 255, 0.06);
-            --text-primary: #f0f4fa;
-            --text-secondary: #8e9aaf;
-            --text-muted: #5a6a7e;
-            --accent: #6c8cff;
-            --accent-glow: rgba(108, 140, 255, 0.25);
-            --accent-gradient: linear-gradient(135deg, #6c8cff, #a78bfa);
-            --green: #4ade80;
-            --green-glow: rgba(74, 222, 128, 0.20);
-            --orange: #fb923c;
-            --red: #f87171;
-            --radius: 16px;
-            --radius-sm: 10px;
-            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45);
-            --transition: 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-            --safe-top: env(safe-area-inset-top, 0px);
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
-        }
-
-        body {
-            background: var(--bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 16px;
-            color: var(--text-primary);
-        }
-
-        .phone-frame {
-            width: 100%;
-            max-width: 420px;
-            background: var(--bg);
-            border-radius: 48px;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border-glass);
-            overflow: hidden;
-            position: relative;
-            height: 780px;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid var(--border-glass);
-        }
-
-        .scroll-area {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 80px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent) transparent;
-        }
-        .scroll-area::-webkit-scrollbar {
-            width: 3px;
-        }
-        .scroll-area::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 8px;
-        }
-
-        /* ---- LOGIN ---- */
-        .login-container,
-        .login-card {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
-        .login-card {
-            background: var(--bg-card);
-            border-radius: 48px;
-            padding: 40px 28px;
-            text-align: center;
-            border: 1px solid var(--border-glass);
-            width: 100%;
-            margin: 20px;
-            backdrop-filter: blur(12px);
-        }
-        .login-card i {
-            font-size: 3.2rem;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 12px;
-        }
-        .login-card h2 {
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-            font-size: 24px;
-        }
-        .login-card input {
-            width: 100%;
-            padding: 16px 20px;
-            border-radius: 60px;
-            border: 1px solid var(--border-glass);
-            background: var(--bg-card);
-            color: var(--text-primary);
-            font-size: 1rem;
-            margin: 16px 0;
-            outline: none;
-            transition: border-color var(--transition), box-shadow var(--transition);
-        }
-        .login-card input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
-        }
-        .login-card input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .btn-primary {
-            background: var(--accent-gradient);
-            color: #fff;
-            border: none;
-            padding: 14px 20px;
-            border-radius: 60px;
-            font-weight: 700;
-            width: 100%;
-            cursor: pointer;
-            transition: transform var(--transition), box-shadow var(--transition);
-            box-shadow: 0 4px 20px var(--accent-glow);
-            font-size: 15px;
-        }
-        .btn-primary:active {
-            transform: scale(0.97);
-        }
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-
-        .btn-icon {
-            background: var(--bg-card);
-            border: 1px solid var(--border-glass);
-            padding: 8px 14px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: background var(--transition), transform var(--transition);
-            color: var(--text-secondary);
-            touch-action: manipulation;
-        }
-        .btn-icon:active {
-            transform: scale(0.95);
-        }
-        .btn-icon:hover {
-            background: var(--bg-card-hover);
-        }
-        .btn-success {
-            background: var(--green);
-            color: #0b0e14;
-            border: none;
-        }
-        .btn-success:active {
-            background: #3bcc7a;
-        }
-        .btn-danger {
-            background: var(--red);
-            color: #0b0e14;
-            border: none;
-        }
-        .btn-danger:active {
-            background: #e06060;
-        }
-        .btn-warning {
-            background: var(--orange);
-            color: #0b0e14;
-            border: none;
-        }
-        .btn-dark {
-            background: var(--text-primary);
-            color: var(--bg);
-            border: none;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border-glass);
-            color: var(--text-secondary);
-        }
-
-        /* ---- HEADER ---- */
-        .admin-header {
-            background: rgba(11, 14, 20, 0.92);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 14px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-glass);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .logo {
-            font-weight: 800;
-            font-size: 1.2rem;
-            color: var(--text-primary);
-            letter-spacing: -0.3px;
-        }
-        .logo i {
-            color: var(--accent);
-            margin-right: 6px;
-        }
-        .exit-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border-glass);
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 13px;
-            transition: background var(--transition);
-        }
-        .exit-btn:active {
-            background: var(--bg-card-hover);
-        }
-
-        /* ---- BOTTOM NAV ---- */
-        .bottom-nav-admin {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(11, 14, 20, 0.92);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            display: flex;
-            justify-content: space-around;
-            padding: 6px 8px calc(6px + var(--safe-bottom));
-            border-top: 1px solid var(--border-glass);
-            z-index: 20;
-        }
-        .nav-tab {
-            background: transparent;
-            border: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            font-size: 0.6rem;
-            padding: 6px 10px;
-            border-radius: 12px;
-            color: var(--text-muted);
-            font-weight: 500;
-            flex: 1;
-            cursor: pointer;
-            transition: color var(--transition), background var(--transition);
-            touch-action: manipulation;
-        }
-        .nav-tab i {
-            font-size: 1.3rem;
-            font-weight: 400;
-        }
-        .nav-tab.active {
-            background: var(--bg-card);
-            color: var(--accent);
-        }
-        .nav-tab.active i {
-            color: var(--accent);
-        }
-        .nav-tab:active {
-            transform: scale(0.92);
-        }
-
-        /* ---- SECTIONS ---- */
-        .admin-section {
-            display: none;
-            padding: 16px 18px 20px;
-            animation: fadeIn 0.25s ease;
-        }
-        .admin-section.active {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            color: var(--text-primary);
-        }
-        .section-title .sub {
-            font-size: 12px;
-            font-weight: 400;
-            color: var(--text-secondary);
-            margin-left: 8px;
-        }
-
-        /* ---- STATS ---- */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-        .stat-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-sm);
-            padding: 16px 18px;
-            border: 1px solid var(--border-glass);
-            backdrop-filter: blur(8px);
-        }
-        .stat-card .label {
-            color: var(--text-secondary);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            margin-top: 2px;
-            line-height: 1.2;
-        }
-        .stat-number.accent {
-            color: var(--accent);
-        }
-        .stat-number.green {
-            color: var(--green);
-        }
-        .stat-number.orange {
-            color: var(--orange);
-        }
-        .stat-number.red {
-            color: var(--red);
-        }
-
-        .insight-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-sm);
-            padding: 14px 18px;
-            border: 1px solid var(--border-glass);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px 18px;
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-        }
-        .insight-card span strong {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-        .insight-card i {
-            color: var(--accent);
-            width: 18px;
-        }
-
-        /* ---- USER CARD ---- */
-        .user-card,
-        .withdraw-card,
-        .submission-card {
-            background: var(--bg-card);
-            border-radius: var(--radius-sm);
-            padding: 16px 18px;
-            margin-bottom: 12px;
-            border: 1px solid var(--border-glass);
-            transition: background var(--transition);
-        }
-        .user-card:hover,
-        .withdraw-card:hover,
-        .submission-card:hover {
-            background: var(--bg-card-hover);
-        }
-
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .flex-between .left {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .chip-group {
-            display: flex;
-            gap: 6px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .status-pill {
-            display: inline-block;
-            padding: 3px 12px;
-            border-radius: 40px;
-            font-size: 0.6rem;
-            font-weight: 700;
-            text-transform: capitalize;
-            letter-spacing: 0.3px;
-        }
-        .pill-pending {
-            background: rgba(251, 146, 60, 0.15);
-            color: var(--orange);
-            border: 1px solid rgba(251, 146, 60, 0.15);
-        }
-        .pill-approved,
-        .pill-completed {
-            background: rgba(74, 222, 128, 0.15);
-            color: var(--green);
-            border: 1px solid rgba(74, 222, 128, 0.15);
-        }
-        .pill-rejected {
-            background: rgba(248, 113, 113, 0.15);
-            color: var(--red);
-            border: 1px solid rgba(248, 113, 113, 0.15);
-        }
-        .pill-processing {
-            background: rgba(108, 140, 255, 0.15);
-            color: var(--accent);
-            border: 1px solid rgba(108, 140, 255, 0.15);
-        }
-
-        .text-muted {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-        }
-        .text-secondary {
-            color: var(--text-secondary);
-        }
-        .text-sm {
-            font-size: 0.8rem;
-        }
-        .fw-700 {
-            font-weight: 700;
-        }
-        .mt-8 {
-            margin-top: 8px;
-        }
-        .mb-8 {
-            margin-bottom: 8px;
-        }
-        .gap-4 {
-            gap: 4px;
-        }
-
-        .code-block {
-            background: rgba(255, 255, 255, 0.04);
-            padding: 2px 10px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            word-break: break-all;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-        }
-        .empty-state i {
-            font-size: 32px;
-            opacity: 0.4;
-            margin-bottom: 8px;
-        }
-        .empty-state h4 {
-            color: var(--text-secondary);
-            font-weight: 500;
-            font-size: 15px;
-        }
-        .empty-state p {
-            font-size: 13px;
-        }
-
-        .search-bar {
-            background: var(--bg-card);
-            border-radius: 60px;
-            padding: 10px 18px;
-            display: flex;
-            gap: 12px;
-            border: 1px solid var(--border-glass);
-            margin-bottom: 16px;
-            align-items: center;
-        }
-        .search-bar i {
-            color: var(--text-muted);
-        }
-        .search-bar input {
-            flex: 1;
-            border: none;
-            outline: none;
-            background: transparent;
-            color: var(--text-primary);
-            font-size: 14px;
-        }
-        .search-bar input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .danger-zone {
-            border-left: 3px solid var(--red);
-            background: rgba(248, 113, 113, 0.04);
-        }
-        .danger-zone h3 {
-            color: var(--red);
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            padding: 20px;
-        }
-        .modal-overlay.active {
-            visibility: visible;
-            opacity: 1;
-        }
-        .modal-box {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius);
-            padding: 28px 24px;
-            width: 92%;
-            max-width: 380px;
-            max-height: 80vh;
-            overflow-y: auto;
-            transform: scale(0.92) translateY(12px);
-            transition: transform 0.3s ease;
-        }
-        .modal-overlay.active .modal-box {
-            transform: scale(1) translateY(0);
-        }
-        .modal-box h3 {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .modal-box h3 i {
-            color: var(--accent);
-        }
-        .profile-detail-item {
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-glass);
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 6px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-        .profile-detail-item:last-child {
-            border-bottom: none;
-        }
-        .profile-detail-item strong {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            padding: 12px 24px;
-            border-radius: 60px;
-            font-weight: 500;
-            z-index: 2000;
-            display: none;
-            font-size: 0.85rem;
-            box-shadow: var(--shadow-card);
-            border: 1px solid var(--border-glass);
-            backdrop-filter: blur(12px);
-            max-width: 90%;
-            text-align: center;
-        }
-
-        .badge-count {
-            background: var(--bg-card);
-            border-radius: 40px;
-            padding: 2px 10px;
-            font-size: 0.6rem;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-glass);
-        }
-
-        .sub-detail {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin: 3px 0;
-        }
-        .sub-detail .label {
-            color: var(--text-muted);
-        }
-
-        .refresh-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 4px 8px;
-            font-size: 1rem;
-            transition: color var(--transition);
-        }
-        .refresh-btn:hover {
-            color: var(--text-primary);
-        }
-
-        .admin-user-badge {
-            font-size: 0.55rem;
-            padding: 2px 10px;
-            border-radius: 12px;
-            background: rgba(108, 140, 255, 0.15);
-            color: var(--accent);
-            border: 1px solid rgba(108, 140, 255, 0.10);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            font-weight: 600;
-        }
-
-        @media (max-width: 400px) {
-            .stat-number {
-                font-size: 1.4rem;
-            }
-            .btn-icon {
-                font-size: 0.6rem;
-                padding: 6px 10px;
-            }
-            .login-card {
-                padding: 28px 18px;
-            }
-            .stats-grid {
-                gap: 8px;
-            }
-            .stat-card {
-                padding: 12px 14px;
-            }
-        }
-        @media (min-width: 480px) {
-            .phone-frame {
-                border-left: 1px solid var(--border-glass);
-                border-right: 1px solid var(--border-glass);
-                box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { background: #f5f5f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
+        .phone-frame { width: 100%; max-width: 420px; background: #ffffff; border-radius: 48px; box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25), 0 0 0 8px #e8e8e8; overflow: hidden; position: relative; height: 780px; display: flex; flex-direction: column; }
+        .scroll-area { flex: 1; overflow-y: auto; padding-bottom: 80px; scrollbar-width: thin; }
+        .login-container, .login-card { display: flex; align-items: center; justify-content: center; height: 100%; }
+        .login-card { background: white; border-radius: 48px; padding: 40px 28px; text-align: center; box-shadow: 0 20px 35px -10px rgba(0,0,0,0.08); width: 100%; margin: 20px; }
+        .login-card i { font-size: 3rem; color: #6c3bdb; margin-bottom: 16px; }
+        .login-card h2 { font-weight: 800; letter-spacing: -0.5px; margin-bottom: 20px; color: #000; }
+        .login-card input { width: 100%; padding: 16px 20px; border-radius: 60px; border: 1px solid #ddd; background: #fafafa; font-size: 1rem; margin: 16px 0; outline: none; }
+        .login-card input:focus { border-color: #6c3bdb; box-shadow: 0 0 0 3px rgba(108,59,219,0.1); }
+        .btn-primary { background: #6c3bdb; color: #fff; border: none; padding: 14px 20px; border-radius: 60px; font-weight: 700; width: 100%; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { background: #5a2cb8; }
+        .admin-header { background: white; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
+        .logo { font-weight: 800; font-size: 1.3rem; color: #000; }
+        .logo i { color: #6c3bdb; margin-right: 6px; }
+        .exit-btn { background: #f0f0f0; border: none; padding: 8px 16px; border-radius: 40px; font-weight: 600; cursor: pointer; color: #333; }
+        .bottom-nav-admin { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 10px 12px 22px; border-top: 1px solid #eee; z-index: 20; }
+        .nav-tab { background: transparent; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.65rem; padding: 6px 12px; border-radius: 40px; color: #888; font-weight: 500; flex: 1; cursor: pointer; transition: 0.2s; }
+        .nav-tab i { font-size: 1.3rem; }
+        .nav-tab.active { background: #f5f5f5; color: #6c3bdb; font-weight: 600; }
+        .nav-tab.active i { color: #6c3bdb; }
+        .admin-section { display: none; padding: 20px; animation: fadeIn 0.25s ease; }
+        .admin-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .stats-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 24px; }
+        .stat-card { background: #f8f8f8; border-radius: 24px; padding: 20px; border: 1px solid #eee; }
+        .stat-number { font-size: 1.8rem; font-weight: 800; color: #000; margin-top: 4px; }
+        .stat-card .label { color: #888; font-size: 0.8rem; }
+        .user-card, .wd-card { background: #fafafa; border-radius: 24px; padding: 18px; margin-bottom: 14px; border: 1px solid #eee; transition: 0.2s; }
+        .user-card:hover, .wd-card:hover { background: #f5f5f5; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .chip-group { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        .btn-icon { background: #f0f0f0; border: none; padding: 8px 14px; border-radius: 40px; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.15s; color: #333; }
+        .btn-icon:active { transform: scale(0.95); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-warning { background: #f59e0b; color: #000; }
+        .btn-dark { background: #1a1a1a; color: white; }
+        .btn-outline { background: transparent; border: 1px solid #ddd; }
+        .status-pill { display: inline-block; padding: 4px 12px; border-radius: 40px; font-size: 0.65rem; font-weight: 700; }
+        .pill-pending { background: #fef3c7; color: #92400e; }
+        .pill-approved { background: #d1fae5; color: #065f46; }
+        .pill-rejected { background: #fee2e2; color: #991b1b; }
+        .search-bar { background: #fafafa; border-radius: 60px; padding: 10px 18px; display: flex; gap: 12px; border: 1px solid #eee; margin-bottom: 20px; }
+        .search-bar input { flex: 1; border: none; outline: none; background: transparent; color: #000; }
+        .empty-state { text-align: center; padding: 48px 20px; color: #aaa; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: 0.2s; }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: white; border-radius: 40px; padding: 28px; width: 92%; max-width: 360px; max-height: 80vh; overflow-y: auto; }
+        .profile-detail-item { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 0.9rem; }
+        .profile-detail-item:last-child { border-bottom: none; }
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 24px; border-radius: 60px; font-weight: 500; z-index: 2000; display: none; font-size: 0.85rem; box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+        .badge-count { background: #eee; border-radius: 40px; padding: 2px 10px; font-size: 0.65rem; }
+        .sub-detail { font-size: 0.8rem; color: #666; margin: 4px 0; }
+        .text-muted { color: #999; font-size: 0.75rem; }
+        .fw-700 { font-weight: 700; }
+        .mt-8 { margin-top: 8px; }
+        .mb-8 { margin-bottom: 8px; }
+        .gap-4 { gap: 4px; }
+        .code-block { background: #f0f0f0; padding: 4px 10px; border-radius: 8px; font-family: monospace; font-size: 0.8rem; }
+        .danger-zone { border-left: 4px solid #ef4444; background: #fef2f2; }
+        .danger-zone h3 { color: #dc2626; }
+        .refresh-btn { background: transparent; border: none; color: #888; cursor: pointer; padding: 4px 8px; font-size: 1rem; }
+        .refresh-btn:hover { color: #000; }
+        @media (max-width: 400px) { .stat-number { font-size: 1.4rem; } .btn-icon { font-size: 0.65rem; padding: 6px 12px; } }
+        .wd-detail { font-size: 0.8rem; color: #666; margin: 2px 0; }
     </style>
 </head>
 <body>
-
-    <div class="phone-frame">
-
-        <!-- LOGIN VIEW -->
-        <div id="loginView" style="height:100%; display:flex; align-items:center; justify-content:center;">
-            <div class="login-container">
-                <div class="login-card">
-                    <i class="fas fa-crown"></i>
-                    <h2>Admin Access</h2>
-                    <input type="password" id="adminPassword" placeholder="Enter master password" />
-                    <button id="loginBtn" class="btn-primary"><i class="fas fa-key"></i> Unlock Panel</button>
-                    <p style="margin-top:14px; color:var(--text-muted); font-size:0.75rem;">Default: <strong style="color:var(--text-secondary);">Admin2025</strong></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ADMIN PANEL -->
-        <div id="adminPanelView" style="display:none; flex-direction:column; height:100%; position:relative;">
-            <div class="admin-header">
-                <div class="logo"><i class="fas fa-crown"></i> Gamil Admin</div>
-                <button id="logoutBtn" class="exit-btn"><i class="fas fa-sign-out-alt"></i> Exit</button>
-            </div>
-
-            <div class="scroll-area" id="adminScrollArea">
-                <!-- DASHBOARD -->
-                <div id="dashboardSection" class="admin-section active">
-                    <div class="stats-grid" id="dashboardStats"></div>
-                    <div class="insight-card" id="extraInsights"></div>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <button class="btn-icon btn-dark" onclick="loadAllData()"><i class="fas fa-sync"></i> Refresh</button>
-                        <span style="font-size:12px; color:var(--text-muted); display:flex; align-items:center; margin-left:auto;" id="lastUpdated">Updated: now</span>
-                    </div>
-                </div>
-
-                <!-- USERS -->
-                <div id="usersSection" class="admin-section">
-                    <div class="section-title">👥 All Users <span class="sub" id="userCount"></span></div>
-                    <div class="search-bar">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="userSearchInput" placeholder="Search by name, ID or type..." />
-                    </div>
-                    <div id="usersListContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading users...</div></div>
-                </div>
-
-                <!-- SUBMISSIONS -->
-                <div id="submissionsSection" class="admin-section">
-                    <div class="flex-between" style="margin-bottom:12px;">
-                        <div class="section-title" style="margin-bottom:0;">✉ Submissions</div>
-                        <div style="display:flex; gap:6px;">
-                            <button class="btn-icon btn-dark" id="filterSubPending">Pending</button>
-                            <button class="btn-icon btn-outline" id="filterSubAll">All</button>
-                        </div>
-                    </div>
-                    <div id="submissionsContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading submissions...</div></div>
-                </div>
-
-                <!-- WITHDRAWALS -->
-                <div id="withdrawalsSection" class="admin-section">
-                    <div class="flex-between" style="margin-bottom:12px;">
-                        <div class="section-title" style="margin-bottom:0;">◊ Withdrawals</div>
-                        <div style="display:flex; gap:6px;">
-                            <button class="btn-icon btn-dark" id="filterWdPending">Pending</button>
-                            <button class="btn-icon btn-outline" id="filterWdAll">All</button>
-                        </div>
-                    </div>
-                    <div id="withdrawalsContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading withdrawals...</div></div>
-                </div>
-
-                <!-- SETTINGS / RESET -->
-                <div id="settingsSection" class="admin-section">
-                    <div class="section-title">⚙ Settings</div>
-                    <div class="user-card danger-zone">
-                        <h3><i class="fas fa-radiation"></i> Danger Zone – Factory Reset</h3>
-                        <p style="margin:10px 0; color:var(--text-secondary); font-size:0.85rem;">
-                            Reset EVERY user: balance → 0, all submissions & withdrawals cleared, daily progress reset.
-                        </p>
-                        <button id="fullResetBtn" class="btn-icon btn-danger" style="width:100%; padding:12px; justify-content:center; font-size:0.85rem;">
-                            <i class="fas fa-trash-alt"></i> 🔥 RESET ALL DATA (IRREVERSIBLE)
-                        </button>
-                    </div>
-                    <div class="user-card" style="margin-top:16px;">
-                        <h4><i class="fas fa-lock"></i> Security</h4>
-                        <input type="password" id="newAdminPassword" placeholder="New admin password" style="width:100%; padding:14px; border-radius:60px; margin:12px 0; border:1px solid var(--border-glass); background:var(--bg-card); color:var(--text-primary); outline:none; font-size:14px;" />
-                        <button id="changePasswordBtn" class="btn-primary" style="background:var(--bg-card); color:var(--text-primary); border:1px solid var(--border-glass); box-shadow:none;">Update Password</button>
-                    </div>
-                    <div class="user-card" style="margin-top:16px;">
-                        <h4><i class="fas fa-info-circle"></i> About</h4>
-                        <p style="font-size:13px; color:var(--text-secondary);">Admin panel for Gamil.com – manage users, submissions, and withdrawals. All data is stored in Firebase Realtime Database.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- BOTTOM NAV -->
-            <div class="bottom-nav-admin">
-                <button class="nav-tab active" data-tab="dashboard"><i class="fas fa-chart-pie"></i><span>Stats</span></button>
-                <button class="nav-tab" data-tab="users"><i class="fas fa-users"></i><span>Users</span></button>
-                <button class="nav-tab" data-tab="submissions"><i class="fas fa-envelope"></i><span>Subs</span></button>
-                <button class="nav-tab" data-tab="withdrawals"><i class="fas fa-hand-holding-usd"></i><span>Payouts</span></button>
-                <button class="nav-tab" data-tab="settings"><i class="fas fa-sliders-h"></i><span>Settings</span></button>
+<div class="phone-frame">
+    <div id="loginView" style="height: 100%; display: flex; align-items: center; justify-content: center;">
+        <div class="login-container">
+            <div class="login-card">
+                <i class="fas fa-crown"></i>
+                <h2>Admin Access</h2>
+                <input type="password" id="adminPassword" placeholder="Enter master password">
+                <button id="loginBtn" class="btn-primary"><i class="fas fa-key"></i> Unlock Panel</button>
+                <p style="margin-top:14px; color:#aaa; font-size:0.75rem;">Default: <strong>Admin2025</strong></p>
             </div>
         </div>
     </div>
 
-    <!-- MODAL -->
-    <div id="userProfileModal" class="modal-overlay">
-        <div class="modal-box">
-            <h3><i class="fas fa-id-card"></i> Player Profile</h3>
-            <div id="profileDetailContent"></div>
-            <button id="closeProfileModal" class="btn-icon" style="width:100%; margin-top:18px; background:var(--bg-card); color:var(--text-primary); justify-content:center; border:1px solid var(--border-glass);">Close</button>
+    <div id="adminPanelView" style="display: none; flex-direction: column; height: 100%; position: relative;">
+        <div class="admin-header">
+            <div class="logo"><i class="fas fa-crown"></i> Ruttore Admin</div>
+            <button id="logoutBtn" class="exit-btn"><i class="fas fa-sign-out-alt"></i> Exit</button>
+        </div>
+        <div class="scroll-area" id="adminScrollArea">
+            <div id="dashboardSection" class="admin-section active">
+                <div class="stats-grid" id="dashboardStats"></div>
+                <div class="user-card" id="extraInsights"></div>
+            </div>
+            <div id="usersSection" class="admin-section">
+                <div class="search-bar"><i class="fas fa-search" style="color:#aaa;"></i><input type="text" id="userSearchInput" placeholder="Search by username, ID"></div>
+                <div id="usersListContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading users...</div></div>
+            </div>
+            <div id="withdrawalsSection" class="admin-section">
+                <div class="flex-between" style="margin-bottom: 16px;">
+                    <button id="filterPendingBtn" class="btn-icon btn-dark"><i class="fas fa-clock"></i> Pending only</button>
+                    <button id="filterAllBtn" class="btn-icon btn-outline">All requests</button>
+                </div>
+                <div id="withdrawalsContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading withdrawals...</div></div>
+            </div>
+            <div id="transactionsSection" class="admin-section">
+                <div id="transactionsContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading transactions...</div></div>
+            </div>
+            <div id="resetSection" class="admin-section">
+                <div class="user-card danger-zone">
+                    <h3><i class="fas fa-radiation"></i> Danger Zone – Factory Reset</h3>
+                    <p style="margin: 10px 0; color:#666; font-size:0.85rem;">Reset EVERY user: balance = 0, totalEarned = 0, completedGames = 0, wins/draws/losses = 0, pendingAmount = 0, withdrawal history cleared.</p>
+                    <button id="fullResetBtn" class="btn-danger" style="width:100%; padding: 14px; margin-top: 8px;"><i class="fas fa-trash-alt"></i> 🔥 RESET ALL DATA (IRREVERSIBLE)</button>
+                </div>
+                <div class="user-card" style="margin-top: 20px;">
+                    <h4><i class="fas fa-lock"></i> Security Settings</h4>
+                    <input type="password" id="newAdminPassword" placeholder="New admin password" style="width:100%; padding:14px; border-radius:60px; margin:12px 0; border:1px solid #ddd; outline:none;">
+                    <button id="changePasswordBtn" class="btn-primary" style="background:#1a1a1a; color:#fff;">Update Password</button>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-nav-admin">
+            <button class="nav-tab active" data-tab="dashboard"><i class="fas fa-chart-pie"></i><span>Stats</span></button>
+            <button class="nav-tab" data-tab="users"><i class="fas fa-users"></i><span>Users</span></button>
+            <button class="nav-tab" data-tab="withdrawals"><i class="fas fa-hand-holding-usd"></i><span>Payouts</span></button>
+            <button class="nav-tab" data-tab="transactions"><i class="fas fa-list"></i><span>TX</span></button>
+            <button class="nav-tab" data-tab="reset"><i class="fas fa-sliders-h"></i><span>Reset</span></button>
         </div>
     </div>
+</div>
+<div id="userProfileModal" class="modal-overlay"><div class="modal-box"><h3 style="margin-bottom: 16px;"><i class="fas fa-id-card"></i> Player Profile</h3><div id="profileDetailContent"></div><button id="closeProfileModal" class="btn-icon" style="width:100%; margin-top: 20px; background:#000; color:white; justify-content:center;">Close</button></div></div>
+<div id="toastMsg" class="toast"></div>
 
-    <div id="toastMsg" class="toast"></div>
+<script>
+    // ─── Firebase Config (same as main app) ───
+    const firebaseConfig = {
+        apiKey: "AIzaSyCAlQL5txzjUagN9A5L0Idki9sjAezOczk",
+        authDomain: "earn-for-earn.firebaseapp.com",
+        databaseURL: "https://earn-for-earn-default-rtdb.firebaseio.com",
+        projectId: "earn-for-earn",
+        storageBucket: "earn-for-earn.firebasestorage.app",
+        messagingSenderId: "730217056305",
+        appId: "1:730217056305:web:d1ab3c775b1ed097742d10",
+        measurementId: "G-N8PP006EGK"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    <script>
-        // ============================================================
-        // FIREBASE CONFIG – SAME AS MAIN APP
-        // ============================================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyCAlQL5txzjUagN9A5L0Idki9sjAezOczk",
-            authDomain: "earn-for-earn.firebaseapp.com",
-            databaseURL: "https://earn-for-earn-default-rtdb.firebaseio.com",
-            projectId: "earn-for-earn",
-            storageBucket: "earn-for-earn.firebasestorage.app",
-            messagingSenderId: "730217056305",
-            appId: "1:730217056305:web:d1ab3c775b1ed097742d10",
-            measurementId: "G-N8PP006EGK"
-        };
+    const ADMIN_PASS_KEY = "ruttore_admin_pass";
+    let allUsers = [], allWithdrawals = [], allTransactions = [];
+    let withdrawFilterMode = "pending";
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+    function showToast(msg, isError = false) {
+        let t = document.getElementById("toastMsg");
+        t.textContent = msg;
+        t.style.background = isError ? "#dc2626" : "#1a1a1a";
+        t.style.display = "block";
+        setTimeout(() => t.style.display = "none", 3000);
+    }
 
-        // ============================================================
-        // ADMIN AUTH
-        // ============================================================
-        const ADMIN_PASS_KEY = "gamil_admin_king_secure";
-        const REWARD_AMOUNT = 0.20;   // <-- UPDATED to $0.20 per approved email
+    function initAdminPass() {
+        if (!localStorage.getItem(ADMIN_PASS_KEY)) localStorage.setItem(ADMIN_PASS_KEY, "Admin2025");
+        return localStorage.getItem(ADMIN_PASS_KEY);
+    }
+    function isLoggedIn() { return sessionStorage.getItem("admin_logged") === "true"; }
+    function setLogin(val) { val ? sessionStorage.setItem("admin_logged","true") : sessionStorage.removeItem("admin_logged"); }
+    function showLoginUI() { document.getElementById("loginView").style.display = "flex"; document.getElementById("adminPanelView").style.display = "none"; }
+    function showAdminUI() { document.getElementById("loginView").style.display = "none"; document.getElementById("adminPanelView").style.display = "flex"; loadAllData(); }
 
-        function getStoredPass() {
-            if (!localStorage.getItem(ADMIN_PASS_KEY)) {
-                localStorage.setItem(ADMIN_PASS_KEY, "Admin2025");
-            }
-            return localStorage.getItem(ADMIN_PASS_KEY);
+    async function loadAllData() {
+        showToast("🔄 Syncing data...");
+        try {
+            // Users
+            const usersSnap = await db.ref("users").once("value");
+            allUsers = [];
+            usersSnap.forEach(child => {
+                let user = child.val();
+                user.uid = child.key;
+                // Ensure arrays exist
+                if (!user.withdrawalHistory) user.withdrawalHistory = [];
+                if (!user.transactions) user.transactions = [];
+                allUsers.push(user);
+            });
+
+            // Withdrawals - we need to gather from each user's withdrawalHistory
+            allWithdrawals = [];
+            allUsers.forEach(user => {
+                if (user.withdrawalHistory && Array.isArray(user.withdrawalHistory)) {
+                    user.withdrawalHistory.forEach(w => {
+                        allWithdrawals.push({
+                            ...w,
+                            userId: user.uid,
+                            username: user.username || user.uid.slice(0,8)
+                        });
+                    });
+                }
+            });
+            allWithdrawals.sort((a,b) => (b.createdAt || b.date || 0) - (a.createdAt || a.date || 0));
+
+            // Transactions - gather from each user's transactions (if stored as array)
+            allTransactions = [];
+            allUsers.forEach(user => {
+                if (user.transactions && Array.isArray(user.transactions)) {
+                    user.transactions.forEach(tx => {
+                        allTransactions.push({
+                            ...tx,
+                            userId: user.uid,
+                            username: user.username || user.uid.slice(0,8)
+                        });
+                    });
+                }
+            });
+            allTransactions.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+            renderDashboard();
+            renderUsersList();
+            renderWithdrawalsList();
+            renderTransactionsList();
+            showToast(`✅ Loaded ${allUsers.length} users, ${allWithdrawals.length} withdrawals, ${allTransactions.length} transactions`);
+        } catch (err) {
+            console.error(err);
+            showToast("Error loading data: " + err.message, true);
         }
+    }
 
-        function isLoggedIn() {
-            return sessionStorage.getItem("gamil_admin_logged") === "true";
-        }
+    // ─── Dashboard ───
+    function renderDashboard() {
+        let totalBalance = 0, totalEarned = 0, totalGames = 0, totalWins = 0, totalDraws = 0;
+        let pendingWd = allWithdrawals.filter(w => w.status === "pending").length;
+        allUsers.forEach(u => {
+            totalBalance += u.balance || 0;
+            totalEarned += u.totalEarned || 0;
+            totalGames += u.completedGames || 0;
+            totalWins += u.wins || 0;
+            totalDraws += u.draws || 0;
+        });
+        document.getElementById("dashboardStats").innerHTML = `
+            <div class="stat-card"><div class="label"><i class="fas fa-users"></i> Total Users</div><div class="stat-number">${allUsers.length}</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-coins"></i> Total RUT</div><div class="stat-number">${totalBalance.toLocaleString()}</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-clock"></i> Pending WD</div><div class="stat-number">${pendingWd}</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-gamepad"></i> Games Played</div><div class="stat-number">${totalGames}</div></div>
+        `;
+        document.getElementById("extraInsights").innerHTML = `
+            <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between; font-size:0.85rem;">
+                <span><i class="fas fa-trophy"></i> Total Earned: <strong>${totalEarned.toLocaleString()}</strong></span>
+                <span><i class="fas fa-check-circle"></i> Wins: <strong>${totalWins}</strong></span>
+                <span><i class="fas fa-handshake"></i> Draws: <strong>${totalDraws}</strong></span>
+            </div>
+        `;
+    }
 
-        function setLogin(val) {
-            if (val) sessionStorage.setItem("gamil_admin_logged", "true");
-            else sessionStorage.removeItem("gamil_admin_logged");
-        }
+    // ─── Users ───
+    function renderUsersList() {
+        const searchTerm = document.getElementById("userSearchInput")?.value.toLowerCase() || "";
+        let filtered = allUsers.filter(u => 
+            (u.username || "").toLowerCase().includes(searchTerm) ||
+            (u.uid || "").toLowerCase().includes(searchTerm)
+        );
+        const container = document.getElementById("usersListContainer");
+        if (!filtered.length) { container.innerHTML = '<div class="empty-state">No users found</div>'; return; }
+        container.innerHTML = filtered.map(u => `
+            <div class="user-card">
+                <div class="flex-between">
+                    <div><strong><i class="fab fa-telegram"></i> ${escapeHtml(u.username || "No name")}</strong>
+                        <div style="font-size:0.65rem; color:#999;">${u.uid.slice(0,12)}...</div>
+                    </div>
+                    <span style="background:#6c3bdb; color:#fff; padding:4px 14px; border-radius:40px; font-weight:700; font-size:0.85rem;">${(u.balance||0).toLocaleString()} RUT</span>
+                </div>
+                <div class="chip-group" style="font-size:0.75rem; color:#666;">
+                    <span><i class="fas fa-gamepad"></i> Games: ${u.completedGames||0}</span>
+                    <span><i class="fas fa-check-circle"></i> Wins: ${u.wins||0}</span>
+                    <span><i class="fas fa-handshake"></i> Draws: ${u.draws||0}</span>
+                    <span><i class="fas fa-coins"></i> Earned: ${(u.totalEarned||0).toLocaleString()}</span>
+                </div>
+                <div class="chip-group">
+                    <button class="btn-icon" onclick="viewUserProfile('${u.uid}')"><i class="fas fa-eye"></i> Profile</button>
+                    <button class="btn-icon btn-success" onclick="addBalanceToUser('${u.uid}', 1000)"><i class="fas fa-plus"></i> +1k</button>
+                    <button class="btn-icon btn-warning" onclick="setUserBalance('${u.uid}')"><i class="fas fa-pen"></i> Set Bal</button>
+                    <button class="btn-icon btn-danger" onclick="resetSingleUser('${u.uid}')"><i class="fas fa-undo-alt"></i> Reset</button>
+                </div>
+            </div>
+        `).join('');
+    }
 
-        function showLoginUI() {
-            document.getElementById("loginView").style.display = "flex";
-            document.getElementById("adminPanelView").style.display = "none";
-        }
+    window.viewUserProfile = async (uid) => {
+        const u = allUsers.find(u => u.uid === uid);
+        if (!u) return;
+        const wdCount = u.withdrawalHistory?.length || 0;
+        const txCount = u.transactions?.length || 0;
+        const html = `
+            <div class="profile-detail-item"><span>Username</span><strong>${escapeHtml(u.username)}</strong></div>
+            <div class="profile-detail-item"><span>User ID</span><span style="font-size:0.8rem;">${u.uid}</span></div>
+            <div class="profile-detail-item"><span>Balance</span><strong>${(u.balance||0).toLocaleString()} RUT</strong></div>
+            <div class="profile-detail-item"><span>Total Earned</span><strong>${(u.totalEarned||0).toLocaleString()} RUT</strong></div>
+            <div class="profile-detail-item"><span>Games</span><strong>${u.completedGames||0}</strong></div>
+            <div class="profile-detail-item"><span>Wins</span><strong>${u.wins||0}</strong></div>
+            <div class="profile-detail-item"><span>Draws</span><strong>${u.draws||0}</strong></div>
+            <div class="profile-detail-item"><span>Losses</span><strong>${u.losses||0}</strong></div>
+            <div class="profile-detail-item"><span>Withdrawals</span><strong>${wdCount}</strong></div>
+            <div class="profile-detail-item"><span>Transactions</span><strong>${txCount}</strong></div>
+            ${u.pendingAmount ? `<div class="profile-detail-item"><span>Pending WD</span><strong>${u.pendingAmount} RUT</strong></div>` : ''}
+            <div class="profile-detail-item"><span>Status</span><strong>${u.status || 'active'}</strong></div>
+        `;
+        document.getElementById("profileDetailContent").innerHTML = html;
+        document.getElementById("userProfileModal").classList.add("active");
+    };
+    document.getElementById("closeProfileModal").onclick = () => document.getElementById("userProfileModal").classList.remove("active");
 
-        function showAdminUI() {
-            document.getElementById("loginView").style.display = "none";
-            document.getElementById("adminPanelView").style.display = "flex";
+    window.addBalanceToUser = async (uid, amount) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            const newBal = (user.balance||0) + amount;
+            await db.ref(`users/${uid}`).update({ balance: newBal, totalEarned: (user.totalEarned||0) + amount });
+            showToast(`+${amount.toLocaleString()} RUT added`);
             loadAllData();
         }
-
-        // ============================================================
-        // STATE
-        // ============================================================
-        let allUsers = [];
-        let allSubmissions = [];
-        let allWithdrawals = [];
-        let subFilterMode = "pending";
-        let wdFilterMode = "pending";
-
-        // ============================================================
-        // TOAST
-        // ============================================================
-        function showToast(msg, isError = false) {
-            const el = document.getElementById("toastMsg");
-            el.textContent = msg;
-            el.style.background = isError ? "rgba(248,113,113,0.12)" : "rgba(74,222,128,0.08)";
-            el.style.color = isError ? "var(--red)" : "var(--green)";
-            el.style.borderColor = isError ? "rgba(248,113,113,0.2)" : "rgba(74,222,128,0.2)";
-            el.style.display = "block";
-            clearTimeout(el._timer);
-            el._timer = setTimeout(() => { el.style.display = "none"; }, 3000);
+    };
+    window.setUserBalance = async (uid) => {
+        const user = allUsers.find(u => u.uid === uid);
+        const newVal = prompt("New balance (RUT):", user?.balance || 0);
+        if (newVal !== null && !isNaN(parseInt(newVal))) {
+            await db.ref(`users/${uid}`).update({ balance: parseInt(newVal) });
+            showToast(`Balance set to ${parseInt(newVal).toLocaleString()}`);
+            loadAllData();
         }
-
-        // ============================================================
-        // DATA LOADING
-        // ============================================================
-        async function loadAllData() {
-            showToast("🔄 Syncing data...");
-            try {
-                const usersSnap = await db.ref("users").once("value");
-                allUsers = [];
-                allSubmissions = [];
-                allWithdrawals = [];
-
-                if (usersSnap.exists()) {
-                    usersSnap.forEach(child => {
-                        const user = child.val();
-                        user.uid = child.key;
-                        allUsers.push(user);
-
-                        // Load submissions for this user
-                        const subs = user.submissions || {};
-                        Object.values(subs).forEach(s => {
-                            allSubmissions.push({
-                                ...s,
-                                userId: user.uid,
-                                userName: user.name || 'Unknown',
-                                userType: user.type || 'FREELANCER'
-                            });
-                        });
-
-                        // Load withdrawals for this user
-                        const wds = user.withdrawals || {};
-                        Object.values(wds).forEach(w => {
-                            allWithdrawals.push({
-                                ...w,
-                                userId: user.uid,
-                                userName: user.name || 'Unknown'
-                            });
-                        });
-                    });
-                }
-
-                // Sort: newest first
-                allSubmissions.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
-                allWithdrawals.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
-
-                renderDashboard();
-                renderUsersList();
-                renderSubmissionsList();
-                renderWithdrawalsList();
-
-                document.getElementById("lastUpdated").textContent = "Updated: " + new Date().toLocaleTimeString();
-                showToast(`✅ Loaded ${allUsers.length} users, ${allSubmissions.length} submissions, ${allWithdrawals.length} withdrawals`);
-            } catch (err) {
-                console.error(err);
-                showToast("❌ Error loading data: " + err.message, true);
-            }
-        }
-
-        // ============================================================
-        // DASHBOARD
-        // ============================================================
-        function renderDashboard() {
-            let totalBalance = 0,
-                totalEarned = 0,
-                totalPendingRewards = 0;
-            let realUsers = 0,
-                freelancers = 0,
-                admins = 0;
-            let approvedCount = 0,
-                pendingSubs = 0,
-                rejectedCount = 0;
-            let pendingWds = 0,
-                completedWds = 0,
-                rejectedWds = 0;
-
-            allUsers.forEach(u => {
-                totalBalance += (u.balance || 0);
-                totalEarned += (u.totalEarned || 0);
-                totalPendingRewards += (u.pendingRewards || 0);
-                if (u.type === 'REAL_USER') realUsers++;
-                else if (u.type === 'ADMIN') admins++;
-                else freelancers++;
-            });
-
-            allSubmissions.forEach(s => {
-                if (s.status === 'approved') approvedCount++;
-                else if (s.status === 'pending') pendingSubs++;
-                else if (s.status === 'rejected') rejectedCount++;
-            });
-
-            allWithdrawals.forEach(w => {
-                if (w.status === 'pending') pendingWds++;
-                else if (w.status === 'completed') completedWds++;
-                else if (w.status === 'rejected') rejectedWds++;
-            });
-
-            document.getElementById("dashboardStats").innerHTML = `
-                    <div class="stat-card"><div class="label"><i class="fas fa-users"></i> Users</div><div class="stat-number accent">${allUsers.length}</div></div>
-                    <div class="stat-card"><div class="label"><i class="fas fa-coins"></i> Total Balance</div><div class="stat-number green">$${totalBalance.toFixed(2)}</div></div>
-                    <div class="stat-card"><div class="label"><i class="fas fa-clock"></i> Pending Subs</div><div class="stat-number orange">${pendingSubs}</div></div>
-                    <div class="stat-card"><div class="label"><i class="fas fa-hand-holding-usd"></i> Pending WDs</div><div class="stat-number red">${pendingWds}</div></div>
-                `;
-
-            document.getElementById("extraInsights").innerHTML = `
-                    <span><i class="fas fa-user-check"></i> Real: <strong>${realUsers}</strong></span>
-                    <span><i class="fas fa-user-tag"></i> Freelancer: <strong>${freelancers}</strong></span>
-                    <span><i class="fas fa-check-circle"></i> Approved Subs: <strong>${approvedCount}</strong></span>
-                    <span><i class="fas fa-times-circle"></i> Rejected: <strong>${rejectedCount}</strong></span>
-                    <span><i class="fas fa-clock"></i> Pending Rewards: <strong>$${totalPendingRewards.toFixed(2)}</strong></span>
-                    <span><i class="fas fa-check-double"></i> Completed WDs: <strong>${completedWds}</strong></span>
-                `;
-        }
-
-        // ============================================================
-        // USERS LIST
-        // ============================================================
-        function renderUsersList() {
-            const search = (document.getElementById("userSearchInput")?.value || "").toLowerCase();
-            let filtered = allUsers.filter(u =>
-                (u.name || "").toLowerCase().includes(search) ||
-                (u.uid || "").toLowerCase().includes(search) ||
-                (u.type || "").toLowerCase().includes(search)
-            );
-
-            const container = document.getElementById("usersListContainer");
-            document.getElementById("userCount").textContent = `(${filtered.length})`;
-
-            if (!filtered.length) {
-                container.innerHTML = `<div class="empty-state"><i class="fas fa-users-slash"></i><h4>No users found</h4><p>Try adjusting your search.</p></div>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(u => {
-                const subCount = allSubmissions.filter(s => s.userId === u.uid).length;
-                const wdCount = allWithdrawals.filter(w => w.userId === u.uid).length;
-                const pendingSubs = allSubmissions.filter(s => s.userId === u.uid && s.status === 'pending').length;
-                const isAdmin = u.type === 'ADMIN';
-                return `
-                        <div class="user-card">
-                            <div class="flex-between">
-                                <div class="left">
-                                    <strong style="font-size:15px;">${escapeHtml(u.name || 'Unknown')}</strong>
-                                    ${isAdmin ? '<span class="admin-user-badge">Admin</span>' : ''}
-                                    <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
-                                        ${u.uid ? u.uid.slice(0,14)+'…' : '—'}
-                                        <span style="margin-left:8px; background:var(--bg-card); padding:1px 10px; border-radius:12px; border:1px solid var(--border-glass);">${u.type || 'FREELANCER'}</span>
-                                    </div>
-                                </div>
-                                <span style="color:var(--green); font-weight:700; font-size:16px;">$${(u.balance || 0).toFixed(2)}</span>
-                            </div>
-                            <div style="display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12px; color:var(--text-secondary); margin-top:6px;">
-                                <span><i class="fas fa-envelope"></i> Subs: ${subCount} <span style="color:var(--orange);">(${pendingSubs} pending)</span></span>
-                                <span><i class="fas fa-hand-holding-usd"></i> WDs: ${wdCount}</span>
-                                <span><i class="fas fa-dollar-sign"></i> Earned: $${(u.totalEarned || 0).toFixed(2)}</span>
-                                <span><i class="fas fa-check-circle"></i> Approved: ${u.approvedCount || 0}</span>
-                            </div>
-                            <div class="chip-group">
-                                <button class="btn-icon" onclick="viewUserProfile('${u.uid}')"><i class="fas fa-eye"></i> Profile</button>
-                                <button class="btn-icon btn-success" onclick="addBalance('${u.uid}', ${REWARD_AMOUNT})"><i class="fas fa-plus"></i> +$${REWARD_AMOUNT.toFixed(2)}</button>
-                                <button class="btn-icon btn-warning" onclick="setBalancePrompt('${u.uid}')"><i class="fas fa-pen"></i> Set Bal</button>
-                                <button class="btn-icon btn-danger" onclick="resetSingleUser('${u.uid}')"><i class="fas fa-undo-alt"></i> Reset</button>
-                            </div>
-                        </div>
-                    `;
-            }).join('');
-        }
-
-        // ============================================================
-        // SUBMISSIONS LIST
-        // ============================================================
-        function renderSubmissionsList() {
-            const container = document.getElementById("submissionsContainer");
-            let filtered = subFilterMode === "pending" ?
-                allSubmissions.filter(s => s.status === 'pending') :
-                allSubmissions;
-
-            if (!filtered.length) {
-                container.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><h4>No submissions</h4><p>${subFilterMode === 'pending' ? 'All submissions are processed.' : 'No submissions found.'}</p></div>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(s => {
-                const status = s.status || 'pending';
-                const badge = status === 'pending' ? 'pill-pending' :
-                    status === 'approved' ? 'pill-approved' : 'pill-rejected';
-                const date = s.created_at ? new Date(s.created_at).toLocaleString() : '—';
-                return `
-                        <div class="submission-card">
-                            <div class="flex-between">
-                                <div class="left">
-                                    <strong style="font-size:14px;">${escapeHtml(s.email || '—')}</strong>
-                                    <div style="font-size:12px; color:var(--text-secondary);">
-                                        ${escapeHtml(s.userName || 'Unknown')}
-                                        <span style="margin-left:8px; color:var(--text-muted);">${s.userId ? s.userId.slice(0,10)+'…' : ''}</span>
-                                    </div>
-                                </div>
-                                <span class="status-pill ${badge}">${status}</span>
-                            </div>
-                            <div class="sub-detail"><span class="label">Password:</span> <span class="code-block">${escapeHtml(s.password || '—')}</span></div>
-                            <div class="sub-detail"><span class="label">Recovery:</span> ${escapeHtml(s.recovery || '—')}</div>
-                            <div class="sub-detail"><span class="label">Submitted:</span> ${date}</div>
-                            ${s.status === 'pending' ? `
-                                <div class="chip-group" style="margin-top:8px;">
-                                    <button class="btn-icon btn-success" onclick="approveSubmission('${s.userId}', '${s.id}')"><i class="fas fa-check"></i> Approve ($${REWARD_AMOUNT.toFixed(2)})</button>
-                                    <button class="btn-icon btn-danger" onclick="rejectSubmission('${s.userId}', '${s.id}')"><i class="fas fa-times"></i> Reject</button>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
-            }).join('');
-        }
-
-        // ============================================================
-        // WITHDRAWALS LIST
-        // ============================================================
-        function renderWithdrawalsList() {
-            const container = document.getElementById("withdrawalsContainer");
-            let filtered = wdFilterMode === "pending" ?
-                allWithdrawals.filter(w => w.status === 'pending') :
-                allWithdrawals;
-
-            if (!filtered.length) {
-                container.innerHTML = `<div class="empty-state"><i class="fas fa-credit-card"></i><h4>No withdrawals</h4><p>${wdFilterMode === 'pending' ? 'All withdrawals are processed.' : 'No withdrawals found.'}</p></div>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(w => {
-                const status = w.status || 'pending';
-                const badge = status === 'pending' ? 'pill-pending' :
-                    status === 'completed' ? 'pill-approved' :
-                    'pill-rejected';
-                const date = w.created_at ? new Date(w.created_at).toLocaleString() : '—';
-                return `
-                        <div class="withdraw-card">
-                            <div class="flex-between">
-                                <div class="left">
-                                    <strong style="font-size:14px;">${escapeHtml(w.userName || 'Unknown')}</strong>
-                                    <div style="font-size:12px; color:var(--text-secondary);">
-                                        Binance: ${escapeHtml(w.binance_uid || '—')}
-                                    </div>
-                                </div>
-                                <span class="status-pill ${badge}">${status}</span>
-                            </div>
-                            <div style="margin:6px 0; font-size:16px; font-weight:700; color:var(--green);">$${(w.amount || 0).toFixed(2)}</div>
-                            <div class="sub-detail"><span class="label">Requested:</span> ${date}</div>
-                            ${w.status === 'pending' ? `
-                                <div class="chip-group" style="margin-top:8px;">
-                                    <button class="btn-icon btn-success" onclick="approveWithdrawal('${w.userId}', '${w.id}')"><i class="fas fa-check"></i> Approve</button>
-                                    <button class="btn-icon btn-danger" onclick="rejectWithdrawal('${w.userId}', '${w.id}')"><i class="fas fa-undo"></i> Reject & Refund</button>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
-            }).join('');
-        }
-
-        // ============================================================
-        // ACTIONS: SUBMISSIONS (uses REWARD_AMOUNT = 0.20)
-        // ============================================================
-        window.approveSubmission = async (userId, subId) => {
-            if (!userId || !subId) return;
-            if (!confirm(`Approve this submission? User will earn $${REWARD_AMOUNT.toFixed(2)}.`)) return;
-
-            try {
-                // Find the submission in the user's submissions
-                const userSnap = await db.ref(`users/${userId}/submissions`).once("value");
-                const subs = userSnap.val() || {};
-                let targetKey = null;
-                for (const [key, val] of Object.entries(subs)) {
-                    if (val.id === subId || val.submission_id === subId) {
-                        targetKey = key;
-                        break;
-                    }
-                }
-                if (!targetKey) {
-                    showToast("Submission not found.", true);
-                    return;
-                }
-
-                await db.ref(`users/${userId}/submissions/${targetKey}`).update({
-                    status: "approved",
-                    updated_at: new Date().toISOString()
-                });
-
-                // Update user balance
-                const userData = await db.ref(`users/${userId}`).once("value");
-                const u = userData.val() || {};
-                const reward = REWARD_AMOUNT;
-                const newBalance = (u.balance || 0) + reward;
-                const newTotalEarned = (u.totalEarned || 0) + reward;
-                const newApproved = (u.approvedCount || 0) + 1;
-
-                // Recalculate pending rewards
-                const pendingCount = Object.values(subs).filter(s => s.status === 'pending' && s.id !== subId).length;
-                const newPendingRewards = pendingCount * reward;
-
-                await db.ref(`users/${userId}`).update({
-                    balance: newBalance,
-                    totalEarned: newTotalEarned,
-                    approvedCount: newApproved,
-                    pendingRewards: newPendingRewards,
-                });
-
-                showToast(`✅ Approved! +$${reward.toFixed(2)} credited.`);
-                loadAllData();
-            } catch (err) {
-                console.error(err);
-                showToast("Error approving submission.", true);
-            }
-        };
-
-        window.rejectSubmission = async (userId, subId) => {
-            if (!userId || !subId) return;
-            if (!confirm("Reject this submission?")) return;
-
-            try {
-                const userSnap = await db.ref(`users/${userId}/submissions`).once("value");
-                const subs = userSnap.val() || {};
-                let targetKey = null;
-                for (const [key, val] of Object.entries(subs)) {
-                    if (val.id === subId || val.submission_id === subId) {
-                        targetKey = key;
-                        break;
-                    }
-                }
-                if (!targetKey) {
-                    showToast("Submission not found.", true);
-                    return;
-                }
-
-                await db.ref(`users/${userId}/submissions/${targetKey}`).update({
-                    status: "rejected",
-                    updated_at: new Date().toISOString()
-                });
-
-                const userData = await db.ref(`users/${userId}`).once("value");
-                const u = userData.val() || {};
-                const pendingCount = Object.values(subs).filter(s => s.status === 'pending' && s.id !== subId).length;
-                const newPendingRewards = pendingCount * REWARD_AMOUNT;
-
-                await db.ref(`users/${userId}`).update({
-                    rejectedCount: (u.rejectedCount || 0) + 1,
-                    pendingRewards: newPendingRewards,
-                });
-
-                showToast("❌ Submission rejected.");
-                loadAllData();
-            } catch (err) {
-                console.error(err);
-                showToast("Error rejecting submission.", true);
-            }
-        };
-
-        // ============================================================
-        // ACTIONS: WITHDRAWALS
-        // ============================================================
-        window.approveWithdrawal = async (userId, wdId) => {
-            if (!userId || !wdId) return;
-            if (!confirm("Approve this withdrawal?")) return;
-
-            try {
-                const userSnap = await db.ref(`users/${userId}/withdrawals`).once("value");
-                const wds = userSnap.val() || {};
-                let targetKey = null;
-                for (const [key, val] of Object.entries(wds)) {
-                    if (val.id === wdId || val.withdrawal_id === wdId) {
-                        targetKey = key;
-                        break;
-                    }
-                }
-                if (!targetKey) {
-                    showToast("Withdrawal not found.", true);
-                    return;
-                }
-
-                await db.ref(`users/${userId}/withdrawals/${targetKey}`).update({
-                    status: "completed",
-                    updated_at: new Date().toISOString()
-                });
-
-                showToast("✅ Withdrawal approved.");
-                loadAllData();
-            } catch (err) {
-                console.error(err);
-                showToast("Error approving withdrawal.", true);
-            }
-        };
-
-        window.rejectWithdrawal = async (userId, wdId) => {
-            if (!userId || !wdId) return;
-            if (!confirm("Reject this withdrawal? Amount will be refunded.")) return;
-
-            try {
-                const userSnap = await db.ref(`users/${userId}/withdrawals`).once("value");
-                const wds = userSnap.val() || {};
-                let targetKey = null;
-                let amount = 0;
-                for (const [key, val] of Object.entries(wds)) {
-                    if (val.id === wdId || val.withdrawal_id === wdId) {
-                        targetKey = key;
-                        amount = val.amount || 0;
-                        break;
-                    }
-                }
-                if (!targetKey) {
-                    showToast("Withdrawal not found.", true);
-                    return;
-                }
-
-                await db.ref(`users/${userId}/withdrawals/${targetKey}`).update({
-                    status: "rejected",
-                    updated_at: new Date().toISOString()
-                });
-
-                // Refund balance
-                if (amount > 0) {
-                    const userData = await db.ref(`users/${userId}`).once("value");
-                    const u = userData.val() || {};
-                    await db.ref(`users/${userId}`).update({
-                        balance: (u.balance || 0) + amount,
-                    });
-                }
-
-                showToast(`❌ Withdrawal rejected. $${amount.toFixed(2)} refunded.`);
-                loadAllData();
-            } catch (err) {
-                console.error(err);
-                showToast("Error rejecting withdrawal.", true);
-            }
-        };
-
-        // ============================================================
-        // ACTIONS: USER MANAGEMENT
-        // ============================================================
-        window.viewUserProfile = async (uid) => {
-            const u = allUsers.find(user => user.uid === uid);
-            if (!u) {
-                showToast("User not found.", true);
-                return;
-            }
-
-            const userSubs = allSubmissions.filter(s => s.userId === uid);
-            const userWds = allWithdrawals.filter(w => w.userId === uid);
-            const approvedSubs = userSubs.filter(s => s.status === 'approved').length;
-            const pendingSubs = userSubs.filter(s => s.status === 'pending').length;
-            const rejectedSubs = userSubs.filter(s => s.status === 'rejected').length;
-            const completedWds = userWds.filter(w => w.status === 'completed').length;
-            const pendingWds = userWds.filter(w => w.status === 'pending').length;
-
-            const html = `
-                    <div class="profile-detail-item"><span>Name</span><strong>${escapeHtml(u.name || '—')}</strong></div>
-                    <div class="profile-detail-item"><span>User ID</span><span style="font-size:0.8rem;">${u.uid || '—'}</span></div>
-                    <div class="profile-detail-item"><span>Type</span><strong>${u.type || 'FREELANCER'}</strong></div>
-                    <div class="profile-detail-item"><span>Balance</span><strong style="color:var(--green);">$${(u.balance || 0).toFixed(2)}</strong></div>
-                    <div class="profile-detail-item"><span>Total Earned</span><strong>$${(u.totalEarned || 0).toFixed(2)}</strong></div>
-                    <div class="profile-detail-item"><span>Pending Rewards</span><strong style="color:var(--orange);">$${(u.pendingRewards || 0).toFixed(2)}</strong></div>
-                    <div class="profile-detail-item"><span>Submissions</span><strong>${userSubs.length} (✅ ${approvedSubs} · ⏳ ${pendingSubs} · ❌ ${rejectedSubs})</strong></div>
-                    <div class="profile-detail-item"><span>Withdrawals</span><strong>${userWds.length} (✅ ${completedWds} · ⏳ ${pendingWds})</strong></div>
-                    <div class="profile-detail-item"><span>Approved Count</span><strong>${u.approvedCount || 0}</strong></div>
-                    <div class="profile-detail-item"><span>Rejected Count</span><strong>${u.rejectedCount || 0}</strong></div>
-                    <div class="profile-detail-item"><span>Joined</span><span>${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</span></div>
-                `;
-
-            document.getElementById("profileDetailContent").innerHTML = html;
-            document.getElementById("userProfileModal").classList.add("active");
-        };
-
-        document.getElementById("closeProfileModal").addEventListener("click", () => {
-            document.getElementById("userProfileModal").classList.remove("active");
-        });
-
-        window.addBalance = async (uid, amount) => {
-            const u = allUsers.find(user => user.uid === uid);
-            if (!u) return;
-            const newBal = (u.balance || 0) + amount;
+    };
+    window.resetSingleUser = async (uid) => {
+        if (confirm("⚠️ Reset user: balance → 0, all stats cleared, withdrawal history cleared?")) {
             await db.ref(`users/${uid}`).update({
-                balance: newBal,
-                totalEarned: (u.totalEarned || 0) + amount,
+                balance: 0,
+                totalEarned: 0,
+                completedGames: 0,
+                wins: 0,
+                draws: 0,
+                losses: 0,
+                pendingAmount: 0,
+                withdrawalHistory: [],
+                transactions: []
             });
-            showToast(`+$${amount.toFixed(2)} added. New balance: $${newBal.toFixed(2)}`);
+            showToast("User reset complete");
             loadAllData();
-        };
+        }
+    };
 
-        window.setBalancePrompt = async (uid) => {
-            const u = allUsers.find(user => user.uid === uid);
-            if (!u) return;
-            const val = prompt("Enter new balance (in $):", (u.balance || 0).toFixed(2));
-            if (val === null) return;
-            const num = parseFloat(val);
-            if (isNaN(num) || num < 0) {
-                showToast("Invalid amount.", true);
-                return;
-            }
-            await db.ref(`users/${uid}`).update({ balance: num });
-            showToast(`Balance set to $${num.toFixed(2)}`);
-            loadAllData();
-        };
+    // ─── Withdrawals ───
+    function renderWithdrawalsList() {
+        let filtered = withdrawFilterMode === "pending" ? allWithdrawals.filter(w => w.status === "pending") : allWithdrawals;
+        const container = document.getElementById("withdrawalsContainer");
+        if (!filtered.length) { container.innerHTML = '<div class="empty-state">No withdrawal requests</div>'; return; }
+        container.innerHTML = filtered.map(w => {
+            const statusClass = w.status === 'pending' ? 'pill-pending' : w.status === 'approved' ? 'pill-approved' : 'pill-rejected';
+            const date = w.createdAt ? new Date(w.createdAt).toLocaleDateString() : 'N/A';
+            const amount = w.amountRUT || w.amount || 0;
+            return `
+            <div class="wd-card">
+                <div class="flex-between">
+                    <div><strong>${escapeHtml(w.username)}</strong><br><small style="color:#999;">${w.withdrawalId || w.id || 'WD-' + w.date}</small></div>
+                    <span class="status-pill ${statusClass}">${w.status}</span>
+                </div>
+                <div style="margin:6px 0;">💰 ${amount.toLocaleString()} RUT (≈ $${(amount * 0.0005).toFixed(2)})</div>
+                <div class="wd-detail">📱 ${w.method || 'Binance'} - ${w.binanceIdentifier || w.account || 'N/A'}</div>
+                <div class="wd-detail">📅 ${date}</div>
+                ${w.status === "pending" ? `
+                <div class="chip-group">
+                    <button class="btn-success" onclick="approveWithdrawal('${w.userId}', '${w.withdrawalId || w.id}', ${amount})"><i class="fas fa-check"></i> Approve</button>
+                    <button class="btn-danger" onclick="rejectWithdrawal('${w.userId}', '${w.withdrawalId || w.id}', ${amount})"><i class="fas fa-undo"></i> Reject & refund</button>
+                </div>` : ''}
+            </div>`;
+        }).join('');
+    }
 
-        window.resetSingleUser = async (uid) => {
-            if (!confirm("⚠️ Reset this user? Balance → 0, all submissions & withdrawals remain but user progress resets.")) return;
-            if (!confirm("This will set balance to 0 and reset daily count. Continue?")) return;
-            try {
-                await db.ref(`users/${uid}`).update({
-                    balance: 0,
-                    totalEarned: 0,
-                    pendingRewards: 0,
-                    approvedCount: 0,
-                    rejectedCount: 0,
-                    dailyCount: 0,
-                });
-                showToast("User reset successfully.");
+    window.approveWithdrawal = async (uid, wdid) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            const hist = user.withdrawalHistory || [];
+            const idx = hist.findIndex(w => (w.withdrawalId || w.id) == wdid);
+            if (idx !== -1) {
+                hist[idx].status = "approved";
+                await db.ref(`users/${uid}`).update({ withdrawalHistory: hist });
+                showToast("✅ Withdrawal approved");
                 loadAllData();
-            } catch (err) {
-                showToast("Error resetting user.", true);
-            }
-        };
-
-        // ============================================================
-        // SETTINGS: FULL RESET
-        // ============================================================
-        document.getElementById("fullResetBtn")?.addEventListener("click", async () => {
-            if (!confirm("⚠️ PERMANENT RESET: All users → balance 0, all submissions/withdrawals cleared. Continue?")) return;
-            if (prompt("Type 'RESET ALL' to confirm:") !== "RESET ALL") {
-                showToast("Reset cancelled.", true);
-                return;
-            }
-
-            try {
-                for (const user of allUsers) {
-                    const uid = user.uid;
-                    // Reset user main fields
-                    await db.ref(`users/${uid}`).update({
-                        balance: 0,
-                        totalEarned: 0,
-                        pendingRewards: 0,
-                        approvedCount: 0,
-                        rejectedCount: 0,
-                        dailyCount: 0,
-                    });
-                    // Clear submissions
-                    await db.ref(`users/${uid}/submissions`).remove();
-                    // Clear withdrawals
-                    await db.ref(`users/${uid}/withdrawals`).remove();
-                }
-                showToast("✅ FULL FACTORY RESET COMPLETE");
-                loadAllData();
-            } catch (err) {
-                console.error(err);
-                showToast("Error during reset.", true);
-            }
-        });
-
-        // ============================================================
-        // SETTINGS: CHANGE PASSWORD
-        // ============================================================
-        document.getElementById("changePasswordBtn")?.addEventListener("click", () => {
-            const newPass = document.getElementById("newAdminPassword").value;
-            if (newPass.length < 4) {
-                showToast("Min 4 characters required.", true);
-                return;
-            }
-            localStorage.setItem(ADMIN_PASS_KEY, newPass);
-            showToast("✅ Admin password updated.");
-            document.getElementById("newAdminPassword").value = "";
-        });
-
-        // ============================================================
-        // FILTER TOGGLES
-        // ============================================================
-        document.getElementById("filterSubPending")?.addEventListener("click", () => {
-            subFilterMode = "pending";
-            renderSubmissionsList();
-        });
-        document.getElementById("filterSubAll")?.addEventListener("click", () => {
-            subFilterMode = "all";
-            renderSubmissionsList();
-        });
-        document.getElementById("filterWdPending")?.addEventListener("click", () => {
-            wdFilterMode = "pending";
-            renderWithdrawalsList();
-        });
-        document.getElementById("filterWdAll")?.addEventListener("click", () => {
-            wdFilterMode = "all";
-            renderWithdrawalsList();
-        });
-
-        // ============================================================
-        // SEARCH
-        // ============================================================
-        document.getElementById("userSearchInput")?.addEventListener("input", renderUsersList);
-
-        // ============================================================
-        // NAVIGATION
-        // ============================================================
-        document.querySelectorAll(".nav-tab").forEach(tab => {
-            tab.addEventListener("click", () => {
-                const target = tab.dataset.tab;
-                document.querySelectorAll(".admin-section").forEach(sec => sec.classList.remove("active"));
-                document.getElementById(`${target}Section`).classList.add("active");
-                document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
-                tab.classList.add("active");
-
-                // Refresh data on tab switch
-                if (target === "users") renderUsersList();
-                if (target === "submissions") renderSubmissionsList();
-                if (target === "withdrawals") renderWithdrawalsList();
-                if (target === "dashboard") renderDashboard();
-            });
-        });
-
-        // ============================================================
-        // LOGIN / LOGOUT
-        // ============================================================
-        document.getElementById("loginBtn")?.addEventListener("click", () => {
-            const pwd = document.getElementById("adminPassword").value;
-            if (pwd === getStoredPass()) {
-                setLogin(true);
-                showAdminUI();
             } else {
-                showToast("❌ Invalid password", true);
+                showToast("Withdrawal not found", true);
             }
-        });
-
-        document.getElementById("logoutBtn")?.addEventListener("click", () => {
-            setLogin(false);
-            showLoginUI();
-        });
-
-        // Enter key on password field
-        document.getElementById("adminPassword")?.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") document.getElementById("loginBtn").click();
-        });
-
-        // ============================================================
-        // UTILITY
-        // ============================================================
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' } [m] || m));
         }
-
-        // ============================================================
-        // AUTO LOGIN CHECK
-        // ============================================================
-        if (isLoggedIn()) {
-            showAdminUI();
-        } else {
-            showLoginUI();
-        }
-
-        // Auto-refresh every 45 seconds
-        setInterval(() => {
-            if (isLoggedIn()) {
+    };
+    window.rejectWithdrawal = async (uid, wdid, amount) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            const hist = user.withdrawalHistory || [];
+            const idx = hist.findIndex(w => (w.withdrawalId || w.id) == wdid);
+            if (idx !== -1) {
+                hist[idx].status = "rejected";
+                // Refund balance
+                const newBal = (user.balance || 0) + amount;
+                // Also reduce pendingAmount
+                const newPending = Math.max(0, (user.pendingAmount || 0) - amount);
+                await db.ref(`users/${uid}`).update({ 
+                    withdrawalHistory: hist, 
+                    balance: newBal,
+                    pendingAmount: newPending
+                });
+                showToast(`❌ Rejected, ${amount.toLocaleString()} RUT refunded`);
                 loadAllData();
+            } else {
+                showToast("Withdrawal not found", true);
             }
-        }, 45000);
+        }
+    };
 
-        console.log("🔐 Gamil Admin Panel initialized. Reward per approval = $0.20");
-    </script>
+    // ─── Transactions ───
+    function renderTransactionsList() {
+        const container = document.getElementById("transactionsContainer");
+        if (!allTransactions.length) { container.innerHTML = '<div class="empty-state">No transactions</div>'; return; }
+        const sorted = allTransactions.slice(0, 50).sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+        container.innerHTML = sorted.map(tx => {
+            const sign = tx.amount > 0 ? '+' : '';
+            const cls = tx.amount > 0 ? 'color:#10b981;' : 'color:#ef4444;';
+            const date = tx.createdAt ? new Date(tx.createdAt).toLocaleDateString() : 'N/A';
+            return `
+            <div class="wd-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                <div>
+                    <div><strong>${escapeHtml(tx.username)}</strong></div>
+                    <div style="font-size:0.75rem; color:#666;">${tx.description || tx.type || 'Transaction'}</div>
+                    <div style="font-size:0.65rem; color:#999;">${date}</div>
+                </div>
+                <div style="font-weight:700; ${cls}">${sign}${Math.abs(tx.amount).toLocaleString()} RUT</div>
+            </div>`;
+        }).join('');
+    }
 
+    // ─── Event Listeners ───
+    document.getElementById("fullResetBtn")?.addEventListener("click", async () => {
+        if (!confirm("⚠️ PERMANENT RESET: All users -> balance 0, stats 0, clear histories. Continue?")) return;
+        if (prompt("Type 'RESET ALL' to confirm:") !== "RESET ALL") { showToast("Reset cancelled", true); return; }
+        for (let user of allUsers) {
+            await db.ref(`users/${user.uid}`).update({
+                balance: 0,
+                totalEarned: 0,
+                completedGames: 0,
+                wins: 0,
+                draws: 0,
+                losses: 0,
+                pendingAmount: 0,
+                withdrawalHistory: [],
+                transactions: []
+            });
+        }
+        showToast("✅ FULL FACTORY RESET COMPLETE");
+        loadAllData();
+    });
+    document.getElementById("filterPendingBtn")?.addEventListener("click", () => { withdrawFilterMode = "pending"; renderWithdrawalsList(); });
+    document.getElementById("filterAllBtn")?.addEventListener("click", () => { withdrawFilterMode = "all"; renderWithdrawalsList(); });
+    document.getElementById("userSearchInput")?.addEventListener("input", () => renderUsersList());
+    document.getElementById("changePasswordBtn")?.addEventListener("click", () => {
+        const newPass = document.getElementById("newAdminPassword").value;
+        if (newPass.length < 4) { showToast("Min 4 characters", true); return; }
+        localStorage.setItem(ADMIN_PASS_KEY, newPass);
+        showToast("✅ Admin password updated");
+        document.getElementById("newAdminPassword").value = "";
+    });
+    document.getElementById("loginBtn")?.addEventListener("click", () => {
+        const pwd = document.getElementById("adminPassword").value;
+        if (pwd === initAdminPass()) { setLogin(true); showAdminUI(); }
+        else showToast("❌ Invalid password", true);
+    });
+    document.getElementById("logoutBtn")?.addEventListener("click", () => { setLogin(false); showLoginUI(); });
+    document.querySelectorAll(".nav-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            const target = tab.dataset.tab;
+            document.querySelectorAll(".admin-section").forEach(sec => sec.classList.remove("active"));
+            const sec = document.getElementById(`${target}Section`);
+            if (sec) sec.classList.add("active");
+            document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            if (target === "users") renderUsersList();
+            if (target === "withdrawals") renderWithdrawalsList();
+            if (target === "transactions") renderTransactionsList();
+            if (target === "dashboard") renderDashboard();
+        });
+    });
+
+    function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+
+    // ─── Auto-login check ───
+    if (isLoggedIn()) showAdminUI(); else showLoginUI();
+</script>
 </body>
 </html>
