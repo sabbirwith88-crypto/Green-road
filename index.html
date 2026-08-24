@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>King Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { background: #f5f5f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
+        .phone-frame { width: 100%; max-width: 420px; background: #ffffff; border-radius: 48px; box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25), 0 0 0 8px #e8e8e8; overflow: hidden; position: relative; height: 780px; display: flex; flex-direction: column; }
+        .scroll-area { flex: 1; overflow-y: auto; padding-bottom: 80px; scrollbar-width: thin; }
+        .login-container, .login-card { display: flex; align-items: center; justify-content: center; height: 100%; }
+        .login-card { background: white; border-radius: 48px; padding: 40px 28px; text-align: center; box-shadow: 0 20px 35px -10px rgba(0,0,0,0.08); width: 100%; margin: 20px; }
+        .login-card i { font-size: 3rem; color: #f5a623; margin-bottom: 16px; }
+        .login-card h2 { font-weight: 800; letter-spacing: -0.5px; margin-bottom: 20px; color: #000; }
+        .login-card input { width: 100%; padding: 16px 20px; border-radius: 60px; border: 1px solid #ddd; background: #fafafa; font-size: 1rem; margin: 16px 0; outline: none; }
+        .login-card input:focus { border-color: #f5a623; box-shadow: 0 0 0 3px rgba(245,166,35,0.1); }
+        .btn-primary { background: #f5a623; color: #000; border: none; padding: 14px 20px; border-radius: 60px; font-weight: 700; width: 100%; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { background: #e09515; }
+        .admin-header { background: white; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
+        .logo { font-weight: 800; font-size: 1.3rem; color: #000; }
+        .logo i { color: #f5a623; margin-right: 6px; }
+        .exit-btn { background: #f0f0f0; border: none; padding: 8px 16px; border-radius: 40px; font-weight: 600; cursor: pointer; color: #333; }
+        .bottom-nav-admin { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 10px 12px 22px; border-top: 1px solid #eee; z-index: 20; }
+        .nav-tab { background: transparent; border: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.65rem; padding: 6px 12px; border-radius: 40px; color: #888; font-weight: 500; flex: 1; cursor: pointer; transition: 0.2s; }
+        .nav-tab i { font-size: 1.3rem; }
+        .nav-tab.active { background: #f5f5f5; color: #f5a623; font-weight: 600; }
+        .nav-tab.active i { color: #f5a623; }
+        .admin-section { display: none; padding: 20px; animation: fadeIn 0.25s ease; }
+        .admin-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .stats-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 24px; }
+        .stat-card { background: #f8f8f8; border-radius: 24px; padding: 20px; border: 1px solid #eee; }
+        .stat-number { font-size: 1.8rem; font-weight: 800; color: #000; margin-top: 4px; }
+        .stat-card .label { color: #888; font-size: 0.8rem; }
+        .user-card, .withdraw-card, .submission-card { background: #fafafa; border-radius: 24px; padding: 18px; margin-bottom: 14px; border: 1px solid #eee; transition: 0.2s; }
+        .user-card:hover, .withdraw-card:hover, .submission-card:hover { background: #f5f5f5; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .chip-group { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        .btn-icon { background: #f0f0f0; border: none; padding: 8px 14px; border-radius: 40px; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.15s; color: #333; }
+        .btn-icon:active { transform: scale(0.95); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-warning { background: #f59e0b; color: #000; }
+        .btn-dark { background: #1a1a1a; color: white; }
+        .btn-outline { background: transparent; border: 1px solid #ddd; }
+        .status-pill { display: inline-block; padding: 4px 12px; border-radius: 40px; font-size: 0.65rem; font-weight: 700; }
+        .pill-pending { background: #fef3c7; color: #92400e; }
+        .pill-approved { background: #d1fae5; color: #065f46; }
+        .pill-rejected { background: #fee2e2; color: #991b1b; }
+        .search-bar { background: #fafafa; border-radius: 60px; padding: 10px 18px; display: flex; gap: 12px; border: 1px solid #eee; margin-bottom: 20px; }
+        .search-bar input { flex: 1; border: none; outline: none; background: transparent; color: #000; }
+        .empty-state { text-align: center; padding: 48px 20px; color: #aaa; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: 0.2s; }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: white; border-radius: 40px; padding: 28px; width: 92%; max-width: 360px; max-height: 80vh; overflow-y: auto; }
+        .profile-detail-item { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 0.9rem; }
+        .profile-detail-item:last-child { border-bottom: none; }
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 12px 24px; border-radius: 60px; font-weight: 500; z-index: 2000; display: none; font-size: 0.85rem; box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+        .badge-count { background: #eee; border-radius: 40px; padding: 2px 10px; font-size: 0.65rem; }
+        .sub-detail { font-size: 0.8rem; color: #666; margin: 4px 0; }
+        .text-muted { color: #999; font-size: 0.75rem; }
+        .fw-700 { font-weight: 700; }
+        .mt-8 { margin-top: 8px; }
+        .mb-8 { margin-bottom: 8px; }
+        .gap-4 { gap: 4px; }
+        .code-block { background: #f0f0f0; padding: 4px 10px; border-radius: 8px; font-family: monospace; font-size: 0.8rem; }
+        .danger-zone { border-left: 4px solid #ef4444; background: #fef2f2; }
+        .danger-zone h3 { color: #dc2626; }
+        .refresh-btn { background: transparent; border: none; color: #888; cursor: pointer; padding: 4px 8px; font-size: 1rem; }
+        .refresh-btn:hover { color: #000; }
+        @media (max-width: 400px) { .stat-number { font-size: 1.4rem; } .btn-icon { font-size: 0.65rem; padding: 6px 12px; } }
+    </style>
+</head>
+<body>
+<div class="phone-frame">
+    <div id="loginView" style="height: 100%; display: flex; align-items: center; justify-content: center;">
+        <div class="login-container">
+            <div class="login-card">
+                <i class="fas fa-crown"></i>
+                <h2>Admin Access</h2>
+                <input type="password" id="adminPassword" placeholder="Enter master password">
+                <button id="loginBtn" class="btn-primary"><i class="fas fa-key"></i> Unlock Panel</button>
+                <p style="margin-top:14px; color:#aaa; font-size:0.75rem;">Default: <strong>Admin2025</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminPanelView" style="display: none; flex-direction: column; height: 100%; position: relative;">
+        <div class="admin-header">
+            <div class="logo"><i class="fas fa-crown"></i> King Admin</div>
+            <button id="logoutBtn" class="exit-btn"><i class="fas fa-sign-out-alt"></i> Exit</button>
+        </div>
+        <div class="scroll-area" id="adminScrollArea">
+            <div id="dashboardSection" class="admin-section active">
+                <div class="stats-grid" id="dashboardStats"></div>
+                <div class="user-card" id="extraInsights"></div>
+            </div>
+            <div id="usersSection" class="admin-section">
+                <div class="search-bar"><i class="fas fa-search" style="color:#aaa;"></i><input type="text" id="userSearchInput" placeholder="Search by username, ID or referral code"></div>
+                <div id="usersListContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading users...</div></div>
+            </div>
+            <div id="sellSection" class="admin-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <h3 style="font-weight:700; color:#000;"><i class="fas fa-store"></i> Sell Submissions</h3>
+                    <button class="btn-icon btn-outline" onclick="loadSellSubmissions()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="sellContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading sell requests...</div></div>
+            </div>
+            <div id="withdrawalsSection" class="admin-section">
+                <div class="flex-between" style="margin-bottom: 16px;">
+                    <button id="filterPendingBtn" class="btn-icon btn-dark"><i class="fas fa-clock"></i> Pending only</button>
+                    <button id="filterAllBtn" class="btn-icon btn-outline">All requests</button>
+                </div>
+                <div id="withdrawalsContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading withdrawals...</div></div>
+            </div>
+            <div id="resetSection" class="admin-section">
+                <div class="user-card danger-zone">
+                    <h3><i class="fas fa-radiation"></i> Danger Zone – Factory Reset</h3>
+                    <p style="margin: 10px 0; color:#666; font-size:0.85rem;">Reset EVERY user: balance = 0, all progress cleared, one‑time tasks removed, sell submissions deleted.</p>
+                    <button id="fullResetBtn" class="btn-danger" style="width:100%; padding: 14px; margin-top: 8px;"><i class="fas fa-trash-alt"></i> 🔥 RESET ALL DATA (IRREVERSIBLE)</button>
+                </div>
+                <div class="user-card" style="margin-top: 20px;">
+                    <h4><i class="fas fa-lock"></i> Security Settings</h4>
+                    <input type="password" id="newAdminPassword" placeholder="New admin password" style="width:100%; padding:14px; border-radius:60px; margin:12px 0; border:1px solid #ddd; outline:none;">
+                    <button id="changePasswordBtn" class="btn-primary" style="background:#1a1a1a; color:#fff;">Update Password</button>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-nav-admin">
+            <button class="nav-tab active" data-tab="dashboard"><i class="fas fa-chart-pie"></i><span>Stats</span></button>
+            <button class="nav-tab" data-tab="users"><i class="fas fa-users"></i><span>Users</span></button>
+            <button class="nav-tab" data-tab="sell"><i class="fas fa-store"></i><span>Sell</span></button>
+            <button class="nav-tab" data-tab="withdrawals"><i class="fas fa-hand-holding-usd"></i><span>Payouts</span></button>
+            <button class="nav-tab" data-tab="reset"><i class="fas fa-sliders-h"></i><span>Reset</span></button>
+        </div>
+    </div>
+</div>
+<div id="userProfileModal" class="modal-overlay"><div class="modal-box"><h3 style="margin-bottom: 16px;"><i class="fas fa-id-card"></i> Player Profile</h3><div id="profileDetailContent"></div><button id="closeProfileModal" class="btn-icon" style="width:100%; margin-top: 20px; background:#000; color:white; justify-content:center;">Close</button></div></div>
+<div id="toastMsg" class="toast"></div>
+
+<script>
+    // ─── Firebase Config ───
+    const firebaseConfig = {
+        apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM",
+        authDomain: "earn-for-earn-55d3e.firebaseapp.com",
+        databaseURL: "https://earn-for-earn-55d3e-default-rtdb.firebaseio.com",
+        projectId: "earn-for-earn-55d3e",
+        storageBucket: "earn-for-earn-55d3e.firebasestorage.app",
+        messagingSenderId: "109416949734",
+        appId: "1:109416949734:web:53f52de7899d65a04c9827"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const ADMIN_PASS_KEY = "admin_king_secure";
+    let allUsers = [], allSellSubmissions = [], allWithdrawals = [];
+    let withdrawFilterMode = "pending";
+
+    function showToast(msg, isError = false) {
+        let t = document.getElementById("toastMsg");
+        t.textContent = msg;
+        t.style.background = isError ? "#dc2626" : "#1a1a1a";
+        t.style.display = "block";
+        setTimeout(() => t.style.display = "none", 3000);
+    }
+
+    function initAdminPass() {
+        if (!localStorage.getItem(ADMIN_PASS_KEY)) localStorage.setItem(ADMIN_PASS_KEY, "Admin2025");
+        return localStorage.getItem(ADMIN_PASS_KEY);
+    }
+    function isLoggedIn() { return sessionStorage.getItem("admin_logged") === "true"; }
+    function setLogin(val) { val ? sessionStorage.setItem("admin_logged","true") : sessionStorage.removeItem("admin_logged"); }
+    function showLoginUI() { document.getElementById("loginView").style.display = "flex"; document.getElementById("adminPanelView").style.display = "none"; }
+    function showAdminUI() { document.getElementById("loginView").style.display = "none"; document.getElementById("adminPanelView").style.display = "flex"; loadAllData(); }
+
+    async function loadAllData() {
+        showToast("🔄 Syncing data...");
+        try {
+            // Load users
+            const usersSnap = await db.ref("users").once("value");
+            allUsers = [];
+            usersSnap.forEach(child => {
+                let user = child.val();
+                user.uid = child.key;
+                if (!user.referrals) user.referrals = [];
+                if (!user.withdrawalHistory) user.withdrawalHistory = [];
+                if (!user.earningsHistory) user.earningsHistory = [];
+                allUsers.push(user);
+            });
+
+            // Load sell submissions from sellSubmissions
+            const sellSnap = await db.ref("sellSubmissions").once("value");
+            allSellSubmissions = [];
+            sellSnap.forEach(child => {
+                allSellSubmissions.push({ id: child.key, ...child.val() });
+            });
+
+            // Build withdrawals list from users
+            allWithdrawals = [];
+            allUsers.forEach(user => {
+                if (user.withdrawalHistory && Array.isArray(user.withdrawalHistory)) {
+                    user.withdrawalHistory.forEach(w => {
+                        allWithdrawals.push({
+                            ...w,
+                            username: user.username || "unknown",
+                            userId: user.uid
+                        });
+                    });
+                }
+            });
+            allWithdrawals.sort((a,b) => (b.date || 0) - (a.date || 0));
+
+            renderDashboard();
+            renderUsersList();
+            renderSellSubmissions();
+            renderWithdrawalsList();
+            showToast(`✅ Loaded ${allUsers.length} users, ${allSellSubmissions.length} sell requests, ${allWithdrawals.length} withdrawals`);
+        } catch (err) {
+            console.error(err);
+            showToast("Error loading data: " + err.message, true);
+        }
+    }
+
+    // ─── Dashboard ───
+    function renderDashboard() {
+        let totalBalance = 0, totalEarned = 0, totalRefs = 0, totalAds = 0;
+        let gmailApproved = 0;
+        allUsers.forEach(u => {
+            totalBalance += u.balance || 0;
+            totalEarned += u.totalEarned || 0;
+            totalRefs += (u.referrals?.length || 0);
+            totalAds += (u.ads1Progress||0)+(u.ads2Progress||0)+(u.ads3Progress||0);
+            if (u.gmailSoldApproved) gmailApproved++;
+        });
+        const pendingSell = allSellSubmissions.filter(s => s.status === "pending").length;
+        const pendingWd = allWithdrawals.filter(w => w.status === "pending").length;
+        document.getElementById("dashboardStats").innerHTML = `
+            <div class="stat-card"><div class="label"><i class="fas fa-users"></i> Total Users</div><div class="stat-number">${allUsers.length}</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-coins"></i> Total Balance</div><div class="stat-number">${totalBalance.toLocaleString()}</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-clock"></i> Pending WD</div><div class="stat-number">${pendingWd}</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-store"></i> Pending Sell</div><div class="stat-number">${pendingSell}</div></div>
+        `;
+        document.getElementById("extraInsights").innerHTML = `
+            <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between; font-size:0.85rem;">
+                <span><i class="fas fa-chart-line"></i> Total Earned: <strong>${totalEarned.toLocaleString()}</strong></span>
+                <span><i class="fas fa-ad"></i> Ads watched: <strong>${totalAds}</strong></span>
+                <span><i class="fas fa-user-friends"></i> Refs: <strong>${totalRefs}</strong></span>
+                <span><i class="fas fa-check-circle"></i> Gmail Approved: <strong>${gmailApproved}</strong></span>
+            </div>
+        `;
+    }
+
+    // ─── Users ───
+    function renderUsersList() {
+        const searchTerm = document.getElementById("userSearchInput")?.value.toLowerCase() || "";
+        let filtered = allUsers.filter(u => 
+            (u.username || "").toLowerCase().includes(searchTerm) ||
+            (u.uid || "").toLowerCase().includes(searchTerm) ||
+            (u.referralCode || "").toLowerCase().includes(searchTerm)
+        );
+        const container = document.getElementById("usersListContainer");
+        if (!filtered.length) { container.innerHTML = '<div class="empty-state">No users found</div>'; return; }
+        container.innerHTML = filtered.map(u => `
+            <div class="user-card">
+                <div class="flex-between">
+                    <div><strong><i class="fab fa-telegram"></i> ${escapeHtml(u.username || "No name")}</strong>
+                        <div style="font-size:0.65rem; color:#999;">${u.uid.slice(0,12)}...</div>
+                    </div>
+                    <span style="background:#000; color:#fff; padding:4px 14px; border-radius:40px; font-weight:700; font-size:0.85rem;">${(u.balance||0).toLocaleString()} KING</span>
+                </div>
+                <div class="chip-group" style="font-size:0.75rem; color:#666;">
+                    <span><i class="fas fa-user-friends"></i> Refs: ${u.referrals?.length || 0}</span>
+                    <span><i class="fas fa-check"></i> Tasks: ${u.tasksCompleted || 0}</span>
+                    <span><i class="fas fa-ad"></i> Ads: ${(u.ads1Progress||0)+(u.ads2Progress||0)+(u.ads3Progress||0)}</span>
+                    ${u.gmailSoldApproved ? '<span style="color:#10b981;"><i class="fas fa-check-circle"></i> Gmail ✓</span>' : ''}
+                </div>
+                <div class="chip-group">
+                    <button class="btn-icon" onclick="viewUserProfile('${u.uid}')"><i class="fas fa-eye"></i> Profile</button>
+                    <button class="btn-icon btn-success" onclick="addBalanceToUser('${u.uid}', 2000)"><i class="fas fa-plus"></i> +2k</button>
+                    <button class="btn-icon btn-warning" onclick="setUserBalance('${u.uid}')"><i class="fas fa-pen"></i> Set Bal</button>
+                    <button class="btn-icon btn-danger" onclick="resetSingleUser('${u.uid}')"><i class="fas fa-undo-alt"></i> Reset</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    window.viewUserProfile = async (uid) => {
+        const u = allUsers.find(u => u.uid === uid);
+        if (!u) return;
+        const referralCount = u.referrals?.length || 0;
+        const totalAds = (u.ads1Progress||0)+(u.ads2Progress||0)+(u.ads3Progress||0);
+        const oneTime = [];
+        if(u.pedoYoutubeClaimed) oneTime.push("YouTube");
+        if(u.pedoChannelClaimed) oneTime.push("TG Channel");
+        if(u.paymentProofClaimed) oneTime.push("Payment Proof");
+        const sellHistory = u.sellHistory || [];
+        const approvedSell = sellHistory.filter(s => s.status === "approved");
+        const html = `
+            <div class="profile-detail-item"><span>Username</span><strong>${escapeHtml(u.username)}</strong></div>
+            <div class="profile-detail-item"><span>User ID</span><span style="font-size:0.8rem;">${u.uid}</span></div>
+            <div class="profile-detail-item"><span>Balance</span><strong>${(u.balance||0).toLocaleString()} KING</strong></div>
+            <div class="profile-detail-item"><span>Total Earned</span><strong>${(u.totalEarned||0).toLocaleString()} KING</strong></div>
+            <div class="profile-detail-item"><span>Referrals</span><strong>${referralCount}</strong></div>
+            <div class="profile-detail-item"><span>Tasks Done</span><strong>${u.tasksCompleted || 0}</strong></div>
+            <div class="profile-detail-item"><span>Ads watched</span><strong>${totalAds}</strong></div>
+            <div class="profile-detail-item"><span>Gmail Approved</span><strong>${u.gmailSoldApproved ? '✅ Yes' : '❌ No'}</strong></div>
+            <div class="profile-detail-item"><span>One‑time completed</span><strong>${oneTime.join(", ") || "None"}</strong></div>
+            <div class="profile-detail-item"><span>Withdrawals</span><strong>${u.withdrawalHistory?.length || 0}</strong></div>
+            <div class="profile-detail-item"><span>Referral Code</span><code style="background:#f0f0f0; padding:2px 10px; border-radius:8px;">${u.referralCode || "—"}</code></div>
+            ${approvedSell.length > 0 ? `<div class="profile-detail-item"><span>Sell History</span><strong>${approvedSell.length} approved</strong></div>` : ''}
+        `;
+        document.getElementById("profileDetailContent").innerHTML = html;
+        document.getElementById("userProfileModal").classList.add("active");
+    };
+    document.getElementById("closeProfileModal").onclick = () => document.getElementById("userProfileModal").classList.remove("active");
+
+    window.addBalanceToUser = async (uid, amount) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            await db.ref(`users/${uid}`).update({ balance: (user.balance||0)+amount, totalEarned: (user.totalEarned||0)+amount });
+            showToast(`+${amount.toLocaleString()} KING added`);
+            loadAllData();
+        }
+    };
+    window.setUserBalance = async (uid) => {
+        const user = allUsers.find(u => u.uid === uid);
+        const newVal = prompt("New balance (KING):", user?.balance || 0);
+        if (newVal !== null && !isNaN(parseInt(newVal))) {
+            await db.ref(`users/${uid}`).update({ balance: parseInt(newVal) });
+            showToast(`Balance set to ${parseInt(newVal).toLocaleString()}`);
+            loadAllData();
+        }
+    };
+    window.resetSingleUser = async (uid) => {
+        if (confirm("⚠️ Reset user: balance → 0, all ads & tasks cleared, one-time tasks reset?")) {
+            await db.ref(`users/${uid}`).update({
+                balance:0, totalEarned:0, tasksCompleted:0,
+                ads1Progress:0, ads2Progress:0, ads3Progress:0,
+                pedoYoutubeClaimed:false, pedoChannelClaimed:false, paymentProofClaimed:false,
+                withdrawalHistory:[], earningsHistory:[]
+            });
+            showToast("User reset complete");
+            loadAllData();
+        }
+    };
+
+    // ─── Sell Submissions ───
+    function renderSellSubmissions() {
+        const container = document.getElementById("sellContainer");
+        if (!allSellSubmissions.length) { container.innerHTML = '<div class="empty-state">No sell submissions</div>'; return; }
+        // Sort by date descending
+        const sorted = [...allSellSubmissions].sort((a,b) => (b.date || 0) - (a.date || 0));
+        container.innerHTML = sorted.map(sub => {
+            const statusClass = sub.status === 'pending' ? 'pill-pending' : sub.status === 'approved' ? 'pill-approved' : 'pill-rejected';
+            const typeLabel = sub.type === 'gmail' ? '📧 Sell Gmail' : sub.type === 'newgmail' ? '🆕 New Gmail' : '📦 Other';
+            const reward = sub.type === 'gmail' ? '1000 KING' : sub.type === 'newgmail' ? '1200 KING' : '—';
+            let details = '';
+            if (sub.type === 'gmail') {
+                details = `
+                    <div class="sub-detail"><span class="text-muted">Email:</span> ${escapeHtml(sub.email || 'N/A')}</div>
+                    <div class="sub-detail"><span class="text-muted">Password:</span> <span class="code-block">${escapeHtml(sub.password || 'N/A')}</span></div>
+                    <div class="sub-detail"><span class="text-muted">Recovery:</span> ${escapeHtml(sub.recovery || 'N/A')}</div>
+                `;
+            } else if (sub.type === 'newgmail') {
+                details = `
+                    <div class="sub-detail"><span class="text-muted">Contact:</span> ${escapeHtml(sub.contact || 'N/A')}</div>
+                `;
+            }
+            const date = sub.date ? new Date(sub.date).toLocaleDateString() : 'N/A';
+            return `<div class="submission-card">
+                <div class="flex-between">
+                    <div>
+                        <strong>${typeLabel}</strong>
+                        <div class="text-muted">${escapeHtml(sub.username || sub.userId?.slice(0,12) || 'unknown')}</div>
+                    </div>
+                    <span class="status-pill ${statusClass}">${sub.status}</span>
+                </div>
+                ${details}
+                <div class="sub-detail"><span class="text-muted">Date:</span> ${date}</div>
+                <div class="sub-detail"><span class="text-muted">Reward:</span> ${reward}</div>
+                ${sub.status === 'pending' ? `
+                <div class="chip-group" style="margin-top:10px;">
+                    <button class="btn-success" onclick="approveSell('${sub.id}', '${sub.userId}', '${sub.type}')"><i class="fas fa-check"></i> Approve</button>
+                    <button class="btn-danger" onclick="rejectSell('${sub.id}')"><i class="fas fa-times"></i> Reject</button>
+                </div>` : ''}
+            </div>`;
+        }).join('');
+    }
+
+    window.approveSell = async (subId, userId, type) => {
+        const sub = allSellSubmissions.find(s => s.id === subId);
+        if (!sub || sub.status !== 'pending') { showToast("Already processed", true); return; }
+        await db.ref(`sellSubmissions/${subId}`).update({ status: "approved" });
+
+        let reward = type === 'gmail' ? 1000 : type === 'newgmail' ? 1200 : 0;
+        if (reward > 0 && userId) {
+            const userSnap = await db.ref(`users/${userId}`).once("value");
+            const user = userSnap.val();
+            if (user) {
+                const updates = {
+                    balance: (user.balance || 0) + reward,
+                    totalEarned: (user.totalEarned || 0) + reward,
+                    tasksCompleted: (user.tasksCompleted || 0) + 1
+                };
+                if (type === 'gmail') {
+                    updates.gmailSoldApproved = true;
+                }
+                await db.ref(`users/${userId}`).update(updates);
+                // Add to sell history
+                const sellHist = user.sellHistory || [];
+                sellHist.push({ id: subId, type, status: 'approved', date: Date.now() });
+                await db.ref(`users/${userId}/sellHistory`).set(sellHist.slice(0, 50));
+
+                const entry = { id: Date.now(), amount: reward, description: `✅ Sell ${type} approved (+${reward} KING)`, date: Date.now() };
+                const history = user.earningsHistory || [];
+                history.unshift(entry);
+                await db.ref(`users/${userId}/earningsHistory`).set(history.slice(0, 200));
+            }
+        }
+        showToast(`✅ Approved! +${reward} KING`);
+        loadAllData();
+    };
+    window.rejectSell = async (subId) => {
+        await db.ref(`sellSubmissions/${subId}`).update({ status: "rejected" });
+        showToast("❌ Rejected");
+        loadAllData();
+    };
+
+    function loadSellSubmissions() { renderSellSubmissions(); }
+
+    // ─── Withdrawals ───
+    function renderWithdrawalsList() {
+        let filtered = withdrawFilterMode === "pending" ? allWithdrawals.filter(w => w.status === "pending") : allWithdrawals;
+        const container = document.getElementById("withdrawalsContainer");
+        if (!filtered.length) { container.innerHTML = '<div class="empty-state">No withdrawal requests</div>'; return; }
+        container.innerHTML = filtered.map(w => `
+            <div class="withdraw-card">
+                <div class="flex-between">
+                    <div><strong>${escapeHtml(w.username)}</strong><br><small style="color:#999;">${w.withdrawId || 'WD-' + w.id}</small></div>
+                    <span class="status-pill pill-${w.status}">${w.status}</span>
+                </div>
+                <div style="margin:6px 0;">💰 ${(w.amount||0).toLocaleString()} KING (fee 10% → net ${(w.netAmount||0).toLocaleString()})</div>
+                <div style="font-size:0.8rem; color:#666;">📱 ${w.method || 'Binance'} - ${w.account || 'N/A'}</div>
+                ${w.status === "pending" ? `<div class="chip-group"><button class="btn-success" onclick="approveWithdrawal('${w.userId}', '${w.id}', ${w.amount})"><i class="fas fa-check"></i> Approve</button><button class="btn-danger" onclick="rejectWithdrawal('${w.userId}', '${w.id}', ${w.amount})"><i class="fas fa-undo"></i> Reject & refund</button></div>` : ''}
+            </div>
+        `).join('');
+    }
+
+    window.approveWithdrawal = async (uid, wdid) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            const hist = [...(user.withdrawalHistory || [])];
+            const idx = hist.findIndex(w => w.id == wdid);
+            if (idx !== -1) {
+                hist[idx].status = "approved";
+                await db.ref(`users/${uid}`).update({ withdrawalHistory: hist });
+                showToast("✅ Withdrawal approved");
+                loadAllData();
+            }
+        }
+    };
+    window.rejectWithdrawal = async (uid, wdid, amount) => {
+        const user = allUsers.find(u => u.uid === uid);
+        if (user) {
+            const hist = [...(user.withdrawalHistory || [])];
+            const idx = hist.findIndex(w => w.id == wdid);
+            if (idx !== -1) {
+                hist[idx].status = "rejected";
+                await db.ref(`users/${uid}`).update({ withdrawalHistory: hist, balance: (user.balance||0) + amount });
+                showToast(`❌ Rejected, ${amount.toLocaleString()} KING refunded`);
+                loadAllData();
+            }
+        }
+    };
+
+    // ─── Event Listeners ───
+    document.getElementById("fullResetBtn")?.addEventListener("click", async () => {
+        if (!confirm("⚠️ PERMANENT RESET: All users -> balance 0, ads 0, tasks 0. Continue?")) return;
+        if (prompt("Type 'RESET ALL' to confirm:") !== "RESET ALL") { showToast("Reset cancelled", true); return; }
+        for (let user of allUsers) {
+            await db.ref(`users/${user.uid}`).update({
+                balance:0, totalEarned:0, tasksCompleted:0,
+                ads1Progress:0, ads2Progress:0, ads3Progress:0,
+                pedoYoutubeClaimed:false, pedoChannelClaimed:false, paymentProofClaimed:false,
+                withdrawalHistory:[], earningsHistory:[],
+                gmailSoldApproved:false, sellHistory:[]
+            });
+        }
+        await db.ref("sellSubmissions").remove();
+        showToast("✅ FULL FACTORY RESET COMPLETE");
+        loadAllData();
+    });
+    document.getElementById("filterPendingBtn")?.addEventListener("click", () => { withdrawFilterMode = "pending"; renderWithdrawalsList(); });
+    document.getElementById("filterAllBtn")?.addEventListener("click", () => { withdrawFilterMode = "all"; renderWithdrawalsList(); });
+    document.getElementById("userSearchInput")?.addEventListener("input", () => renderUsersList());
+    document.getElementById("changePasswordBtn")?.addEventListener("click", () => {
+        const newPass = document.getElementById("newAdminPassword").value;
+        if (newPass.length < 4) { showToast("Min 4 characters", true); return; }
+        localStorage.setItem(ADMIN_PASS_KEY, newPass);
+        showToast("✅ Admin password updated");
+        document.getElementById("newAdminPassword").value = "";
+    });
+    document.getElementById("loginBtn")?.addEventListener("click", () => {
+        const pwd = document.getElementById("adminPassword").value;
+        if (pwd === initAdminPass()) { setLogin(true); showAdminUI(); }
+        else showToast("❌ Invalid password", true);
+    });
+    document.getElementById("logoutBtn")?.addEventListener("click", () => { setLogin(false); showLoginUI(); });
+    document.querySelectorAll(".nav-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            const target = tab.dataset.tab;
+            document.querySelectorAll(".admin-section").forEach(sec => sec.classList.remove("active"));
+            document.getElementById(`${target}Section`).classList.add("active");
+            document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            if (target === "users") renderUsersList();
+            if (target === "sell") renderSellSubmissions();
+            if (target === "withdrawals") renderWithdrawalsList();
+            if (target === "dashboard") renderDashboard();
+        });
+    });
+
+    function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+
+    // ─── Auto-login check ───
+    if (isLoggedIn()) showAdminUI(); else showLoginUI();
+</script>
+</body>
+</html>
