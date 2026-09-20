@@ -2,397 +2,193 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
-<title>PMER</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-<!-- Telegram Web SDK -->
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<!-- Ad SDKs: Ads 1 Adsgram, Ads 2 Adsbitvex, Ads 3 Monetag, Ads 4 Giga Pub, Ads 5 OnClickA -->
-<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-<script src="https://sdk.adsbitvex.com/functions/v1/ad-script?appid=000274"></script>
-<script src='//libtl.com/sdk.js' data-zone='10541383' data-sdk='show_10541383'></script>
-<script src="https://ad.gigapub.tech/script?id=6471"></script>
-<script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>PMER Admin Panel</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <style>
-:root{
-  --bg:#F5F4FB; --card:#FFFFFF; --ink:#16132F; --muted:#6C6989; --line:#E7E4F4;
-  --brand:#6A3DF0; --brand-soft:#EEE9FF; --gold:#FFC53D; --gold-ink:#3D2A00;
-  --ok:#0F9F6E; --ok-soft:#E1F6EC; --bad:#DC3B4B; --bad-soft:#FDE9EB;
-  --hero:#17133A; --nav:rgba(255,255,255,.94);
-  --shadow:0 1px 2px rgba(23,19,58,.05),0 10px 24px -14px rgba(23,19,58,.22);
-  color-scheme:light;
-}
-[data-theme="dark"]{
-  --bg:#0E0B22; --card:#181433; --ink:#F2F0FC; --muted:#9F9AC4; --line:#2B2652;
-  --brand:#9273FF; --brand-soft:#261F55; --ok:#37C58F; --ok-soft:#0F3527; --bad:#FF6B7A; --bad-soft:#3D1620;
-  --hero:#1F1958; --nav:rgba(24,20,51,.94); --shadow:0 1px 2px rgba(0,0,0,.4);
-  color-scheme:dark;
-}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-[hidden]{display:none!important}
-html,body{background:var(--bg);color:var(--ink);font:500 15px/1.45 'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;touch-action:manipulation;overscroll-behavior-y:none}
-button,input{font:inherit;color:inherit}
-h1,h2,h3,.num{font-family:'Sora','Manrope',sans-serif;letter-spacing:-.01em}
-:focus-visible{outline:2.5px solid var(--brand);outline-offset:2px}
-.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.ico.sm{width:18px;height:18px}
-.mut{color:var(--muted)}
-.grow{flex:1;min-width:0}
-.row{display:flex;align-items:center;gap:12px}
-
-/* splash + gate */
-#splash,#gate{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:32px;text-align:center;transition:opacity .45s ease}
-#splash{background:radial-gradient(circle at 50% 36%,rgba(106,61,240,.20),transparent 58%),var(--bg)}
-#splash.leave{opacity:0;pointer-events:none}
-.sl{position:relative;width:112px;height:112px;margin-bottom:26px;animation:pop .7s cubic-bezier(.2,1.2,.4,1) both}
-.sl .logo{width:112px;height:112px;filter:drop-shadow(0 20px 26px rgba(106,61,240,.45))}
-.sl::before,.sl::after{content:"";position:absolute;inset:-14px;border-radius:38%;border:1.5px solid var(--brand);opacity:0;animation:ring 2.4s ease-out infinite}
-.sl::after{animation-delay:1.2s}
-#splash .word{font:800 30px 'Sora',sans-serif;letter-spacing:.32em;text-indent:.32em;animation:rise .6s .25s cubic-bezier(.2,.8,.2,1) both}
-#splash .tag{margin-top:8px;color:var(--muted);font-size:13.5px;font-weight:600;letter-spacing:.06em;animation:rise .6s .4s cubic-bezier(.2,.8,.2,1) both}
-#splash .bar{width:132px;height:4px;border-radius:4px;background:var(--line);overflow:hidden;margin:34px 0 0;animation:rise .6s .55s both}
-#splash .bar i{display:block;height:100%;width:40%;background:var(--brand);border-radius:4px;animation:slide 1s ease-in-out infinite}
-#gate{gap:14px}
-#gate .logo{width:84px;height:84px;filter:drop-shadow(0 16px 22px rgba(106,61,240,.4))}
-#gate h1{font-size:22px}
-#gate p{max-width:300px;color:var(--muted)}
-.logo{display:block;border-radius:30%;overflow:hidden;flex:none;line-height:0}
-.logo .mark{width:100%;height:100%;display:block}
-.logo img{width:100%;height:100%;object-fit:cover;display:block}
-
-/* layout */
-#app{max-width:480px;margin:0 auto;padding:16px 16px calc(104px + env(safe-area-inset-bottom))}
-.page>h1{font-size:26px;font-weight:800;margin:6px 0 4px}
-.page>.sub{color:var(--muted);margin-bottom:18px;max-width:40ch}
-.page.enter{animation:pagein .35s cubic-bezier(.2,.8,.2,1)}
-.page.enter .list>*,.page.enter .tiles>*,.page.enter .stats>*,.page.enter .menu{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
-.page.enter .list>*:nth-child(2),.page.enter .tiles>*:nth-child(2),.page.enter .stats>*:nth-child(2){animation-delay:.04s}
-.page.enter .list>*:nth-child(3),.page.enter .tiles>*:nth-child(3),.page.enter .stats>*:nth-child(3){animation-delay:.08s}
-.page.enter .list>*:nth-child(4),.page.enter .tiles>*:nth-child(4){animation-delay:.12s}
-.page.enter .list>*:nth-child(n+5){animation-delay:.16s}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.brand{display:flex;align-items:center;gap:10px;font:800 19px 'Sora',sans-serif;letter-spacing:.06em}
-.brand .logo{width:38px;height:38px;box-shadow:0 6px 14px -6px rgba(106,61,240,.6)}
-.icon-btn{width:40px;height:40px;border-radius:14px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;cursor:pointer;transition:transform .12s}
-.icon-btn:active{transform:scale(.92)}
-
-/* coin */
-.coin{width:22px;height:22px;border-radius:50%;flex:none;display:inline-grid;place-items:center;font:800 8.5px/1 'Sora',sans-serif;color:#5C4000;background:radial-gradient(circle at 30% 28%,#FFE79B,#FFC53D 58%,#E39D00);box-shadow:inset 0 0 0 2px rgba(255,255,255,.4),inset 0 -2px 0 rgba(0,0,0,.12)}
-.coin.lg{width:34px;height:34px;font-size:12px}
-
-/* hero */
-.hero{position:relative;overflow:hidden;background:var(--hero);color:#fff;border-radius:28px;padding:22px 20px 20px;margin-bottom:14px}
-.hero .rings{position:absolute;right:-30px;top:-30px;width:240px;height:240px;fill:none;stroke:#fff;stroke-opacity:.12;stroke-width:1.5;pointer-events:none}
-.hero.ping .rings circle{animation:ping 1s ease-out}
-.hero.ping .rings circle:nth-child(2){animation-delay:.1s}.hero.ping .rings circle:nth-child(3){animation-delay:.2s}.hero.ping .rings circle:nth-child(4){animation-delay:.3s}
-.hero-label{font-size:13px;color:#fff;opacity:.72}
-.hero-amt{display:flex;align-items:center;gap:10px;margin:6px 0 2px}
-.hero-amt .num{font-size:40px;font-weight:800;line-height:1.1}
-.hero-sub{font-size:13px;opacity:.72;margin-bottom:18px}
-.hero-actions{display:flex;gap:10px}
-.hero-actions .btn{flex:1}
-
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 12px}
-.stat .num{font-size:19px;font-weight:700}
-.stat small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tile{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow);transition:transform .15s}
-.tile:active{transform:scale(.96)}
-.tile b{display:block;font:700 15px 'Sora',sans-serif}
-.tile span.mut{display:block;font-size:13px;line-height:1.35;margin-top:2px}
-
-/* generic pieces */
-.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:var(--shadow)}
-button.card{width:100%;text-align:left;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .15s}
-button.card:active{transform:scale(.98)}
-button.card>.ico:last-child{color:var(--muted);width:18px;height:18px}
-.list{display:flex;flex-direction:column;gap:12px}
-.tbadge{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;flex:none;color:var(--tc,var(--brand));background:var(--brand-soft);background:color-mix(in srgb,var(--tc,var(--brand)) 15%,transparent)}
-.t-join{--tc:#6A3DF0}.t-reaction{--tc:#E0457B}.t-view{--tc:#0C93A0}.t-conditions{--tc:#D18100}.t-ads{--tc:#6A3DF0}
-[data-theme="dark"] .t-join,[data-theme="dark"] .t-ads{--tc:#A58CFF}
-.reward{display:inline-flex;align-items:center;gap:6px;background:#FFF3D1;background:color-mix(in srgb,var(--gold) 22%,transparent);color:#8A5A00;font:700 13px 'Sora',sans-serif;padding:6px 10px 6px 6px;border-radius:999px;white-space:nowrap}
-[data-theme="dark"] .reward{color:#FFD879}
-.reward .coin{width:18px;height:18px;font-size:7px}
-.card h3{font-size:15px;font-weight:700;line-height:1.3;word-break:break-word}
-.card .meta{font-size:13px;color:var(--muted);margin-top:2px}
-.bar{height:6px;border-radius:6px;background:var(--line);overflow:hidden;margin:12px 0}
-.bar i{display:block;height:100%;background:var(--brand);border-radius:6px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
-.actions{display:flex;gap:10px;margin-top:14px}
-.actions .btn{flex:1}
-.steps{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:8px;counter-reset:s}
-.steps li{counter-increment:s;display:flex;gap:10px;font-size:13.5px;line-height:1.4}
-.steps li::before{content:counter(s);flex:none;width:20px;height:20px;border-radius:50%;background:var(--brand-soft);color:var(--brand);font:700 11px/20px 'Sora',sans-serif;text-align:center}
-
-.btn{appearance:none;border:0;border-radius:14px;padding:13px 16px;font:700 14.5px/1.1 'Manrope',sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:transform .15s,opacity .2s,background .25s,box-shadow .25s;text-align:center}
-.btn:active{transform:scale(.96)}
-.btn[disabled]{opacity:.55;cursor:not-allowed;transform:none}
-.btn-primary{background:var(--brand);color:#fff;box-shadow:0 8px 18px -10px var(--brand)}
-.btn-soft{background:var(--brand-soft);color:var(--brand)}
-.btn-gold{background:var(--gold);color:var(--gold-ink)}
-.btn-line{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
-.btn-glass{background:rgba(255,255,255,.14);color:#fff}
-.btn-block{width:100%}
-.btn-sm{padding:10px 14px;font-size:13.5px;border-radius:12px}
-.btn.cool{background:var(--line);color:var(--muted);box-shadow:none}
-.spin{width:15px;height:15px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex:none}
-
-.chips{display:flex;gap:8px;overflow-x:auto;margin:0 -16px 16px;padding:2px 16px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:9px 14px;font:600 13.5px 'Manrope',sans-serif;cursor:pointer;display:flex;gap:6px;align-items:center;transition:background .2s,color .2s,transform .12s}
-.chip:active{transform:scale(.95)}
-.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.chip em{font-style:normal;opacity:.6;font-size:12px}
-
-.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--line);border-radius:14px;padding:4px;margin-bottom:18px}
-.seg button{border:0;background:transparent;border-radius:11px;padding:10px;font:700 13.5px 'Manrope',sans-serif;color:var(--muted);cursor:pointer;transition:background .2s,color .2s}
-.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
-.seg .count{background:var(--brand);color:#fff;border-radius:999px;font-size:11px;padding:1px 7px;margin-left:4px}
-
-.empty{text-align:center;padding:36px 20px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:12px}
-.empty b{color:var(--ink);font:700 16px 'Sora',sans-serif}
-.pill{display:inline-block;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}
-.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.mut{background:var(--line);color:var(--muted)}.pill.brand{background:var(--brand-soft);color:var(--brand)}
-.alert{background:var(--bad-soft);color:var(--bad);border-radius:14px;padding:12px 14px;font-weight:700;font-size:13.5px;margin-bottom:14px;line-height:1.4}
-
-/* promote */
-.promo-head{display:flex;align-items:center;gap:14px;margin:6px 0 14px}
-.promo-head .logo{width:58px;height:58px;box-shadow:0 10px 20px -8px rgba(106,61,240,.55)}
-.promo-head h1{font-size:26px;font-weight:800;line-height:1.1}
-.stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
-.stepper div{font-size:12.5px;color:var(--muted);font-weight:600}
-.stepper div::before{content:"";display:block;height:4px;border-radius:4px;background:var(--line);margin-bottom:6px;transition:background .3s}
-.stepper div.done::before,.stepper div.now::before{background:var(--brand)}
-.stepper div.now{color:var(--ink)}
-.cats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-.cat{border:1.5px solid var(--line);background:var(--card);border-radius:18px;padding:14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,background .2s,transform .12s}
-.cat:active{transform:scale(.97)}
-.cat.on{border-color:var(--brand);background:var(--brand-soft)}
-.cat b{font:700 14px 'Sora',sans-serif;display:block}
-.cat small{color:var(--muted);font-size:12.5px}
-.field{margin-bottom:16px}
-.field label{display:flex;justify-content:space-between;font-weight:700;font-size:13.5px;margin-bottom:8px}
-.field label span{font-weight:600;color:var(--muted)}
-.input{width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;outline:none;transition:border-color .2s,box-shadow .2s}
-.input:focus{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-soft)}
-.input.bad{border-color:var(--bad)}
-.hint{font-size:12.5px;margin-top:6px;color:var(--muted)}
-.hint.bad{color:var(--bad);font-weight:600}.hint.ok{color:var(--ok)}
-.sum{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px 16px;margin-bottom:16px}
-.sum div{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px dashed var(--line)}
-.sum div:last-child{border:0;font-weight:800}
-.sum .neg{color:var(--bad)}
-.nav-row{display:flex;gap:10px;margin-top:6px}.nav-row .btn:last-child{flex:1}
-
-/* profile */
-.pfp{display:flex;align-items:center;gap:14px;margin:6px 0 18px}
-.avatar{width:64px;height:64px;border-radius:22px;background:var(--brand);color:#fff;display:grid;place-items:center;font:800 26px 'Sora',sans-serif;overflow:hidden;flex:none}
-.avatar img{width:100%;height:100%;object-fit:cover}
-.pfp h1{font-size:21px;font-weight:800;line-height:1.2}
-.income{background:var(--hero);color:#fff;border-radius:24px;padding:18px 20px;margin-bottom:12px}
-.income .num{font-size:30px;font-weight:800;display:flex;align-items:center;gap:8px;margin-top:4px}
-.income small{opacity:.72;font-size:13px}
-.deposit{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.menu{background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden;margin-top:12px}
-.menu button{width:100%;display:flex;align-items:center;gap:14px;padding:16px;background:none;border:0;border-bottom:1px solid var(--line);cursor:pointer;text-align:left;font-weight:600;transition:background .15s}
-.menu button:active{background:var(--brand-soft)}
-.menu button:last-child{border:0}
-.menu .ico:first-child{color:var(--brand)}
-.menu .ico:last-child{margin-left:auto;color:var(--muted);width:18px;height:18px}
-.ver{text-align:center;color:var(--muted);font-size:12.5px;margin-top:18px}
-
-/* nav */
-#nav{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;justify-content:center;pointer-events:none}
-#nav .navbar{pointer-events:auto;width:100%;max-width:480px;display:grid;grid-template-columns:repeat(5,1fr);align-items:end;background:var(--card);background:var(--nav);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 6px calc(8px + env(safe-area-inset-bottom))}
-.nb{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;color:var(--muted);font:600 11px 'Manrope',sans-serif;cursor:pointer;transition:color .2s}
-.nb .ico{transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
-.nb.on{color:var(--brand);font-weight:800}
-.nb.on:not(.fab) .ico{transform:translateY(-2px) scale(1.12)}
-.nb.fab .fabi{width:54px;height:54px;border-radius:19px;background:var(--brand);color:#fff;display:grid;place-items:center;margin-top:-26px;box-shadow:0 12px 22px -10px var(--brand);border:4px solid var(--bg);transition:transform .2s}
-.nb.fab:active .fabi{transform:scale(.92)}
-.nb.fab{color:var(--muted)}.nb.fab.on{color:var(--brand)}
-
-/* toast */
-#toasts{position:fixed;top:calc(12px + env(safe-area-inset-top));left:0;right:0;z-index:300;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;padding:0 16px}
-.toast{background:var(--ink);color:var(--bg);border-radius:18px;padding:12px 16px;display:flex;align-items:center;gap:12px;max-width:380px;box-shadow:0 14px 30px -12px rgba(0,0,0,.45);animation:tin .35s cubic-bezier(.2,.9,.3,1.2),tout .3s ease 3s forwards;font-weight:600;font-size:14px}
-.toast b{display:block;font:800 17px 'Sora',sans-serif}
-.toast small{display:block;opacity:.7;font-size:12.5px;font-weight:500}
-.toast .coin{width:32px;height:32px;font-size:11px}
-.toast.err{background:var(--bad);color:#fff}
-
-/* sheet */
-.sheet-wrap{position:fixed;inset:0;z-index:150;background:rgba(10,8,30,.55);display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .25s}
-.sheet-wrap.open{opacity:1}
-.sheet{width:100%;max-width:480px;max-height:88vh;overflow:auto;background:var(--bg);border-radius:28px 28px 0 0;padding:10px 18px calc(24px + env(safe-area-inset-bottom));transform:translateY(60px);transition:transform .35s cubic-bezier(.2,.9,.3,1)}
-.sheet-wrap.open .sheet{transform:none}
-.grab{width:44px;height:5px;border-radius:5px;background:var(--line);margin:0 auto 14px}
-.sheet h2{font-size:21px;font-weight:800;margin-bottom:6px}
-.sheet .lead{color:var(--muted);margin-bottom:16px}
-.sheet h4{font:700 14.5px 'Sora',sans-serif;margin:16px 0 4px}
-.sheet p.doc{color:var(--muted);font-size:14px}
-.opts{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;margin-bottom:16px}
-.opt{border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:12px 8px;font:700 14px 'Manrope',sans-serif;cursor:pointer;text-align:center;transition:border-color .2s,background .2s}
-.opt.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
-.kv{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:4px 14px;margin-bottom:16px}
-.kv div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:14px}
-.kv div:last-child{border:0}
-.linkbox{display:flex;gap:8px;align-items:center;background:var(--card);border:1.5px dashed var(--line);border-radius:14px;padding:10px 12px;margin:12px 0;font-size:13px;word-break:break-all}
-.msgbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:12px 0;font-size:13.5px;white-space:pre-line;color:var(--muted)}
-.hist{font-size:13.5px;padding:10px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
-.gap{height:10px}
-#adminWrap{position:fixed;inset:0;z-index:140;background:var(--bg);overflow:auto;padding:0 16px calc(24px + env(safe-area-inset-bottom));animation:pagein .3s}
-.ad-in{max-width:480px;margin:0 auto}
-.ad-head{position:sticky;top:0;z-index:2;background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(14px + env(safe-area-inset-top)) 0 10px}
-.ad-head h1{font-size:22px;font-weight:800}
-.ad-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.ad-list{display:flex;flex-direction:column;gap:10px}
-.ad-user{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;cursor:pointer}
-.ad-user b{display:block;word-break:break-word}
-.ad-user small{color:var(--muted);font-size:12.5px}
-.pill.bad{background:var(--bad-soft);color:var(--bad)}
-.stack{display:flex;flex-direction:column;gap:10px;margin-top:14px}
-.stack .field{margin:0}
-.field.sub label{font-size:13px}
-.badge{background:var(--brand);color:#fff;border-radius:999px;font-size:11px;padding:1px 8px;margin-left:8px}
-.note{background:var(--brand-soft);color:var(--brand);border-radius:14px;padding:12px 14px;font-weight:600;font-size:13px;margin-bottom:14px;line-height:1.4}
-.pkgs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.pkg{border:1.5px solid var(--line);background:var(--card);border-radius:18px;padding:14px;text-align:left;cursor:pointer;transition:border-color .2s,background .2s,transform .12s}
-.pkg:active{transform:scale(.97)}
-.pkg.on{border-color:var(--brand);background:var(--brand-soft)}
-.pkg b{display:block;font:800 22px 'Sora',sans-serif}
-.pkg span{display:flex;align-items:center;gap:6px;margin-top:8px;font:700 13px 'Sora',sans-serif;color:var(--muted)}
-.req{display:flex;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
-.req b{display:block;word-break:break-word}
-.req small{display:block;color:var(--muted);font-size:12.5px}
-
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
-@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
-@keyframes ring{0%{opacity:.55;transform:scale(.92)}100%{opacity:0;transform:scale(1.45)}}
-@keyframes ping{0%{stroke-opacity:.12}30%{stroke-opacity:.6}100%{stroke-opacity:.12}}
-@keyframes tin{from{transform:translateY(-24px) scale(.9);opacity:0}to{transform:none;opacity:1}}
-@keyframes tout{to{transform:translateY(-16px);opacity:0}}
-@keyframes pagein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.shake{animation:shake .35s}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,-apple-system,sans-serif}
+body{background:#f5f5f5;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:16px}
+.phone-frame{width:100%;max-width:420px;background:#fff;border-radius:48px;box-shadow:0 25px 45px -12px rgba(0,0,0,.25),0 0 0 8px #e8e8e8;overflow:hidden;position:relative;height:800px;display:flex;flex-direction:column}
+.scroll-area{flex:1;overflow-y:auto;padding-bottom:88px;scrollbar-width:thin}
+.login-container,.login-card{display:flex;align-items:center;justify-content:center;height:100%}
+.login-card{background:#fff;border-radius:48px;padding:40px 28px;text-align:center;box-shadow:0 20px 35px -10px rgba(0,0,0,.08);width:100%;margin:20px}
+.login-card i{font-size:3rem;color:#6a3df0;margin-bottom:16px}
+.login-card h2{font-weight:800;letter-spacing:-.5px;margin-bottom:20px;color:#000}
+.login-card input{width:100%;padding:16px 20px;border-radius:60px;border:1px solid #ddd;background:#fafafa;font-size:1rem;margin:16px 0;outline:none}
+.login-card input:focus{border-color:#6a3df0;box-shadow:0 0 0 3px rgba(106,61,240,.12)}
+.btn-primary{background:#6a3df0;color:#fff;border:none;padding:14px 20px;border-radius:60px;font-weight:700;width:100%;cursor:pointer;transition:.2s}
+.btn-primary:hover{background:#5a2cb8}
+.admin-header{background:#fff;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;position:sticky;top:0;z-index:10}
+.logo{font-weight:800;font-size:1.3rem;color:#000}
+.logo i{color:#6a3df0;margin-right:6px}
+.header-actions{display:flex;gap:6px}
+.exit-btn{background:#f0f0f0;border:none;padding:8px 16px;border-radius:40px;font-weight:600;cursor:pointer;color:#333}
+.exit-btn:active{transform:scale(.96)}
+.bottom-nav-admin{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);display:flex;justify-content:space-around;padding:10px 6px 22px;border-top:1px solid #eee;z-index:20}
+.nav-tab{background:transparent;border:none;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.62rem;padding:6px 8px;border-radius:40px;color:#888;font-weight:500;flex:1;cursor:pointer;transition:.2s;position:relative}
+.nav-tab i{font-size:1.25rem}
+.nav-tab.active{background:#f5f5f5;color:#6a3df0;font-weight:600}
+.nav-tab.active i{color:#6a3df0}
+.nav-badge{position:absolute;top:2px;right:14px;background:#ef4444;color:#fff;border-radius:40px;font-size:.6rem;padding:1px 6px;font-weight:700}
+.admin-section{display:none;padding:20px;animation:fadeIn .25s ease}
+.admin-section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:#f8f8f8;border-radius:24px;padding:20px;border:1px solid #eee}
+.stat-number{font-size:1.7rem;font-weight:800;color:#000;margin-top:4px;word-break:break-all}
+.stat-card .label{color:#888;font-size:.78rem}
+.user-card,.wd-card{background:#fafafa;border-radius:24px;padding:18px;margin-bottom:14px;border:1px solid #eee;transition:.2s}
+.user-card:hover,.wd-card:hover{background:#f5f5f5}
+.flex-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.chip-group{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn-icon{background:#f0f0f0;border:none;padding:8px 14px;border-radius:40px;font-size:.7rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.15s;color:#333}
+.btn-icon:active{transform:scale(.95)}
+.btn-success{background:#10b981;color:#fff}
+.btn-danger{background:#ef4444;color:#fff}
+.btn-warning{background:#f59e0b;color:#000}
+.btn-dark{background:#1a1a1a;color:#fff}
+.btn-outline{background:transparent;border:1px solid #ddd}
+.status-pill{display:inline-block;padding:4px 12px;border-radius:40px;font-size:.65rem;font-weight:700;text-transform:capitalize}
+.pill-pending{background:#fef3c7;color:#92400e}
+.pill-approved{background:#d1fae5;color:#065f46}
+.pill-paid{background:#d1fae5;color:#065f46}
+.pill-rejected{background:#fee2e2;color:#991b1b}
+.pill-stopped{background:#e5e7eb;color:#374151}
+.pill-live{background:#dbeafe;color:#1e40af}
+.pill-completed{background:#ede9fe;color:#5b21b6}
+.search-bar{background:#fafafa;border-radius:60px;padding:10px 18px;display:flex;gap:12px;border:1px solid #eee;margin-bottom:20px}
+.search-bar input{flex:1;border:none;outline:none;background:transparent;color:#000;font-size:.9rem}
+.empty-state{text-align:center;padding:48px 20px;color:#aaa;font-size:.85rem}
+.empty-state i{font-size:1.6rem;display:block;margin-bottom:10px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1000;visibility:hidden;opacity:0;transition:.2s}
+.modal-overlay.active{visibility:visible;opacity:1}
+.modal-box{background:#fff;border-radius:40px;padding:28px;width:92%;max-width:360px;max-height:80vh;overflow-y:auto}
+.profile-detail-item{padding:12px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:.88rem}
+.profile-detail-item:last-child{border-bottom:none}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:12px 24px;border-radius:60px;font-weight:500;z-index:2000;display:none;font-size:.85rem;box-shadow:0 8px 30px rgba(0,0,0,.2);max-width:90%}
+.subtabs{display:flex;gap:8px;margin-bottom:18px}
+.subtab{flex:1;padding:11px;border-radius:60px;border:1px solid #eee;background:#fafafa;font-weight:600;font-size:.8rem;cursor:pointer;color:#666;transition:.2s;position:relative}
+.subtab.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.subtab .sub-badge{background:#ef4444;color:#fff;border-radius:40px;font-size:.6rem;padding:1px 6px;margin-left:4px}
+.danger-zone{border-left:4px solid #ef4444;background:#fef2f2}
+.danger-zone h3{color:#dc2626}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;word-break:break-all;color:#555}
+.hint{font-size:.75rem;color:#888;margin-top:6px;line-height:1.5}
+.kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #eee;font-size:.85rem}
+.kv:last-child{border:none}
+@media (max-width:400px){.stat-number{font-size:1.35rem}.btn-icon{font-size:.65rem;padding:6px 12px}.nav-tab span{font-size:.58rem}}
 </style>
 </head>
 <body>
+<div class="phone-frame">
 
-<!-- icons -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-<linearGradient id="lg-brand" x1="8" y1="4" x2="88" y2="92" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9B78FF"/><stop offset=".55" stop-color="#6A3DF0"/><stop offset="1" stop-color="#4A22C2"/></linearGradient>
-<linearGradient id="lg-shine" x1="0" y1="0" x2="0" y2="96" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>
-<radialGradient id="lg-coin" cx=".32" cy=".28" r=".9"><stop offset="0" stop-color="#FFE79B"/><stop offset=".6" stop-color="#FFC53D"/><stop offset="1" stop-color="#E39D00"/></radialGradient>
-<symbol id="logo-mark" viewBox="0 0 96 96">
-  <rect width="96" height="96" rx="29" fill="url(#lg-brand)"/>
-  <rect width="96" height="96" rx="29" fill="url(#lg-shine)"/>
-  <g fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="1.6"><circle cx="84" cy="10" r="22"/><circle cx="84" cy="10" r="38"/><circle cx="84" cy="10" r="54"/></g>
-  <path fill="#fff" fill-rule="evenodd" d="M30 30a5 5 0 0 1 5-5h20a19 19 0 0 1 0 38H46v9a5 5 0 0 1-5 5h-6a5 5 0 0 1-5-5zM46 37v13h9a6.5 6.5 0 0 0 0-13z"/>
-  <circle cx="69" cy="70" r="11" fill="url(#lg-coin)"/><circle cx="69" cy="70" r="7.4" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.4"/>
-</symbol>
-<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5h4v5"/></symbol>
-<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
-<symbol id="i-tasks" viewBox="0 0 24 24"><path d="M10 6h10M10 12h10M10 18h10"/><path d="M3.5 6l1.3 1.3L7 5M3.5 12l1.3 1.3L7 11M3.5 18l1.3 1.3L7 17"/></symbol>
-<symbol id="i-mega" viewBox="0 0 24 24"><path d="M3 11v2a1 1 0 001 1h2l8 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M17 9a4 4 0 010 6"/><path d="M19.5 6a8 8 0 010 12"/></symbol>
-<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol>
-<symbol id="i-userplus" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6"/><path d="M19 8v6M16 11h6"/></symbol>
-<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 5.8-8 11-8 11z"/></symbol>
-<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
-<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol>
-<symbol id="i-shieldok" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
-<symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z"/></symbol>
-<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-<symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></symbol>
-<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14.5c3 .3 5 2 5 5"/></symbol>
-<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h9M19 6h1M4 12h3M13 12h7M4 18h11M21 18h-1"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
-<symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></symbol>
-<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
-<symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
-<symbol id="i-help" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0116 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></symbol>
-<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></symbol>
-<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
-<symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4z"/></symbol>
-</defs></svg>
+  <!-- LOGIN -->
+  <div id="loginView" style="height:100%;display:flex;align-items:center;justify-content:center;">
+    <div class="login-container">
+      <div class="login-card">
+        <i class="fas fa-crown"></i>
+        <h2>PMER Admin</h2>
+        <input type="password" id="adminPassword" placeholder="Enter admin password" autocomplete="current-password">
+        <button id="loginBtn" class="btn-primary"><i class="fas fa-key"></i> Unlock Panel</button>
+        <p style="margin-top:14px;color:#aaa;font-size:.72rem;">Default password: <strong>Admin2025</strong></p>
+      </div>
+    </div>
+  </div>
 
-<div id="splash"><div class="sl"><div class="logo" id="splashLogo"></div></div><div class="word">PMER</div><div class="tag">Earn. Promote. Grow.</div><div class="bar"><i></i></div></div>
+  <!-- PANEL -->
+  <div id="adminPanelView" style="display:none;flex-direction:column;height:100%;position:relative;">
+    <div class="admin-header">
+      <div class="logo"><i class="fas fa-crown"></i> PMER Admin</div>
+      <div class="header-actions">
+        <button id="refreshBtn" class="exit-btn" aria-label="Refresh"><i class="fas fa-sync-alt"></i></button>
+        <button id="logoutBtn" class="exit-btn"><i class="fas fa-sign-out-alt"></i> Exit</button>
+      </div>
+    </div>
 
-<div id="gate" hidden>
-  <div class="logo" id="gateLogo"></div>
-  <h1>Open PMER in Telegram</h1>
-  <p>Your balance and tasks are tied to your Telegram account. Open this app from the PMER bot inside Telegram to continue.</p>
+    <div class="scroll-area" id="adminScrollArea">
+      <!-- STATS -->
+      <div id="statsSection" class="admin-section active">
+        <div class="stats-grid" id="dashboardStats"></div>
+        <div class="user-card" id="extraInsights"></div>
+      </div>
+
+      <!-- USERS -->
+      <div id="usersSection" class="admin-section">
+        <div class="search-bar"><i class="fas fa-search" style="color:#aaa;"></i><input type="text" id="userSearchInput" placeholder="Search name, @username or ID"></div>
+        <div id="usersListContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i>Loading users…</div></div>
+      </div>
+
+      <!-- FINANCE -->
+      <div id="financeSection" class="admin-section">
+        <div class="subtabs">
+          <button class="subtab active" data-fin="deposits">Deposits<span class="sub-badge" id="depBadge" hidden></span></button>
+          <button class="subtab" data-fin="withdrawals">Withdrawals<span class="sub-badge" id="wdBadge" hidden></span></button>
+        </div>
+        <div id="financeContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i>Loading…</div></div>
+      </div>
+
+      <!-- TASKS -->
+      <div id="tasksSection" class="admin-section">
+        <div class="subtabs">
+          <button class="subtab active" data-task="reviews">Reviews<span class="sub-badge" id="revBadge" hidden></span></button>
+          <button class="subtab" data-task="campaigns">Campaigns</button>
+        </div>
+        <div id="tasksContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i>Loading…</div></div>
+      </div>
+
+      <!-- MORE -->
+      <div id="moreSection" class="admin-section">
+        <div class="user-card danger-zone">
+          <h3><i class="fas fa-radiation"></i> Danger Zone — Factory Reset</h3>
+          <p style="margin:10px 0;color:#666;font-size:.85rem;">Resets EVERY user: balance → 0, total income → 0, tasks done → 0, completed tasks, submissions and ad counters cleared. Names, referrals and campaigns are kept.</p>
+          <button id="fullResetBtn" class="btn-primary" style="background:#ef4444;width:100%;padding:14px;margin-top:8px;"><i class="fas fa-trash-alt"></i> Reset all user data (irreversible)</button>
+        </div>
+
+        <div class="user-card" style="margin-top:20px;">
+          <h4><i class="fas fa-flag"></i> Flagged links</h4>
+          <div id="flagsContainer" style="margin-top:12px;"></div>
+        </div>
+
+        <div class="user-card" style="margin-top:20px;">
+          <h4><i class="fas fa-lock"></i> Admin password</h4>
+          <p class="hint">The password is set at the top of this file in the <code>ADMIN_PASSWORD</code> constant. Change it there to pick a new one.</p>
+          <div class="hint" style="margin-top:8px;">Current password: <b>Admin2025</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav-admin">
+      <button class="nav-tab active" data-tab="stats"><i class="fas fa-chart-pie"></i><span>Stats</span></button>
+      <button class="nav-tab" data-tab="users"><i class="fas fa-users"></i><span>Users</span></button>
+      <button class="nav-tab" data-tab="finance"><i class="fas fa-hand-holding-usd"></i><span>Finance</span></button>
+      <button class="nav-tab" data-tab="tasks"><i class="fas fa-tasks"></i><span>Tasks</span></button>
+      <button class="nav-tab" data-tab="more"><i class="fas fa-sliders-h"></i><span>More</span></button>
+    </div>
+  </div>
 </div>
 
-<main id="app" hidden>
-  <section id="p-home" class="page"></section>
-  <section id="p-earn" class="page" hidden></section>
-  <section id="p-tasks" class="page" hidden></section>
-  <section id="p-promote" class="page" hidden></section>
-  <section id="p-profile" class="page" hidden></section>
-</main>
-
-<nav id="nav" hidden><div class="navbar">
-  <button class="nb on" data-go="home"><svg class="ico"><use href="#i-home"/></svg>Home</button>
-  <button class="nb" data-go="earn"><svg class="ico"><use href="#i-bolt"/></svg>Earn</button>
-  <button class="nb fab" data-go="promote"><span class="fabi"><svg class="ico"><use href="#i-mega"/></svg></span>Promote</button>
-  <button class="nb" data-go="tasks"><svg class="ico"><use href="#i-tasks"/></svg>Tasks</button>
-  <button class="nb" data-go="profile"><svg class="ico"><use href="#i-user"/></svg>Profile</button>
-</div></nav>
-
-<div id="adminWrap" hidden></div>
-<div id="toasts" aria-live="polite"></div>
-<div id="sheetWrap" class="sheet-wrap" hidden><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div><div id="sheetBody"></div></div></div>
+<div id="userProfileModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3 style="margin-bottom:16px;"><i class="fas fa-id-card"></i> User profile</h3>
+    <div id="profileDetailContent"></div>
+    <button id="closeProfileModal" class="btn-icon" style="width:100%;margin-top:20px;background:#000;color:#fff;justify-content:center;">Close</button>
+  </div>
+</div>
+<div id="toastMsg" class="toast"></div>
 
 <script>
-(() => {
 'use strict';
 
-/* =====================================================================
-   CONFIG - edit these values
-   ===================================================================== */
-const CONFIG = {
-  appName: 'PMER',
-  logo: '',                     // your logo: paste an image URL or a data:image/... string here
-  adReward: 1000,               // JR per completed ad
-  adDailyLimit: 5,              // how many times each ad can be watched per day
-  adCooldownSec: 60,            // an ad can be watched again after this many seconds
-  adsgramBlockId: '30645',
-  onclickaId: '464920',
-  minReward: { join: 1000, reaction: 700, view: 500, conditions: 2500 }, // minimum JR per user
-  minUsers: 20,                 // minimum users for a campaign
-  titleMin: 5, titleMax: 25,
-  viewSeconds: 2,               // View task: user must stay on the post this long, then come back
-  reactionSeconds: 6,           // Reaction task: user opens the post, reacts and stays this long, then comes back
-  conditionSeconds: 10,         // With-conditions task: minimum time between opening the bot and submitting
-  reviewHours: 24,              // With-conditions requests are approved automatically after this many hours
-  referral: { bonus: 15000, afterTasks: 20 },
-  withdraw: { min: 300000, minReferrals: 3, feePercent: 10, methods: ['Binance'] },
-  jrPerUsd: 3000000,            // 300,000 JR = $0.10
-  adminHash: '71ac7624f095c1ae18691401dee441a0bdc8750f249382386ffd018d185e1e54',   // SHA-256 of the admin password (hidden panel: tap the version text in Profile 5 times)
-  botLink: 'https://t.me/pmer01_bot',
-  communityLink: 'https://t.me/pmercommunity',
-  supportLink: 'https://t.me/mrdinooo11',
-  // Join / Reaction / link checking. Paste your bot token (from @BotFather) here. Make the bot an admin of every
-  // channel that runs Join or Reaction campaigns. NOTE: anything in this file can be read by users, so keep the
-  // token only if you accept that risk, or deploy the Worker at the bottom of this file and use verifyUrl instead.
-  botToken: '8900908750:AAFs1ORXDg_7C_YRbWM-6lxpJeeljNeKWC0',
-  verifyUrl: '',
-  deposit: {                    // Deposit packages and the Binance UID users pay to
-    uid: '1226899375',
-    packages: [{ usd: 1, jr: 1000000 }, { usd: 5, jr: 4500000 }, { usd: 10, jr: 8000000 }, { usd: 25, jr: 20000000 }]
-  }
-};
+/* ============================================================
+   CONFIG — must match index.html
+   ============================================================ */
+const ADMIN_PASSWORD = 'Admin2025';  // change this to change the admin password
+const JR_PER_USD     = 3000000;      // 300,000 JR = $0.10
+const REVIEW_HOURS   = 24;
+const WITHDRAW_FEE   = 10;
 
-/* =====================================================================
-   Firebase (same project as before, data lives under "pn/")
-   ===================================================================== */
 firebase.initializeApp({
   apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM",
   authDomain: "earn-for-earn-55d3e.firebaseapp.com",
@@ -402,1180 +198,538 @@ firebase.initializeApp({
   messagingSenderId: "109416949734",
   appId: "1:109416949734:web:53f52de7899d65a04c9827"
 });
-const db = firebase.database();
-const TS = firebase.database.ServerValue.TIMESTAMP;
-const P = { user: id => `pn/users/${id}`, tasks: 'pn/tasks', task: id => `pn/tasks/${id}` };
-
-/* =====================================================================
-   Helpers
-   ===================================================================== */
-const $ = (s, el = document) => el.querySelector(s);
-const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-const fmt = n => Number(n || 0).toLocaleString('en-US');
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const ico = (n, c = '') => `<svg class="ico ${c}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
-const coin = (c = '') => `<span class="coin ${c}" aria-hidden="true">JR</span>`;
-const logoHTML = () => CONFIG.logo ? `<img src="${esc(CONFIG.logo)}" alt="${CONFIG.appName}">` : '<svg class="mark" viewBox="0 0 96 96" role="img" aria-label="PMER"><use href="#logo-mark"/></svg>';
-const PREVIEW = /[?&]preview\b/.test(location.search);
-const tg = window.Telegram && window.Telegram.WebApp;
-const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
-const jrToUsd = jr => (jr / CONFIG.jrPerUsd).toFixed(2);
-const today = () => new Date().toLocaleDateString('en-CA');
-const fmtLeft = ms => { const h = Math.floor(ms / 3600000), m = Math.floor(ms % 3600000 / 60000); return h > 0 ? `${h}h ${m}m` : `${Math.max(0, m)}m`; };
-const chatKey = c => String(c).replace(/^@/, '').toLowerCase();
-function setHTML(el, html) { if (el.__h === html) return false; el.innerHTML = html; el.__h = html; return true; }
-
-function hap(kind) {
-  if (store.get('pn_haptics') === 'off') return;
-  try { if (kind === 'tap') tg.HapticFeedback.impactOccurred('light'); else tg.HapticFeedback.notificationOccurred(kind); } catch (e) {}
-}
-function openLink(url) {
-  try {
-    if (/^https?:\/\/(t|telegram)\.me\//i.test(url) && tg && tg.openTelegramLink) return tg.openTelegramLink(url);
-    if (tg && tg.openLink) return tg.openLink(url);
-  } catch (e) {}
-  window.open(url, '_blank');
-}
-function copyText(t) {
-  const done = () => { toast('Copied'); hap('success'); };
-  const fallback = () => { const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand('copy'); done(); } catch (e) {} a.remove(); };
-  if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t).then(done, fallback);
-  fallback();
-}
-
-/* toasts */
-function toast(msg, opt = {}) {
-  const key = (opt.coins ? 'c' + opt.coins : '') + '|' + msg + '|' + (opt.err ? 'e' : '');
-  if ($$('#toasts .toast').some(x => x.__k === key)) return;
-  const el = document.createElement('div'); el.__k = key;
-  el.className = 'toast' + (opt.err ? ' err' : '');
-  el.innerHTML = opt.coins
-    ? `${coin()}<div><b>+${fmt(opt.coins)} JR</b><small>${esc(msg || 'added to your balance')}</small></div>`
-    : `<div>${esc(msg)}</div>`;
-  $('#toasts').appendChild(el);
-  while ($('#toasts').children.length > 2) $('#toasts').firstChild.remove();
-  setTimeout(() => el.remove(), 3400);
-}
-const toastErr = m => { toast(m, { err: true }); hap('error'); };
-function rewarded(amount, note) {
-  toast(note, { coins: amount }); hap('success');
-  const h = $('#hero'); if (h) { h.classList.remove('ping'); void h.offsetWidth; h.classList.add('ping'); }
-}
-
-/* bottom sheet */
-function openSheet(html, mount) {
-  $('#sheetBody').innerHTML = html;
-  const w = $('#sheetWrap'); w.hidden = false; requestAnimationFrame(() => w.classList.add('open'));
-  if (mount) mount($('#sheetBody'));
-}
-function closeSheet() {
-  const w = $('#sheetWrap'); w.classList.remove('open'); setTimeout(() => { w.hidden = true; $('#sheetBody').innerHTML = ''; }, 250);
-}
-$('#sheetWrap').addEventListener('click', e => { if (e.target.id === 'sheetWrap') closeSheet(); });
-
-function applyTheme() {
-  const pref = store.get('pn_theme') || 'auto';
-  const sys = (tg && tg.colorScheme) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  const t = pref === 'auto' ? sys : pref;
-  document.documentElement.dataset.theme = t;
-  try { tg.setHeaderColor(t === 'dark' ? '#0E0B22' : '#F5F4FB'); tg.setBackgroundColor(t === 'dark' ? '#0E0B22' : '#F5F4FB'); } catch (e) {}
-}
-
-/* =====================================================================
-   State
-   ===================================================================== */
-const S = {
-  uid: null, user: {}, tasks: {}, tab: 'home', filter: 'all', promoTab: 'new', ui: {}, view: null, shown: null, screened: {}, chatCache: {}, botId: null, pending: {}, prevSub: null,
-  wiz: { step: 1, type: 'join', url: '', title: '', steps: ['', '', ''], perUser: '', users: '' }
-};
-
-/* =====================================================================
-   Income (all balance changes go through transactions)
-   ===================================================================== */
-function applyIncome(u, amt) {
-  const d = new Date().toLocaleDateString('en-CA');
-  if (!u.today || u.today.d !== d) u.today = { d, a: 0 };
-  u.today.a += amt;
-  u.balance = (u.balance || 0) + amt;
-  u.totalIncome = (u.totalIncome || 0) + amt;
-  u.tasksDone = (u.tasksDone || 0) + 1;
-}
-
-async function checkReferral(u) {
-  const B = CONFIG.referral.bonus;
-  if (!u || !u.referredBy || u.refBonusPaid || (u.tasksDone || 0) < CONFIG.referral.afterTasks) return;
-  const t = await db.ref(P.user(S.uid)).transaction(x => {
-    if (!x) return x; if (x.refBonusPaid) return;
-    x.refBonusPaid = true; x.balance = (x.balance || 0) + B; x.totalIncome = (x.totalIncome || 0) + B; return x;
-  });
-  if (!t.committed) return;
-  await db.ref(P.user(u.referredBy)).transaction(r => {
-    if (!r) return r;
-    r.balance = (r.balance || 0) + B; r.totalIncome = (r.totalIncome || 0) + B; r.refEarned = (r.refEarned || 0) + B;
-    if (r.referrals && r.referrals[S.uid]) r.referrals[S.uid].bonus = B;
-    return r;
-  });
-  rewarded(B, 'Referral bonus');
-}
-
-/* =====================================================================
-   Ads: daily limit per ad, plus a cooldown between views
-   ===================================================================== */
-const notReady = () => { throw new Error('not_ready'); };
-const ADS = [
-  { key: 'adsgram',   label: 'Ads 1', run: async () => { if (!window.Adsgram) notReady(); await window.Adsgram.init({ blockId: CONFIG.adsgramBlockId }).show(); } },
-  { key: 'onclicka',  label: 'Ads 2', run: async () => { const show = await initOnclicka(); await show(); } },
-  { key: 'monetag',   label: 'Ads 3', run: async () => { if (typeof window.show_10541383 !== 'function') notReady(); await window.show_10541383(); } },
-  { key: 'gigapub',   label: 'Ads 4', run: async () => { if (typeof window.showGiga !== 'function') notReady(); await window.showGiga('main'); } },
-  { key: 'adsbitvex', label: 'Ads 5', run: async () => { if (typeof window.showadsbitvex !== 'function') notReady(); await window.showadsbitvex(); } }
-];
-let onclickaInit = null;
-function initOnclicka() {
-  if (onclickaInit) return onclickaInit;
-  if (typeof window.initCdTma !== 'function') return Promise.reject(new Error('not_ready'));
-  onclickaInit = window.initCdTma({ id: CONFIG.onclickaId }).then(show => { window.show = show; return show; }).catch(e => { onclickaInit = null; throw e; });
-  return onclickaInit;
-}
-const adCount = k => (S.user.adDay === today() ? (S.user.adToday || {})[k] || 0 : 0);
-const adLeft = k => Math.min(CONFIG.adCooldownSec, Math.max(0, Math.ceil((((S.user.adNext || {})[k] || 0) - Date.now()) / 1000)));
-
-async function watchAd(key) {
-  const a = ADS.find(x => x.key === key); if (!a || S.ui['ad_' + key]) return;
-  if (adCount(key) >= CONFIG.adDailyLimit) return toastErr(`You have used all ${CONFIG.adDailyLimit} views of this ad today. Come back tomorrow.`);
-  if (adLeft(key) > 0) return;
-  S.ui['ad_' + key] = true; renderEarn();
-  try { await a.run(); }
-  catch (e) {
-    console.warn('Ad error', key, e);
-    S.ui['ad_' + key] = false; renderEarn();
-    return toastErr(e && e.message === 'not_ready' ? 'This ad is not available right now. Try another one.' : 'The ad was not finished, so no JR was added. Try again.');
-  }
-  const res = await db.ref(P.user(S.uid)).transaction(u => {
-    if (!u) return u;
-    const now = Date.now(), d = today();
-    if (u.adDay !== d) { u.adDay = d; u.adToday = {}; }
-    u.adToday = u.adToday || {}; u.adNext = u.adNext || {};
-    if ((u.adToday[key] || 0) >= CONFIG.adDailyLimit) return;
-    if ((u.adNext[key] || 0) - now > 3000) return;
-    u.adNext[key] = now + CONFIG.adCooldownSec * 1000;
-    u.adToday[key] = (u.adToday[key] || 0) + 1;
-    applyIncome(u, CONFIG.adReward);
-    return u;
-  });
-  S.ui['ad_' + key] = false;
-  if (res.committed) { rewarded(CONFIG.adReward, 'Ad reward added'); checkReferral(res.snapshot.val()); }
-  else toastErr('This ad is not available right now. Try again in a moment.');
-  renderEarn();
-}
-function updateAdButtons() {
-  $$('[data-adbtn]').forEach(b => {
-    const k = b.dataset.adbtn; if (S.ui['ad_' + k]) return;
-    const full = adCount(k) >= CONFIG.adDailyLimit, left = adLeft(k);
-    const txt = full ? 'Daily limit reached' : left > 0 ? `Watch again in ${left}s` : 'Watch ad';
-    if (b.__t !== txt) { b.textContent = txt; b.__t = txt; }
-    b.disabled = full || left > 0; b.classList.toggle('cool', full || left > 0);
-  });
-}
-setInterval(() => { if (S.tab === 'earn') updateAdButtons(); }, 500);
-
-/* =====================================================================
-   Telegram links, categories and content screening
-   ===================================================================== */
-const KIND = { channel: 'a channel or group link', post: 'a post link', bot: 'a bot link' };
+const db  = firebase.database();
+const TS  = firebase.database.ServerValue.TIMESTAMP;
+const P   = { user: id => `pn/users/${id}`, task: id => `pn/tasks/${id}` };
 const CAT = {
-  join:       { label: 'Join',            icon: 'userplus', kind: 'channel', ph: 'https://t.me/yourchannel',     hint: 'Public channel or group link, like https://t.me/yourchannel', sub: 'Channel or group' },
-  reaction:   { label: 'Reaction',        icon: 'heart',    kind: 'post',    ph: 'https://t.me/yourchannel/123', hint: 'Link to one post, like https://t.me/yourchannel/123',          sub: 'Post' },
-  view:       { label: 'View',            icon: 'eye',      kind: 'post',    ph: 'https://t.me/yourchannel/123', hint: 'Link to one post, like https://t.me/yourchannel/123',          sub: 'Post' },
-  conditions: { label: 'With conditions', icon: 'shieldok', kind: 'bot',     ph: 'https://t.me/yourbot',         hint: 'Bot link, like https://t.me/yourbot',                          sub: 'Bot' }
+  join:       { label: 'Join',            icon: 'user-plus' },
+  reaction:   { label: 'Reaction',        icon: 'heart' },
+  view:       { label: 'View',            icon: 'eye' },
+  conditions: { label: 'With conditions', icon: 'shield-alt' }
 };
 
-function parseTg(raw) {
-  let s = (raw || '').trim(); if (!s) return null;
-  if (!/^https?:\/\//i.test(s)) s = 'https://' + s;
-  let u; try { u = new URL(s); } catch (e) { return null; }
-  if (!['t.me', 'www.t.me', 'telegram.me'].includes(u.hostname.toLowerCase())) return null;
-  const p = u.pathname.split('/').filter(Boolean);
-  if (!p.length) return null;
-  if (p[0] === 'c') {
-    if (p.length === 3 && /^\d+$/.test(p[1]) && /^\d+$/.test(p[2])) return { kind: 'post', chat: '-100' + p[1], msgId: +p[2], url: `https://t.me/c/${p[1]}/${p[2]}` };
-    return null;
-  }
-  const name = p[0];
-  if (!/^[A-Za-z][A-Za-z0-9_]{3,31}$/.test(name)) return null;
-  const isBot = /bot$/i.test(name);
-  if (p.length === 1) {
-    if (isBot) return { kind: 'bot', chat: '@' + name, url: `https://t.me/${name}` + (/^\?start=[\w-]+$/.test(u.search) ? u.search : '') };
-    return { kind: 'channel', chat: '@' + name, url: `https://t.me/${name}` };
-  }
-  if (p.length === 2 && /^\d+$/.test(p[1]) && !isBot) return { kind: 'post', chat: '@' + name, msgId: +p[1], url: `https://t.me/${name}/${p[1]}` };
-  return null;
-}
-function checkUrl(type, raw) {
-  const cat = CAT[type];
-  if (!raw.trim()) return { ok: false, msg: '' };
-  const p = parseTg(raw);
-  if (!p) return { ok: false, msg: `That is not a supported Telegram link. ${cat.hint}.` };
-  if (p.kind !== cat.kind) return { ok: false, msg: `This is ${KIND[p.kind]}. ${cat.label} campaigns need ${KIND[cat.kind]}.` };
-  return { ok: true, p };
+/* ============================================================
+   State
+   ============================================================ */
+const D = { users:{}, tasks:{}, deposits:{}, withdrawals:{}, pending:[], flags:{}, adminLog:{} };
+let financeSub = 'deposits';
+let taskSub    = 'reviews';
+let withdrawFilter = 'pending';
+
+/* ============================================================
+   Helpers
+   ============================================================ */
+const $  = s => document.querySelector(s);
+const fmt  = n => Number(n||0).toLocaleString('en-US');
+const jrToUsd = jr => (Number(jr||0) / JR_PER_USD).toFixed(2);
+const when = ts => ts ? new Date(ts).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }) : '';
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pill = st => ({ pending:'pill-pending', approved:'pill-approved', paid:'pill-paid', rejected:'pill-rejected',
+                       live:'pill-live', completed:'pill-completed', stopped:'pill-stopped' }[st] || 'pill-rejected');
+const byNew = obj => Object.entries(obj).sort((a,b) => (b[1].createdAt||0) - (a[1].createdAt||0));
+const username = uid => (D.users[uid] || {}).name || uid;
+
+function toast(msg, err=false) {
+  const t = $('#toastMsg');
+  t.textContent = msg;
+  t.style.background = err ? '#dc2626' : '#1a1a1a';
+  t.style.display = 'block';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.style.display = 'none', 3000);
 }
 
-/* Adult / pornographic content screening + trackability checks */
-const BAD_EN = /(^|[^a-z0-9])(porn\w*|pr0n|xxx+|sex\w*|nud(e|es|ity)|naked|nsfw|hentai|erotic\w*|escort\w*|onlyfans|18\s?\+|18plus|adult\s?(content|video|videos|chat|only|club|movies?)|cam\s?girls?|milf|blowjob|boobs?|fetish|bdsm|hookup|call\s?girls?|chudai)([^a-z0-9]|$)/i;
-const BAD_BN = /(পর্ন|সেক্স|নগ্ন|উলঙ্গ|চটি)/;
-const isBad = t => !!t && (BAD_EN.test(String(t).replace(/[_\-.]+/g, ' ')) || BAD_BN.test(String(t)));
-const HARAM_MSG = 'This is haram. Adult and pornographic content is not allowed on PMER, so this link cannot be promoted.';
-const botName = () => '@' + CONFIG.botLink.split('/').pop().split('?')[0];
-// Telegram deep link: opens a picker where the owner chooses the channel/group and confirms adding the bot as admin (invite_users = smallest right).
-const adminLink = type => `${CONFIG.botLink}?${type === 'channel' ? 'startchannel' : 'startgroup'}&admin=invite_users`;
-const adminButtons = () => `<div class="actions" style="margin-top:12px"><button class="btn btn-primary btn-sm" data-act="add-admin">Add PMER as admin</button><button class="btn btn-soft btn-sm" data-act="recheck">I added it, check again</button></div>`;
+/* ============================================================
+   Login
+   ============================================================ */
+const isLoggedIn = () => sessionStorage.getItem('pmer_admin_logged') === 'true';
+const setLogin   = v  => v ? sessionStorage.setItem('pmer_admin_logged','true')
+                           : sessionStorage.removeItem('pmer_admin_logged');
+function showLoginUI() { $('#loginView').style.display = 'flex'; $('#adminPanelView').style.display = 'none'; }
+function showAdminUI()  { $('#loginView').style.display = 'none'; $('#adminPanelView').style.display = 'flex'; loadAll(); }
 
-async function tgApi(method, qs) {
-  const r = await fetch(`https://api.telegram.org/bot${CONFIG.botToken}/${method}?${qs}`);
-  return r.json();
-}
-// Checks that the chat exists and, for Join, that PMER's bot is an admin there (otherwise joins cannot be tracked).
-async function chatCheck(p, type) {
-  const ck = p.chat + '|' + type, c = S.chatCache[ck];
-  if (c && Date.now() - c.t < 60000) return c.v;
-  const needTrack = type === 'join';
-  let v = { ok: true, texts: [] };
-  if (p.kind === 'bot') return v;
-  if (needTrack && !CONFIG.botToken && !CONFIG.verifyUrl) v = { ok: false, reason: 'notrack' };
-  else if (CONFIG.botToken) {
-    try {
-      const j = await tgApi('getChat', 'chat_id=' + encodeURIComponent(p.chat));
-      if (!j.ok) {
-        if (needTrack) v = { ok: false, reason: /^-100/.test(p.chat) ? 'needadmin' : 'notfound' };
-        else if (!/^-100/.test(p.chat)) v = { ok: false, reason: 'notfound' };
-      } else {
-        const ch = j.result; v.chatType = ch.type; v.texts = [ch.title || '', ch.description || '', ch.username || ''];
-        if (type === 'join' && ch.type === 'private') v = { ok: false, reason: 'notchannel' };
-        else if (needTrack) {
-          if (!S.botId) { const me = await tgApi('getMe', ''); S.botId = me.ok ? me.result.id : null; }
-          const m = S.botId ? await tgApi('getChatMember', `chat_id=${encodeURIComponent(p.chat)}&user_id=${S.botId}`) : { ok: false };
-          if (!m.ok || !['administrator', 'creator'].includes(m.result.status)) v = { ok: false, reason: 'needadmin', chatType: ch.type };
-        }
-      }
-    } catch (e) { v = { ok: false, reason: 'offline' }; }
-  }
-  if (v.ok) S.chatCache[ck] = { t: Date.now(), v };
-  return v;
-}
-async function screenTarget(p, extra, type) {
-  const cc = await chatCheck(p, type);
-  if (!cc.ok) return cc;
-  const texts = [p.chat || '', p.url].concat(cc.texts || [], extra || []);
-  if (texts.some(isBad)) { try { db.ref('pn/flags').push().set({ uid: S.uid, url: p.url, createdAt: TS }); } catch (e) {} return { ok: false, reason: 'adult' }; }
-  return { ok: true, chatType: cc.chatType };
-}
-const blockText = r => ({
-  adult: HARAM_MSG,
-  notfound: 'We could not find this channel or group. Check the link and try again.',
-  notchannel: 'This link is a person, not a channel or group. Use a public channel or group link.',
-  needadmin: `Give PMER permission first. Tap "Add PMER as admin", pick this channel or group, and confirm. PMER only needs it to check who really joined.`,
-  notrack: 'Join campaigns are not available right now because join tracking is not set up. Please contact support.',
-  offline: 'Could not check this link right now. Check your connection and try again.'
-}[r] || 'This link cannot be promoted.');
-function showBlock(msg, extra) { const b = $('#blockBox'); if (!b) return; const uh = $('#urlHint'); if (uh) uh.hidden = true; b.textContent = msg; if (extra) b.insertAdjacentHTML('beforeend', extra); b.hidden = false; b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); hap('error'); }
+$('#loginBtn').addEventListener('click', () => {
+  const pw = $('#adminPassword').value;
+  if (!pw) return toast('Enter the password', true);
+  if (pw !== ADMIN_PASSWORD) return toast('Invalid password', true);
+  $('#adminPassword').value = '';
+  setLogin(true);
+  showAdminUI();
+});
+$('#adminPassword').addEventListener('keydown', e => { if (e.key === 'Enter') $('#loginBtn').click(); });
+$('#logoutBtn').addEventListener('click', () => { setLogin(false); showLoginUI(); });
+$('#refreshBtn').addEventListener('click', () => loadAll(true));
 
-/* =====================================================================
-   Verification (Join tracking)
-   ===================================================================== */
-async function verifyRemote(task) {
-  const chat = task.chat;
-  if (CONFIG.verifyUrl) {
-    const r = await fetch(CONFIG.verifyUrl.replace(/\/$/, '') + '/verify', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: task.type, chat, msgId: task.msgId || null, initData: (tg && tg.initData) || '' })
-    });
-    if (!r.ok) throw new Error('verifier_http');
-    return !!(await r.json()).ok;
-  }
-  if (!CONFIG.botToken) { console.warn('No verifier configured. Set CONFIG.botToken or CONFIG.verifyUrl.'); throw new Error('no_verifier'); }
-  if (task.type === 'join') {
-    const j = await tgApi('getChatMember', `chat_id=${encodeURIComponent(chat)}&user_id=${S.uid}`);
-    if (!j.ok) throw new Error('verifier_tg');
-    const m = j.result; return ['member', 'administrator', 'creator'].includes(m.status) || (m.status === 'restricted' && m.is_member);
-  }
-  return false;
-}
-
-async function claimTask(task) {
-  const remRef = db.ref(P.task(task.id) + '/remaining');
-  const slot = await remRef.transaction(r => { if (r === null) return null; return r > 0 ? r - 1 : undefined; });
-  if (!slot.committed || slot.snapshot.val() === null) { toastErr('This task is full. Try another one.'); return false; }
-  const res = await db.ref(P.user(S.uid)).transaction(u => {
-    if (!u) return u;
-    u.done = u.done || {};
-    if (u.done[task.id]) return;
-    u.done[task.id] = true;
-    applyIncome(u, task.perUser);
-    return u;
-  });
-  if (!res.committed) { await remRef.transaction(r => (r || 0) + 1); toastErr('You already completed this task.'); return false; }
-  if (slot.snapshot.val() === 0) db.ref(P.task(task.id) + '/status').set('completed');
-  rewarded(task.perUser, 'Task reward added');
-  checkReferral(res.snapshot.val());
-  return true;
-}
-
-/* =====================================================================
-   Tasks page
-   ===================================================================== */
-const liveTasks = () => Object.entries(S.tasks).map(([id, t]) => ({ id, ...t })).filter(t => t.status === 'live' && t.remaining > 0 && CAT[t.type]);
-const subOf = id => (S.user.submitted || {})[id];
-const isMine = t => t.owner === S.uid;
-const notDone = t => !(S.user.done && S.user.done[t.id]) && !subOf(t.id);
-const canVerifyJoin = () => !!(CONFIG.botToken || CONFIG.verifyUrl);
-const usable = t => t.type !== 'join' || canVerifyJoin();
-const availableTasks = () => liveTasks().filter(t => !isMine(t) && notDone(t) && usable(t));
-const listTasks = () => liveTasks().filter(t => isMine(t) || (notDone(t) && usable(t)));
-const pendingTasks = () => Object.entries(S.user.submitted || {}).filter(([, st]) => st === 'pending').map(([id]) => ({ id, ...(S.tasks[id] || {}) }));
-
-function taskCard(t) {
-  const c = CAT[t.type], st = S.ui[t.id] || {};
-  if (isMine(t)) {
-    const done = (t.total || 0) - (t.remaining || 0), pct = t.total ? done / t.total * 100 : 0;
-    return `<article class="card" data-card="${t.id}">
-      <div class="row"><span class="tbadge t-${t.type}">${ico(c.icon)}</span>
-        <div class="grow"><h3>${esc(t.title)}</h3><p class="meta">${c.label}, ${fmt(t.perUser)} JR per user</p></div>
-        <span class="pill brand">Your campaign</span></div>
-      <div class="bar"><i style="width:${pct}%"></i></div>
-      <div class="row" style="justify-content:space-between;font-size:13px"><span class="mut">${fmt(done)} of ${fmt(t.total)} users</span><span class="mut">${fmt(t.remaining)} left</span></div></article>`;
-  }
-  const busy = '<span class="spin"></span>';
-  let acts = '', wrap = 'actions';
-  const vbtn = `<button class="btn btn-soft" data-act="verify" data-id="${t.id}" ${st.busy ? 'disabled' : ''}>${st.busy ? busy : 'Verify'}</button>`;
-  if (t.type === 'join') acts = `<button class="btn btn-primary" data-act="open" data-id="${t.id}">Join</button>${vbtn}`;
-  if (t.type === 'reaction' || t.type === 'view') acts = `<button class="btn btn-primary btn-block" data-act="view" data-id="${t.id}" data-vbtn="${t.id}" ${st.busy ? 'disabled' : ''}>${st.failed ? 'Try again' : t.type === 'view' ? 'View' : 'React'}</button>`;
-  if (t.type === 'conditions') {
-    wrap = 'stack';
-    const un = st.uname !== undefined ? st.uname : (S.user.username ? '@' + S.user.username : '');
-    acts = `<button class="btn btn-primary btn-block" data-act="cond-open" data-id="${t.id}">Open bot</button>
-      <div class="field sub"><label for="u-${t.id}">Submit your username</label><input id="u-${t.id}" class="input" data-uname="${t.id}" maxlength="40" autocomplete="off" autocapitalize="off" placeholder="Your username in the bot" value="${esc(un)}"><div class="hint">Finish the steps in the bot, then submit the username you used there.</div></div>
-      <button class="btn btn-soft btn-block" data-act="cond-submit" data-id="${t.id}" ${st.busy ? 'disabled' : ''}>${st.busy ? busy : st.failed ? 'Try again' : 'Submit for review'}</button>`;
-  }
-  const steps = t.type === 'conditions' && t.steps ? `<ol class="steps">${t.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol>` : '';
-  return `<article class="card" data-card="${t.id}">
-    <div class="row"><span class="tbadge t-${t.type}">${ico(c.icon)}</span>
-      <div class="grow"><h3>${esc(t.title)}</h3><p class="meta">${c.label}, ${fmt(t.remaining)} spots left</p></div>
-      <span class="reward">${coin()}+${fmt(t.perUser)}</span></div>
-    ${steps}<div class="${wrap}">${acts}</div></article>`;
-}
-function pendingCard(t) {
-  const at = (S.user.subAt || {})[t.id] || 0, ms = at ? at + CONFIG.reviewHours * 3600000 - Date.now() : 0;
-  return `<article class="card"><div class="row"><span class="tbadge t-conditions">${ico('shieldok')}</span>
-    <div class="grow"><h3>${esc(t.title || 'Task')}</h3><p class="meta">Waiting for the advertiser${ms > 0 ? `, auto-approved in ${fmtLeft(ms)}` : ''}</p></div>
-    <span class="reward">${coin()}+${fmt(t.perUser)}</span></div></article>`;
-}
-
-function renderTasks() {
-  if (S.tab !== 'tasks') return;
-  const ae = document.activeElement;
-  if (ae && ae.matches && ae.matches('[data-uname]')) { S.taskDirty = true; return; }
-  const all = listTasks(), pend = pendingTasks();
-  const n = k => k === 'all' ? all.length : k === 'pending' ? pend.length : all.filter(t => t.type === k).length;
-  const list = S.filter === 'pending' ? pend : (S.filter === 'all' ? all : all.filter(t => t.type === S.filter)).sort((a, b) => b.perUser - a.perUser || (a.createdAt || 0) - (b.createdAt || 0));
-  const chips = [['all', 'All'], ['join', 'Join'], ['reaction', 'Reaction'], ['view', 'View'], ['conditions', 'With conditions'], ['pending', 'Pending']]
-    .map(([k, l]) => `<button class="chip ${S.filter === k ? 'on' : ''}" data-act="filter" data-k="${k}">${l}<em>${n(k)}</em></button>`).join('');
-  setHTML($('#p-tasks'), `<h1>Tasks</h1><p class="sub">Finish a quick task and the JR lands in your balance. Highest rewards come first.</p>
-    <div class="chips" role="tablist">${chips}</div>
-    <div class="list">${list.length ? list.map(S.filter === 'pending' ? pendingCard : taskCard).join('') : `<div class="empty">${ico('tasks')}<b>${S.filter === 'pending' ? 'Nothing waiting for approval' : 'No tasks here right now'}</b><span>${S.filter === 'pending' ? 'Tasks you submit to advertisers show up here until they are approved.' : 'New tasks appear as soon as advertisers publish them. Watch an ad in the meantime.'}</span><button class="btn btn-soft" data-go="earn">Go to Earn</button></div>`}</div>`);
-}
-document.addEventListener('focusout', e => { if (e.target.matches && e.target.matches('[data-uname]') && S.taskDirty) { S.taskDirty = false; setTimeout(renderTasks, 350); } });
-
-function setTaskUi(id, patch) { S.ui[id] = Object.assign(S.ui[id] || {}, patch); renderTasks(); }
-const taskById = id => S.tasks[id] ? { id, ...S.tasks[id] } : null;
-
-async function doVerify(id) {
-  const t = taskById(id); if (!t) return;
-  setTaskUi(id, { busy: true });
-  let ok = false;
-  try { ok = await verifyRemote(t); }
-  catch (e) {
-    console.warn('verify error', e);
-    setTaskUi(id, { busy: false });
-    return toastErr(e.message === 'no_verifier' ? 'Verification is not available yet. Please try again later.'
-      : e.message === 'verifier_tg' ? 'Could not check this channel. Its owner must make ' + botName() + ' an admin.'
-      : 'Could not check right now. Try again in a moment.');
-  }
-  if (!ok) { setTaskUi(id, { busy: false }); return toastErr('You have not joined this channel yet. Join it first, then tap Verify.'); }
-  setTaskUi(id, { busy: false });
-  await claimTask(t);
-}
-
-/* View and Reaction tasks: open the post, stay on it for a few seconds, then come back */
-const secsFor = t => (t && t.type === 'reaction' ? CONFIG.reactionSeconds : CONFIG.viewSeconds);
-function viewLabel(id) {
-  const v = S.view; const b = $(`[data-vbtn="${id}"]`); if (!b) return;
-  const t = taskById(id), idle = t && t.type === 'reaction' ? 'React' : 'View';
-  if (!v || v.id !== id) { b.innerHTML = (S.ui[id] && S.ui[id].failed) ? 'Try again' : idle; return; }
-  const left = Math.max(0, Math.ceil((v.secs * 1000 - (Date.now() - v.t0)) / 1000));
-  b.innerHTML = left > 0 ? `<span class="spin"></span> ${t && t.type === 'reaction' ? 'Reacting' : 'Viewing'}, ${left}s` : 'Come back to the app';
-}
-function startView(id) {
-  const t = taskById(id); if (!t || S.view) return;
-  S.view = { id, t0: Date.now(), left: false, secs: secsFor(t) };
-  setTaskUi(id, { busy: true, failed: false });
-  openLink(t.url);
-  const timer = setInterval(() => {
-    const v = S.view; if (!v) return clearInterval(timer);
-    viewLabel(v.id);
-    if (!v.left && Date.now() - v.t0 >= v.secs * 1000) finishView(true);
-  }, 250);
-  S.view.timer = timer;
-  viewLabel(id);
-}
-async function finishView(success) {
-  const v = S.view; if (!v) return;
-  clearInterval(v.timer); S.view = null;
-  const t = taskById(v.id);
-  if (!success || !t) {
-    setTaskUi(v.id, { busy: false, failed: true });
-    return toastErr(t && t.type === 'reaction' ? `You came back too soon. React to the post and stay on it for ${v.secs} seconds, then return.` : `You came back too soon. Stay on the post for ${v.secs} seconds, then return.`);
-  }
-  setTaskUi(v.id, { busy: false, failed: false });
-  await claimTask(t);
-}
-function markLeft() { if (S.view) S.view.left = true; }
-function onReturn() {
-  const v = S.view; if (!v || !v.left) return;
-  finishView(Date.now() - v.t0 >= v.secs * 1000);
-}
-function maybeRecheck() { if (S.adminType && S.tab === 'promote' && S.wiz.step === 1) setTimeout(wizNext, 700); }
-document.addEventListener('visibilitychange', () => { if (document.hidden) markLeft(); else { onReturn(); maybeRecheck(); } });
-try { tg.onEvent('deactivated', markLeft); tg.onEvent('activated', () => { onReturn(); maybeRecheck(); }); } catch (e) {}
-
-/* With-conditions task: user submits a username, the advertiser approves (auto-approved after reviewHours) */
-function condOpen(id) { const t = taskById(id); if (!t) return; S.ui[id] = Object.assign(S.ui[id] || {}, { opened: Date.now() }); openLink(t.url); }
-
-async function condSubmit(id) {
-  const t = taskById(id); if (!t) return;
-  const st = S.ui[id] || {}, o = st.opened;
-  const un = (st.uname !== undefined ? st.uname : (S.user.username ? '@' + S.user.username : '')).trim();
-  if (!o || Date.now() - o < CONFIG.conditionSeconds * 1000) {
-    setTaskUi(id, { failed: true });
-    return toastErr(o ? 'Finish all the steps in the bot first, then tap Try again.' : 'Open the bot and follow the steps first.');
-  }
-  if (un.length < 3) return toastErr('Enter the username you used in the bot.');
-  setTaskUi(id, { busy: true, failed: false });
-  const mark = await db.ref(P.user(S.uid)).transaction(u => {
-    if (!u) return u;
-    u.submitted = u.submitted || {}; u.subAt = u.subAt || {};
-    if (u.submitted[id] || (u.done && u.done[id])) return;
-    u.submitted[id] = 'pending'; u.subAt[id] = Date.now(); return u;
-  });
-  if (!mark.committed) { setTaskUi(id, { busy: false }); return toastErr('You already submitted this task.'); }
-  const remRef = db.ref(P.task(id) + '/remaining');
-  const slot = await remRef.transaction(r => { if (r === null) return null; return r > 0 ? r - 1 : undefined; });
-  if (!slot.committed || slot.snapshot.val() === null) {
-    await db.ref(P.user(S.uid)).transaction(u => { if (u && u.submitted) { delete u.submitted[id]; if (u.subAt) delete u.subAt[id]; } return u; });
-    setTaskUi(id, { busy: false }); return toastErr('This task is full. Try another one.');
-  }
-  const key = `${id}_${S.uid}`;
-  await db.ref(`pn/pending/${t.owner}/${key}`).set({ status: 'pending', taskId: id, uid: S.uid, name: S.user.name || '', tgUser: S.user.username || '', submitted: un, perUser: t.perUser, title: t.title, createdAt: TS });
-  await db.ref(`pn/pendingAll/${key}`).set({ owner: t.owner, createdAt: TS });
-  setTaskUi(id, { busy: false });
-  hap('success'); toast(`Submitted. The advertiser reviews it within ${CONFIG.reviewHours} hours.`);
-}
-
-// Approve or reject one pending request. Safe to call from any client: only the first caller wins.
-async function resolveReview(owner, key, approve) {
-  const ref = db.ref(`pn/pending/${owner}/${key}`);
-  const tx = await ref.transaction(cur => { if (cur === null) return cur; if (cur.status !== 'pending') return; cur.status = 'resolving'; return cur; });
-  const v = tx.committed ? tx.snapshot.val() : null;
-  if (!v || v.status !== 'resolving') return false;
-  if (approve) {
-    await db.ref(P.user(v.uid)).transaction(u => {
-      if (!u) return u;
-      u.submitted = u.submitted || {}; u.done = u.done || {};
-      u.done[v.taskId] = true; u.submitted[v.taskId] = 'approved'; applyIncome(u, v.perUser); return u;
-    });
-  } else {
-    await db.ref(P.user(v.uid)).transaction(u => { if (!u) return u; u.submitted = u.submitted || {}; u.submitted[v.taskId] = 'rejected'; return u; });
-    await db.ref(P.task(v.taskId) + '/remaining').transaction(r => (r || 0) + 1);
-    await db.ref(P.task(v.taskId) + '/status').set('live');
-  }
-  await ref.remove(); await db.ref('pn/pendingAll/' + key).remove();
-  return true;
-}
-async function sweepPending() {
-  if (!S.uid) return;
+/* ============================================================
+   Load
+   ============================================================ */
+async function loadAll(announce=false) {
+  if (announce) toast('🔄 Syncing…');
   try {
-    const cutoff = Date.now() - CONFIG.reviewHours * 3600000;
-    const snap = await db.ref('pn/pendingAll').orderByChild('createdAt').endAt(cutoff).limitToFirst(20).once('value');
-    for (const [key, v] of Object.entries(snap.val() || {})) await resolveReview(v.owner, key, true);
-  } catch (e) { console.warn('sweep', e); }
-}
-function notifySubmissions(u) {
-  const cur = u.submitted || {}, prev = S.prevSub;
-  if (prev) for (const [id, st] of Object.entries(cur)) {
-    if (prev[id] === 'pending' && st !== 'pending') {
-      const t = S.tasks[id] || {};
-      if (st === 'approved') rewarded(t.perUser || 0, 'Submission approved'); else toastErr(`Your submission "${t.title || 'task'}" was rejected.`);
-    }
+    const [u,t,d,w,pa,f,al] = await Promise.all([
+      db.ref('pn/users').once('value'),
+      db.ref('pn/tasks').once('value'),
+      db.ref('pn/deposits').once('value'),
+      db.ref('pn/withdrawals').once('value'),
+      db.ref('pn/pending').once('value'),
+      db.ref('pn/flags').once('value'),
+      db.ref('pn/adminLog').limitToLast(100).once('value')
+    ]);
+    D.users       = u.val()  || {};
+    D.tasks       = t.val()  || {};
+    D.deposits    = d.val()  || {};
+    D.withdrawals = w.val()  || {};
+    D.flags       = f.val()  || {};
+    D.adminLog    = al.val() || {};
+
+    // flatten pending (nested by owner)
+    D.pending = [];
+    pa.forEach(ownerNode => {
+      const owner = ownerNode.key;
+      ownerNode.forEach(child => {
+        D.pending.push({ _owner: owner, _key: child.key, ...(child.val() || {}) });
+      });
+    });
+    D.pending.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+    renderAll();
+    if (announce) toast(`✅ ${Object.keys(D.users).length} users, ${Object.keys(D.tasks).length} campaigns`);
+  } catch (err) {
+    console.error(err);
+    toast('Error loading: ' + err.message, true);
   }
-  S.prevSub = Object.assign({}, cur);
 }
-function openPendingSheet(id) {
-  const t = taskById(id); if (!t) return;
-  const items = Object.entries(S.pending || {}).filter(([, v]) => v.taskId === id).sort((a, b) => (a[1].createdAt || 0) - (b[1].createdAt || 0));
-  const left = v => fmtLeft((v.createdAt || Date.now()) + CONFIG.reviewHours * 3600000 - Date.now());
-  openSheet(`<h2>Pending requests</h2><p class="lead">${esc(t.title)}. Approve users who finished the steps. Requests you do not answer within ${CONFIG.reviewHours} hours are approved automatically and the user gets ${fmt(t.perUser)} JR.</p>
-    ${items.length ? items.map(([k, v]) => `<div class="req" data-k="${esc(k)}"><div class="grow"><b>${esc(v.submitted)}</b><small>${esc(v.name || 'User')}${v.tgUser ? ' (@' + esc(v.tgUser) + ')' : ''}, ${left(v)} left</small></div><button class="btn btn-soft btn-sm" data-r="reject">Reject</button><button class="btn btn-primary btn-sm" data-r="approve">Approve</button></div>`).join('') : `<div class="empty"><b>No pending requests</b><span>New submissions from users appear here.</span></div>`}`, b => {
-    $$('.req', b).forEach(row => $$('[data-r]', row).forEach(btn => btn.onclick = async () => {
-      $$('[data-r]', row).forEach(x => x.disabled = true);
-      const ok = await resolveReview(S.uid, row.dataset.k, btn.dataset.r === 'approve');
-      if (ok) { row.remove(); toast(btn.dataset.r === 'approve' ? 'Approved. The user received the JR.' : 'Rejected.'); hap('success'); } else { toastErr('This request was already handled.'); row.remove(); }
-    }));
-  });
+function renderAll() { renderStats(); renderUsers(); renderFinance(); renderTasks(); renderFlags(); renderBadges(); }
+function renderBadges() {
+  const dep = Object.values(D.deposits).filter(x => x.status === 'pending').length;
+  const wd  = Object.values(D.withdrawals).filter(x => x.status === 'pending').length;
+  const rev = D.pending.filter(x => x.status === 'pending').length;
+  const set = (el, n) => { if (!el) return; el.hidden = !n; el.textContent = n; };
+  set($('#depBadge'), dep); set($('#wdBadge'), wd); set($('#revBadge'), rev);
 }
 
-/* =====================================================================
-   Earn page
-   ===================================================================== */
-function renderEarn() {
-  if (S.tab !== 'earn') return;
-  const td = S.user.today && S.user.today.d === today() ? S.user.today.a : 0, L = CONFIG.adDailyLimit;
-  const cards = ADS.map(a => {
-    const n = adCount(a.key), busy = S.ui['ad_' + a.key], left = adLeft(a.key), full = n >= L;
-    return `<article class="card">
-      <div class="row"><span class="tbadge t-ads">${ico('play')}</span>
-        <div class="grow"><h3>${a.label}</h3><p class="meta">${n} of ${L} watched today</p></div>
-        <span class="reward">${coin()}+${fmt(CONFIG.adReward)}</span></div>
-      <div class="bar"><i style="width:${Math.min(100, n / L * 100)}%"></i></div>
-      <button class="btn btn-primary btn-block ${(full || left > 0) && !busy ? 'cool' : ''}" data-act="watch" data-key="${a.key}" data-adbtn="${a.key}" ${full || left > 0 || busy ? 'disabled' : ''}>${busy ? '<span class="spin"></span> Loading ad' : full ? 'Daily limit reached' : left > 0 ? `Watch again in ${left}s` : 'Watch ad'}</button>
-    </article>`;
+/* ============================================================
+   Stats
+   ============================================================ */
+function renderStats() {
+  const U = Object.values(D.users);
+  const sum = f => U.reduce((a,x) => a + (f(x)||0), 0);
+  const live = Object.values(D.tasks).filter(t => t.status === 'live').length;
+  const pendingDep = Object.values(D.deposits).filter(x => x.status === 'pending').length;
+  const pendingWd  = Object.values(D.withdrawals).filter(x => x.status === 'pending').length;
+  const pendingRev = D.pending.filter(x => x.status === 'pending').length;
+
+  $('#dashboardStats').innerHTML = `
+    <div class="stat-card"><div class="label"><i class="fas fa-users"></i> Users</div><div class="stat-number">${fmt(U.length)}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-coins"></i> Total balance (JR)</div><div class="stat-number">${fmt(sum(x => x.balance))}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-clock"></i> Pending deposits</div><div class="stat-number">${fmt(pendingDep)}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-hourglass-half"></i> Pending withdrawals</div><div class="stat-number">${fmt(pendingWd)}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-bullhorn"></i> Live campaigns</div><div class="stat-number">${fmt(live)}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-clipboard-check"></i> Pending reviews</div><div class="stat-number">${fmt(pendingRev)}</div></div>`;
+
+  $('#extraInsights').innerHTML = `
+    <div class="kv"><span class="text-muted">Total income paid out</span><b>${fmt(sum(x => x.totalIncome))} JR ($${jrToUsd(sum(x => x.totalIncome))})</b></div>
+    <div class="kv"><span class="text-muted">Total spent on campaigns</span><b>${fmt(sum(x => x.spent))} JR</b></div>
+    <div class="kv"><span class="text-muted">Total deposited</span><b>${fmt(sum(x => x.deposited))} JR</b></div>
+    <div class="kv"><span class="text-muted">Tasks completed</span><b>${fmt(sum(x => x.tasksDone))}</b></div>
+    <div class="kv"><span class="text-muted">Blocked users</span><b>${fmt(U.filter(x => x.banned).length)}</b></div>
+    <div class="kv"><span class="text-muted">Flagged links</span><b>${fmt(Object.keys(D.flags).length)}</b></div>`;
+}
+
+/* ============================================================
+   Users
+   ============================================================ */
+function renderUsers() {
+  const q = ($('#userSearchInput')?.value || '').trim().toLowerCase().replace(/^@/,'');
+  const list = Object.entries(D.users)
+    .filter(([id,u]) => !q || id.includes(q) || (u.name||'').toLowerCase().includes(q) || (u.username||'').toLowerCase().includes(q))
+    .sort((a,b) => (b[1].balance||0) - (a[1].balance||0));
+
+  const box = $('#usersListContainer');
+  if (!list.length) { box.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i>No users found</div>'; return; }
+
+  box.innerHTML = list.map(([id,u]) => {
+    const refs = Object.keys(u.referrals || {}).length;
+    return `<div class="user-card">
+      <div class="flex-between">
+        <div>
+          <strong><i class="fab fa-telegram"></i> ${esc(u.name || 'User')}${u.banned ? ' <span class="status-pill pill-rejected">blocked</span>' : ''}</strong>
+          <div style="font-size:.65rem;color:#999;">${u.username ? '@' + esc(u.username) + ' · ' : ''}${esc(id)}</div>
+        </div>
+        <span style="background:#6a3df0;color:#fff;padding:4px 14px;border-radius:40px;font-weight:700;font-size:.82rem;">${fmt(u.balance)} JR</span>
+      </div>
+      <div class="chip-group" style="font-size:.72rem;color:#666;">
+        <span><i class="fas fa-coins"></i> ${fmt(u.totalIncome)} earned</span>
+        <span><i class="fas fa-tasks"></i> ${fmt(u.tasksDone)} done</span>
+        <span><i class="fas fa-users"></i> ${fmt(refs)} refs</span>
+      </div>
+      <div class="chip-group">
+        <button class="btn-icon" data-act="profile" data-uid="${esc(id)}"><i class="fas fa-eye"></i> Profile</button>
+        <button class="btn-icon btn-success" data-act="addbal" data-uid="${esc(id)}"><i class="fas fa-plus"></i> Add JR</button>
+        <button class="btn-icon btn-warning" data-act="setbal" data-uid="${esc(id)}"><i class="fas fa-pen"></i> Set</button>
+        <button class="btn-icon ${u.banned ? 'btn-success' : 'btn-dark'}" data-act="ban" data-uid="${esc(id)}">${u.banned ? '<i class="fas fa-unlock"></i> Unblock' : '<i class="fas fa-ban"></i> Block'}</button>
+      </div>
+    </div>`;
   }).join('');
-  setHTML($('#p-earn'), `<h1>Earn</h1><p class="sub">Watch an ad and earn ${fmt(CONFIG.adReward)} JR each time. Every ad can be watched ${L} times a day, with a ${CONFIG.adCooldownSec} second wait between views. You have earned ${fmt(td)} JR today.</p><div class="list">${cards}</div>`);
-  updateAdButtons();
 }
+$('#userSearchInput').addEventListener('input', renderUsers);
 
-/* =====================================================================
-   Home
-   ===================================================================== */
-function countUp(el, from, to) {
-  if (!el) return; if (from === to) { el.textContent = fmt(to); return; }
-  const t0 = performance.now(), dur = 700;
-  (function step(now) { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(Math.round(from + (to - from) * e)); if (k < 1) requestAnimationFrame(step); })(t0);
-}
-function renderHome() {
-  if (S.tab !== 'home') return;
-  const u = S.user, refs = Object.keys(u.referrals || {}).length, td = u.today && u.today.d === today() ? u.today.a : 0;
-  setHTML($('#p-home'), `
-    <header class="topbar"><div class="brand"><span class="logo">${logoHTML()}</span>PMER</div><button class="icon-btn" data-sheet="support" aria-label="Support">${ico('help')}</button></header>
-    <section class="hero" id="hero">
-      <svg class="rings" viewBox="0 0 240 240" aria-hidden="true"><circle cx="150" cy="90" r="30"/><circle cx="150" cy="90" r="60"/><circle cx="150" cy="90" r="90"/><circle cx="150" cy="90" r="120"/></svg>
-      <div class="hero-label">Your balance</div>
-      <div class="hero-amt">${coin('lg')}<span class="num" id="balNum">0</span></div>
-      <p class="hero-sub">${fmt(u.totalIncome)} JR earned in total</p>
-      <div class="hero-actions"><button class="btn btn-gold" data-go="earn">Earn JR</button><button class="btn btn-glass" data-go="promote">Promote</button></div>
-    </section>
-    <div class="stats">
-      <div class="stat"><div class="num">${fmt(refs)}</div><small>Referrals</small></div>
-      <div class="stat"><div class="num">${fmt(u.tasksDone)}</div><small>Tasks done</small></div>
-      <div class="stat"><div class="num">${fmt(td)}</div><small>Earned today</small></div>
-    </div>
-    <div class="tiles">
-      <button class="tile" data-go="earn"><span class="tbadge t-ads">${ico('play')}</span><div><b>Watch ads</b><span class="mut">${fmt(CONFIG.adReward)} JR each</span></div></button>
-      <button class="tile" data-go="tasks"><span class="tbadge t-view">${ico('tasks')}</span><div><b>Social tasks</b><span class="mut">${availableTasks().length} live now</span></div></button>
-      <button class="tile" data-go="promote"><span class="tbadge t-reaction">${ico('mega')}</span><div><b>Promote</b><span class="mut">Grow your channel or bot</span></div></button>
-      <button class="tile" data-sheet="withdraw"><span class="tbadge t-conditions">${ico('out')}</span><div><b>Withdraw</b><span class="mut">From ${fmt(CONFIG.withdraw.min)} JR</span></div></button>
-    </div>`);
-  const bal = u.balance || 0; countUp($('#balNum'), S.shown === null ? bal : S.shown, bal); S.shown = bal;
-}
+$('#usersListContainer').addEventListener('click', async e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const uid = b.dataset.uid, u = D.users[uid]; if (!u) return;
+  const act = b.dataset.act;
 
-/* =====================================================================
-   Promote
-   ===================================================================== */
-const myTasks = () => Object.entries(S.tasks).map(([id, t]) => ({ id, ...t })).filter(t => t.owner === S.uid).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  if (act === 'profile') return openProfile(uid, u);
 
-function renderPromote() {
-  if (S.tab !== 'promote') return;
-  const mine = myTasks();
-  setHTML($('#p-promote'), `<div class="promo-head"><span class="logo">${logoHTML()}</span><div><h1>Promote</h1><span class="mut">Grow your channel, group or bot</span></div></div>
-    <div class="seg"><button class="${S.promoTab === 'new' ? 'on' : ''}" data-act="promo-tab" data-k="new">New campaign</button><button class="${S.promoTab === 'mine' ? 'on' : ''}" data-act="promo-tab" data-k="mine">My campaigns<span class="count">${mine.length}</span></button></div>
-    <div id="promoBody"></div>`);
-  S.promoTab === 'new' ? renderWizard() : renderMine();
-}
-
-function renderMine() {
-  const el = $('#promoBody'); if (!el) return;
-  const mine = myTasks(), pend = Object.values(S.pending || {});
-  setHTML(el, mine.length ? `<div class="list">${mine.map(t => {
-    const c = CAT[t.type] || CAT.join, done = (t.total || 0) - (t.remaining || 0), pct = t.total ? done / t.total * 100 : 0;
-    const pc = t.type === 'conditions' ? pend.filter(v => v.taskId === t.id).length : 0;
-    return `<article class="card"><div class="row"><span class="tbadge t-${t.type}">${ico(c.icon)}</span>
-      <div class="grow"><h3>${esc(t.title)}</h3><p class="meta">${c.label}, ${fmt(t.perUser)} JR per user</p></div>
-      <span class="pill ${t.status === 'live' ? 'ok' : 'mut'}">${t.status === 'live' ? 'Live' : 'Completed'}</span></div>
-      <div class="bar"><i style="width:${pct}%"></i></div>
-      <div class="row" style="justify-content:space-between;font-size:13px"><span class="mut">${fmt(done)} of ${fmt(t.total)} users</span><span class="mut">${fmt(done * t.perUser)} JR spent</span></div>
-      ${t.type === 'conditions' ? `<button class="btn btn-soft btn-block" style="margin-top:12px" data-act="pending" data-id="${t.id}">Pending requests<span class="badge">${pc}</span></button>` : ''}</article>`;
-  }).join('')}</div>` : `<div class="empty">${ico('mega')}<b>No campaigns yet</b><span>Create your first campaign and start getting users.</span><button class="btn btn-primary" data-act="promo-tab" data-k="new">Create campaign</button></div>`);
-}
-
-function renderWizard() {
-  const el = $('#promoBody'); if (!el) return;
-  const w = S.wiz, cat = CAT[w.type];
-  el.__h = null;
-  const stepper = `<div class="stepper">${['Target', 'Details', 'Budget'].map((l, i) => `<div class="${i + 1 < w.step ? 'done' : i + 1 === w.step ? 'now' : ''}">${l}</div>`).join('')}</div>`;
-  let body = '';
-  if (w.step === 1) {
-    body = `<div class="cats">${Object.entries(CAT).map(([k, c]) => `<button class="cat ${w.type === k ? 'on' : ''}" data-act="wiz-cat" data-k="${k}"><span class="tbadge t-${k}">${ico(c.icon)}</span><div><b>${c.label}</b><small>Min ${fmt(CONFIG.minReward[k])} JR per user</small></div></button>`).join('')}</div>
-      <div class="alert" id="blockBox" hidden></div>
-      <div class="field"><label for="wUrl">${cat.sub} link</label><input id="wUrl" class="input" data-wiz="url" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="${cat.ph}" value="${esc(w.url)}"><div class="hint" id="urlHint">${cat.hint}</div></div>
-      <div class="nav-row"><button class="btn btn-primary" id="wizNext" data-act="wiz-next" disabled>Continue</button></div>`;
-  } else if (w.step === 2) {
-    body = `<div class="alert" id="blockBox" hidden></div>
-      <div class="field"><label for="wTitle">Campaign title <span id="titleCount">0/${CONFIG.titleMax}</span></label><input id="wTitle" class="input" data-wiz="title" maxlength="${CONFIG.titleMax}" autocomplete="off" placeholder="Short, clear title" value="${esc(w.title)}"><div class="hint" id="titleHint">Use ${CONFIG.titleMin} to ${CONFIG.titleMax} characters.</div></div>
-      ${w.type === 'conditions' ? `<div class="field"><label>Steps users must follow</label>${[0, 1, 2].map(i => `<input class="input" style="margin-bottom:8px" data-wiz="step" data-i="${i}" maxlength="60" autocomplete="off" placeholder="Step ${i + 1}" value="${esc(w.steps[i])}" aria-label="Step ${i + 1}">`).join('')}<div class="hint">Three short steps, for example: Start the bot, Choose a language, Tap Continue.</div></div>` : ''}
-      <div class="nav-row"><button class="btn btn-line" data-act="wiz-back">Back</button><button class="btn btn-primary" id="wizNext" data-act="wiz-next" disabled>Continue</button></div>`;
-  } else {
-    body = `<div class="alert" id="blockBox" hidden></div>
-      ${w.type === 'reaction' ? `<div class="note">Reactions are checked by time. Users are paid after they open the post, react, and stay on it for ${CONFIG.reactionSeconds} seconds.</div>` : ''}<div class="field"><label for="wPer">Reward per user <span>Minimum ${fmt(CONFIG.minReward[w.type])} JR</span></label><input id="wPer" class="input" data-wiz="perUser" inputmode="numeric" placeholder="${CONFIG.minReward[w.type]}" value="${esc(w.perUser)}"><div class="hint" id="perHint"></div></div>
-      <div class="field"><label for="wUsers">Users needed <span>Minimum ${CONFIG.minUsers}</span></label><input id="wUsers" class="input" data-wiz="users" inputmode="numeric" placeholder="${CONFIG.minUsers}" value="${esc(w.users)}"><div class="hint" id="usersHint"></div></div>
-      <div class="sum"><div><span class="mut">Total cost</span><span id="sCost">0 JR</span></div><div><span class="mut">Your balance</span><span id="sBal">0 JR</span></div><div><span id="sLbl">Balance after publishing</span><span id="sAfter">0 JR</span></div></div>
-      <div class="alert" id="fundHint" hidden></div>
-      <div class="nav-row"><button class="btn btn-line" data-act="wiz-back">Back</button><button class="btn btn-primary" id="wizPublish" data-act="wiz-publish" disabled>Publish campaign</button></div>
-      <button class="btn btn-soft btn-block" id="wizDeposit" data-sheet="deposit" style="margin-top:10px" hidden>${ico('plus', 'sm')} Add balance</button>`;
+  if (act === 'addbal') {
+    const raw = prompt(`Add JR to ${u.name || uid}\nCurrent: ${fmt(u.balance)} JR`, '1000');
+    if (raw === null) return;
+    const amt = parseInt(raw, 10);
+    if (!amt) return toast('Enter a valid number', true);
+    await db.ref(P.user(uid)).transaction(x => { if (!x) return x; x.balance = (x.balance||0) + amt; return x; });
+    toast(`Balance adjusted by ${fmt(amt)} JR`); return loadAll();
   }
-  el.innerHTML = stepper + body;
-  updateWiz();
-}
-
-function wizCost() { const w = S.wiz, per = parseInt(w.perUser, 10) || 0, users = parseInt(w.users, 10) || 0; return { per, users, cost: per * users }; }
-
-function updateWiz() {
-  const w = S.wiz, next = $('#wizNext');
-  if (w.step === 1) {
-    const r = checkUrl(w.type, w.url), h = $('#urlHint'), inp = $('#wUrl');
-    h.hidden = !!($('#blockBox') && !$('#blockBox').hidden);
-    if (r.ok) { h.className = 'hint ok'; h.textContent = 'Link looks good.'; inp.classList.remove('bad'); }
-    else if (r.msg) { h.className = 'hint bad'; h.textContent = r.msg; inp.classList.add('bad'); }
-    else { h.className = 'hint'; h.textContent = CAT[w.type].hint; inp.classList.remove('bad'); }
-    next.disabled = !r.ok;
-  } else if (w.step === 2) {
-    const n = w.title.trim().length, ok = n >= CONFIG.titleMin && n <= CONFIG.titleMax;
-    $('#titleCount').textContent = `${n}/${CONFIG.titleMax}`;
-    $('#titleHint').className = 'hint' + (ok ? ' ok' : '');
-    $('#titleHint').textContent = ok ? 'Title looks good.' : n < CONFIG.titleMin ? `Add ${CONFIG.titleMin - n} more character${CONFIG.titleMin - n === 1 ? '' : 's'}. Titles need ${CONFIG.titleMin} to ${CONFIG.titleMax} characters.` : `Titles can be at most ${CONFIG.titleMax} characters.`;
-    const stepsOk = w.type !== 'conditions' || w.steps.every(s => s.trim().length >= 5);
-    next.disabled = !(ok && stepsOk);
-  } else {
-    const min = CONFIG.minReward[w.type], { per, users, cost } = wizCost(), bal = S.user.balance || 0;
-    const perOk = per >= min, usersOk = users >= CONFIG.minUsers && users <= 1000000, ph = $('#perHint'), uh = $('#usersHint');
-    ph.className = 'hint' + (w.perUser && !perOk ? ' bad' : ''); ph.textContent = w.perUser && !perOk ? `The minimum for ${CAT[w.type].label} is ${fmt(min)} JR per user.` : '';
-    uh.className = 'hint' + (w.users && !usersOk ? ' bad' : ''); uh.textContent = w.users && !usersOk ? `You need at least ${CONFIG.minUsers} users for a campaign.` : '';
-    $('#sCost').textContent = fmt(cost) + ' JR'; $('#sBal').textContent = fmt(bal) + ' JR';
-    const short = cost > bal, after = bal - cost;
-    $('#sLbl').textContent = short ? 'You still need' : 'Balance after publishing';
-    $('#sAfter').textContent = fmt(Math.abs(after)) + ' JR'; $('#sAfter').className = short ? 'neg' : '';
-    const fh = $('#fundHint'), showShort = short && per > 0 && users > 0;
-    fh.hidden = !showShort; fh.textContent = `You have not enough balance. You are ${fmt(cost - bal)} JR short.`;
-    $('#wizDeposit').hidden = !showShort;
-    $('#wizPublish').disabled = !(perOk && usersOk);
+  if (act === 'setbal') {
+    const raw = prompt(`Set balance for ${u.name || uid} (JR)`, u.balance || 0);
+    if (raw === null) return;
+    const val = parseInt(raw, 10);
+    if (isNaN(val)) return toast('Enter a valid number', true);
+    await db.ref(P.user(uid) + '/balance').set(val);
+    toast(`Balance set to ${fmt(val)} JR`); return loadAll();
   }
-}
-
-async function publish() {
-  const w = S.wiz, r = checkUrl(w.type, w.url); if (!r.ok) return;
-  const { per, users, cost } = wizCost(), btn = $('#wizPublish');
-  if (per < CONFIG.minReward[w.type] || users < CONFIG.minUsers) return;
-  if (cost > (S.user.balance || 0)) { toastErr('You have not enough balance'); btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake'); return updateWiz(); }
-  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Checking';
-  const scr = await screenTarget(r.p, [w.title].concat(w.type === 'conditions' ? w.steps : []), w.type);
-  if (!scr.ok) { showBlock(blockText(scr.reason)); btn.textContent = 'Publish campaign'; return updateWiz(); }
-  btn.innerHTML = '<span class="spin"></span> Publishing';
-  const tx = await db.ref(P.user(S.uid)).transaction(u => { if (!u || (u.balance || 0) < cost) return; u.balance -= cost; u.spent = (u.spent || 0) + cost; return u; });
-  if (!tx.committed) { toastErr('You have not enough balance'); btn.textContent = 'Publish campaign'; return updateWiz(); }
-  try {
-    await db.ref(P.tasks).push().set({
-      type: w.type, title: w.title.trim(), url: r.p.url, chat: r.p.chat, msgId: r.p.msgId || null,
-      steps: w.type === 'conditions' ? w.steps.map(s => s.trim()) : null,
-      perUser: per, total: users, remaining: users, owner: S.uid, ownerName: S.user.name || '', status: 'live', createdAt: TS
-    });
-  } catch (e) {
-    console.error(e);
-    await db.ref(P.user(S.uid)).transaction(u => { if (!u) return u; u.balance = (u.balance || 0) + cost; u.spent = Math.max(0, (u.spent || 0) - cost); return u; });
-    toastErr('Could not publish. Your balance was not charged.'); btn.textContent = 'Publish campaign'; return updateWiz();
+  if (act === 'ban') {
+    if (!u.banned && !confirm(`Block ${u.name || uid}? They will not be able to use PMER.`)) return;
+    await db.ref(P.user(uid) + '/banned').set(u.banned ? null : true);
+    toast(u.banned ? 'User unblocked' : 'User blocked'); return loadAll();
   }
-  S.wiz = { step: 1, type: 'join', url: '', title: '', steps: ['', '', ''], perUser: '', users: '' };
-  S.promoTab = 'mine'; hap('success'); toast('Published. Your campaign is live.');
-  renderPromote();
+});
+
+function openProfile(uid, u) {
+  const refs = Object.keys(u.referrals || {});
+  const done = Object.keys(u.done || {}).length;
+  const sub  = Object.entries(u.submitted || {});
+  const wds  = Object.values(u.withdrawals || {}).length;
+  $('#profileDetailContent').innerHTML = `
+    <div class="profile-detail-item"><span>Name</span><b>${esc(u.name || '—')}</b></div>
+    <div class="profile-detail-item"><span>Username</span><b>${u.username ? '@' + esc(u.username) : '—'}</b></div>
+    <div class="profile-detail-item"><span>ID</span><span class="mono">${esc(uid)}</span></div>
+    <div class="profile-detail-item"><span>Balance</span><b>${fmt(u.balance)} JR</b></div>
+    <div class="profile-detail-item"><span>Total income</span><b>${fmt(u.totalIncome)} JR</b></div>
+    <div class="profile-detail-item"><span>Tasks done</span><b>${fmt(u.tasksDone)}</b></div>
+    <div class="profile-detail-item"><span>Completed task ids</span><b>${fmt(done)}</b></div>
+    <div class="profile-detail-item"><span>Submissions</span><b>${fmt(sub.length)} (${sub.filter(([,v]) => v === 'pending').length} pending)</b></div>
+    <div class="profile-detail-item"><span>Referrals</span><b>${fmt(refs.length)}</b></div>
+    <div class="profile-detail-item"><span>Referral bonus earned</span><b>${fmt(u.refEarned)} JR</b></div>
+    <div class="profile-detail-item"><span>Spent on campaigns</span><b>${fmt(u.spent)} JR</b></div>
+    <div class="profile-detail-item"><span>Deposited</span><b>${fmt(u.deposited)} JR</b></div>
+    <div class="profile-detail-item"><span>Withdrawals</span><b>${fmt(wds)}</b></div>
+    <div class="profile-detail-item"><span>Joined</span><b>${when(u.createdAt)}</b></div>
+    <div class="profile-detail-item"><span>Status</span><b>${u.banned ? 'blocked' : 'active'}</b></div>`;
+  $('#userProfileModal').classList.add('active');
 }
+$('#closeProfileModal').addEventListener('click', () => $('#userProfileModal').classList.remove('active'));
+$('#userProfileModal').addEventListener('click', e => { if (e.target.id === 'userProfileModal') $('#userProfileModal').classList.remove('active'); });
 
-async function wizNext() {
-  if (S.checking) return;
-  S.checking = true;
-  try { await wizNextInner(); } finally { S.checking = false; }
-}
-async function wizNextInner() {
-  const w = S.wiz, btn = $('#wizNext');
-  if (w.step === 1) {
-    const r = checkUrl(w.type, w.url); if (!r.ok) return;
-    btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Checking link';
-    const scr = await screenTarget(r.p, [], w.type);
-    if (!scr.ok) {
-      S.adminType = scr.reason === 'needadmin' ? (scr.chatType || 'channel') : null;
-      showBlock(blockText(scr.reason), S.adminType ? adminButtons() : '');
-      btn.textContent = 'Continue'; return updateWiz();
-    }
-    S.adminType = null;
-  } else if (w.step === 2) {
-    if (isBad(w.title) || (w.type === 'conditions' && w.steps.some(isBad))) return showBlock(HARAM_MSG);
-  }
-  w.step++; renderWizard(); window.scrollTo(0, 0);
-}
+/* ============================================================
+   Finance (deposits + withdrawals)
+   ============================================================ */
+document.querySelectorAll('[data-fin]').forEach(b => b.addEventListener('click', () => {
+  financeSub = b.dataset.fin;
+  document.querySelectorAll('[data-fin]').forEach(x => x.classList.toggle('active', x === b));
+  renderFinance();
+}));
 
-/* =====================================================================
-   Profile + sheets
-   ===================================================================== */
-function renderProfile() {
-  if (S.tab !== 'profile') return;
-  const u = S.user, name = u.name || 'User', init = esc(name.trim().charAt(0).toUpperCase() || 'U');
-  setHTML($('#p-profile'), `
-    <div class="pfp"><div class="avatar">${u.photo ? `<img src="${esc(u.photo)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}<span>${init}</span></div>
-      <div><h1>${esc(name)}</h1><span class="mut">${u.username ? '@' + esc(u.username) : 'Telegram user'}</span></div></div>
-    <div class="income"><small>Total income</small><div class="num">${coin('lg')}${fmt(u.totalIncome)}</div></div>
-    <div class="card deposit"><div class="grow"><h3>Balance ${fmt(u.balance)} JR</h3><p class="meta">Add balance to run campaigns</p></div><button class="btn btn-gold" data-sheet="deposit">${ico('plus', 'sm')} Deposit</button></div>
-    <button class="card" data-open="${esc(CONFIG.communityLink)}"><span class="tbadge t-join">${ico('send')}</span><div class="grow"><h3>Join our community</h3><p class="meta">News, updates and help from the PMER team</p></div>${ico('chev')}</button>
-    <div class="menu">
-      <button data-sheet="withdraw">${ico('out')}Withdraw${ico('chev')}</button>
-      <button data-sheet="referral">${ico('users')}Invite friends${ico('chev')}</button>
-      <button data-sheet="settings">${ico('sliders')}Settings${ico('chev')}</button>
-      <button data-sheet="privacy">${ico('shield')}Privacy policy${ico('chev')}</button>
-      <button data-sheet="terms">${ico('doc')}Terms and conditions${ico('chev')}</button>
-      <button data-sheet="support">${ico('help')}Support${ico('chev')}</button>
-    </div><p class="ver" id="verTap">PMER 1.1</p>`);
-}
-
-const SHARE_TEXT = `Join me on PMER, the Telegram app where you earn JR every day.
-
-- Complete simple tasks and earn
-- Watch ads and get ${fmt(CONFIG.adReward)} JR each time
-- Promote your channel, group or bot to real users
-- Withdraw your earnings to Binance
-
-Start earning now:`;
-
-const SHEETS = {
-  support: () => openSheet(`<h2>Support</h2><p class="lead">Questions about a task, deposit, or withdrawal? Message us on Telegram.</p><button class="btn btn-primary btn-block" data-open="${esc(CONFIG.supportLink)}">${ico('send', 'sm')} Message support</button>`),
-
-  settings: () => {
-    const th = store.get('pn_theme') || 'auto', hp = store.get('pn_haptics') !== 'off';
-    openSheet(`<h2>Settings</h2><h4>Appearance</h4><div class="opts">${['auto', 'light', 'dark'].map(k => `<button class="opt ${th === k ? 'on' : ''}" data-set="theme" data-v="${k}">${k[0].toUpperCase() + k.slice(1)}</button>`).join('')}</div>
-      <h4>Vibration</h4><div class="opts"><button class="opt ${hp ? 'on' : ''}" data-set="haptics" data-v="on">On</button><button class="opt ${!hp ? 'on' : ''}" data-set="haptics" data-v="off">Off</button></div>`);
-  },
-
-  deposit: () => {
-    const D = CONFIG.deposit; let pick = 1, page = 1, logged = false;
-    const draw = b => {
-      const pk = D.packages[pick];
-      b.innerHTML = page === 1
-        ? `<h2>Deposit</h2><p class="lead">Choose a package. You pay in USD with Binance.</p>
-          <div class="pkgs">${D.packages.map((x, i) => `<button class="pkg ${i === pick ? 'on' : ''}" data-i="${i}"><b>$${x.usd}</b><span>${coin()}${fmt(x.jr)} JR</span></button>`).join('')}</div>
-          <button class="btn btn-primary btn-block" id="depNext">Next</button>`
-        : `<h2>Pay $${pk.usd}</h2><p class="lead">You receive ${fmt(pk.jr)} JR after the admin confirms your payment.</p>
-          <div class="linkbox"><div class="grow"><small class="mut">Binance UID</small><div style="font:800 21px 'Sora',sans-serif;letter-spacing:.04em">${esc(D.uid)}</div></div><button class="btn btn-soft btn-sm" data-copy="${esc(D.uid)}">${ico('copy', 'sm')} Copy</button></div>
-          <ol class="steps"><li>Open Binance and pay $${pk.usd} to the Binance UID above.</li><li>Take a screenshot of the payment and copy the Order ID.</li><li>Send the screenshot and the Order ID to the admin.</li></ol>
-          <div class="gap"></div><button class="btn btn-primary btn-block" id="depAdmin">${ico('send', 'sm')} Send to admin</button>
-          <div class="gap"></div><button class="btn btn-line btn-block" id="depBack">Back</button>`;
-      $$('.pkg', b).forEach(x => x.onclick = () => { pick = +x.dataset.i; draw(b); });
-      const nx = $('#depNext', b); if (nx) nx.onclick = () => { page = 2; draw(b); };
-      const bk = $('#depBack', b); if (bk) bk.onclick = () => { page = 1; draw(b); };
-      const ad = $('#depAdmin', b); if (ad) ad.onclick = async () => {
-        if (!logged) { logged = true; try { await db.ref('pn/deposits').push().set({ uid: S.uid, name: S.user.name || '', usd: pk.usd, jr: pk.jr, method: 'Binance', status: 'pending', createdAt: TS }); } catch (e) {} }
-        openLink(CONFIG.supportLink);
-      };
-    };
-    openSheet('', draw);
-  },
-
-  withdraw: () => {
-    const u = S.user, refs = Object.keys(u.referrals || {}).length, W = CONFIG.withdraw, bal = u.balance || 0;
-    const okBal = bal >= W.min, okRef = refs >= W.minReferrals, method = W.methods[0];
-    const hist = Object.values(u.withdrawals || {}).sort((a, b) => b.createdAt - a.createdAt).slice(0, 8);
-    openSheet(`<h2>Withdraw</h2><p class="lead">Available ${fmt(bal)} JR, about $${jrToUsd(bal)}. Payouts go to ${method} only.</p>
-      <div class="kv"><div><span class="mut">Minimum withdrawal</span><b>${fmt(W.min)} JR = $${jrToUsd(W.min)}</b></div>
-        <div><span>Balance of ${fmt(W.min)} JR or more</span><span class="pill ${okBal ? 'ok' : 'mut'}">${okBal ? 'Done' : 'Not yet'}</span></div>
-        ${W.minReferrals ? `<div><span>At least ${W.minReferrals} referrals</span><span class="pill ${okRef ? 'ok' : 'mut'}">${okRef ? 'Done' : refs + ' of ' + W.minReferrals}</span></div>` : ''}</div>
-      <div class="field"><input id="wdAcc" class="input" placeholder="${method} ID or wallet address" autocomplete="off"></div>
-      <div class="field"><input id="wdAmt" class="input" inputmode="numeric" placeholder="Amount in JR (min ${fmt(W.min)})"><div class="hint" id="wdHint">A ${W.feePercent}% fee applies.</div></div>
-      <button class="btn btn-primary btn-block" id="wdGo" ${okBal && (okRef || !W.minReferrals) ? '' : 'disabled'}>Request withdrawal</button>
-      ${hist.length ? `<h4>Recent requests</h4>${hist.map(h => `<div class="hist"><span>${esc(h.method)}, ${fmt(h.amount)} JR</span><span class="mut">${esc(h.status || 'pending')}</span></div>`).join('')}` : ''}`, b => {
-      $('#wdAmt', b).oninput = e => { const a = parseInt(e.target.value, 10) || 0; $('#wdHint', b).textContent = a ? `You receive about $${jrToUsd(Math.floor(a * (100 - W.feePercent) / 100))} after the ${W.feePercent}% fee.` : `A ${W.feePercent}% fee applies.`; };
-      $('#wdGo', b).onclick = async () => {
-        const acc = $('#wdAcc', b).value.trim(), amt = parseInt($('#wdAmt', b).value, 10) || 0;
-        if (!acc) return toastErr(`Enter your ${method} ID or wallet address.`);
-        if (amt < W.min) return toastErr(`The minimum withdrawal is ${fmt(W.min)} JR.`);
-        const tx = await db.ref(P.user(S.uid)).transaction(x => { if (!x || (x.balance || 0) < amt) return; x.balance -= amt; return x; });
-        if (!tx.committed) return toastErr('You have not enough balance');
-        const rec = { uid: S.uid, name: u.name || '', method, account: acc, amount: amt, fee: Math.ceil(amt * W.feePercent / 100), net: Math.floor(amt * (100 - W.feePercent) / 100), status: 'pending', createdAt: TS };
-        const ref = db.ref('pn/withdrawals').push();
-        await ref.set(rec); await db.ref(P.user(S.uid) + '/withdrawals/' + ref.key).set(rec);
-        hap('success'); closeSheet(); toast('Withdrawal requested. We will review it soon.');
-      };
-    });
-  },
-
-  referral: () => {
-    const u = S.user, list = Object.values(u.referrals || {}), link = `${CONFIG.botLink}?startapp=${S.uid}`, R = CONFIG.referral;
-    const msg = SHARE_TEXT + '\n' + link;
-    openSheet(`<h2>Invite friends</h2><p class="lead">You and your friend each get ${fmt(R.bonus)} JR once they complete ${R.afterTasks} tasks.</p>
-      <div class="linkbox"><span class="grow">${esc(link)}</span><button class="btn btn-soft btn-sm" data-copy="${esc(link)}">${ico('copy', 'sm')} Copy</button></div>
-      <div class="msgbox">${esc(msg)}</div>
-      <button class="btn btn-primary btn-block" data-open="https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(SHARE_TEXT)}">${ico('send', 'sm')} Share on Telegram</button>
-      <div class="gap"></div>
-      <button class="btn btn-soft btn-block" data-copy="${esc(msg)}">${ico('copy', 'sm')} Copy message</button>
-      <h4>Your referrals (${list.length})</h4>${list.length ? list.map(r => `<div class="hist"><span>${esc(r.name || 'Friend')}</span><span class="${r.bonus ? '' : 'mut'}">${r.bonus ? '+' + fmt(r.bonus) + ' JR' : 'In progress'}</span></div>`).join('') : '<p class="doc">No referrals yet.</p>'}
-      <div class="kv" style="margin-top:14px"><div><span class="mut">Referral bonus earned</span><b>${fmt(u.refEarned)} JR</b></div></div>`);
-  },
-
-  privacy: () => openSheet(`<h2>Privacy policy</h2>
-    <h4>What we collect</h4><p class="doc">Your Telegram ID, name, username and profile photo as provided by Telegram, plus your balance, completed tasks, campaigns, deposit requests and withdrawal requests.</p>
-    <h4>How we use it</h4><p class="doc">To run PMER, credit rewards, show your campaigns, review payments and withdrawals, prevent fraud and answer support requests.</p>
-    <h4>Ads</h4><p class="doc">Ads are delivered by third-party networks such as Adsgram, Adsbitvex, Monetag, Giga Pub and OnClickA. They may collect device and ad-interaction data under their own privacy policies.</p>
-    <h4>Sharing</h4><p class="doc">We do not sell your personal data. Campaign owners only see totals for their campaigns, not who completed them.</p>
-    <h4>Your choices</h4><p class="doc">You can ask support to delete your account data at any time. Some payment records may be kept as required for fraud prevention.</p>`),
-
-  terms: () => openSheet(`<h2>Terms and conditions</h2>
-    <h4>Using PMER</h4><p class="doc">You need a Telegram account. One person may use one account. Do not use bots, scripts, VPN farms or multiple accounts to collect rewards.</p>
-    <h4>Rewards</h4><p class="doc">Rewards are added after a task is completed and verified. With conditions tasks are reviewed by the advertiser and approved automatically after ${CONFIG.reviewHours} hours if not reviewed. We may remove rewards and block accounts that show fake or abusive activity.</p>
-    <h4>Campaigns</h4><p class="doc">Campaigns must follow the law and Telegram rules. Every link is checked before it goes live. Adult and pornographic content is haram and strictly forbidden, along with scams, hate and illegal offers. Such links are rejected and the account may be blocked. The full campaign budget is reserved when you publish and is paid out as users complete the task.</p>
-    <h4>Balance and withdrawals</h4><p class="doc">JR is a reward balance inside PMER. Withdrawals are paid to Binance only, need at least ${fmt(CONFIG.withdraw.min)} JR ($${jrToUsd(CONFIG.withdraw.min)}), are reviewed manually and include a service fee.</p>
-    <h4>Changes</h4><p class="doc">We may update rewards, limits and these terms. Continuing to use PMER means you accept the changes.</p>`)
-};
-
-/* =====================================================================
-   Admin panel. Hidden: tap the version text in Profile 5 times (or open the app link with #admin).
-   ===================================================================== */
-const ADMIN = { on: false, tab: 'overview', q: '', fails: 0, lockUntil: 0, d: { users: {}, deposits: {}, withdrawals: {}, flags: {}, tasks: {} } };
-const sha256 = async t => { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); };
-const when = ts => ts ? new Date(ts).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : '';
-const uname = uid => (ADMIN.d.users[uid] || {}).name || uid;
-const pillCls = st => st === 'approved' || st === 'paid' || st === 'live' ? 'ok' : st === 'rejected' || st === 'stopped' ? 'bad' : 'mut';
-
-function blockAccount() {
-  $('#app').hidden = true; $('#nav').hidden = true; $('#splash').hidden = true;
-  const g = $('#gate'); g.querySelector('h1').textContent = 'Account blocked';
-  g.querySelector('p').textContent = 'This account was blocked for breaking the PMER rules. Contact support if you think this is a mistake.';
-  g.hidden = false;
-}
-
-function adminLogin() {
-  if (ADMIN.on) return openAdmin();
-  openSheet(`<h2>Admin</h2><p class="lead">Enter the admin password.</p><div class="field"><input id="admPw" class="input" type="password" autocomplete="off" placeholder="Password"></div><button class="btn btn-primary btn-block" id="admGo">Unlock</button>`, b => {
-    const go = async () => {
-      if (Date.now() < ADMIN.lockUntil) return toastErr('Too many tries. Wait a minute and try again.');
-      let ok = false;
-      try { ok = (await sha256($('#admPw', b).value)) === CONFIG.adminHash; } catch (e) { return toastErr('Admin needs a secure (https) page.'); }
-      if (!ok) { if (++ADMIN.fails >= 5) { ADMIN.lockUntil = Date.now() + 60000; ADMIN.fails = 0; } return toastErr('Wrong password.'); }
-      ADMIN.on = true; closeSheet(); openAdmin();
-    };
-    $('#admGo', b).onclick = go; $('#admPw', b).onkeydown = e => { if (e.key === 'Enter') go(); };
-  });
-}
-
-async function openAdmin() {
-  const w = $('#adminWrap'); w.hidden = false; ADMIN.tab = 'overview'; ADMIN.q = '';
-  w.innerHTML = `<div class="ad-in"><div class="ad-head"><h1>Admin</h1><div class="row"><button class="btn btn-soft btn-sm" data-adm="refresh">Refresh</button><button class="icon-btn" data-adm="close" aria-label="Close">${ico('x')}</button></div></div><div class="chips" id="adTabs"></div><div id="adBody"><div class="empty"><span class="spin"></span></div></div></div>`;
-  await adminLoad();
-}
-async function adminLoad() {
-  try {
-    const [u, d, w, f, t] = await Promise.all(['pn/users', 'pn/deposits', 'pn/withdrawals', 'pn/flags', 'pn/tasks'].map(p => db.ref(p).once('value')));
-    ADMIN.d = { users: u.val() || {}, deposits: d.val() || {}, withdrawals: w.val() || {}, flags: f.val() || {}, tasks: t.val() || {} };
-  } catch (e) { toastErr('Could not load admin data.'); }
-  renderAdmin();
-}
-const byNew = o => Object.entries(o).sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
-const pendingOf = o => Object.values(o).filter(x => x.status === 'pending').length;
-
-function renderAdmin() {
-  const D = ADMIN.d, tabs = [['overview', 'Overview'], ['deposits', 'Deposits', pendingOf(D.deposits)], ['withdrawals', 'Withdrawals', pendingOf(D.withdrawals)], ['users', 'Users'], ['campaigns', 'Campaigns'], ['flags', 'Flags', Object.keys(D.flags).length]];
-  $('#adTabs').innerHTML = tabs.map(([k, l, n]) => `<button class="chip ${ADMIN.tab === k ? 'on' : ''}" data-adm="tab" data-k="${k}">${l}${n ? `<em>${n}</em>` : ''}</button>`).join('');
-  const el = $('#adBody'), U = Object.entries(D.users);
-  if (ADMIN.tab === 'overview') {
-    const sum = f => U.reduce((a, [, u]) => a + (f(u) || 0), 0), live = Object.values(D.tasks).filter(t => t.status === 'live').length;
-    const st = [['Users', fmt(U.length)], ['Total balance (JR)', fmt(sum(u => u.balance))], ['Total earned (JR)', fmt(sum(u => u.totalIncome))], ['Live campaigns', fmt(live)], ['Pending deposits', fmt(pendingOf(D.deposits))], ['Pending withdrawals', fmt(pendingOf(D.withdrawals))], ['Blocked users', fmt(U.filter(([, u]) => u.banned).length)], ['Flagged links', fmt(Object.keys(D.flags).length)]];
-    el.innerHTML = `<div class="ad-grid">${st.map(([l, v]) => `<div class="stat"><div class="num">${v}</div><small>${l}</small></div>`).join('')}</div>`;
-  } else if (ADMIN.tab === 'deposits') {
+function renderFinance() {
+  const box = $('#financeContainer');
+  if (financeSub === 'deposits') {
     const rows = byNew(D.deposits).slice(0, 100);
-    el.innerHTML = rows.length ? `<div class="ad-list">${rows.map(([k, x]) => `<article class="card"><div class="row"><div class="grow"><h3>$${esc(x.usd)} for ${fmt(x.jr)} JR</h3><p class="meta">${esc(x.name || 'User')} (${esc(x.uid)}), ${when(x.createdAt)}</p></div><span class="pill ${pillCls(x.status)}">${esc(x.status)}</span></div>${x.status === 'pending' ? `<div class="actions"><button class="btn btn-soft" data-adm="dep-no" data-k="${k}">Reject</button><button class="btn btn-primary" data-adm="dep-ok" data-k="${k}">Approve</button></div>` : ''}</article>`).join('')}</div>` : `<div class="empty"><b>No deposit requests</b></div>`;
-  } else if (ADMIN.tab === 'withdrawals') {
-    const rows = byNew(D.withdrawals).slice(0, 100);
-    el.innerHTML = rows.length ? `<div class="ad-list">${rows.map(([k, x]) => `<article class="card"><div class="row"><div class="grow"><h3>${fmt(x.amount)} JR (pay $${jrToUsd(x.net)})</h3><p class="meta">${esc(x.name || 'User')} (${esc(x.uid)}), ${when(x.createdAt)}</p><p class="meta">${esc(x.method)}: <b>${esc(x.account)}</b></p></div><span class="pill ${pillCls(x.status)}">${esc(x.status)}</span></div>${x.status === 'pending' ? `<div class="actions"><button class="btn btn-soft btn-sm" data-copy="${esc(x.account)}">Copy ID</button><button class="btn btn-line btn-sm" data-adm="wd-no" data-k="${k}">Reject and refund</button><button class="btn btn-primary btn-sm" data-adm="wd-ok" data-k="${k}">Mark paid</button></div>` : ''}</article>`).join('')}</div>` : `<div class="empty"><b>No withdrawal requests</b></div>`;
-  } else if (ADMIN.tab === 'users') {
-    el.innerHTML = `<div class="field"><input class="input" id="admQ" placeholder="Search name, @username or ID" value="${esc(ADMIN.q)}" autocomplete="off"></div><div class="ad-list" id="adList"></div>`;
-    $('#admQ').oninput = e => { ADMIN.q = e.target.value; adminUsers(); }; adminUsers();
-  } else if (ADMIN.tab === 'campaigns') {
-    const rows = byNew(D.tasks).slice(0, 100);
-    el.innerHTML = rows.length ? `<div class="ad-list">${rows.map(([k, t]) => `<article class="card"><div class="row"><div class="grow"><h3>${esc(t.title)}</h3><p class="meta">${esc((CAT[t.type] || {}).label || t.type)}, ${fmt(t.perUser)} JR per user, ${fmt((t.total || 0) - (t.remaining || 0))} of ${fmt(t.total)} done</p><p class="meta">By ${esc(t.ownerName || uname(t.owner))} (${esc(t.owner)})</p></div><span class="pill ${pillCls(t.status)}">${esc(t.status)}</span></div>${t.status === 'live' ? `<div class="actions"><button class="btn btn-soft btn-sm" data-open="${esc(t.url)}">Open link</button><button class="btn btn-line btn-sm" data-adm="stop" data-k="${k}">Stop and refund</button></div>` : ''}</article>`).join('')}</div>` : `<div class="empty"><b>No campaigns</b></div>`;
-  } else {
-    const rows = byNew(D.flags);
-    el.innerHTML = rows.length ? `<p class="sub" style="margin-bottom:12px">Adult or blocked links that users tried to promote.</p><div class="ad-list">${rows.map(([k, x]) => `<article class="card"><h3 style="word-break:break-all">${esc(x.url)}</h3><p class="meta">${esc(uname(x.uid))} (${esc(x.uid)}), ${when(x.createdAt)}</p><div class="actions"><button class="btn btn-soft btn-sm" data-adm="flag-clear" data-k="${k}">Clear</button><button class="btn btn-line btn-sm" data-adm="flag-ban" data-k="${x.uid}" data-f="${k}">Block user</button></div></article>`).join('')}</div>` : `<div class="empty"><b>No flagged links</b></div>`;
+    if (!rows.length) { box.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i>No deposit requests</div>'; return; }
+    box.innerHTML = rows.map(([k,x]) => `<div class="wd-card">
+      <div class="flex-between">
+        <div><strong>${esc(x.name || username(x.uid))}</strong><div class="text-muted mono">${esc(x.uid)}</div></div>
+        <span class="status-pill ${pill(x.status)}">${esc(x.status)}</span>
+      </div>
+      <div style="margin:8px 0;font-size:.9rem;">💵 $${esc(x.usd)} → ${fmt(x.jr)} JR</div>
+      <div class="text-muted">📅 ${when(x.createdAt)}</div>
+      ${x.status === 'pending' ? `<div class="chip-group">
+        <button class="btn-icon btn-success" data-fin-act="dep-ok" data-k="${esc(k)}"><i class="fas fa-check"></i> Approve</button>
+        <button class="btn-icon btn-danger" data-fin-act="dep-no" data-k="${esc(k)}"><i class="fas fa-times"></i> Reject</button>
+      </div>` : ''}
+    </div>`).join('');
+    return;
   }
-}
-function adminUsers() {
-  const q = ADMIN.q.trim().toLowerCase().replace(/^@/, '');
-  const rows = Object.entries(ADMIN.d.users).filter(([id, u]) => !q || id.includes(q) || (u.name || '').toLowerCase().includes(q) || (u.username || '').toLowerCase().includes(q)).sort((a, b) => (b[1].balance || 0) - (a[1].balance || 0)).slice(0, 50);
-  $('#adList').innerHTML = rows.length ? rows.map(([id, u]) => `<button class="ad-user" data-adm="user" data-k="${esc(id)}"><div class="grow"><b>${esc(u.name || 'User')} ${u.banned ? '<span class="pill bad">Blocked</span>' : ''}</b><small>${u.username ? '@' + esc(u.username) + ', ' : ''}ID ${esc(id)}</small></div><div style="text-align:right"><b>${fmt(u.balance)}</b><small>JR</small></div></button>`).join('') : `<div class="empty"><b>No users found</b></div>`;
+
+  const all = byNew(D.withdrawals);
+  const rows = (withdrawFilter === 'pending' ? all.filter(([,x]) => x.status === 'pending') : all).slice(0, 100);
+  if (!rows.length) { box.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i>No withdrawal requests</div>'; return; }
+  box.innerHTML = `
+    <div class="flex-between" style="margin-bottom:12px;">
+      <button class="btn-icon ${withdrawFilter === 'pending' ? 'btn-dark' : 'btn-outline'}" data-wd-filter="pending"><i class="fas fa-clock"></i> Pending only</button>
+      <button class="btn-icon ${withdrawFilter === 'all' ? 'btn-dark' : 'btn-outline'}" data-wd-filter="all">All requests</button>
+    </div>` + rows.map(([k,x]) => `<div class="wd-card">
+      <div class="flex-between">
+        <div><strong>${esc(x.name || username(x.uid))}</strong><div class="text-muted mono">${esc(x.uid)}</div></div>
+        <span class="status-pill ${pill(x.status)}">${esc(x.status)}</span>
+      </div>
+      <div style="margin:8px 0;font-size:.9rem;">💰 ${fmt(x.amount)} JR <span class="text-muted">(pay $${jrToUsd(x.net)} after ${WITHDRAW_FEE}% fee)</span></div>
+      <div class="text-muted">📱 ${esc(x.method || 'Binance')} · <span class="mono">${esc(x.account || '—')}</span></div>
+      <div class="text-muted">📅 ${when(x.createdAt)}</div>
+      ${x.status === 'pending' ? `<div class="chip-group">
+        <button class="btn-icon" data-copy="${esc(x.account || '')}"><i class="fas fa-copy"></i> Copy ID</button>
+        <button class="btn-icon btn-success" data-fin-act="wd-ok" data-k="${esc(k)}"><i class="fas fa-check"></i> Mark paid</button>
+        <button class="btn-icon btn-danger" data-fin-act="wd-no" data-k="${esc(k)}"><i class="fas fa-undo"></i> Reject & refund</button>
+      </div>` : ''}
+    </div>`).join('');
 }
 
-const adminLog = (a, k, extra) => { try { db.ref('pn/adminLog').push().set(Object.assign({ a, k, createdAt: TS }, extra || {})); } catch (e) {} };
+$('#financeContainer').addEventListener('click', async e => {
+  const f = e.target.closest('[data-wd-filter]');
+  if (f) { withdrawFilter = f.dataset.wdFilter; return renderFinance(); }
+  const c = e.target.closest('[data-copy]');
+  if (c) { try { await navigator.clipboard.writeText(c.dataset.copy); toast('Copied'); } catch(_) {} return; }
+  const b = e.target.closest('[data-fin-act]'); if (!b) return;
+  b.disabled = true;
+  const k = b.dataset.k, a = b.dataset.finAct;
+  if (a === 'dep-ok' || a === 'dep-no') await handleDeposit(k, a === 'dep-ok');
+  else if (a === 'wd-ok' || a === 'wd-no') await handleWithdraw(k, a === 'wd-ok');
+  await loadAll();
+});
+
 async function claimStatus(path, from, to) {
   const tx = await db.ref(path).transaction(c => { if (c === null) return c; if (c !== from) return; return to; });
   return tx.committed && tx.snapshot.val() === to;
 }
-async function adminDeposit(k, ok) {
-  const d = ADMIN.d.deposits[k]; if (!d) return;
-  if (!(await claimStatus(`pn/deposits/${k}/status`, 'pending', 'processing'))) return toastErr('Already handled. Tap Refresh.');
+
+async function handleDeposit(k, ok) {
+  const d = D.deposits[k]; if (!d) return;
+  if (!(await claimStatus(`pn/deposits/${k}/status`, 'pending', 'processing'))) return toast('Already handled', true);
   if (ok) {
-    const res = await db.ref(P.user(d.uid)).transaction(u => { if (!u) return u; u.balance = (u.balance || 0) + d.jr; u.deposited = (u.deposited || 0) + d.jr; return u; });
-    if (!res.snapshot.val()) { await db.ref(`pn/deposits/${k}/status`).set('pending'); return toastErr('User not found. Nothing was credited.'); }
-    ADMIN.d.users[d.uid] = res.snapshot.val();
+    const res = await db.ref(P.user(d.uid)).transaction(u => {
+      if (!u) return u;
+      u.balance = (u.balance || 0) + (d.jr || 0);
+      u.deposited = (u.deposited || 0) + (d.jr || 0);
+      return u;
+    });
+    if (!res.snapshot.val()) {
+      await db.ref(`pn/deposits/${k}/status`).set('pending');
+      return toast('User not found. Nothing credited.', true);
+    }
   }
   await db.ref(`pn/deposits/${k}/status`).set(ok ? 'approved' : 'rejected');
-  d.status = ok ? 'approved' : 'rejected'; adminLog(ok ? 'deposit-ok' : 'deposit-no', k); toast(ok ? `Approved. ${fmt(d.jr)} JR credited.` : 'Deposit rejected.'); hap('success');
+  log(ok ? 'deposit-ok' : 'deposit-no', k);
+  toast(ok ? `✅ Credited ${fmt(d.jr)} JR` : 'Deposit rejected');
 }
-async function adminWithdraw(k, paid) {
-  const w = ADMIN.d.withdrawals[k]; if (!w) return;
-  if (!(await claimStatus(`pn/withdrawals/${k}/status`, 'pending', 'processing'))) return toastErr('Already handled. Tap Refresh.');
+
+async function handleWithdraw(k, paid) {
+  const w = D.withdrawals[k]; if (!w) return;
+  if (!(await claimStatus(`pn/withdrawals/${k}/status`, 'pending', 'processing'))) return toast('Already handled', true);
   if (!paid) {
-    const res = await db.ref(P.user(w.uid)).transaction(u => { if (!u) return u; u.balance = (u.balance || 0) + w.amount; return u; });
-    if (res.snapshot.val()) ADMIN.d.users[w.uid] = res.snapshot.val();
+    // refund the full amount taken from the user
+    await db.ref(P.user(w.uid)).transaction(u => {
+      if (!u) return u;
+      u.balance = (u.balance || 0) + (w.amount || 0);
+      return u;
+    });
   }
   const st = paid ? 'paid' : 'rejected';
   await db.ref(`pn/withdrawals/${k}/status`).set(st);
-  try { await db.ref(`${P.user(w.uid)}/withdrawals/${k}/status`).set(st); } catch (e) {}
-  w.status = st; adminLog(paid ? 'withdraw-paid' : 'withdraw-refund', k); toast(paid ? 'Marked as paid.' : `Rejected. ${fmt(w.amount)} JR refunded.`); hap('success');
+  try { await db.ref(`${P.user(w.uid)}/withdrawals/${k}/status`).set(st); } catch(_) {}
+  log(paid ? 'withdraw-paid' : 'withdraw-refund', k);
+  toast(paid ? '✅ Marked as paid' : `↩ Refunded ${fmt(w.amount)} JR`);
 }
-async function adminStop(k) {
-  if (!(await claimStatus(`${P.task(k)}/status`, 'live', 'stopping'))) return toastErr('This campaign is not live any more. Tap Refresh.');
-  const t = (await db.ref(P.task(k)).once('value')).val() || {}, refund = (t.remaining || 0) * (t.perUser || 0);
-  if (refund > 0) await db.ref(P.user(t.owner)).transaction(u => { if (!u) return u; u.balance = (u.balance || 0) + refund; return u; });
-  await db.ref(P.task(k)).update({ status: 'stopped', remaining: 0 });
-  if (ADMIN.d.tasks[k]) { ADMIN.d.tasks[k].status = 'stopped'; ADMIN.d.tasks[k].remaining = 0; }
-  adminLog('stop', k, { refund }); toast(`Stopped. ${fmt(refund)} JR refunded to the owner.`); hap('success');
+
+/* ============================================================
+   Tasks (campaigns + reviews)
+   ============================================================ */
+document.querySelectorAll('[data-task]').forEach(b => b.addEventListener('click', () => {
+  taskSub = b.dataset.task;
+  document.querySelectorAll('[data-task]').forEach(x => x.classList.toggle('active', x === b));
+  renderTasks();
+}));
+
+function renderTasks() {
+  const box = $('#tasksContainer');
+  if (taskSub === 'reviews') {
+    const rows = D.pending.slice(0, 100);
+    if (!rows.length) { box.innerHTML = '<div class="empty-state"><i class="fas fa-clipboard-check"></i>No pending reviews</div>'; return; }
+    box.innerHTML = rows.map(p => {
+      const msLeft = (p.createdAt || 0) + REVIEW_HOURS * 3600000 - Date.now();
+      const auto = msLeft > 0 ? `auto-approves in ${Math.ceil(msLeft/3600000)}h` : 'auto-approving now';
+      return `<div class="wd-card">
+        <div class="flex-between">
+          <div><strong>${esc(p.title || 'Task')}</strong><div class="text-muted">${esc(p.name || username(p.uid))}${p.tgUser ? ' (@' + esc(p.tgUser) + ')' : ''}</div></div>
+          <span class="status-pill ${pill(p.status)}">${esc(p.status || 'pending')}</span>
+        </div>
+        <div style="margin:8px 0;font-size:.9rem;">Submitted username: <b class="mono">${esc(p.submitted || '—')}</b></div>
+        <div class="text-muted">💰 ${fmt(p.perUser)} JR · ${auto} · ${when(p.createdAt)}</div>
+        ${p.status === 'pending' ? `<div class="chip-group">
+          <button class="btn-icon btn-success" data-task-act="rev-ok" data-owner="${esc(p._owner)}" data-key="${esc(p._key)}"><i class="fas fa-check"></i> Approve</button>
+          <button class="btn-icon btn-danger" data-task-act="rev-no" data-owner="${esc(p._owner)}" data-key="${esc(p._key)}"><i class="fas fa-times"></i> Reject</button>
+        </div>` : ''}
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  const rows = byNew(D.tasks).slice(0, 100);
+  if (!rows.length) { box.innerHTML = '<div class="empty-state"><i class="fas fa-tasks"></i>No campaigns</div>'; return; }
+  box.innerHTML = rows.map(([k,t]) => {
+    const c = CAT[t.type] || { label: t.type, icon: 'tasks' };
+    const done = (t.total || 0) - (t.remaining || 0);
+    const pct = t.total ? Math.round(done / t.total * 100) : 0;
+    return `<div class="wd-card">
+      <div class="flex-between">
+        <div><strong><i class="fas fa-${c.icon}"></i> ${esc(t.title)}</strong>
+          <div class="text-muted">${esc(c.label)} · ${fmt(t.perUser)} JR per user</div></div>
+        <span class="status-pill ${pill(t.status)}">${esc(t.status)}</span>
+      </div>
+      <div style="height:6px;background:#eee;border-radius:6px;overflow:hidden;margin:10px 0;"><i style="display:block;height:100%;width:${pct}%;background:#6a3df0;"></i></div>
+      <div class="text-muted">${fmt(done)} of ${fmt(t.total)} users · ${fmt((t.remaining||0) * (t.perUser||0))} JR left to pay</div>
+      <div class="text-muted">Owner: ${esc(t.ownerName || username(t.owner))} · <span class="mono">${esc(t.owner)}</span></div>
+      <div class="chip-group">
+        <button class="btn-icon" data-task-act="open" data-url="${esc(t.url)}"><i class="fas fa-external-link-alt"></i> Open link</button>
+        ${t.status === 'live' ? `<button class="btn-icon btn-danger" data-task-act="stop" data-k="${esc(k)}"><i class="fas fa-stop"></i> Stop & refund</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
 }
-function adminUser(uid) {
-  const u = ADMIN.d.users[uid]; if (!u) return;
-  const refs = Object.keys(u.referrals || {}).length;
-  openSheet(`<h2>${esc(u.name || 'User')}</h2><p class="lead">${u.username ? '@' + esc(u.username) + ', ' : ''}ID ${esc(uid)}${u.banned ? ', blocked' : ''}</p>
-    <div class="kv"><div><span class="mut">Balance</span><b>${fmt(u.balance)} JR</b></div><div><span class="mut">Total earned</span><b>${fmt(u.totalIncome)} JR</b></div><div><span class="mut">Tasks done</span><b>${fmt(u.tasksDone)}</b></div><div><span class="mut">Referrals</span><b>${refs}</b></div><div><span class="mut">Joined</span><b>${when(u.createdAt)}</b></div></div>
-    <div class="field"><input id="admAmt" class="input" inputmode="numeric" placeholder="Amount in JR"></div>
-    <div class="actions"><button class="btn btn-soft" id="admSub">Subtract</button><button class="btn btn-primary" id="admAdd">Add</button></div>
-    <div class="gap"></div><button class="btn ${u.banned ? 'btn-soft' : 'btn-line'} btn-block" id="admBan">${u.banned ? 'Unblock user' : 'Block user'}</button>`, b => {
-    const adj = async sign => {
-      const amt = parseInt($('#admAmt', b).value, 10) || 0; if (amt <= 0) return toastErr('Enter an amount in JR.');
-      const res = await db.ref(P.user(uid)).transaction(x => { if (!x) return x; x.balance = Math.max(0, (x.balance || 0) + sign * amt); return x; });
-      if (!res.snapshot.val()) return toastErr('User not found.');
-      ADMIN.d.users[uid] = res.snapshot.val(); adminLog('balance', uid, { delta: sign * amt }); toast(`Balance is now ${fmt(res.snapshot.val().balance)} JR.`); closeSheet(); renderAdmin();
-    };
-    $('#admAdd', b).onclick = () => adj(1); $('#admSub', b).onclick = () => adj(-1);
-    $('#admBan', b).onclick = async () => { await db.ref(P.user(uid) + '/banned').set(u.banned ? null : true); if (u.banned) delete u.banned; else u.banned = true; adminLog(u.banned ? 'block' : 'unblock', uid); toast(u.banned ? 'User blocked.' : 'User unblocked.'); closeSheet(); renderAdmin(); };
-  });
-}
-$('#adminWrap').addEventListener('click', async e => {
-  const b = e.target.closest('[data-adm]'); if (!b) return;
-  const a = b.dataset.adm, k = b.dataset.k;
-  if (a === 'close') { $('#adminWrap').hidden = true; return; }
-  if (a === 'refresh') return adminLoad();
-  if (a === 'tab') { ADMIN.tab = k; ADMIN.q = ''; return renderAdmin(); }
-  if (a === 'user') return adminUser(k);
+
+$('#tasksContainer').addEventListener('click', async e => {
+  const b = e.target.closest('[data-task-act]'); if (!b) return;
+  const a = b.dataset.taskAct;
+  if (a === 'open') return window.open(b.dataset.url, '_blank');
   b.disabled = true;
-  try {
-    if (a === 'dep-ok' || a === 'dep-no') await adminDeposit(k, a === 'dep-ok');
-    else if (a === 'wd-ok' || a === 'wd-no') await adminWithdraw(k, a === 'wd-ok');
-    else if (a === 'stop') await adminStop(k);
-    else if (a === 'flag-clear') { await db.ref('pn/flags/' + k).remove(); delete ADMIN.d.flags[k]; }
-    else if (a === 'flag-ban') { await db.ref(P.user(k) + '/banned').set(true); if (ADMIN.d.users[k]) ADMIN.d.users[k].banned = true; await db.ref('pn/flags/' + b.dataset.f).remove(); delete ADMIN.d.flags[b.dataset.f]; toast('User blocked.'); }
-  } catch (err) { console.error(err); toastErr('Something went wrong. Try again.'); }
-  renderAdmin();
-});
-document.addEventListener('click', e => {
-  if (!e.target.closest('#verTap')) return;
-  const now = Date.now(); S.taps = (S.taps || []).filter(t => now - t < 2500).concat(now);
-  if (S.taps.length >= 5) { S.taps = []; adminLogin(); }
+  if (a === 'stop')      await stopCampaign(b.dataset.k);
+  if (a === 'rev-ok')    await resolveReview(b.dataset.owner, b.dataset.key, true);
+  if (a === 'rev-no')    await resolveReview(b.dataset.owner, b.dataset.key, false);
+  await loadAll();
 });
 
-/* =====================================================================
-   Render + navigation
-   ===================================================================== */
-function render() {
-  if (!S.uid) return;
-  if (S.tab === 'home') renderHome();
-  else if (S.tab === 'earn') renderEarn();
-  else if (S.tab === 'tasks') renderTasks();
-  else if (S.tab === 'promote') {
-    if (S.promoTab === 'mine' || !$('#promoBody')) renderPromote();
-    else { const c = $('.seg .count'); if (c) c.textContent = myTasks().length; if (S.wiz.step === 3) updateWiz(); }
+async function stopCampaign(k) {
+  const t = D.tasks[k]; if (!t) return;
+  if (!confirm(`Stop "${t.title}" and refund ${fmt((t.remaining||0) * (t.perUser||0))} JR to the owner?`)) return;
+  if (!(await claimStatus(`${P.task(k)}/status`, 'live', 'stopping'))) return toast('This campaign is not live', true);
+  const refund = (t.remaining || 0) * (t.perUser || 0);
+  if (refund > 0) {
+    await db.ref(P.user(t.owner)).transaction(u => { if (!u) return u; u.balance = (u.balance || 0) + refund; return u; });
   }
-  else if (S.tab === 'profile') renderProfile();
-}
-function go(tab) {
-  S.tab = tab;
-  $$('.page').forEach(p => p.hidden = p.id !== 'p-' + tab);
-  $$('.nb').forEach(b => b.classList.toggle('on', b.dataset.go === tab));
-  const pg = $('#p-' + tab); pg.classList.remove('enter'); void pg.offsetWidth; pg.classList.add('enter');
-  if (tab === 'promote') { $('#p-promote').__h = null; renderPromote(); } else render();
-  window.scrollTo(0, 0); hap('tap');
+  await db.ref(P.task(k)).update({ status: 'stopped', remaining: 0 });
+  log('stop', k, { refund });
+  toast(`Stopped. ${fmt(refund)} JR refunded.`);
 }
 
-const ACT = {
-  watch: b => watchAd(b.dataset.key),
-  filter: b => { S.filter = b.dataset.k; renderTasks(); },
-  open: b => { const t = taskById(b.dataset.id); if (!t) return; S.ui[t.id] = Object.assign(S.ui[t.id] || {}, { opened: Date.now() }); openLink(t.url); },
-  verify: b => doVerify(b.dataset.id),
-  view: b => startView(b.dataset.id),
-  'cond-open': b => condOpen(b.dataset.id),
-  'cond-submit': b => condSubmit(b.dataset.id),
-  pending: b => openPendingSheet(b.dataset.id),
-  'promo-tab': b => { S.promoTab = b.dataset.k; renderPromote(); },
-  'wiz-cat': b => { S.wiz.type = b.dataset.k; S.wiz.url = ''; S.wiz.perUser = ''; renderWizard(); },
-  'wiz-next': () => wizNext(),
-  'add-admin': () => openLink(adminLink(S.adminType)),
-  recheck: () => wizNext(),
-  'wiz-back': () => { S.wiz.step--; renderWizard(); window.scrollTo(0, 0); },
-  'wiz-publish': () => publish()
-};
-document.addEventListener('click', e => {
-  const t = e.target;
-  let b;
-  if ((b = t.closest('[data-act]'))) return ACT[b.dataset.act] && ACT[b.dataset.act](b);
-  if ((b = t.closest('[data-go]'))) { if (!$('#sheetWrap').hidden) closeSheet(); return go(b.dataset.go); }
-  if ((b = t.closest('[data-sheet]'))) { hap('tap'); if (!$('#sheetWrap').hidden) { closeSheet(); return setTimeout(() => SHEETS[b.dataset.sheet](), 260); } return SHEETS[b.dataset.sheet](); }
-  if ((b = t.closest('[data-open]'))) return openLink(b.dataset.open);
-  if ((b = t.closest('[data-copy]'))) return copyText(b.dataset.copy);
-  if ((b = t.closest('[data-set]'))) {
-    store.set(b.dataset.set === 'theme' ? 'pn_theme' : 'pn_haptics', b.dataset.v);
-    $$(`[data-set="${b.dataset.set}"]`).forEach(x => x.classList.toggle('on', x === b)); applyTheme();
+async function resolveReview(owner, key, approve) {
+  const ref = db.ref(`pn/pending/${owner}/${key}`);
+  const tx = await ref.transaction(cur => {
+    if (cur === null) return cur;
+    if (cur.status !== 'pending') return;
+    cur.status = 'resolving';
+    return cur;
+  });
+  const v = tx.committed ? tx.snapshot.val() : null;
+  if (!v || v.status !== 'resolving') return toast('Already handled', true);
+
+  if (approve) {
+    await db.ref(P.user(v.uid)).transaction(u => {
+      if (!u) return u;
+      u.submitted = u.submitted || {};
+      u.done = u.done || {};
+      u.done[v.taskId] = true;
+      u.submitted[v.taskId] = 'approved';
+      u.balance = (u.balance || 0) + (v.perUser || 0);
+      u.totalIncome = (u.totalIncome || 0) + (v.perUser || 0);
+      u.tasksDone = (u.tasksDone || 0) + 1;
+      return u;
+    });
+    toast(`✅ Approved. ${fmt(v.perUser)} JR credited.`);
+  } else {
+    await db.ref(P.user(v.uid)).transaction(u => {
+      if (!u) return u;
+      u.submitted = u.submitted || {};
+      u.submitted[v.taskId] = 'rejected';
+      return u;
+    });
+    await db.ref(P.task(v.taskId) + '/remaining').transaction(r => (r || 0) + 1);
+    await db.ref(P.task(v.taskId) + '/status').set('live');
+    toast('Rejected. Slot returned.');
+  }
+  await ref.remove();
+  await db.ref('pn/pendingAll/' + key).remove();
+  log(approve ? 'review-ok' : 'review-no', key);
+}
+
+/* ============================================================
+   More (flags, factory reset, admin log)
+   ============================================================ */
+function renderFlags() {
+  const rows = byNew(D.flags);
+  const box = $('#flagsContainer');
+  if (!rows.length) { box.innerHTML = '<div class="empty-state" style="padding:20px;"><i class="fas fa-flag"></i>No flagged links</div>'; return; }
+  box.innerHTML = rows.map(([k,x]) => `<div class="wd-card" style="padding:14px;">
+    <div class="mono" style="word-break:break-all;font-size:.75rem;">${esc(x.url)}</div>
+    <div class="text-muted" style="margin-top:6px;">${esc(username(x.uid))} · ${when(x.createdAt)}</div>
+    <div class="chip-group">
+      <button class="btn-icon" data-flag-act="clear" data-k="${esc(k)}"><i class="fas fa-check"></i> Clear</button>
+      <button class="btn-icon btn-danger" data-flag-act="ban" data-k="${esc(k)}" data-uid="${esc(x.uid)}"><i class="fas fa-ban"></i> Block user</button>
+    </div>
+  </div>`).join('');
+}
+
+$('#moreSection').addEventListener('click', async e => {
+  const b = e.target.closest('[data-flag-act]'); if (!b) return;
+  if (b.dataset.flagAct === 'clear') {
+    await db.ref('pn/flags/' + b.dataset.k).remove();
+    toast('Flag cleared'); return loadAll();
+  }
+  if (b.dataset.flagAct === 'ban') {
+    if (!confirm('Block this user?')) return;
+    await db.ref(P.user(b.dataset.uid) + '/banned').set(true);
+    await db.ref('pn/flags/' + b.dataset.k).remove();
+    toast('User blocked'); return loadAll();
   }
 });
-document.addEventListener('input', e => {
-  const un = e.target.closest && e.target.closest('[data-uname]');
-  if (un) { const id = un.dataset.uname; S.ui[id] = Object.assign(S.ui[id] || {}, { uname: un.value }); return; }
-  const el = e.target.closest('[data-wiz]'); if (!el) return;
-  const w = S.wiz, k = el.dataset.wiz;
-  if (k === 'step') w.steps[+el.dataset.i] = el.value;
-  else if (k === 'perUser' || k === 'users') { el.value = el.value.replace(/\D/g, '').slice(0, 9); w[k] = el.value; }
-  else w[k] = el.value;
-  const bb = $('#blockBox'); if (bb) bb.hidden = true; S.adminType = null;
-  updateWiz();
+
+$('#fullResetBtn').addEventListener('click', async () => {
+  if (!confirm('⚠️ Reset ALL user data (balances, incomes, tasks done, submissions, ad counters)?')) return;
+  if (prompt("Type 'RESET ALL' to confirm:") !== 'RESET ALL') return toast('Cancelled', true);
+  const d = new Date().toLocaleDateString('en-CA');
+  const ids = Object.keys(D.users);
+  let i = 0;
+  for (const uid of ids) {
+    await db.ref(P.user(uid)).update({
+      balance: 0, totalIncome: 0, tasksDone: 0,
+      done: null, submitted: null, subAt: null,
+      spent: 0, deposited: 0,
+      today: { d, a: 0 }, adDay: d, adToday: null, adNext: null
+    });
+    if (++i % 10 === 0) toast(`Reset ${i}/${ids.length}…`);
+  }
+  toast('✅ Factory reset complete');
+  loadAll();
 });
 
-/* =====================================================================
+function log(a, k, extra) { try { db.ref('pn/adminLog').push().set(Object.assign({ a, k, createdAt: TS }, extra || {})); } catch(_) {} }
+
+/* ============================================================
+   Nav
+   ============================================================ */
+document.querySelectorAll('.nav-tab').forEach(tab => tab.addEventListener('click', () => {
+  const target = tab.dataset.tab;
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  const sec = document.getElementById(target + 'Section');
+  if (sec) sec.classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t === tab));
+  $('#adminScrollArea').scrollTop = 0;
+  if (target === 'users')   renderUsers();
+  if (target === 'finance') renderFinance();
+  if (target === 'tasks')   renderTasks();
+  if (target === 'stats')   renderStats();
+  if (target === 'more')    renderFlags();
+}));
+
+/* ============================================================
    Boot
-   ===================================================================== */
-async function ensureUser(tu) {
-  const ref = db.ref(P.user(S.uid)), snap = await ref.once('value');
-  const profile = { name: [tu.first_name, tu.last_name].filter(Boolean).join(' ') || tu.username || 'User', username: tu.username || '', photo: tu.photo_url || '' };
-  if (snap.exists()) return ref.update(profile);
-  const start = tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param;
-  let referredBy = null;
-  if (start && /^\d+$/.test(start) && start !== S.uid) { const r = await db.ref(P.user(start) + '/name').once('value'); if (r.exists()) referredBy = start; }
-  await ref.set(Object.assign({ balance: 0, totalIncome: 0, tasksDone: 0, createdAt: TS, referredBy }, profile));
-  if (referredBy) await db.ref(P.user(referredBy) + '/referrals/' + S.uid).set({ name: profile.name, bonus: 0 });
-}
-function hideSplash() { const s = $('#splash'); s.classList.add('leave'); setTimeout(() => { s.hidden = true; }, 420); }
-
-async function boot() {
-  $('#splashLogo').innerHTML = logoHTML(); $('#gateLogo').innerHTML = logoHTML();
-  const t0 = Date.now();
-  try { tg.ready(); tg.expand(); tg.disableVerticalSwipes && tg.disableVerticalSwipes(); } catch (e) {}
-  applyTheme();
-  const tu = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || (PREVIEW ? { id: 'preview', first_name: 'Preview', username: 'preview' } : null);
-  if (!tu) { $('#splash').hidden = true; $('#gate').hidden = false; return; }
-  S.uid = String(tu.id);
-  try { await ensureUser(tu); } catch (e) { console.error(e); }
-  let firstUser = true;
-  db.ref(P.user(S.uid)).on('value', s => { const u = s.val() || {}; if (u.banned) return blockAccount(); notifySubmissions(u); S.user = u; render(); if (firstUser) { firstUser = false; checkReferral(u); } });
-  db.ref('pn/pending/' + S.uid).on('value', s => { S.pending = s.val() || {}; if (S.tab === 'promote' && S.promoTab === 'mine') renderMine(); });
-  sweepPending(); setInterval(sweepPending, 60000);
-  db.ref(P.tasks).limitToLast(300).on('value', s => { S.tasks = s.val() || {}; render(); });
-  $('#app').hidden = false; $('#nav').hidden = false;
-  go('home');
-  if (location.hash === '#admin') adminLogin();
-  setTimeout(hideSplash, Math.max(0, 900 - (Date.now() - t0)));
-}
-boot();
-})();
-</script>
-<script type="text/plain" id="verify-worker-source">
-/**
- * PMER verifier (Cloudflare Worker), OPTIONAL
- * The app already checks Join and Reaction by itself when CONFIG.botToken is set. Use this Worker instead if you do not
- * want the bot token inside index.html (then keep botToken empty and set CONFIG.verifyUrl to the Worker URL).
- * Reactions are read from the same Firebase path (pn/reactions) that the app fills, so both ways work together.
- *
- * Setup
- * 1. Create a Worker, paste this file, and add these variables:
- *      BOT_TOKEN       token of your bot (the bot must be an admin of every channel that runs Join or Reaction campaigns)
- *      FIREBASE_DB     https://earn-for-earn-55d3e-default-rtdb.firebaseio.com
- *      FIREBASE_SECRET database secret (Firebase console > Project settings > Service accounts > Database secrets)
- *      WEBHOOK_SECRET  any random string
- * 2. Point Telegram at the worker so reactions are recorded:
- *      https://api.telegram.org/bot<TOKEN>/setWebhook?url=<WORKER_URL>/webhook&secret_token=<WEBHOOK_SECRET>&allowed_updates=["message_reaction"]
- * 3. Put <WORKER_URL> in CONFIG.verifyUrl inside index.html.
- */
-const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
-const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json', ...CORS } });
-const chatKey = c => String(c).replace(/^@/, '').toLowerCase();
-
-export default {
-  async fetch(req, env) {
-    const path = new URL(req.url).pathname;
-    if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
-    if (req.method === 'POST' && path === '/verify') return verify(req, env);
-    if (req.method === 'POST' && path === '/webhook') return webhook(req, env);
-    return new Response('ok');
-  }
-};
-
-async function verify(req, env) {
-  const { type, chat, msgId, initData } = await req.json().catch(() => ({}));
-  const user = await checkInitData(initData || '', env.BOT_TOKEN);
-  if (!user || !chat) return json({ ok: false, error: 'unauthorized' }, 401);
-
-  if (type === 'join') {
-    const r = await fetch(`https://api.telegram.org/bot${env.BOT_TOKEN}/getChatMember?chat_id=${encodeURIComponent(chat)}&user_id=${user.id}`);
-    const j = await r.json();
-    if (!j.ok) return json({ ok: false });
-    const m = j.result;
-    return json({ ok: ['member', 'administrator', 'creator'].includes(m.status) || (m.status === 'restricted' && m.is_member) });
-  }
-  if (type === 'reaction') {
-    const r = await fetch(`${env.FIREBASE_DB}/pn/reactions/${chatKey(chat)}_${msgId}/${user.id}.json?auth=${env.FIREBASE_SECRET}`);
-    return json({ ok: (await r.json()) === true });
-  }
-  return json({ ok: false, error: 'unsupported' }, 400);
-}
-
-// Telegram sends message_reaction updates here; we store "user X currently reacted to post Y".
-async function webhook(req, env) {
-  if (req.headers.get('X-Telegram-Bot-Api-Secret-Token') !== env.WEBHOOK_SECRET) return new Response('forbidden', { status: 403 });
-  const mr = (await req.json()).message_reaction;
-  if (mr && mr.user) {
-    const keys = [`${mr.chat.id}_${mr.message_id}`];
-    if (mr.chat.username) keys.push(`${mr.chat.username.toLowerCase()}_${mr.message_id}`);
-    const on = (mr.new_reaction || []).length > 0;
-    await Promise.all(keys.map(k => fetch(`${env.FIREBASE_DB}/pn/reactions/${k}/${mr.user.id}.json?auth=${env.FIREBASE_SECRET}`, { method: on ? 'PUT' : 'DELETE', body: on ? 'true' : undefined })));
-  }
-  return new Response('ok');
-}
-
-// Validates Telegram Mini App initData (HMAC) and returns the user, so nobody can verify as someone else.
-async function checkInitData(initData, token) {
-  const p = new URLSearchParams(initData), hash = p.get('hash');
-  if (!hash) return null;
-  p.delete('hash');
-  const enc = new TextEncoder();
-  const hmac = async (key, data) => new Uint8Array(await crypto.subtle.sign('HMAC', await crypto.subtle.importKey('raw', key, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']), enc.encode(data)));
-  const check = [...p.entries()].sort(([a], [b]) => (a < b ? -1 : 1)).map(([k, v]) => `${k}=${v}`).join('\n');
-  const sig = [...await hmac(await hmac(enc.encode('WebAppData'), token), check)].map(b => b.toString(16).padStart(2, '0')).join('');
-  if (sig !== hash || Date.now() / 1000 - Number(p.get('auth_date')) > 86400) return null;
-  try { return JSON.parse(p.get('user')); } catch (e) { return null; }
-}
+   ============================================================ */
+if (isLoggedIn()) showAdminUI(); else showLoginUI();
 </script>
 </body>
 </html>
