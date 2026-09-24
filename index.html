@@ -5,731 +5,1035 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>PMER Admin Panel</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,-apple-system,sans-serif}
-body{background:#f5f5f5;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:16px}
-.phone-frame{width:100%;max-width:420px;background:#fff;border-radius:48px;box-shadow:0 25px 45px -12px rgba(0,0,0,.25),0 0 0 8px #e8e8e8;overflow:hidden;position:relative;height:800px;display:flex;flex-direction:column}
-.scroll-area{flex:1;overflow-y:auto;padding-bottom:88px;scrollbar-width:thin}
-.login-container,.login-card{display:flex;align-items:center;justify-content:center;height:100%}
-.login-card{background:#fff;border-radius:48px;padding:40px 28px;text-align:center;box-shadow:0 20px 35px -10px rgba(0,0,0,.08);width:100%;margin:20px}
-.login-card i{font-size:3rem;color:#6a3df0;margin-bottom:16px}
-.login-card h2{font-weight:800;letter-spacing:-.5px;margin-bottom:20px;color:#000}
-.login-card input{width:100%;padding:16px 20px;border-radius:60px;border:1px solid #ddd;background:#fafafa;font-size:1rem;margin:16px 0;outline:none}
-.login-card input:focus{border-color:#6a3df0;box-shadow:0 0 0 3px rgba(106,61,240,.12)}
-.btn-primary{background:#6a3df0;color:#fff;border:none;padding:14px 20px;border-radius:60px;font-weight:700;width:100%;cursor:pointer;transition:.2s}
-.btn-primary:hover{background:#5a2cb8}
-.admin-header{background:#fff;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;position:sticky;top:0;z-index:10}
-.logo{font-weight:800;font-size:1.3rem;color:#000}
-.logo i{color:#6a3df0;margin-right:6px}
-.header-actions{display:flex;gap:6px}
-.exit-btn{background:#f0f0f0;border:none;padding:8px 16px;border-radius:40px;font-weight:600;cursor:pointer;color:#333}
-.exit-btn:active{transform:scale(.96)}
-.bottom-nav-admin{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);display:flex;justify-content:space-around;padding:10px 6px 22px;border-top:1px solid #eee;z-index:20}
-.nav-tab{background:transparent;border:none;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.62rem;padding:6px 8px;border-radius:40px;color:#888;font-weight:500;flex:1;cursor:pointer;transition:.2s;position:relative}
-.nav-tab i{font-size:1.25rem}
-.nav-tab.active{background:#f5f5f5;color:#6a3df0;font-weight:600}
-.nav-tab.active i{color:#6a3df0}
-.nav-badge{position:absolute;top:2px;right:14px;background:#ef4444;color:#fff;border-radius:40px;font-size:.6rem;padding:1px 6px;font-weight:700}
+:root{
+  --bg:#F5F4FB; --card:#fff; --ink:#16132F; --muted:#6C6989; --line:#E7E4F4;
+  --brand:#6A3DF0; --brand-soft:#EEE9FF; --gold:#FFC53D; --ok:#0F9F6E; --ok-soft:#E1F6EC;
+  --jade:#34C48A; --jade-soft:#E1F6EC; --jade-ink:#003D26;
+  --bad:#DC3B4B; --bad-soft:#FDE9EB; --warn:#D18100; --warn-soft:#FFF3D1;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:'Inter',system-ui,-apple-system,sans-serif}
+body{background:#f0f0f3;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:16px;color:var(--ink)}
+.phone-frame{width:100%;max-width:440px;background:var(--card);border-radius:40px;box-shadow:0 25px 45px -12px rgba(0,0,0,.25),0 0 0 8px #e8e8e8;overflow:hidden;position:relative;height:820px;max-height:calc(100vh - 32px);display:flex;flex-direction:column}
+.view{display:none;height:100%;width:100%}
+.view.active{display:flex}
+#loginView{align-items:center;justify-content:center}
+#adminPanelView{flex-direction:column;position:relative}
+.scroll-area{flex:1;overflow-y:auto;padding-bottom:90px;scrollbar-width:thin}
+.scroll-area::-webkit-scrollbar{width:5px}
+.scroll-area::-webkit-scrollbar-thumb{background:#ddd;border-radius:5px}
+
+/* login */
+.login-wrap{display:flex;align-items:center;justify-content:center;height:100%;padding:20px;width:100%}
+.login-card{background:#fff;border-radius:36px;padding:40px 28px;text-align:center;box-shadow:0 20px 35px -10px rgba(0,0,0,.08);width:100%;border:1px solid #f0f0f0}
+.login-card .crown{width:76px;height:76px;border-radius:24px;background:linear-gradient(135deg,#9B78FF,#4A22C2);display:grid;place-items:center;margin:0 auto 16px;box-shadow:0 12px 24px -10px rgba(106,61,240,.6)}
+.login-card .crown i{font-size:2rem;color:#fff}
+.login-card h2{font-weight:800;letter-spacing:-.5px;margin-bottom:6px;color:#000;font-size:1.4rem}
+.login-card p.sub{color:#999;font-size:.78rem;margin-bottom:22px}
+.login-card input{width:100%;padding:15px 22px;border-radius:60px;border:1px solid #ddd;background:#fafafa;font-size:1rem;margin:0 0 12px;outline:none;transition:.2s}
+.login-card input:focus{border-color:var(--brand);box-shadow:0 0 0 4px rgba(106,61,240,.12);background:#fff}
+.btn-primary{background:linear-gradient(135deg,#8a63ff,var(--brand));color:#fff;border:none;padding:15px 20px;border-radius:60px;font-weight:700;width:100%;cursor:pointer;transition:.2s;font-size:.95rem}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-primary:active{transform:scale(.98)}
+.btn-primary[disabled]{opacity:.5;cursor:not-allowed}
+.forgot-link{background:none;border:none;color:#bbb;font-size:.7rem;margin-top:14px;text-decoration:underline;cursor:pointer;padding:6px}
+.forgot-link:hover{color:var(--brand)}
+.status-line{font-size:.65rem;color:#bbb;margin-top:12px}
+
+/* header */
+.admin-header{background:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;position:sticky;top:0;z-index:10}
+.logo{font-weight:800;font-size:1.05rem;color:#000;display:flex;align-items:center;gap:8px}
+.logo .lg{width:32px;height:32px;border-radius:11px;background:linear-gradient(135deg,#9B78FF,#4A22C2);display:grid;place-items:center;color:#fff;font-size:.85rem;box-shadow:0 6px 14px -6px rgba(106,61,240,.6)}
+.exit-btn{background:#f0f0f0;border:none;padding:9px 16px;border-radius:40px;font-weight:600;cursor:pointer;color:#333;font-size:.8rem}
+.exit-btn:hover{background:#e5e5e5}
+.refresh-btn{background:transparent;border:none;color:#999;cursor:pointer;padding:6px 8px;font-size:1rem}
+.refresh-btn:hover{color:var(--brand);transform:rotate(180deg);transition:.4s}
+
+/* nav */
+.bottom-nav-admin{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.98);backdrop-filter:blur(12px);display:flex;justify-content:space-around;padding:8px 4px 18px;border-top:1px solid #eee;z-index:20;overflow-x:auto}
+.nav-tab{background:transparent;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.53rem;padding:6px 2px;border-radius:12px;color:#999;font-weight:600;flex:1;min-width:52px;cursor:pointer;transition:.15s;position:relative;white-space:nowrap}
+.nav-tab i{font-size:1.05rem}
+.nav-tab.active{background:var(--brand-soft);color:var(--brand)}
+.nav-tab .badge{position:absolute;top:2px;right:6px;background:var(--bad);color:#fff;font-size:.5rem;padding:1px 5px;border-radius:20px;font-weight:700;min-width:16px;text-align:center}
+
+/* sections */
 .admin-section{display:none;padding:20px;animation:fadeIn .25s ease}
 .admin-section.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px}
-.stat-card{background:#f8f8f8;border-radius:24px;padding:20px;border:1px solid #eee}
-.stat-number{font-size:1.7rem;font-weight:800;color:#000;margin-top:4px;word-break:break-all}
-.stat-card .label{color:#888;font-size:.78rem}
-.user-card,.wd-card{background:#fafafa;border-radius:24px;padding:18px;margin-bottom:14px;border:1px solid #eee;transition:.2s}
-.user-card:hover,.wd-card:hover{background:#f5f5f5}
+
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:22px}
+.stat-card{background:#fafafa;border-radius:22px;padding:16px;border:1px solid #eee}
+.stat-card .label{color:#888;font-size:.68rem;font-weight:600;display:flex;align-items:center;gap:6px}
+.stat-card .stat-number{font-size:1.35rem;font-weight:800;color:#000;margin-top:6px;letter-spacing:-.5px;word-break:break-all}
+.stat-card.brand{background:var(--brand-soft);border-color:#ddd4ff}
+.stat-card.brand .stat-number{color:var(--brand)}
+.stat-card.jade{background:var(--jade-soft);border-color:#c0f0d8}
+.stat-card.jade .stat-number{color:var(--jade-ink)}
+
+.user-card,.wd-card{background:#fafafa;border-radius:22px;padding:16px;margin-bottom:12px;border:1px solid #eee;transition:.2s}
+.user-card:hover,.wd-card:hover{background:#f6f6f6}
 .flex-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-.chip-group{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.btn-icon{background:#f0f0f0;border:none;padding:8px 14px;border-radius:40px;font-size:.7rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.15s;color:#333}
+.chip-group{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.btn-icon{background:#f0f0f0;border:none;padding:7px 12px;border-radius:40px;font-size:.68rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:.15s;color:#333;white-space:nowrap}
 .btn-icon:active{transform:scale(.95)}
-.btn-success{background:#10b981;color:#fff}
-.btn-danger{background:#ef4444;color:#fff}
-.btn-warning{background:#f59e0b;color:#000}
-.btn-dark{background:#1a1a1a;color:#fff}
-.btn-outline{background:transparent;border:1px solid #ddd}
-.status-pill{display:inline-block;padding:4px 12px;border-radius:40px;font-size:.65rem;font-weight:700;text-transform:capitalize}
-.pill-pending{background:#fef3c7;color:#92400e}
-.pill-approved{background:#d1fae5;color:#065f46}
-.pill-paid{background:#d1fae5;color:#065f46}
-.pill-rejected{background:#fee2e2;color:#991b1b}
-.pill-stopped{background:#e5e7eb;color:#374151}
-.pill-live{background:#dbeafe;color:#1e40af}
-.pill-completed{background:#ede9fe;color:#5b21b6}
-.search-bar{background:#fafafa;border-radius:60px;padding:10px 18px;display:flex;gap:12px;border:1px solid #eee;margin-bottom:20px}
+.btn-icon:hover{background:#e8e8e8}
+.btn-success{background:var(--ok);color:#fff}.btn-success:hover{background:#0c855b}
+.btn-danger{background:var(--bad);color:#fff}.btn-danger:hover{background:#b82f3e}
+.btn-warning{background:var(--warn);color:#fff}.btn-warning:hover{background:#a86b00}
+.btn-jade{background:var(--jade);color:#fff}.btn-jade:hover{background:#28a374}
+.btn-dark{background:#1a1a1a;color:#fff}.btn-dark:hover{background:#000}
+
+.status-pill{display:inline-block;padding:3px 10px;border-radius:40px;font-size:.58rem;font-weight:700;letter-spacing:.02em;text-transform:uppercase}
+.pill-pending{background:var(--warn-soft);color:var(--warn)}
+.pill-approved{background:var(--ok-soft);color:var(--ok)}
+.pill-rejected{background:var(--bad-soft);color:var(--bad)}
+.pill-live{background:var(--ok-soft);color:var(--ok)}
+.pill-completed{background:#eee;color:#777}
+.pill-paused{background:var(--warn-soft);color:var(--warn)}
+
+.search-bar{background:#fafafa;border-radius:60px;padding:12px 20px;display:flex;gap:12px;border:1px solid #eee;margin-bottom:18px;align-items:center}
 .search-bar input{flex:1;border:none;outline:none;background:transparent;color:#000;font-size:.9rem}
-.empty-state{text-align:center;padding:48px 20px;color:#aaa;font-size:.85rem}
-.empty-state i{font-size:1.6rem;display:block;margin-bottom:10px}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1000;visibility:hidden;opacity:0;transition:.2s}
+.empty-state{text-align:center;padding:48px 20px;color:#aaa}
+.empty-state i{font-size:2rem;margin-bottom:10px;display:block;opacity:.5}
+.empty-state b{display:block;color:#666;margin-bottom:4px;font-size:.9rem}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1000;visibility:hidden;opacity:0;transition:.2s;padding:16px}
 .modal-overlay.active{visibility:visible;opacity:1}
-.modal-box{background:#fff;border-radius:40px;padding:28px;width:92%;max-width:360px;max-height:80vh;overflow-y:auto}
-.profile-detail-item{padding:12px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:.88rem}
-.profile-detail-item:last-child{border-bottom:none}
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:12px 24px;border-radius:60px;font-weight:500;z-index:2000;display:none;font-size:.85rem;box-shadow:0 8px 30px rgba(0,0,0,.2);max-width:90%}
-.subtabs{display:flex;gap:8px;margin-bottom:18px}
-.subtab{flex:1;padding:11px;border-radius:60px;border:1px solid #eee;background:#fafafa;font-weight:600;font-size:.8rem;cursor:pointer;color:#666;transition:.2s;position:relative}
-.subtab.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
-.subtab .sub-badge{background:#ef4444;color:#fff;border-radius:40px;font-size:.6rem;padding:1px 6px;margin-left:4px}
-.danger-zone{border-left:4px solid #ef4444;background:#fef2f2}
-.danger-zone h3{color:#dc2626}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;word-break:break-all;color:#555}
-.hint{font-size:.75rem;color:#888;margin-top:6px;line-height:1.5}
-.kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #eee;font-size:.85rem}
-.kv:last-child{border:none}
-@media (max-width:400px){.stat-number{font-size:1.35rem}.btn-icon{font-size:.65rem;padding:6px 12px}.nav-tab span{font-size:.58rem}}
+.modal-box{background:#fff;border-radius:28px;padding:24px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto}
+.modal-box h3{margin-bottom:16px;font-size:1.05rem;display:flex;align-items:center;gap:10px}
+.profile-item{padding:10px 0;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:.83rem}
+.profile-item:last-child{border-bottom:none}
+.profile-item span:first-child{color:#888}
+.profile-item strong,.profile-item span:last-child{font-weight:700;text-align:right;max-width:60%;word-break:break-word}
+.profile-section{margin-top:14px;padding-top:12px;border-top:1px solid #eee}
+.profile-section-title{font-size:.72rem;font-weight:700;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a1a;color:#fff;padding:13px 24px;border-radius:60px;font-weight:600;z-index:2000;opacity:0;pointer-events:none;font-size:.82rem;box-shadow:0 12px 30px rgba(0,0,0,.25);transition:.25s;max-width:88%;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--bad)}
+.toast.ok{background:var(--ok)}
+
+.text-muted{color:#999;font-size:.7rem}
+.code-block{background:#f0f0f0;padding:3px 8px;border-radius:8px;font-family:ui-monospace,monospace;font-size:.7rem;color:#666;word-break:break-all;max-width:100%;display:inline-block}
+.danger-zone{border-left:4px solid var(--bad);background:#fef2f2}
+.danger-zone h3{color:var(--bad);font-size:.9rem;margin-bottom:8px}
+.danger-zone p{color:#666;font-size:.78rem;line-height:1.5;margin-bottom:12px}
+.danger-zone input{width:100%;padding:12px 18px;border-radius:60px;border:1px solid #fca5a5;background:#fff;margin-bottom:10px;outline:none;font-size:.85rem}
+.wd-detail{font-size:.74rem;color:#666;margin:3px 0;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.amount-line{font-size:1rem;font-weight:800;color:#000;margin:8px 0 4px}
+.amount-line small{font-weight:600;color:#999;font-size:.7rem}
+.jr-tag{color:var(--brand);font-weight:800}
+.rj-tag{color:var(--jade-ink);font-weight:800}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:#f0f0f0;border-radius:14px;padding:4px;margin-bottom:16px}
+.seg button{border:0;background:transparent;border-radius:11px;padding:9px;font-weight:700;font-size:.75rem;color:#888;cursor:pointer;transition:.2s}
+.seg button.on{background:#fff;color:#000;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.progress-bar{height:6px;border-radius:6px;background:#e8e8e8;overflow:hidden;margin:10px 0}
+.progress-bar i{display:block;height:100%;background:var(--brand);border-radius:6px;transition:width .4s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.shake{animation:shake .35s}
+@media (max-width:400px){.stat-card .stat-number{font-size:1.1rem}.btn-icon{font-size:.62rem;padding:6px 10px}.nav-tab{font-size:.48rem;min-width:46px}.nav-tab i{font-size:.95rem}}
 </style>
 </head>
 <body>
 <div class="phone-frame">
 
   <!-- LOGIN -->
-  <div id="loginView" style="height:100%;display:flex;align-items:center;justify-content:center;">
-    <div class="login-container">
+  <div id="loginView" class="view active">
+    <div class="login-wrap">
       <div class="login-card">
-        <i class="fas fa-crown"></i>
+        <div class="crown"><i class="fas fa-crown"></i></div>
         <h2>PMER Admin</h2>
-        <input type="password" id="adminPassword" placeholder="Enter admin password" autocomplete="current-password">
-        <button id="loginBtn" class="btn-primary"><i class="fas fa-key"></i> Unlock Panel</button>
-        <p style="margin-top:14px;color:#aaa;font-size:.72rem;">Default password: <strong>Admin2025</strong></p>
+        <p class="sub">Enter the master password to manage the app</p>
+        <input type="password" id="adminPassword" placeholder="Master password" autocomplete="current-password">
+        <button id="loginBtn" class="btn-primary" type="button"><i class="fas fa-key"></i> Unlock Panel</button>
+        <button id="forgotPassBtn" class="forgot-link" type="button">Forgot password?</button>
+        <p class="status-line" id="statusLine">Default: Admin2025</p>
       </div>
     </div>
   </div>
 
   <!-- PANEL -->
-  <div id="adminPanelView" style="display:none;flex-direction:column;height:100%;position:relative;">
+  <div id="adminPanelView" class="view">
     <div class="admin-header">
-      <div class="logo"><i class="fas fa-crown"></i> PMER Admin</div>
-      <div class="header-actions">
-        <button id="refreshBtn" class="exit-btn" aria-label="Refresh"><i class="fas fa-sync-alt"></i></button>
-        <button id="logoutBtn" class="exit-btn"><i class="fas fa-sign-out-alt"></i> Exit</button>
+      <div class="logo"><span class="lg"><i class="fas fa-crown"></i></span> PMER Admin</div>
+      <div style="display:flex;gap:4px;align-items:center">
+        <button class="refresh-btn" id="refreshBtn" title="Refresh" type="button"><i class="fas fa-sync-alt"></i></button>
+        <button id="logoutBtn" class="exit-btn" type="button"><i class="fas fa-sign-out-alt"></i> Exit</button>
       </div>
     </div>
 
     <div class="scroll-area" id="adminScrollArea">
-      <!-- STATS -->
-      <div id="statsSection" class="admin-section active">
+      <div id="dashboardSection" class="admin-section active">
         <div class="stats-grid" id="dashboardStats"></div>
         <div class="user-card" id="extraInsights"></div>
       </div>
 
-      <!-- USERS -->
       <div id="usersSection" class="admin-section">
-        <div class="search-bar"><i class="fas fa-search" style="color:#aaa;"></i><input type="text" id="userSearchInput" placeholder="Search name, @username or ID"></div>
-        <div id="usersListContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i>Loading users…</div></div>
-      </div>
-
-      <!-- FINANCE -->
-      <div id="financeSection" class="admin-section">
-        <div class="subtabs">
-          <button class="subtab active" data-fin="deposits">Deposits<span class="sub-badge" id="depBadge" hidden></span></button>
-          <button class="subtab" data-fin="withdrawals">Withdrawals<span class="sub-badge" id="wdBadge" hidden></span></button>
+        <div class="search-bar"><i class="fas fa-search" style="color:#aaa"></i>
+          <input type="text" id="userSearchInput" placeholder="Search by name, username or ID">
         </div>
-        <div id="financeContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i>Loading…</div></div>
+        <div id="usersListContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i><b>Loading users…</b></div></div>
       </div>
 
-      <!-- TASKS -->
+      <div id="withdrawalsSection" class="admin-section">
+        <div class="seg" id="wdSeg">
+          <button class="on" data-wdf="pending" type="button">Pending</button>
+          <button data-wdf="all" type="button">All</button>
+        </div>
+        <div id="withdrawalsContainer"></div>
+      </div>
+
+      <div id="depositsSection" class="admin-section">
+        <div class="seg" id="depSeg">
+          <button class="on" data-depf="pending" type="button">Pending</button>
+          <button data-depf="all" type="button">All</button>
+        </div>
+        <div id="depositsContainer"></div>
+      </div>
+
       <div id="tasksSection" class="admin-section">
-        <div class="subtabs">
-          <button class="subtab active" data-task="reviews">Reviews<span class="sub-badge" id="revBadge" hidden></span></button>
-          <button class="subtab" data-task="campaigns">Campaigns</button>
+        <div class="seg" id="taskSeg">
+          <button class="on" data-tf="live" type="button">Live</button>
+          <button data-tf="all" type="button">All</button>
         </div>
-        <div id="tasksContainer"><div class="empty-state"><i class="fas fa-spinner fa-pulse"></i>Loading…</div></div>
+        <div id="tasksContainer"></div>
       </div>
 
-      <!-- MORE -->
-      <div id="moreSection" class="admin-section">
+      <div id="reviewsSection" class="admin-section">
+        <div id="reviewsContainer"></div>
+      </div>
+
+      <div id="joinsSection" class="admin-section">
+        <p class="text-muted" style="margin-bottom:14px">Users who joined and are being watched. If they leave before the 5-day window, you can claw back their reward manually.</p>
+        <div id="joinsContainer"></div>
+      </div>
+
+      <div id="dangerSection" class="admin-section">
         <div class="user-card danger-zone">
-          <h3><i class="fas fa-radiation"></i> Danger Zone — Factory Reset</h3>
-          <p style="margin:10px 0;color:#666;font-size:.85rem;">Resets EVERY user: balance → 0, total income → 0, tasks done → 0, completed tasks, submissions and ad counters cleared. Names, referrals and campaigns are kept.</p>
-          <button id="fullResetBtn" class="btn-primary" style="background:#ef4444;width:100%;padding:14px;margin-top:8px;"><i class="fas fa-trash-alt"></i> Reset all user data (irreversible)</button>
+          <h3><i class="fas fa-radiation"></i> Factory Reset</h3>
+          <p>Reset EVERY user: JR → 0, RJ → 0, stats → 0, submissions and referrals cleared. Pending withdrawals and deposits get cancelled.</p>
+          <input type="text" id="resetConfirmInput" placeholder="Type RESET ALL to confirm">
+          <button id="fullResetBtn" class="btn-primary" style="background:var(--bad)" type="button"><i class="fas fa-trash-alt"></i> RESET ALL USER DATA</button>
         </div>
 
-        <div class="user-card" style="margin-top:20px;">
-          <h4><i class="fas fa-flag"></i> Flagged links</h4>
-          <div id="flagsContainer" style="margin-top:12px;"></div>
+        <div class="user-card" style="margin-top:14px">
+          <h3 style="font-size:.9rem;margin-bottom:10px"><i class="fas fa-flag" style="color:var(--bad)"></i> Flags & Join Watch</h3>
+          <button id="clearFlagsBtn" class="btn-icon btn-warning" style="width:100%;justify-content:center;padding:11px;margin-bottom:8px" type="button"><i class="fas fa-broom"></i> Clear all flags</button>
+          <button id="clearWatchBtn" class="btn-icon btn-danger" style="width:100%;justify-content:center;padding:11px" type="button"><i class="fas fa-eye-slash"></i> Clear join watch list</button>
         </div>
 
-        <div class="user-card" style="margin-top:20px;">
-          <h4><i class="fas fa-lock"></i> Admin password</h4>
-          <p class="hint">The password is set at the top of this file in the <code>ADMIN_PASSWORD</code> constant. Change it there to pick a new one.</p>
-          <div class="hint" style="margin-top:8px;">Current password: <b>Admin2025</b></div>
+        <div class="user-card" style="margin-top:14px">
+          <h3 style="font-size:.9rem;margin-bottom:10px"><i class="fas fa-lock" style="color:var(--brand)"></i> Admin Password</h3>
+          <input type="password" id="newAdminPassword" placeholder="New admin password" style="width:100%;padding:13px 20px;border-radius:60px;margin-bottom:10px;border:1px solid #ddd;outline:none;font-size:.88rem">
+          <button id="changePasswordBtn" class="btn-primary" style="background:#1a1a1a" type="button"><i class="fas fa-key"></i> Update Password</button>
         </div>
+
+        <p class="text-muted" style="text-align:center;margin-top:18px">PMER Admin 2.0 · pn/ database</p>
       </div>
     </div>
 
     <div class="bottom-nav-admin">
-      <button class="nav-tab active" data-tab="stats"><i class="fas fa-chart-pie"></i><span>Stats</span></button>
-      <button class="nav-tab" data-tab="users"><i class="fas fa-users"></i><span>Users</span></button>
-      <button class="nav-tab" data-tab="finance"><i class="fas fa-hand-holding-usd"></i><span>Finance</span></button>
-      <button class="nav-tab" data-tab="tasks"><i class="fas fa-tasks"></i><span>Tasks</span></button>
-      <button class="nav-tab" data-tab="more"><i class="fas fa-sliders-h"></i><span>More</span></button>
+      <button class="nav-tab active" data-tab="dashboard" type="button"><i class="fas fa-chart-pie"></i><span>Stats</span></button>
+      <button class="nav-tab" data-tab="users" type="button"><i class="fas fa-users"></i><span>Users</span></button>
+      <button class="nav-tab" data-tab="withdrawals" type="button"><i class="fas fa-hand-holding-usd"></i><span>Payouts</span><span class="badge" id="wdBadge" style="display:none"></span></button>
+      <button class="nav-tab" data-tab="deposits" type="button"><i class="fas fa-wallet"></i><span>Deposits</span><span class="badge" id="depBadge" style="display:none"></span></button>
+      <button class="nav-tab" data-tab="tasks" type="button"><i class="fas fa-bullhorn"></i><span>Ads</span></button>
+      <button class="nav-tab" data-tab="reviews" type="button"><i class="fas fa-clipboard-check"></i><span>Reviews</span><span class="badge" id="revBadge" style="display:none"></span></button>
+      <button class="nav-tab" data-tab="joins" type="button"><i class="fas fa-user-shield"></i><span>Joins</span></button>
+      <button class="nav-tab" data-tab="danger" type="button"><i class="fas fa-sliders-h"></i><span>Settings</span></button>
     </div>
   </div>
 </div>
 
 <div id="userProfileModal" class="modal-overlay">
   <div class="modal-box">
-    <h3 style="margin-bottom:16px;"><i class="fas fa-id-card"></i> User profile</h3>
+    <h3><i class="fas fa-id-card" style="color:var(--brand)"></i> User Profile</h3>
     <div id="profileDetailContent"></div>
-    <button id="closeProfileModal" class="btn-icon" style="width:100%;margin-top:20px;background:#000;color:#fff;justify-content:center;">Close</button>
+    <button id="closeProfileModal" class="btn-primary" style="margin-top:18px;background:#000" type="button">Close</button>
   </div>
 </div>
+
 <div id="toastMsg" class="toast"></div>
 
 <script>
 'use strict';
 
-/* ============================================================
-   CONFIG — must match index.html
-   ============================================================ */
-const ADMIN_PASSWORD = 'Admin2025';  // change this to change the admin password
-const JR_PER_USD     = 3000000;      // 300,000 JR = $0.10
-const REVIEW_HOURS   = 24;
-const WITHDRAW_FEE   = 10;
+/* ===== SAFE STORAGE ===== */
+const _memL = {}, _memS = {};
+const lsGet = k => { try { return localStorage.getItem(k); } catch(e){ return _memL[k] ?? null; } };
+const lsSet = (k,v) => { _memL[k]=v; try{ localStorage.setItem(k,v); }catch(e){} };
+const ssGet = k => { try { return sessionStorage.getItem(k); } catch(e){ return _memS[k] ?? null; } };
+const ssSet = (k,v) => { _memS[k]=v; try{ sessionStorage.setItem(k,v); }catch(e){} };
+const ssDel = k => { delete _memS[k]; try{ sessionStorage.removeItem(k); }catch(e){} };
 
-firebase.initializeApp({
-  apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM",
-  authDomain: "earn-for-earn-55d3e.firebaseapp.com",
-  databaseURL: "https://earn-for-earn-55d3e-default-rtdb.firebaseio.com",
-  projectId: "earn-for-earn-55d3e",
-  storageBucket: "earn-for-earn-55d3e.firebasestorage.app",
-  messagingSenderId: "109416949734",
-  appId: "1:109416949734:web:53f52de7899d65a04c9827"
-});
-const db  = firebase.database();
-const TS  = firebase.database.ServerValue.TIMESTAMP;
-const P   = { user: id => `pn/users/${id}`, task: id => `pn/tasks/${id}` };
-const CAT = {
-  join:       { label: 'Join',            icon: 'user-plus' },
-  reaction:   { label: 'Reaction',        icon: 'heart' },
-  view:       { label: 'View',            icon: 'eye' },
-  conditions: { label: 'With conditions', icon: 'shield-alt' }
-};
+/* ===== CONSTANTS ===== */
+const JRPUSD = 10000;         // 10000 JR = $1 (from CONFIG.usdRate)
+const WD_FEE = 3;             // % (from CONFIG.withdraw.feePct)
+const ADMIN_PASS_KEY = 'pmer_admin_pass';
+const DEFAULT_PASS = 'Admin2025';
+const LOGIN_KEY = 'pmer_admin_logged';
+const SWAP_IN = 1000, SWAP_OUT = 50000;
 
-/* ============================================================
-   State
-   ============================================================ */
-const D = { users:{}, tasks:{}, deposits:{}, withdrawals:{}, pending:[], flags:{}, adminLog:{} };
-let financeSub = 'deposits';
-let taskSub    = 'reviews';
-let withdrawFilter = 'pending';
+/* ===== FIREBASE ===== */
+let db = null, TS = Date.now(), firebaseOk = false;
+try {
+  firebase.initializeApp({
+    apiKey: "AIzaSyAmTdb5ejQtgYxmkfLc575HcBN8pMhrBPM",
+    authDomain: "earn-for-earn-55d3e.firebaseapp.com",
+    databaseURL: "https://earn-for-earn-55d3e-default-rtdb.firebaseio.com",
+    projectId: "earn-for-earn-55d3e",
+    storageBucket: "earn-for-earn-55d3e.firebasestorage.app",
+    messagingSenderId: "109416949734",
+    appId: "1:109416949734:web:53f52de7899d65a04c9827"
+  });
+  db = firebase.database();
+  TS = firebase.database.ServerValue.TIMESTAMP;
+  firebaseOk = true;
+  console.log('[PMER Admin] Firebase ready ✓');
+} catch(e) { console.error('[PMER Admin] Firebase init failed:', e); }
 
-/* ============================================================
-   Helpers
-   ============================================================ */
+/* ===== STATE ===== */
+let allUsers = [], allWithdrawals = [], allDeposits = [], allTasks = [], allReviews = [], allJoins = [], flags = [];
+let wdFilter = 'pending', depFilter = 'pending', taskFilter = 'live';
+
+/* ===== UTILS ===== */
 const $  = s => document.querySelector(s);
-const fmt  = n => Number(n||0).toLocaleString('en-US');
-const jrToUsd = jr => (Number(jr||0) / JR_PER_USD).toFixed(2);
-const when = ts => ts ? new Date(ts).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }) : '';
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const pill = st => ({ pending:'pill-pending', approved:'pill-approved', paid:'pill-paid', rejected:'pill-rejected',
-                       live:'pill-live', completed:'pill-completed', stopped:'pill-stopped' }[st] || 'pill-rejected');
-const byNew = obj => Object.entries(obj).sort((a,b) => (b[1].createdAt||0) - (a[1].createdAt||0));
-const username = uid => (D.users[uid] || {}).name || uid;
+const $$ = s => [...document.querySelectorAll(s)];
+const fmt = n => Number(n || 0).toLocaleString('en-US');
+const usd = jr => '$' + (Number(jr || 0) / JRPUSD).toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const tsToDate = t => t ? new Date(t).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : 'N/A';
+const tsToTime = t => t ? new Date(t).toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : 'N/A';
+const jrBal = u => (u && u.balance) || 0;
+const rjBal = u => ((u && u.rjBalance) || 0) - ((u && u.debtTotal) || 0);
 
-function toast(msg, err=false) {
-  const t = $('#toastMsg');
+function showToast(msg, kind = '') {
+  const t = document.getElementById('toastMsg'); if (!t) return;
   t.textContent = msg;
-  t.style.background = err ? '#dc2626' : '#1a1a1a';
-  t.style.display = 'block';
-  clearTimeout(toast._t);
-  toast._t = setTimeout(() => t.style.display = 'none', 3000);
+  t.className = 'toast' + (kind ? ' ' + kind : '');
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-/* ============================================================
-   Login
-   ============================================================ */
-const isLoggedIn = () => sessionStorage.getItem('pmer_admin_logged') === 'true';
-const setLogin   = v  => v ? sessionStorage.setItem('pmer_admin_logged','true')
-                           : sessionStorage.removeItem('pmer_admin_logged');
-function showLoginUI() { $('#loginView').style.display = 'flex'; $('#adminPanelView').style.display = 'none'; }
-function showAdminUI()  { $('#loginView').style.display = 'none'; $('#adminPanelView').style.display = 'flex'; loadAll(); }
+/* ===== AUTH ===== */
+function getAdminPass() {
+  let v = lsGet(ADMIN_PASS_KEY);
+  if (!v) { v = DEFAULT_PASS; lsSet(ADMIN_PASS_KEY, v); }
+  return v;
+}
+const isLoggedIn = () => ssGet(LOGIN_KEY) === 'true';
+const setLogin = v => v ? ssSet(LOGIN_KEY, 'true') : ssDel(LOGIN_KEY);
 
-$('#loginBtn').addEventListener('click', () => {
-  const pw = $('#adminPassword').value;
-  if (!pw) return toast('Enter the password', true);
-  if (pw !== ADMIN_PASSWORD) return toast('Invalid password', true);
-  $('#adminPassword').value = '';
-  setLogin(true);
-  showAdminUI();
-});
-$('#adminPassword').addEventListener('keydown', e => { if (e.key === 'Enter') $('#loginBtn').click(); });
-$('#logoutBtn').addEventListener('click', () => { setLogin(false); showLoginUI(); });
-$('#refreshBtn').addEventListener('click', () => loadAll(true));
+function showLoginUI() {
+  document.getElementById('loginView').classList.add('active');
+  document.getElementById('adminPanelView').classList.remove('active');
+}
+function showAdminUI() {
+  document.getElementById('loginView').classList.remove('active');
+  document.getElementById('adminPanelView').classList.add('active');
+  console.log('[PMER Admin] Panel opened');
+  try { loadAllData(); } catch(e) { console.error('loadAllData:', e); }
+  try { attachRealtime(); } catch(e) { console.error('attachRealtime:', e); }
+}
 
-/* ============================================================
-   Load
-   ============================================================ */
-async function loadAll(announce=false) {
-  if (announce) toast('🔄 Syncing…');
+function handleLogin() {
+  console.log('[PMER Admin] Login clicked');
   try {
-    const [u,t,d,w,pa,f,al] = await Promise.all([
+    const inp = document.getElementById('adminPassword');
+    if (!inp) return showToast('Password field missing', 'err');
+    const pwd = (inp.value || '').trim();
+    if (!pwd) { showToast('Please enter the password', 'err'); inp.focus(); return; }
+    const stored = getAdminPass();
+    console.log('[PMER Admin] comparing');
+    if (pwd === stored) {
+      setLogin(true);
+      showAdminUI();
+      showToast('✅ Unlocked', 'ok');
+    } else {
+      showToast('❌ Wrong password. Default: Admin2025', 'err');
+      inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
+      inp.value = ''; inp.focus();
+    }
+  } catch(err) {
+    console.error('[PMER Admin] Login error:', err);
+    showToast('Login error: ' + err.message, 'err');
+  }
+}
+
+/* ===== BOOT — attach login FIRST ===== */
+(function bootstrap() {
+  const sl = document.getElementById('statusLine');
+  if (sl) sl.textContent = firebaseOk ? 'Default: Admin2025' : '⚠️ Firebase unavailable';
+  const btn = document.getElementById('loginBtn');
+  const inp = document.getElementById('adminPassword');
+  const forgot = document.getElementById('forgotPassBtn');
+  if (btn) btn.addEventListener('click', handleLogin);
+  if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); handleLogin(); } });
+  if (forgot) forgot.addEventListener('click', () => {
+    if (confirm('Reset admin password to "Admin2025"?')) {
+      lsSet(ADMIN_PASS_KEY, DEFAULT_PASS);
+      showToast('✅ Password reset to Admin2025', 'ok');
+      if (inp) inp.focus();
+    }
+  });
+  console.log('[PMER Admin] Login handlers attached ✓');
+  try { attachAllHandlers(); } catch(e) { console.error('handlers:', e); }
+  if (isLoggedIn()) showAdminUI(); else showLoginUI();
+})();
+
+function attachAllHandlers() {
+  document.getElementById('logoutBtn')?.addEventListener('click', () => { setLogin(false); location.reload(); });
+  document.getElementById('refreshBtn')?.addEventListener('click', () => loadAllData());
+  document.getElementById('userSearchInput')?.addEventListener('input', renderUsersList);
+  document.getElementById('closeProfileModal')?.addEventListener('click', () => document.getElementById('userProfileModal').classList.remove('active'));
+  document.getElementById('userProfileModal')?.addEventListener('click', e => { if (e.target.id === 'userProfileModal') e.target.classList.remove('active'); });
+
+  document.getElementById('wdSeg')?.addEventListener('click', e => {
+    const b = e.target.closest('button[data-wdf]'); if (!b) return;
+    wdFilter = b.dataset.wdf;
+    $$('#wdSeg button').forEach(x => x.classList.toggle('on', x === b));
+    renderWithdrawalsList();
+  });
+  document.getElementById('depSeg')?.addEventListener('click', e => {
+    const b = e.target.closest('button[data-depf]'); if (!b) return;
+    depFilter = b.dataset.depf;
+    $$('#depSeg button').forEach(x => x.classList.toggle('on', x === b));
+    renderDepositsList();
+  });
+  document.getElementById('taskSeg')?.addEventListener('click', e => {
+    const b = e.target.closest('button[data-tf]'); if (!b) return;
+    taskFilter = b.dataset.tf;
+    $$('#taskSeg button').forEach(x => x.classList.toggle('on', x === b));
+    renderTasksList();
+  });
+
+  document.getElementById('fullResetBtn')?.addEventListener('click', handleFullReset);
+  document.getElementById('clearFlagsBtn')?.addEventListener('click', async () => {
+    if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+    if (!confirm('Clear all flagged content reports?')) return;
+    await db.ref('pn/flags').remove();
+    flags = []; showToast('Flags cleared', 'ok'); renderDashboard();
+  });
+  document.getElementById('clearWatchBtn')?.addEventListener('click', async () => {
+    if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+    if (!confirm('Clear join watch list? Users will no longer be tracked for leaving.')) return;
+    await db.ref('pn/joinWatch').remove();
+    allJoins = []; showToast('Join watch cleared', 'ok'); renderJoinsList();
+  });
+  document.getElementById('changePasswordBtn')?.addEventListener('click', () => {
+    const np = document.getElementById('newAdminPassword').value;
+    if (np.length < 4) return showToast('Min 4 characters', 'err');
+    lsSet(ADMIN_PASS_KEY, np);
+    document.getElementById('newAdminPassword').value = '';
+    showToast('✅ Password updated', 'ok');
+  });
+
+  $$('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      $$('.admin-section').forEach(s => s.classList.remove('active'));
+      const sec = document.getElementById(target + 'Section');
+      if (sec) sec.classList.add('active');
+      $$('.nav-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      if (target === 'dashboard') renderDashboard();
+      if (target === 'users') renderUsersList();
+      if (target === 'withdrawals') renderWithdrawalsList();
+      if (target === 'deposits') renderDepositsList();
+      if (target === 'tasks') renderTasksList();
+      if (target === 'reviews') renderReviewsList();
+      if (target === 'joins') renderJoinsList();
+    });
+  });
+  console.log('[PMER Admin] All handlers attached ✓');
+}
+
+/* ===== LOAD DATA ===== */
+async function loadAllData() {
+  if (!firebaseOk) { showToast('⚠️ Firebase unavailable', 'err'); return; }
+  showToast('🔄 Syncing…');
+  try {
+    const [uS, tS, wS, dS, fS, jS] = await Promise.all([
       db.ref('pn/users').once('value'),
       db.ref('pn/tasks').once('value'),
-      db.ref('pn/deposits').once('value'),
       db.ref('pn/withdrawals').once('value'),
-      db.ref('pn/pending').once('value'),
+      db.ref('pn/deposits').once('value'),
       db.ref('pn/flags').once('value'),
-      db.ref('pn/adminLog').limitToLast(100).once('value')
+      db.ref('pn/joinWatch').once('value')
     ]);
-    D.users       = u.val()  || {};
-    D.tasks       = t.val()  || {};
-    D.deposits    = d.val()  || {};
-    D.withdrawals = w.val()  || {};
-    D.flags       = f.val()  || {};
-    D.adminLog    = al.val() || {};
 
-    // flatten pending (nested by owner)
-    D.pending = [];
-    pa.forEach(ownerNode => {
-      const owner = ownerNode.key;
-      ownerNode.forEach(child => {
-        D.pending.push({ _owner: owner, _key: child.key, ...(child.val() || {}) });
-      });
-    });
-    D.pending.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+    allUsers = [];
+    uS.forEach(c => { const u = c.val() || {}; u.uid = c.key; allUsers.push(u); });
+    allUsers.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-    renderAll();
-    if (announce) toast(`✅ ${Object.keys(D.users).length} users, ${Object.keys(D.tasks).length} campaigns`);
-  } catch (err) {
-    console.error(err);
-    toast('Error loading: ' + err.message, true);
+    allTasks = [];
+    tS.forEach(c => { const t = c.val() || {}; t.id = c.key; allTasks.push(t); });
+    allTasks.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+    allWithdrawals = [];
+    wS.forEach(c => allWithdrawals.push({ key: c.key, ...c.val() }));
+    allWithdrawals.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+    allDeposits = [];
+    dS.forEach(c => allDeposits.push({ key: c.key, ...c.val() }));
+    allDeposits.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+    flags = [];
+    fS.forEach(c => flags.push({ key: c.key, ...c.val() }));
+
+    allJoins = [];
+    jS.forEach(c => allJoins.push({ key: c.key, ...c.val() }));
+
+    renderDashboard();
+    renderUsersList();
+    renderWithdrawalsList();
+    renderDepositsList();
+    renderTasksList();
+    renderJoinsList();
+    updateBadges();
+    showToast(`✅ ${allUsers.length} users · ${allTasks.length} campaigns`, 'ok');
+  } catch(e) {
+    console.error('loadAllData:', e);
+    showToast('Load error: ' + e.message, 'err');
   }
 }
-function renderAll() { renderStats(); renderUsers(); renderFinance(); renderTasks(); renderFlags(); renderBadges(); }
-function renderBadges() {
-  const dep = Object.values(D.deposits).filter(x => x.status === 'pending').length;
-  const wd  = Object.values(D.withdrawals).filter(x => x.status === 'pending').length;
-  const rev = D.pending.filter(x => x.status === 'pending').length;
-  const set = (el, n) => { if (!el) return; el.hidden = !n; el.textContent = n; };
-  set($('#depBadge'), dep); set($('#wdBadge'), wd); set($('#revBadge'), rev);
+
+let realtimeAttached = false;
+function attachRealtime() {
+  if (realtimeAttached || !firebaseOk) return;
+  realtimeAttached = true;
+
+  db.ref('pn/withdrawals').on('value', s => {
+    allWithdrawals = [];
+    s.forEach(c => allWithdrawals.push({ key: c.key, ...c.val() }));
+    allWithdrawals.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+    renderWithdrawalsList(); renderDashboard(); updateBadges();
+  });
+  db.ref('pn/deposits').on('value', s => {
+    allDeposits = [];
+    s.forEach(c => allDeposits.push({ key: c.key, ...c.val() }));
+    allDeposits.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+    renderDepositsList(); renderDashboard(); updateBadges();
+  });
+  db.ref('pn/pendingAll').on('value', s => {
+    const keys = s.val() || {};
+    Promise.all(Object.entries(keys).map(async ([k, v]) => {
+      const snap = await db.ref('pn/pending/' + v.owner + '/' + k).once('value');
+      return snap.exists() ? { owner: v.owner, key: k, ...snap.val() } : null;
+    })).then(rows => {
+      allReviews = rows.filter(Boolean).filter(r => r.status === 'pending');
+      renderReviewsList(); updateBadges();
+    });
+  });
+  db.ref('pn/joinWatch').on('value', s => {
+    allJoins = [];
+    s.forEach(c => allJoins.push({ key: c.key, ...c.val() }));
+    renderJoinsList();
+  });
+  console.log('[PMER Admin] Realtime attached ✓');
 }
 
-/* ============================================================
-   Stats
-   ============================================================ */
-function renderStats() {
-  const U = Object.values(D.users);
-  const sum = f => U.reduce((a,x) => a + (f(x)||0), 0);
-  const live = Object.values(D.tasks).filter(t => t.status === 'live').length;
-  const pendingDep = Object.values(D.deposits).filter(x => x.status === 'pending').length;
-  const pendingWd  = Object.values(D.withdrawals).filter(x => x.status === 'pending').length;
-  const pendingRev = D.pending.filter(x => x.status === 'pending').length;
+/* ===== DASHBOARD ===== */
+function renderDashboard() {
+  let totalJR = 0, totalRJ = 0, totalEarned = 0, totalTasks = 0, totalSpent = 0, totalRefs = 0, totalDebt = 0;
+  allUsers.forEach(u => {
+    totalJR += jrBal(u);
+    totalRJ += rjBal(u);
+    totalEarned += u.rjTotal || 0;
+    totalTasks += u.tasksDone || 0;
+    totalSpent += u.spent || 0;
+    totalRefs += Object.keys(u.referrals || {}).length;
+    totalDebt += u.debtTotal || 0;
+  });
+  const pendWd  = allWithdrawals.filter(w => w.status === 'pending').length;
+  const pendDep = allDeposits.filter(d => d.status === 'pending').length;
+  const liveT   = allTasks.filter(t => t.status === 'live').length;
+  const pendRev = allReviews.length;
 
-  $('#dashboardStats').innerHTML = `
-    <div class="stat-card"><div class="label"><i class="fas fa-users"></i> Users</div><div class="stat-number">${fmt(U.length)}</div></div>
-    <div class="stat-card"><div class="label"><i class="fas fa-coins"></i> Total balance (JR)</div><div class="stat-number">${fmt(sum(x => x.balance))}</div></div>
-    <div class="stat-card"><div class="label"><i class="fas fa-clock"></i> Pending deposits</div><div class="stat-number">${fmt(pendingDep)}</div></div>
-    <div class="stat-card"><div class="label"><i class="fas fa-hourglass-half"></i> Pending withdrawals</div><div class="stat-number">${fmt(pendingWd)}</div></div>
-    <div class="stat-card"><div class="label"><i class="fas fa-bullhorn"></i> Live campaigns</div><div class="stat-number">${fmt(live)}</div></div>
-    <div class="stat-card"><div class="label"><i class="fas fa-clipboard-check"></i> Pending reviews</div><div class="stat-number">${fmt(pendingRev)}</div></div>`;
+  const el = document.getElementById('dashboardStats');
+  if (el) el.innerHTML = `
+    <div class="stat-card brand"><div class="label"><i class="fas fa-users"></i> Users</div><div class="stat-number">${fmt(allUsers.length)}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-coins" style="color:var(--brand)"></i> Total JR held</div><div class="stat-number">${fmt(totalJR)}</div></div>
+    <div class="stat-card jade"><div class="label"><i class="fas fa-gem" style="color:var(--jade)"></i> Total RJ held</div><div class="stat-number">${fmt(totalRJ)}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-arrow-up" style="color:var(--ok)"></i> RJ earned</div><div class="stat-number">${fmt(totalEarned)}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-arrow-down" style="color:var(--bad)"></i> RJ spent</div><div class="stat-number">${fmt(totalSpent)}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-clock" style="color:var(--warn)"></i> Pending payouts</div><div class="stat-number">${pendWd}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-wallet" style="color:var(--warn)"></i> Pending deposits</div><div class="stat-number">${pendDep}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-bullhorn" style="color:var(--brand)"></i> Live campaigns</div><div class="stat-number">${liveT}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-clipboard-check" style="color:var(--brand)"></i> Reviews waiting</div><div class="stat-number">${pendRev}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-user-shield" style="color:var(--warn)"></i> Join watches</div><div class="stat-number">${allJoins.length}</div></div>
+  `;
 
-  $('#extraInsights').innerHTML = `
-    <div class="kv"><span class="text-muted">Total income paid out</span><b>${fmt(sum(x => x.totalIncome))} JR ($${jrToUsd(sum(x => x.totalIncome))})</b></div>
-    <div class="kv"><span class="text-muted">Total spent on campaigns</span><b>${fmt(sum(x => x.spent))} JR</b></div>
-    <div class="kv"><span class="text-muted">Total deposited</span><b>${fmt(sum(x => x.deposited))} JR</b></div>
-    <div class="kv"><span class="text-muted">Tasks completed</span><b>${fmt(sum(x => x.tasksDone))}</b></div>
-    <div class="kv"><span class="text-muted">Blocked users</span><b>${fmt(U.filter(x => x.banned).length)}</b></div>
-    <div class="kv"><span class="text-muted">Flagged links</span><b>${fmt(Object.keys(D.flags).length)}</b></div>`;
-}
-
-/* ============================================================
-   Users
-   ============================================================ */
-function renderUsers() {
-  const q = ($('#userSearchInput')?.value || '').trim().toLowerCase().replace(/^@/,'');
-  const list = Object.entries(D.users)
-    .filter(([id,u]) => !q || id.includes(q) || (u.name||'').toLowerCase().includes(q) || (u.username||'').toLowerCase().includes(q))
-    .sort((a,b) => (b[1].balance||0) - (a[1].balance||0));
-
-  const box = $('#usersListContainer');
-  if (!list.length) { box.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i>No users found</div>'; return; }
-
-  box.innerHTML = list.map(([id,u]) => {
-    const refs = Object.keys(u.referrals || {}).length;
-    return `<div class="user-card">
-      <div class="flex-between">
-        <div>
-          <strong><i class="fab fa-telegram"></i> ${esc(u.name || 'User')}${u.banned ? ' <span class="status-pill pill-rejected">blocked</span>' : ''}</strong>
-          <div style="font-size:.65rem;color:#999;">${u.username ? '@' + esc(u.username) + ' · ' : ''}${esc(id)}</div>
-        </div>
-        <span style="background:#6a3df0;color:#fff;padding:4px 14px;border-radius:40px;font-weight:700;font-size:.82rem;">${fmt(u.balance)} JR</span>
-      </div>
-      <div class="chip-group" style="font-size:.72rem;color:#666;">
-        <span><i class="fas fa-coins"></i> ${fmt(u.totalIncome)} earned</span>
-        <span><i class="fas fa-tasks"></i> ${fmt(u.tasksDone)} done</span>
-        <span><i class="fas fa-users"></i> ${fmt(refs)} refs</span>
-      </div>
-      <div class="chip-group">
-        <button class="btn-icon" data-act="profile" data-uid="${esc(id)}"><i class="fas fa-eye"></i> Profile</button>
-        <button class="btn-icon btn-success" data-act="addbal" data-uid="${esc(id)}"><i class="fas fa-plus"></i> Add JR</button>
-        <button class="btn-icon btn-warning" data-act="setbal" data-uid="${esc(id)}"><i class="fas fa-pen"></i> Set</button>
-        <button class="btn-icon ${u.banned ? 'btn-success' : 'btn-dark'}" data-act="ban" data-uid="${esc(id)}">${u.banned ? '<i class="fas fa-unlock"></i> Unblock' : '<i class="fas fa-ban"></i> Block'}</button>
-      </div>
+  const ex = document.getElementById('extraInsights');
+  if (ex) ex.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.8rem">
+      <span><i class="fas fa-check-circle" style="color:var(--ok)"></i> Tasks: <strong>${fmt(totalTasks)}</strong></span>
+      <span><i class="fas fa-user-plus" style="color:var(--brand)"></i> Referrals: <strong>${fmt(totalRefs)}</strong></span>
+      <span><i class="fas fa-flag" style="color:var(--bad)"></i> Flags: <strong>${fmt(flags.length)}</strong></span>
+      <span><i class="fas fa-exclamation-triangle" style="color:var(--warn)"></i> Total debt: <strong>${fmt(totalDebt)} RJ</strong></span>
     </div>`;
+}
+
+function updateBadges() {
+  const setB = (id, n) => { const el = document.getElementById(id); if (!el) return; el.textContent = n > 99 ? '99+' : n; el.style.display = n > 0 ? 'inline-block' : 'none'; };
+  setB('wdBadge', allWithdrawals.filter(w => w.status === 'pending').length);
+  setB('depBadge', allDeposits.filter(d => d.status === 'pending').length);
+  setB('revBadge', allReviews.length);
+}
+
+/* ===== USERS ===== */
+function renderUsersList() {
+  const q = (document.getElementById('userSearchInput')?.value || '').toLowerCase().trim();
+  const filtered = allUsers.filter(u =>
+    (u.name || '').toLowerCase().includes(q) ||
+    (u.username || '').toLowerCase().includes(q) ||
+    (u.uid || '').toLowerCase().includes(q)
+  );
+  const c = document.getElementById('usersListContainer'); if (!c) return;
+  if (!filtered.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i><b>No users found</b></div>'; return; }
+  c.innerHTML = filtered.slice(0, 200).map(u => {
+    const initials = esc((u.name || 'U').trim().charAt(0).toUpperCase());
+    const refs = Object.keys(u.referrals || {}).length;
+    const debt = u.debtTotal || 0;
+    return `
+      <div class="user-card">
+        <div class="flex-between">
+          <div style="display:flex;gap:12px;align-items:center;min-width:0;flex:1">
+            <div style="width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#9B78FF,#4A22C2);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1rem;flex:none">${initials}</div>
+            <div style="min-width:0;flex:1">
+              <strong style="font-size:.88rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(u.name || 'User')}</strong>
+              <div class="text-muted">${u.username ? '@' + esc(u.username) : u.uid.slice(0, 12) + '…'}</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:10px">
+          <div><div class="text-muted" style="font-size:.62rem">JR balance</div><div class="jr-tag">${fmt(jrBal(u))}</div></div>
+          <div><div class="text-muted" style="font-size:.62rem">RJ balance</div><div class="rj-tag">${fmt(rjBal(u))}</div></div>
+        </div>
+        ${debt > 0 ? `<div style="margin-top:6px;padding:6px 10px;background:var(--bad-soft);border-radius:8px;font-size:.68rem;color:var(--bad);font-weight:600"><i class="fas fa-exclamation-triangle"></i> Debt: ${fmt(debt)} RJ</div>` : ''}
+        <div class="chip-group" style="font-size:.68rem;color:#666">
+          <span><i class="fas fa-check"></i> ${fmt(u.tasksDone)} tasks</span>
+          <span><i class="fas fa-user-plus"></i> ${refs} refs</span>
+          <span><i class="fas fa-coins"></i> ${fmt(u.totalIncome)} JR earned</span>
+        </div>
+        <div class="chip-group">
+          <button class="btn-icon" onclick="viewUser('${u.uid}')" type="button"><i class="fas fa-eye"></i> View</button>
+          <button class="btn-icon btn-success" onclick="addJR('${u.uid}',10000)" type="button"><i class="fas fa-plus"></i> +10k JR</button>
+          <button class="btn-icon btn-jade" onclick="addRJ('${u.uid}',50000)" type="button"><i class="fas fa-gem"></i> +50k RJ</button>
+          <button class="btn-icon btn-warning" onclick="setBal('${u.uid}')" type="button"><i class="fas fa-pen"></i> Set</button>
+          <button class="btn-icon btn-danger" onclick="resetUser('${u.uid}')" type="button"><i class="fas fa-undo"></i> Reset</button>
+        </div>
+      </div>`;
   }).join('');
 }
-$('#userSearchInput').addEventListener('input', renderUsers);
 
-$('#usersListContainer').addEventListener('click', async e => {
-  const b = e.target.closest('[data-act]'); if (!b) return;
-  const uid = b.dataset.uid, u = D.users[uid]; if (!u) return;
-  const act = b.dataset.act;
+window.viewUser = uid => {
+  const u = allUsers.find(x => x.uid === uid); if (!u) return;
+  const doneCount = Object.keys(u.done || {}).length;
+  const subs = Object.entries(u.submitted || {});
+  const refs = u.referrals || {};
+  const swaps = Object.values(u.swaps || {});
+  const withdrawals = Object.values(u.withdrawals || {});
+  const deposits = Object.values(u.deposits || {});
+  const clawed = Object.values(u.clawed || {});
+  const subRows = subs.length ? subs.map(([id, st]) => `<div class="profile-item"><span>${esc(id.slice(0,10))}…</span><strong>${esc(st)}</strong></div>`).join('') : '<div class="profile-item"><span>Submissions</span><strong>none</strong></div>';
+  const refRows = Object.keys(refs).length ? Object.values(refs).slice(0, 10).map(r => `<div class="profile-item"><span>${esc(r.name || 'Friend')}</span><strong>${r.bonus ? '+' + fmt(r.bonus) + ' JR' : 'pending'}</strong></div>`).join('') : '<div class="profile-item"><span>Referrals</span><strong>none</strong></div>';
+  const swapRows = swaps.slice(-5).reverse().map(s => `<div class="profile-item"><span>${fmt(s.jr)} JR → ${fmt(s.rj)} RJ</span><strong class="text-muted">recent</strong></div>`).join('');
+  const clawRows = clawed.slice(-5).map(c => `<div class="profile-item"><span>${esc(c.title || 'Task')}</span><strong style="color:var(--bad)">-${fmt(c.amt)} RJ</strong></div>`).join('');
 
-  if (act === 'profile') return openProfile(uid, u);
+  document.getElementById('profileDetailContent').innerHTML = `
+    <div class="profile-item"><span>Name</span><strong>${esc(u.name || '—')}</strong></div>
+    <div class="profile-item"><span>Username</span><strong>${u.username ? '@' + esc(u.username) : '—'}</strong></div>
+    <div class="profile-item"><span>User ID</span><span style="font-size:.7rem">${u.uid}</span></div>
+    <div class="profile-item"><span>JR balance</span><strong style="color:var(--brand)">${fmt(jrBal(u))} JR</strong></div>
+    <div class="profile-item"><span>RJ balance</span><strong style="color:var(--jade-ink)">${fmt(rjBal(u))} RJ</strong></div>
+    <div class="profile-item"><span>JR ≈ USD</span><strong>${usd(jrBal(u))}</strong></div>
+    <div class="profile-item"><span>Total JR income</span><strong>${fmt(u.totalIncome)} JR</strong></div>
+    <div class="profile-item"><span>Total RJ earned</span><strong>${fmt(u.rjTotal)} RJ</strong></div>
+    <div class="profile-item"><span>RJ spent on ads</span><strong>${fmt(u.spent)} RJ</strong></div>
+    <div class="profile-item"><span>Debt</span><strong style="color:${(u.debtTotal||0) > 0 ? 'var(--bad)' : '#999'}">${fmt(u.debtTotal || 0)} RJ</strong></div>
+    <div class="profile-item"><span>Tasks done</span><strong>${fmt(u.tasksDone)}</strong></div>
+    <div class="profile-item"><span>Unique tasks</span><strong>${fmt(doneCount)}</strong></div>
+    <div class="profile-item"><span>Ref JR earned</span><strong>${fmt(u.refEarned)} JR</strong></div>
+    <div class="profile-item"><span>Ref RJ earned</span><strong>${fmt(u.refEarnedRJ)} RJ</strong></div>
+    <div class="profile-item"><span>Referred by</span><strong>${u.referredBy ? u.referredBy.slice(0,12)+'…' : '—'}</strong></div>
+    <div class="profile-item"><span>Withdrawals</span><strong>${withdrawals.length}</strong></div>
+    <div class="profile-item"><span>Deposits</span><strong>${deposits.length}</strong></div>
+    <div class="profile-item"><span>Swaps</span><strong>${swaps.length}</strong></div>
+    <div class="profile-item"><span>Joined</span><strong>${tsToDate(u.createdAt)}</strong></div>
+    <div class="profile-section"><div class="profile-section-title">Submissions</div>${subRows}</div>
+    <div class="profile-section"><div class="profile-section-title">Referrals (${Object.keys(refs).length})</div>${refRows}</div>
+    ${swapRows ? `<div class="profile-section"><div class="profile-section-title">Recent swaps</div>${swapRows}</div>` : ''}
+    ${clawRows ? `<div class="profile-section"><div class="profile-section-title">Clawed rewards</div>${clawRows}</div>` : ''}
+  `;
+  document.getElementById('userProfileModal').classList.add('active');
+};
 
-  if (act === 'addbal') {
-    const raw = prompt(`Add JR to ${u.name || uid}\nCurrent: ${fmt(u.balance)} JR`, '1000');
-    if (raw === null) return;
-    const amt = parseInt(raw, 10);
-    if (!amt) return toast('Enter a valid number', true);
-    await db.ref(P.user(uid)).transaction(x => { if (!x) return x; x.balance = (x.balance||0) + amt; return x; });
-    toast(`Balance adjusted by ${fmt(amt)} JR`); return loadAll();
-  }
-  if (act === 'setbal') {
-    const raw = prompt(`Set balance for ${u.name || uid} (JR)`, u.balance || 0);
-    if (raw === null) return;
-    const val = parseInt(raw, 10);
-    if (isNaN(val)) return toast('Enter a valid number', true);
-    await db.ref(P.user(uid) + '/balance').set(val);
-    toast(`Balance set to ${fmt(val)} JR`); return loadAll();
-  }
-  if (act === 'ban') {
-    if (!u.banned && !confirm(`Block ${u.name || uid}? They will not be able to use PMER.`)) return;
-    await db.ref(P.user(uid) + '/banned').set(u.banned ? null : true);
-    toast(u.banned ? 'User unblocked' : 'User blocked'); return loadAll();
-  }
-});
+window.addJR = async (uid, amount) => {
+  if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+  const u = allUsers.find(x => x.uid === uid); if (!u) return;
+  await db.ref(`pn/users/${uid}`).update({ balance: (u.balance||0) + amount, totalIncome: (u.totalIncome||0) + amount });
+  showToast(`+${fmt(amount)} JR added`, 'ok'); loadAllData();
+};
+window.addRJ = async (uid, amount) => {
+  if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+  const u = allUsers.find(x => x.uid === uid); if (!u) return;
+  await db.ref(`pn/users/${uid}`).update({ rjBalance: (u.rjBalance||0) + amount, rjTotal: (u.rjTotal||0) + amount });
+  showToast(`+${fmt(amount)} RJ added`, 'ok'); loadAllData();
+};
+window.setBal = async uid => {
+  const u = allUsers.find(x => x.uid === uid);
+  const jr = prompt('New JR balance:', u?.balance || 0);
+  if (jr === null) return;
+  const rj = prompt('New RJ balance:', u?.rjBalance || 0);
+  if (rj === null) return;
+  const nJ = parseInt(jr, 10), nR = parseInt(rj, 10);
+  if (isNaN(nJ) || isNaN(nR) || nJ < 0 || nR < 0) return showToast('Invalid amount', 'err');
+  await db.ref(`pn/users/${uid}`).update({ balance: nJ, rjBalance: nR });
+  showToast(`Set: ${fmt(nJ)} JR, ${fmt(nR)} RJ`, 'ok'); loadAllData();
+};
+window.resetUser = async uid => {
+  if (!confirm('Reset this user? All balances, stats, submissions cleared.')) return;
+  await db.ref(`pn/users/${uid}`).update({
+    balance: 0, totalIncome: 0, tasksDone: 0, spent: 0, refEarned: 0, refEarnedRJ: 0,
+    rjBalance: 0, rjTotal: 0, debtTotal: 0, debts: null, clawed: null,
+    done: null, submitted: null, subAt: null, referrals: null,
+    adToday: null, adNext: null, adProgress: null, today: null, todayRJ: null,
+    swaps: null, withdrawals: null, deposits: null, outbox: null, recv: null
+  });
+  showToast('User reset', 'ok'); loadAllData();
+};
 
-function openProfile(uid, u) {
-  const refs = Object.keys(u.referrals || {});
-  const done = Object.keys(u.done || {}).length;
-  const sub  = Object.entries(u.submitted || {});
-  const wds  = Object.values(u.withdrawals || {}).length;
-  $('#profileDetailContent').innerHTML = `
-    <div class="profile-detail-item"><span>Name</span><b>${esc(u.name || '—')}</b></div>
-    <div class="profile-detail-item"><span>Username</span><b>${u.username ? '@' + esc(u.username) : '—'}</b></div>
-    <div class="profile-detail-item"><span>ID</span><span class="mono">${esc(uid)}</span></div>
-    <div class="profile-detail-item"><span>Balance</span><b>${fmt(u.balance)} JR</b></div>
-    <div class="profile-detail-item"><span>Total income</span><b>${fmt(u.totalIncome)} JR</b></div>
-    <div class="profile-detail-item"><span>Tasks done</span><b>${fmt(u.tasksDone)}</b></div>
-    <div class="profile-detail-item"><span>Completed task ids</span><b>${fmt(done)}</b></div>
-    <div class="profile-detail-item"><span>Submissions</span><b>${fmt(sub.length)} (${sub.filter(([,v]) => v === 'pending').length} pending)</b></div>
-    <div class="profile-detail-item"><span>Referrals</span><b>${fmt(refs.length)}</b></div>
-    <div class="profile-detail-item"><span>Referral bonus earned</span><b>${fmt(u.refEarned)} JR</b></div>
-    <div class="profile-detail-item"><span>Spent on campaigns</span><b>${fmt(u.spent)} JR</b></div>
-    <div class="profile-detail-item"><span>Deposited</span><b>${fmt(u.deposited)} JR</b></div>
-    <div class="profile-detail-item"><span>Withdrawals</span><b>${fmt(wds)}</b></div>
-    <div class="profile-detail-item"><span>Joined</span><b>${when(u.createdAt)}</b></div>
-    <div class="profile-detail-item"><span>Status</span><b>${u.banned ? 'blocked' : 'active'}</b></div>`;
-  $('#userProfileModal').classList.add('active');
-}
-$('#closeProfileModal').addEventListener('click', () => $('#userProfileModal').classList.remove('active'));
-$('#userProfileModal').addEventListener('click', e => { if (e.target.id === 'userProfileModal') $('#userProfileModal').classList.remove('active'); });
-
-/* ============================================================
-   Finance (deposits + withdrawals)
-   ============================================================ */
-document.querySelectorAll('[data-fin]').forEach(b => b.addEventListener('click', () => {
-  financeSub = b.dataset.fin;
-  document.querySelectorAll('[data-fin]').forEach(x => x.classList.toggle('active', x === b));
-  renderFinance();
-}));
-
-function renderFinance() {
-  const box = $('#financeContainer');
-  if (financeSub === 'deposits') {
-    const rows = byNew(D.deposits).slice(0, 100);
-    if (!rows.length) { box.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i>No deposit requests</div>'; return; }
-    box.innerHTML = rows.map(([k,x]) => `<div class="wd-card">
-      <div class="flex-between">
-        <div><strong>${esc(x.name || username(x.uid))}</strong><div class="text-muted mono">${esc(x.uid)}</div></div>
-        <span class="status-pill ${pill(x.status)}">${esc(x.status)}</span>
-      </div>
-      <div style="margin:8px 0;font-size:.9rem;">💵 $${esc(x.usd)} → ${fmt(x.jr)} JR</div>
-      <div class="text-muted">📅 ${when(x.createdAt)}</div>
-      ${x.status === 'pending' ? `<div class="chip-group">
-        <button class="btn-icon btn-success" data-fin-act="dep-ok" data-k="${esc(k)}"><i class="fas fa-check"></i> Approve</button>
-        <button class="btn-icon btn-danger" data-fin-act="dep-no" data-k="${esc(k)}"><i class="fas fa-times"></i> Reject</button>
-      </div>` : ''}
-    </div>`).join('');
-    return;
-  }
-
-  const all = byNew(D.withdrawals);
-  const rows = (withdrawFilter === 'pending' ? all.filter(([,x]) => x.status === 'pending') : all).slice(0, 100);
-  if (!rows.length) { box.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i>No withdrawal requests</div>'; return; }
-  box.innerHTML = `
-    <div class="flex-between" style="margin-bottom:12px;">
-      <button class="btn-icon ${withdrawFilter === 'pending' ? 'btn-dark' : 'btn-outline'}" data-wd-filter="pending"><i class="fas fa-clock"></i> Pending only</button>
-      <button class="btn-icon ${withdrawFilter === 'all' ? 'btn-dark' : 'btn-outline'}" data-wd-filter="all">All requests</button>
-    </div>` + rows.map(([k,x]) => `<div class="wd-card">
-      <div class="flex-between">
-        <div><strong>${esc(x.name || username(x.uid))}</strong><div class="text-muted mono">${esc(x.uid)}</div></div>
-        <span class="status-pill ${pill(x.status)}">${esc(x.status)}</span>
-      </div>
-      <div style="margin:8px 0;font-size:.9rem;">💰 ${fmt(x.amount)} JR <span class="text-muted">(pay $${jrToUsd(x.net)} after ${WITHDRAW_FEE}% fee)</span></div>
-      <div class="text-muted">📱 ${esc(x.method || 'Binance')} · <span class="mono">${esc(x.account || '—')}</span></div>
-      <div class="text-muted">📅 ${when(x.createdAt)}</div>
-      ${x.status === 'pending' ? `<div class="chip-group">
-        <button class="btn-icon" data-copy="${esc(x.account || '')}"><i class="fas fa-copy"></i> Copy ID</button>
-        <button class="btn-icon btn-success" data-fin-act="wd-ok" data-k="${esc(k)}"><i class="fas fa-check"></i> Mark paid</button>
-        <button class="btn-icon btn-danger" data-fin-act="wd-no" data-k="${esc(k)}"><i class="fas fa-undo"></i> Reject & refund</button>
-      </div>` : ''}
-    </div>`).join('');
-}
-
-$('#financeContainer').addEventListener('click', async e => {
-  const f = e.target.closest('[data-wd-filter]');
-  if (f) { withdrawFilter = f.dataset.wdFilter; return renderFinance(); }
-  const c = e.target.closest('[data-copy]');
-  if (c) { try { await navigator.clipboard.writeText(c.dataset.copy); toast('Copied'); } catch(_) {} return; }
-  const b = e.target.closest('[data-fin-act]'); if (!b) return;
-  b.disabled = true;
-  const k = b.dataset.k, a = b.dataset.finAct;
-  if (a === 'dep-ok' || a === 'dep-no') await handleDeposit(k, a === 'dep-ok');
-  else if (a === 'wd-ok' || a === 'wd-no') await handleWithdraw(k, a === 'wd-ok');
-  await loadAll();
-});
-
-async function claimStatus(path, from, to) {
-  const tx = await db.ref(path).transaction(c => { if (c === null) return c; if (c !== from) return; return to; });
-  return tx.committed && tx.snapshot.val() === to;
-}
-
-async function handleDeposit(k, ok) {
-  const d = D.deposits[k]; if (!d) return;
-  if (!(await claimStatus(`pn/deposits/${k}/status`, 'pending', 'processing'))) return toast('Already handled', true);
-  if (ok) {
-    const res = await db.ref(P.user(d.uid)).transaction(u => {
-      if (!u) return u;
-      u.balance = (u.balance || 0) + (d.jr || 0);
-      u.deposited = (u.deposited || 0) + (d.jr || 0);
-      return u;
-    });
-    if (!res.snapshot.val()) {
-      await db.ref(`pn/deposits/${k}/status`).set('pending');
-      return toast('User not found. Nothing credited.', true);
-    }
-  }
-  await db.ref(`pn/deposits/${k}/status`).set(ok ? 'approved' : 'rejected');
-  log(ok ? 'deposit-ok' : 'deposit-no', k);
-  toast(ok ? `✅ Credited ${fmt(d.jr)} JR` : 'Deposit rejected');
-}
-
-async function handleWithdraw(k, paid) {
-  const w = D.withdrawals[k]; if (!w) return;
-  if (!(await claimStatus(`pn/withdrawals/${k}/status`, 'pending', 'processing'))) return toast('Already handled', true);
-  if (!paid) {
-    // refund the full amount taken from the user
-    await db.ref(P.user(w.uid)).transaction(u => {
-      if (!u) return u;
-      u.balance = (u.balance || 0) + (w.amount || 0);
-      return u;
-    });
-  }
-  const st = paid ? 'paid' : 'rejected';
-  await db.ref(`pn/withdrawals/${k}/status`).set(st);
-  try { await db.ref(`${P.user(w.uid)}/withdrawals/${k}/status`).set(st); } catch(_) {}
-  log(paid ? 'withdraw-paid' : 'withdraw-refund', k);
-  toast(paid ? '✅ Marked as paid' : `↩ Refunded ${fmt(w.amount)} JR`);
-}
-
-/* ============================================================
-   Tasks (campaigns + reviews)
-   ============================================================ */
-document.querySelectorAll('[data-task]').forEach(b => b.addEventListener('click', () => {
-  taskSub = b.dataset.task;
-  document.querySelectorAll('[data-task]').forEach(x => x.classList.toggle('active', x === b));
-  renderTasks();
-}));
-
-function renderTasks() {
-  const box = $('#tasksContainer');
-  if (taskSub === 'reviews') {
-    const rows = D.pending.slice(0, 100);
-    if (!rows.length) { box.innerHTML = '<div class="empty-state"><i class="fas fa-clipboard-check"></i>No pending reviews</div>'; return; }
-    box.innerHTML = rows.map(p => {
-      const msLeft = (p.createdAt || 0) + REVIEW_HOURS * 3600000 - Date.now();
-      const auto = msLeft > 0 ? `auto-approves in ${Math.ceil(msLeft/3600000)}h` : 'auto-approving now';
-      return `<div class="wd-card">
+/* ===== WITHDRAWALS ===== */
+function renderWithdrawalsList() {
+  const list = wdFilter === 'pending' ? allWithdrawals.filter(w => w.status === 'pending') : allWithdrawals;
+  const c = document.getElementById('withdrawalsContainer'); if (!c) return;
+  if (!list.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><b>No withdrawal requests</b></div>'; return; }
+  c.innerHTML = list.map(w => {
+    const sc = w.status === 'pending' ? 'pill-pending' : w.status === 'approved' || w.status === 'paid' ? 'pill-approved' : 'pill-rejected';
+    const amt = w.amount || 0;
+    const fee = w.fee || Math.ceil(amt * WD_FEE / 100);
+    const net = w.net || (amt - fee);
+    return `
+      <div class="wd-card">
         <div class="flex-between">
-          <div><strong>${esc(p.title || 'Task')}</strong><div class="text-muted">${esc(p.name || username(p.uid))}${p.tgUser ? ' (@' + esc(p.tgUser) + ')' : ''}</div></div>
-          <span class="status-pill ${pill(p.status)}">${esc(p.status || 'pending')}</span>
+          <div style="min-width:0"><strong style="font-size:.88rem">${esc(w.name || 'User')}</strong>
+            <div class="text-muted">${w.uid ? w.uid.slice(0,12)+'…' : ''}${w.username ? ' · @'+esc(w.username) : ''}</div>
+          </div>
+          <span class="status-pill ${sc}">${w.status}</span>
         </div>
-        <div style="margin:8px 0;font-size:.9rem;">Submitted username: <b class="mono">${esc(p.submitted || '—')}</b></div>
-        <div class="text-muted">💰 ${fmt(p.perUser)} JR · ${auto} · ${when(p.createdAt)}</div>
-        ${p.status === 'pending' ? `<div class="chip-group">
-          <button class="btn-icon btn-success" data-task-act="rev-ok" data-owner="${esc(p._owner)}" data-key="${esc(p._key)}"><i class="fas fa-check"></i> Approve</button>
-          <button class="btn-icon btn-danger" data-task-act="rev-no" data-owner="${esc(p._owner)}" data-key="${esc(p._key)}"><i class="fas fa-times"></i> Reject</button>
+        <div class="amount-line">${fmt(amt)} JR <small>· ${usd(amt)}</small></div>
+        <div class="wd-detail"><i class="fas fa-coins" style="color:var(--warn)"></i> Fee ${WD_FEE}% = ${fmt(fee)} · Net ${fmt(net)} JR (${usd(net)})</div>
+        <div class="wd-detail"><i class="fab fa-bitcoin" style="color:var(--brand)"></i> Binance UID: <span class="code-block">${esc(w.binanceUid || w.account || '—')}</span></div>
+        <div class="wd-detail"><i class="fas fa-clock"></i> ${tsToTime(w.createdAt)}</div>
+        ${w.status === 'pending' ? `<div class="chip-group">
+          <button class="btn-icon btn-success" onclick="approveWD('${w.key}')" type="button"><i class="fas fa-check"></i> Approve (paid)</button>
+          <button class="btn-icon btn-danger" onclick="rejectWD('${w.key}')" type="button"><i class="fas fa-undo"></i> Reject & refund</button>
         </div>` : ''}
       </div>`;
-    }).join('');
-    return;
-  }
-
-  const rows = byNew(D.tasks).slice(0, 100);
-  if (!rows.length) { box.innerHTML = '<div class="empty-state"><i class="fas fa-tasks"></i>No campaigns</div>'; return; }
-  box.innerHTML = rows.map(([k,t]) => {
-    const c = CAT[t.type] || { label: t.type, icon: 'tasks' };
-    const done = (t.total || 0) - (t.remaining || 0);
-    const pct = t.total ? Math.round(done / t.total * 100) : 0;
-    return `<div class="wd-card">
-      <div class="flex-between">
-        <div><strong><i class="fas fa-${c.icon}"></i> ${esc(t.title)}</strong>
-          <div class="text-muted">${esc(c.label)} · ${fmt(t.perUser)} JR per user</div></div>
-        <span class="status-pill ${pill(t.status)}">${esc(t.status)}</span>
-      </div>
-      <div style="height:6px;background:#eee;border-radius:6px;overflow:hidden;margin:10px 0;"><i style="display:block;height:100%;width:${pct}%;background:#6a3df0;"></i></div>
-      <div class="text-muted">${fmt(done)} of ${fmt(t.total)} users · ${fmt((t.remaining||0) * (t.perUser||0))} JR left to pay</div>
-      <div class="text-muted">Owner: ${esc(t.ownerName || username(t.owner))} · <span class="mono">${esc(t.owner)}</span></div>
-      <div class="chip-group">
-        <button class="btn-icon" data-task-act="open" data-url="${esc(t.url)}"><i class="fas fa-external-link-alt"></i> Open link</button>
-        ${t.status === 'live' ? `<button class="btn-icon btn-danger" data-task-act="stop" data-k="${esc(k)}"><i class="fas fa-stop"></i> Stop & refund</button>` : ''}
-      </div>
-    </div>`;
   }).join('');
 }
-
-$('#tasksContainer').addEventListener('click', async e => {
-  const b = e.target.closest('[data-task-act]'); if (!b) return;
-  const a = b.dataset.taskAct;
-  if (a === 'open') return window.open(b.dataset.url, '_blank');
-  b.disabled = true;
-  if (a === 'stop')      await stopCampaign(b.dataset.k);
-  if (a === 'rev-ok')    await resolveReview(b.dataset.owner, b.dataset.key, true);
-  if (a === 'rev-no')    await resolveReview(b.dataset.owner, b.dataset.key, false);
-  await loadAll();
-});
-
-async function stopCampaign(k) {
-  const t = D.tasks[k]; if (!t) return;
-  if (!confirm(`Stop "${t.title}" and refund ${fmt((t.remaining||0) * (t.perUser||0))} JR to the owner?`)) return;
-  if (!(await claimStatus(`${P.task(k)}/status`, 'live', 'stopping'))) return toast('This campaign is not live', true);
-  const refund = (t.remaining || 0) * (t.perUser || 0);
-  if (refund > 0) {
-    await db.ref(P.user(t.owner)).transaction(u => { if (!u) return u; u.balance = (u.balance || 0) + refund; return u; });
-  }
-  await db.ref(P.task(k)).update({ status: 'stopped', remaining: 0 });
-  log('stop', k, { refund });
-  toast(`Stopped. ${fmt(refund)} JR refunded.`);
-}
-
-async function resolveReview(owner, key, approve) {
-  const ref = db.ref(`pn/pending/${owner}/${key}`);
-  const tx = await ref.transaction(cur => {
-    if (cur === null) return cur;
-    if (cur.status !== 'pending') return;
-    cur.status = 'resolving';
-    return cur;
+window.approveWD = async key => {
+  if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+  const w = allWithdrawals.find(x => x.key === key); if (!w) return;
+  if (w.status !== 'pending') return showToast('Already handled', 'err');
+  if (!confirm(`Approve payout of ${fmt(w.net || w.amount)} JR (${usd(w.net || w.amount)}) to Binance UID ${w.binanceUid || w.account}?`)) return;
+  await db.ref(`pn/withdrawals/${key}`).update({ status: 'paid', approvedAt: TS });
+  if (w.uid) await db.ref(`pn/users/${w.uid}/withdrawals/${key}`).update({ status: 'paid', approvedAt: TS }).catch(()=>{});
+  showToast('✅ Withdrawal marked as paid', 'ok'); loadAllData();
+};
+window.rejectWD = async key => {
+  if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+  const w = allWithdrawals.find(x => x.key === key); if (!w) return;
+  if (w.status !== 'pending') return showToast('Already handled', 'err');
+  if (!confirm(`Reject and refund ${fmt(w.amount)} JR to the user?`)) return;
+  await db.ref(`pn/users/${w.uid}`).transaction(u => {
+    if (!u) return u;
+    u.balance = (u.balance || 0) + (w.amount || 0);
+    return u;
   });
-  const v = tx.committed ? tx.snapshot.val() : null;
-  if (!v || v.status !== 'resolving') return toast('Already handled', true);
+  await db.ref(`pn/withdrawals/${key}`).update({ status: 'rejected', rejectedAt: TS });
+  if (w.uid) await db.ref(`pn/users/${w.uid}/withdrawals/${key}`).update({ status: 'rejected', rejectedAt: TS }).catch(()=>{});
+  showToast(`❌ Rejected · ${fmt(w.amount)} JR refunded`, 'ok'); loadAllData();
+};
 
-  if (approve) {
-    await db.ref(P.user(v.uid)).transaction(u => {
+/* ===== DEPOSITS ===== */
+function renderDepositsList() {
+  const list = depFilter === 'pending' ? allDeposits.filter(d => d.status === 'pending') : allDeposits;
+  const c = document.getElementById('depositsContainer'); if (!c) return;
+  if (!list.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><b>No deposit requests</b></div>'; return; }
+  c.innerHTML = list.map(d => {
+    const sc = d.status === 'pending' ? 'pill-pending' : d.status === 'approved' ? 'pill-approved' : 'pill-rejected';
+    return `
+      <div class="wd-card">
+        <div class="flex-between">
+          <div style="min-width:0"><strong style="font-size:.88rem">${esc(d.name || 'User')}</strong>
+            <div class="text-muted">${d.uid ? d.uid.slice(0,12)+'…' : ''}${d.username ? ' · @'+esc(d.username) : ''}</div>
+          </div>
+          <span class="status-pill ${sc}">${d.status}</span>
+        </div>
+        <div class="amount-line">$${d.usd || 0} <small>· ${fmt(d.rj)} RJ</small></div>
+        <div class="wd-detail"><i class="fas fa-receipt" style="color:var(--brand)"></i> Order ID: <span class="code-block">${esc(d.orderId || '—')}</span></div>
+        <div class="wd-detail"><i class="fas fa-clock"></i> ${tsToTime(d.createdAt)}</div>
+        ${d.status === 'pending' ? `<div class="chip-group">
+          <button class="btn-icon btn-success" onclick="approveDep('${d.key}')" type="button"><i class="fas fa-check"></i> Approve & credit RJ</button>
+          <button class="btn-icon btn-danger" onclick="rejectDep('${d.key}')" type="button"><i class="fas fa-times"></i> Reject</button>
+        </div>` : ''}
+      </div>`;
+  }).join('');
+}
+window.approveDep = async key => {
+  if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+  const d = allDeposits.find(x => x.key === key); if (!d) return;
+  if (d.status !== 'pending') return showToast('Already handled', 'err');
+  if (!confirm(`Credit ${fmt(d.rj)} RJ to ${d.name || d.uid}?`)) return;
+  await db.ref(`pn/users/${d.uid}`).transaction(u => {
+    if (!u) return u;
+    u.rjBalance = (u.rjBalance || 0) + (d.rj || 0);
+    u.rjTotal = (u.rjTotal || 0) + (d.rj || 0);
+    return u;
+  });
+  await db.ref(`pn/deposits/${key}`).update({ status: 'approved', approvedAt: TS });
+  if (d.uid) await db.ref(`pn/users/${d.uid}/deposits/${key}`).update({ status: 'approved', credited: true, approvedAt: TS }).catch(()=>{});
+  showToast(`✅ Approved · ${fmt(d.rj)} RJ credited`, 'ok'); loadAllData();
+};
+window.rejectDep = async key => {
+  if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+  const d = allDeposits.find(x => x.key === key); if (!d) return;
+  if (d.status !== 'pending') return showToast('Already handled', 'err');
+  if (!confirm('Reject this deposit request?')) return;
+  await db.ref(`pn/deposits/${key}`).update({ status: 'rejected', rejectedAt: TS });
+  if (d.uid) await db.ref(`pn/users/${d.uid}/deposits/${key}`).update({ status: 'rejected' }).catch(()=>{});
+  showToast('❌ Deposit rejected', 'ok'); loadAllData();
+};
+
+/* ===== TASKS ===== */
+const TYPE_META = {
+  join:       { label: 'Join',            icon: 'user-plus', cls: 'tt-join' },
+  reaction:   { label: 'Reaction',        icon: 'heart',     cls: 'tt-reaction' },
+  view:       { label: 'View',            icon: 'eye',       cls: 'tt-view' },
+  conditions: { label: 'With conditions', icon: 'shield-alt',cls: 'tt-conditions' },
+  website:    { label: 'Website',         icon: 'globe',     cls: 'tt-website' },
+  youtube:    { label: 'YouTube',         icon: 'youtube',   cls: 'tt-youtube' }
+};
+function renderTasksList() {
+  const list = taskFilter === 'live' ? allTasks.filter(t => t.status === 'live') : allTasks;
+  const c = document.getElementById('tasksContainer'); if (!c) return;
+  if (!list.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-bullhorn"></i><b>No campaigns</b></div>'; return; }
+  c.innerHTML = list.map(t => {
+    const m = TYPE_META[t.type] || TYPE_META.join;
+    const total = t.total || 0, rem = t.remaining || 0, done = total - rem;
+    const pct = total ? (done / total) * 100 : 0;
+    const owner = allUsers.find(u => u.uid === t.owner);
+    const ownerName = owner?.name || t.ownerName || (t.owner ? t.owner.slice(0,10)+'…' : '—');
+    const sc = t.status === 'live' ? 'pill-live' : t.status === 'paused' ? 'pill-paused' : 'pill-completed';
+    return `
+      <div class="wd-card">
+        <div class="flex-between">
+          <div style="display:flex;gap:10px;align-items:center;min-width:0;flex:1">
+            <div style="width:36px;height:36px;border-radius:12px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-size:.9rem;flex:none"><i class="fas fa-${m.icon}"></i></div>
+            <div style="min-width:0;flex:1">
+              <strong style="display:block;font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.title || 'Untitled')}</strong>
+              <div class="text-muted">${m.label} · ${fmt(t.perUser)} RJ/user${t.fee ? ' (+'+fmt(t.fee)+' fee)' : ''}</div>
+            </div>
+          </div>
+          <span class="status-pill ${sc}">${t.status || 'live'}</span>
+        </div>
+        <div class="progress-bar"><i style="width:${pct}%"></i></div>
+        <div class="flex-between" style="font-size:.7rem;color:#888">
+          <span>${fmt(done)} / ${fmt(total)} completed</span>
+          <span>${fmt(done * (t.perUser || 0))} RJ paid</span>
+        </div>
+        <div class="wd-detail" style="margin-top:8px"><i class="fas fa-user"></i> Owner: ${esc(ownerName)}</div>
+        <div class="wd-detail"><i class="fas fa-link"></i> <span class="code-block">${esc((t.url || '').slice(0,45))}${t.url && t.url.length > 45 ? '…' : ''}</span></div>
+        <div class="chip-group">
+          <button class="btn-icon" onclick="openTaskUrl('${esc(t.url || '').replace(/'/g, "\\'")}')" type="button"><i class="fas fa-external-link-alt"></i> Open</button>
+          ${t.status === 'live' ? `<button class="btn-icon btn-warning" onclick="stopTask('${t.id}')" type="button"><i class="fas fa-pause"></i> Pause</button>` :
+            t.status === 'paused' ? `<button class="btn-icon btn-success" onclick="resumeTask('${t.id}')" type="button"><i class="fas fa-play"></i> Resume</button>` : ''}
+          <button class="btn-icon btn-danger" onclick="deleteTask('${t.id}')" type="button"><i class="fas fa-trash"></i> Delete & refund</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+window.openTaskUrl = url => { if (url) window.open(url, '_blank'); };
+window.stopTask = async id => {
+  if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+  await db.ref(`pn/tasks/${id}/status`).set('paused');
+  showToast('Campaign paused', 'ok'); loadAllData();
+};
+window.resumeTask = async id => {
+  if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+  await db.ref(`pn/tasks/${id}/status`).set('live');
+  showToast('Campaign resumed', 'ok'); loadAllData();
+};
+window.deleteTask = async id => {
+  if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+  const t = allTasks.find(x => x.id === id); if (!t) return;
+  const refund = (t.remaining || 0) * ((t.perUser || 0) + (t.fee || 0));
+  if (!confirm(`Delete "${t.title}"?\n\n${refund > 0 ? `Refund ${fmt(refund)} RJ to owner?` : 'No refund.'}`)) return;
+  if (refund > 0 && t.owner) {
+    await db.ref(`pn/users/${t.owner}`).transaction(u => {
       if (!u) return u;
-      u.submitted = u.submitted || {};
-      u.done = u.done || {};
-      u.done[v.taskId] = true;
-      u.submitted[v.taskId] = 'approved';
-      u.balance = (u.balance || 0) + (v.perUser || 0);
-      u.totalIncome = (u.totalIncome || 0) + (v.perUser || 0);
+      u.rjBalance = (u.rjBalance || 0) + refund;
+      u.spent = Math.max(0, (u.spent || 0) - refund);
+      return u;
+    });
+  }
+  await db.ref(`pn/tasks/${id}`).remove();
+  showToast(`Deleted${refund > 0 ? ' · ' + fmt(refund) + ' RJ refunded' : ''}`, 'ok'); loadAllData();
+};
+
+/* ===== REVIEWS ===== */
+function renderReviewsList() {
+  const c = document.getElementById('reviewsContainer'); if (!c) return;
+  if (!allReviews.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-clipboard-check"></i><b>No pending submissions</b></div>'; return; }
+  c.innerHTML = allReviews.map(r => {
+    const task = allTasks.find(t => t.id === r.taskId) || {};
+    const ageMs = Date.now() - (r.createdAt || Date.now());
+    const hoursLeft = Math.max(0, 24 - ageMs / 3600000);
+    return `
+      <div class="wd-card">
+        <div class="flex-between">
+          <div style="min-width:0"><strong style="font-size:.85rem;display:block">${esc(task.title || 'Task')}</strong>
+            <div class="text-muted">from ${esc(r.name || 'User')}${r.tgUser ? ' · @'+esc(r.tgUser) : ''}</div>
+          </div>
+          <span class="status-pill pill-pending">pending</span>
+        </div>
+        <div class="wd-detail"><i class="fas fa-user-check"></i> Submitted: <span class="code-block">${esc(r.submitted)}</span></div>
+        <div class="wd-detail"><i class="fas fa-coins"></i> Reward: <strong>${fmt(r.perUser)} RJ</strong></div>
+        <div class="wd-detail"><i class="fas fa-clock"></i> Auto-approves in ${hoursLeft < 1 ? '<1h' : Math.round(hoursLeft)+'h'}</div>
+        <div class="chip-group">
+          <button class="btn-icon btn-success" onclick="approveReview('${r.owner}','${r.key}')" type="button"><i class="fas fa-check"></i> Approve</button>
+          <button class="btn-icon btn-danger" onclick="rejectReview('${r.owner}','${r.key}')" type="button"><i class="fas fa-times"></i> Reject</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+async function resolveReviewAdmin(owner, key, approve) {
+  const ref = db.ref(`pn/pending/${owner}/${key}`);
+  const tx = await ref.transaction(cur => { if (cur === null) return cur; if (cur.status !== 'pending') return; cur.status = 'resolving'; return cur; });
+  const v = tx.committed ? tx.snapshot.val() : null;
+  if (!v || v.status !== 'resolving') return false;
+  if (approve) {
+    await db.ref(`pn/users/${v.uid}`).transaction(u => {
+      if (!u) return u;
+      u.submitted = u.submitted || {}; u.done = u.done || {};
+      u.done[v.taskId] = true; u.submitted[v.taskId] = 'approved';
+      const d = new Date().toLocaleDateString('en-CA');
+      if (!u.todayRJ || u.todayRJ.d !== d) u.todayRJ = { d, a: 0 };
+      u.todayRJ.a += v.perUser;
+      u.rjBalance = (u.rjBalance || 0) + v.perUser;
+      u.rjTotal = (u.rjTotal || 0) + v.perUser;
       u.tasksDone = (u.tasksDone || 0) + 1;
       return u;
     });
-    toast(`✅ Approved. ${fmt(v.perUser)} JR credited.`);
   } else {
-    await db.ref(P.user(v.uid)).transaction(u => {
+    await db.ref(`pn/users/${v.uid}`).transaction(u => { if (!u) return u; u.submitted = u.submitted || {}; u.submitted[v.taskId] = 'rejected'; return u; });
+    await db.ref(`pn/tasks/${v.taskId}/remaining`).transaction(r => (r || 0) + 1);
+    await db.ref(`pn/tasks/${v.taskId}/status`).set('live');
+  }
+  await ref.remove(); await db.ref('pn/pendingAll/' + key).remove();
+  return true;
+}
+window.approveReview = async (owner, key) => {
+  if (!confirm('Approve this submission and pay the user?')) return;
+  const ok = await resolveReviewAdmin(owner, key, true);
+  showToast(ok ? '✅ Approved · RJ credited' : 'Already handled', ok ? 'ok' : 'err');
+};
+window.rejectReview = async (owner, key) => {
+  if (!confirm('Reject this submission?')) return;
+  const ok = await resolveReviewAdmin(owner, key, false);
+  showToast(ok ? 'Rejected · slot restored' : 'Already handled', ok ? 'ok' : 'err');
+};
+
+/* ===== JOIN WATCH ===== */
+function renderJoinsList() {
+  const c = document.getElementById('joinsContainer'); if (!c) return;
+  if (!allJoins.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-user-shield"></i><b>No active join watches</b></div>'; return; }
+  const now = Date.now();
+  c.innerHTML = allJoins.slice(0, 200).map(w => {
+    const timeLeft = Math.max(0, (w.until || 0) - now);
+    const nextIn = Math.max(0, (w.next || 0) - now);
+    const u = allUsers.find(x => x.uid === w.uid);
+    return `
+      <div class="wd-card">
+        <div class="flex-between">
+          <div style="min-width:0">
+            <strong style="font-size:.85rem">${esc(u?.name || w.uid || 'User')}</strong>
+            <div class="text-muted">${w.title ? esc(w.title) : 'Task'}</div>
+          </div>
+          <span class="status-pill ${timeLeft > 0 ? 'pill-pending' : 'pill-completed'}">${timeLeft > 0 ? 'Watching' : 'Expired'}</span>
+        </div>
+        <div class="wd-detail"><i class="fas fa-coins"></i> Reward at risk: <strong>${fmt(w.amt)} RJ</strong></div>
+        <div class="wd-detail"><i class="fas fa-clock"></i> Expires in ${Math.floor(timeLeft/3600000)}h ${Math.floor((timeLeft%3600000)/60000)}m</div>
+        <div class="wd-detail"><i class="fas fa-sync"></i> Next auto-check in ${Math.floor(nextIn/60000)}m</div>
+        <div class="chip-group">
+          <button class="btn-icon btn-danger" onclick="forceClawback('${w.key}')" type="button"><i class="fas fa-hand-paper"></i> Force clawback</button>
+          <button class="btn-icon" onclick="unwatch('${w.key}')" type="button"><i class="fas fa-times"></i> Remove watch</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+window.unwatch = async key => {
+  if (!confirm('Remove this join watch? User keeps their reward.')) return;
+  await db.ref('pn/joinWatch/' + key).remove();
+  showToast('Watch removed', 'ok');
+};
+window.forceClawback = async key => {
+  const w = allJoins.find(x => x.key === key); if (!w) return;
+  if (!confirm(`Claw back ${fmt(w.amt)} RJ from user? They will owe it if balance is short.`)) return;
+  try {
+    await db.ref(`pn/users/${w.uid}`).transaction(u => {
       if (!u) return u;
-      u.submitted = u.submitted || {};
-      u.submitted[v.taskId] = 'rejected';
+      u.clawed = u.clawed || {}; if (u.clawed[key]) return;
+      const pay = Math.min(Math.max(u.rjBalance || 0, 0), w.amt), rest = w.amt - pay;
+      u.clawed[key] = { amt: w.amt, owner: w.owner, at: Date.now(), title: w.title || '' };
+      u.rjBalance = (u.rjBalance || 0) - pay;
+      if (pay > 0) { u.outbox = u.outbox || {}; u.outbox[key + '_0'] = { owner: w.owner, amt: pay }; }
+      if (rest > 0) { u.debts = u.debts || {}; u.debts[key] = { owner: w.owner, left: rest, title: w.title || '' }; u.debtTotal = (u.debtTotal || 0) + rest; }
       return u;
     });
-    await db.ref(P.task(v.taskId) + '/remaining').transaction(r => (r || 0) + 1);
-    await db.ref(P.task(v.taskId) + '/status').set('live');
-    toast('Rejected. Slot returned.');
-  }
-  await ref.remove();
-  await db.ref('pn/pendingAll/' + key).remove();
-  log(approve ? 'review-ok' : 'review-no', key);
-}
-
-/* ============================================================
-   More (flags, factory reset, admin log)
-   ============================================================ */
-function renderFlags() {
-  const rows = byNew(D.flags);
-  const box = $('#flagsContainer');
-  if (!rows.length) { box.innerHTML = '<div class="empty-state" style="padding:20px;"><i class="fas fa-flag"></i>No flagged links</div>'; return; }
-  box.innerHTML = rows.map(([k,x]) => `<div class="wd-card" style="padding:14px;">
-    <div class="mono" style="word-break:break-all;font-size:.75rem;">${esc(x.url)}</div>
-    <div class="text-muted" style="margin-top:6px;">${esc(username(x.uid))} · ${when(x.createdAt)}</div>
-    <div class="chip-group">
-      <button class="btn-icon" data-flag-act="clear" data-k="${esc(k)}"><i class="fas fa-check"></i> Clear</button>
-      <button class="btn-icon btn-danger" data-flag-act="ban" data-k="${esc(k)}" data-uid="${esc(x.uid)}"><i class="fas fa-ban"></i> Block user</button>
-    </div>
-  </div>`).join('');
-}
-
-$('#moreSection').addEventListener('click', async e => {
-  const b = e.target.closest('[data-flag-act]'); if (!b) return;
-  if (b.dataset.flagAct === 'clear') {
-    await db.ref('pn/flags/' + b.dataset.k).remove();
-    toast('Flag cleared'); return loadAll();
-  }
-  if (b.dataset.flagAct === 'ban') {
-    if (!confirm('Block this user?')) return;
-    await db.ref(P.user(b.dataset.uid) + '/banned').set(true);
-    await db.ref('pn/flags/' + b.dataset.k).remove();
-    toast('User blocked'); return loadAll();
-  }
-});
-
-$('#fullResetBtn').addEventListener('click', async () => {
-  if (!confirm('⚠️ Reset ALL user data (balances, incomes, tasks done, submissions, ad counters)?')) return;
-  if (prompt("Type 'RESET ALL' to confirm:") !== 'RESET ALL') return toast('Cancelled', true);
-  const d = new Date().toLocaleDateString('en-CA');
-  const ids = Object.keys(D.users);
-  let i = 0;
-  for (const uid of ids) {
-    await db.ref(P.user(uid)).update({
-      balance: 0, totalIncome: 0, tasksDone: 0,
-      done: null, submitted: null, subAt: null,
-      spent: 0, deposited: 0,
-      today: { d, a: 0 }, adDay: d, adToday: null, adNext: null
+    // credit owner immediately
+    await db.ref(`pn/users/${w.owner}`).transaction(o => {
+      if (!o) return o;
+      o.rjBalance = (o.rjBalance || 0) + (w.amt || 0);
+      o.rjTotal = (o.rjTotal || 0) + (w.amt || 0);
+      return o;
     });
-    if (++i % 10 === 0) toast(`Reset ${i}/${ids.length}…`);
+    await db.ref('pn/joinWatch/' + key).remove();
+    showToast(`✅ Clawed back ${fmt(w.amt)} RJ`, 'ok'); loadAllData();
+  } catch(e) { console.error(e); showToast('Clawback failed', 'err'); }
+};
+
+/* ===== FULL RESET ===== */
+async function handleFullReset() {
+  if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+  if (document.getElementById('resetConfirmInput').value.trim() !== 'RESET ALL') return showToast("Type 'RESET ALL' to confirm", 'err');
+  if (!confirm('PERMANENT: reset every user?\nThis cannot be undone.')) return;
+  showToast('Resetting all users…');
+  let count = 0;
+  for (const u of allUsers) {
+    await db.ref(`pn/users/${u.uid}`).update({
+      balance: 0, totalIncome: 0, tasksDone: 0, spent: 0, refEarned: 0, refEarnedRJ: 0,
+      rjBalance: 0, rjTotal: 0, debtTotal: 0, debts: null, clawed: null,
+      done: null, submitted: null, subAt: null, referrals: null,
+      adToday: null, adNext: null, adProgress: null, today: null, todayRJ: null,
+      swaps: null, withdrawals: null, deposits: null, outbox: null, recv: null, refBonusPaid: null
+    });
+    count++;
   }
-  toast('✅ Factory reset complete');
-  loadAll();
-});
+  for (const w of allWithdrawals.filter(x => x.status === 'pending')) await db.ref(`pn/withdrawals/${w.key}`).update({ status: 'cancelled' });
+  for (const d of allDeposits.filter(x => x.status === 'pending')) await db.ref(`pn/deposits/${d.key}`).update({ status: 'cancelled' });
+  await db.ref('pn/joinWatch').remove().catch(()=>{});
+  document.getElementById('resetConfirmInput').value = '';
+  showToast(`✅ Reset ${count} users`, 'ok');
+  loadAllData();
+}
 
-function log(a, k, extra) { try { db.ref('pn/adminLog').push().set(Object.assign({ a, k, createdAt: TS }, extra || {})); } catch(_) {} }
-
-/* ============================================================
-   Nav
-   ============================================================ */
-document.querySelectorAll('.nav-tab').forEach(tab => tab.addEventListener('click', () => {
-  const target = tab.dataset.tab;
-  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-  const sec = document.getElementById(target + 'Section');
-  if (sec) sec.classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t === tab));
-  $('#adminScrollArea').scrollTop = 0;
-  if (target === 'users')   renderUsers();
-  if (target === 'finance') renderFinance();
-  if (target === 'tasks')   renderTasks();
-  if (target === 'stats')   renderStats();
-  if (target === 'more')    renderFlags();
-}));
-
-/* ============================================================
-   Boot
-   ============================================================ */
-if (isLoggedIn()) showAdminUI(); else showLoginUI();
+console.log('[PMER Admin] Script loaded ✓');
 </script>
 </body>
 </html>
