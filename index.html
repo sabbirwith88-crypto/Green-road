@@ -25,7 +25,6 @@ body{background:#f0f0f3;display:flex;justify-content:center;align-items:flex-sta
 .scroll-area::-webkit-scrollbar{width:5px}
 .scroll-area::-webkit-scrollbar-thumb{background:#ddd;border-radius:5px}
 
-/* login */
 .login-wrap{display:flex;align-items:center;justify-content:center;height:100%;padding:20px;width:100%}
 .login-card{background:#fff;border-radius:36px;padding:40px 28px;text-align:center;box-shadow:0 20px 35px -10px rgba(0,0,0,.08);width:100%;border:1px solid #f0f0f0}
 .login-card .crown{width:76px;height:76px;border-radius:24px;background:linear-gradient(135deg,#9B78FF,#4A22C2);display:grid;place-items:center;margin:0 auto 16px;box-shadow:0 12px 24px -10px rgba(106,61,240,.6)}
@@ -39,26 +38,20 @@ body{background:#f0f0f3;display:flex;justify-content:center;align-items:flex-sta
 .btn-primary:active{transform:scale(.98)}
 .btn-primary[disabled]{opacity:.5;cursor:not-allowed}
 .forgot-link{background:none;border:none;color:#bbb;font-size:.7rem;margin-top:14px;text-decoration:underline;cursor:pointer;padding:6px}
-.forgot-link:hover{color:var(--brand)}
 .status-line{font-size:.65rem;color:#bbb;margin-top:12px}
 
-/* header */
 .admin-header{background:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;position:sticky;top:0;z-index:10}
 .logo{font-weight:800;font-size:1.05rem;color:#000;display:flex;align-items:center;gap:8px}
 .logo .lg{width:32px;height:32px;border-radius:11px;background:linear-gradient(135deg,#9B78FF,#4A22C2);display:grid;place-items:center;color:#fff;font-size:.85rem;box-shadow:0 6px 14px -6px rgba(106,61,240,.6)}
 .exit-btn{background:#f0f0f0;border:none;padding:9px 16px;border-radius:40px;font-weight:600;cursor:pointer;color:#333;font-size:.8rem}
-.exit-btn:hover{background:#e5e5e5}
 .refresh-btn{background:transparent;border:none;color:#999;cursor:pointer;padding:6px 8px;font-size:1rem}
-.refresh-btn:hover{color:var(--brand);transform:rotate(180deg);transition:.4s}
 
-/* nav */
 .bottom-nav-admin{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.98);backdrop-filter:blur(12px);display:flex;justify-content:space-around;padding:8px 4px 18px;border-top:1px solid #eee;z-index:20;overflow-x:auto}
 .nav-tab{background:transparent;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.53rem;padding:6px 2px;border-radius:12px;color:#999;font-weight:600;flex:1;min-width:52px;cursor:pointer;transition:.15s;position:relative;white-space:nowrap}
 .nav-tab i{font-size:1.05rem}
 .nav-tab.active{background:var(--brand-soft);color:var(--brand)}
 .nav-tab .badge{position:absolute;top:2px;right:6px;background:var(--bad);color:#fff;font-size:.5rem;padding:1px 5px;border-radius:20px;font-weight:700;min-width:16px;text-align:center}
 
-/* sections */
 .admin-section{display:none;padding:20px;animation:fadeIn .25s ease}
 .admin-section.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -72,6 +65,10 @@ body{background:#f0f0f3;display:flex;justify-content:center;align-items:flex-sta
 .stat-card.jade{background:var(--jade-soft);border-color:#c0f0d8}
 .stat-card.jade .stat-number{color:var(--jade-ink)}
 
+.diag-bar{background:#fff7e6;border:1px solid #ffe0a3;border-radius:14px;padding:10px 14px;margin-bottom:14px;font-size:.7rem;color:#8a5a00;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.diag-bar .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}
+.diag-bar .dot.bad{background:var(--bad)}
+
 .user-card,.wd-card{background:#fafafa;border-radius:22px;padding:16px;margin-bottom:12px;border:1px solid #eee;transition:.2s}
 .user-card:hover,.wd-card:hover{background:#f6f6f6}
 .flex-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
@@ -83,7 +80,6 @@ body{background:#f0f0f3;display:flex;justify-content:center;align-items:flex-sta
 .btn-danger{background:var(--bad);color:#fff}.btn-danger:hover{background:#b82f3e}
 .btn-warning{background:var(--warn);color:#fff}.btn-warning:hover{background:#a86b00}
 .btn-jade{background:var(--jade);color:#fff}.btn-jade:hover{background:#28a374}
-.btn-dark{background:#1a1a1a;color:#fff}.btn-dark:hover{background:#000}
 
 .status-pill{display:inline-block;padding:3px 10px;border-radius:40px;font-size:.58rem;font-weight:700;letter-spacing:.02em;text-transform:uppercase}
 .pill-pending{background:var(--warn-soft);color:var(--warn)}
@@ -126,6 +122,9 @@ body{background:#f0f0f3;display:flex;justify-content:center;align-items:flex-sta
 .amount-line small{font-weight:600;color:#999;font-size:.7rem}
 .jr-tag{color:var(--brand);font-weight:800}
 .rj-tag{color:var(--jade-ink);font-weight:800}
+.src-tag{display:inline-block;padding:1px 7px;border-radius:20px;font-size:.58rem;font-weight:700;background:#eef;color:#557;margin-left:4px}
+.src-tag.global{background:#e1f0ff;color:#0369a1}
+.src-tag.nested{background:#f0e1ff;color:#7c3aed}
 .seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:#f0f0f0;border-radius:14px;padding:4px;margin-bottom:16px}
 .seg button{border:0;background:transparent;border-radius:11px;padding:9px;font-weight:700;font-size:.75rem;color:#888;cursor:pointer;transition:.2s}
 .seg button.on{background:#fff;color:#000;box-shadow:0 1px 4px rgba(0,0,0,.08)}
@@ -139,7 +138,6 @@ body{background:#f0f0f3;display:flex;justify-content:center;align-items:flex-sta
 <body>
 <div class="phone-frame">
 
-  <!-- LOGIN -->
   <div id="loginView" class="view active">
     <div class="login-wrap">
       <div class="login-card">
@@ -154,7 +152,6 @@ body{background:#f0f0f3;display:flex;justify-content:center;align-items:flex-sta
     </div>
   </div>
 
-  <!-- PANEL -->
   <div id="adminPanelView" class="view">
     <div class="admin-header">
       <div class="logo"><span class="lg"><i class="fas fa-crown"></i></span> PMER Admin</div>
@@ -165,7 +162,9 @@ body{background:#f0f0f3;display:flex;justify-content:center;align-items:flex-sta
     </div>
 
     <div class="scroll-area" id="adminScrollArea">
+
       <div id="dashboardSection" class="admin-section active">
+        <div class="diag-bar" id="diagBar"><span class="dot"></span> Checking data sources…</div>
         <div class="stats-grid" id="dashboardStats"></div>
         <div class="user-card" id="extraInsights"></div>
       </div>
@@ -206,11 +205,17 @@ body{background:#f0f0f3;display:flex;justify-content:center;align-items:flex-sta
       </div>
 
       <div id="joinsSection" class="admin-section">
-        <p class="text-muted" style="margin-bottom:14px">Users who joined and are being watched. If they leave before the 5-day window, you can claw back their reward manually.</p>
+        <p class="text-muted" style="margin-bottom:14px">Users being watched. If they leave before the 5-day window, force clawback returns their reward.</p>
         <div id="joinsContainer"></div>
       </div>
 
       <div id="dangerSection" class="admin-section">
+        <div class="user-card" style="background:#f0f8ff;border:1px solid #b6d8f5;margin-bottom:14px">
+          <h3 style="font-size:.9rem;margin-bottom:10px"><i class="fas fa-tools" style="color:#0369a1"></i> Diagnostics</h3>
+          <div id="diagList" class="text-muted" style="font-size:.75rem;line-height:1.7">Run refresh to see path status.</div>
+          <button id="runDiagBtn" class="btn-icon" style="width:100%;justify-content:center;padding:11px;margin-top:10px" type="button"><i class="fas fa-heartbeat"></i> Run full diagnostic</button>
+        </div>
+
         <div class="user-card danger-zone">
           <h3><i class="fas fa-radiation"></i> Factory Reset</h3>
           <p>Reset EVERY user: JR → 0, RJ → 0, stats → 0, submissions and referrals cleared. Pending withdrawals and deposits get cancelled.</p>
@@ -230,7 +235,7 @@ body{background:#f0f0f3;display:flex;justify-content:center;align-items:flex-sta
           <button id="changePasswordBtn" class="btn-primary" style="background:#1a1a1a" type="button"><i class="fas fa-key"></i> Update Password</button>
         </div>
 
-        <p class="text-muted" style="text-align:center;margin-top:18px">PMER Admin 2.0 · pn/ database</p>
+        <p class="text-muted" style="text-align:center;margin-top:18px">PMER Admin 2.1 · pn/ database</p>
       </div>
     </div>
 
@@ -269,12 +274,11 @@ const ssSet = (k,v) => { _memS[k]=v; try{ sessionStorage.setItem(k,v); }catch(e)
 const ssDel = k => { delete _memS[k]; try{ sessionStorage.removeItem(k); }catch(e){} };
 
 /* ===== CONSTANTS ===== */
-const JRPUSD = 10000;         // 10000 JR = $1 (from CONFIG.usdRate)
-const WD_FEE = 3;             // % (from CONFIG.withdraw.feePct)
+const JRPUSD = 10000;
+const WD_FEE = 3;
 const ADMIN_PASS_KEY = 'pmer_admin_pass';
 const DEFAULT_PASS = 'Admin2025';
 const LOGIN_KEY = 'pmer_admin_logged';
-const SWAP_IN = 1000, SWAP_OUT = 50000;
 
 /* ===== FIREBASE ===== */
 let db = null, TS = Date.now(), firebaseOk = false;
@@ -295,8 +299,15 @@ try {
 } catch(e) { console.error('[PMER Admin] Firebase init failed:', e); }
 
 /* ===== STATE ===== */
-let allUsers = [], allWithdrawals = [], allDeposits = [], allTasks = [], allReviews = [], allJoins = [], flags = [];
+let allUsers = [];
+let allWithdrawals = [];
+let allDeposits = [];
+let allTasks = [];
+let allReviews = [];
+let allJoins = [];
+let flags = [];
 let wdFilter = 'pending', depFilter = 'pending', taskFilter = 'live';
+const diag = {};
 
 /* ===== UTILS ===== */
 const $  = s => document.querySelector(s);
@@ -315,7 +326,19 @@ function showToast(msg, kind = '') {
   t.className = 'toast' + (kind ? ' ' + kind : '');
   t.classList.add('show');
   clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.remove('show'), 2800);
+  t._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* Wrap any firebase read so one failure never kills the whole panel */
+async function safeRead(path) {
+  try {
+    const s = await db.ref(path).once('value');
+    return { ok: true, val: s.val() };
+  } catch (e) {
+    console.warn('[PMER Admin] read failed:', path, e.message);
+    diag[path] = 'FAIL: ' + (e.message || 'unknown');
+    return { ok: false, val: null, error: e.message || 'unknown' };
+  }
 }
 
 /* ===== AUTH ===== */
@@ -347,7 +370,6 @@ function handleLogin() {
     const pwd = (inp.value || '').trim();
     if (!pwd) { showToast('Please enter the password', 'err'); inp.focus(); return; }
     const stored = getAdminPass();
-    console.log('[PMER Admin] comparing');
     if (pwd === stored) {
       setLogin(true);
       showAdminUI();
@@ -387,6 +409,7 @@ function handleLogin() {
 function attachAllHandlers() {
   document.getElementById('logoutBtn')?.addEventListener('click', () => { setLogin(false); location.reload(); });
   document.getElementById('refreshBtn')?.addEventListener('click', () => loadAllData());
+  document.getElementById('runDiagBtn')?.addEventListener('click', () => runDiagnostic());
   document.getElementById('userSearchInput')?.addEventListener('input', renderUsersList);
   document.getElementById('closeProfileModal')?.addEventListener('click', () => document.getElementById('userProfileModal').classList.remove('active'));
   document.getElementById('userProfileModal')?.addEventListener('click', e => { if (e.target.id === 'userProfileModal') e.target.classList.remove('active'); });
@@ -414,14 +437,14 @@ function attachAllHandlers() {
   document.getElementById('clearFlagsBtn')?.addEventListener('click', async () => {
     if (!firebaseOk) return showToast('Firebase unavailable', 'err');
     if (!confirm('Clear all flagged content reports?')) return;
-    await db.ref('pn/flags').remove();
-    flags = []; showToast('Flags cleared', 'ok'); renderDashboard();
+    try { await db.ref('pn/flags').remove(); flags = []; showToast('Flags cleared', 'ok'); renderDashboard(); }
+    catch (e) { showToast('Failed: ' + e.message, 'err'); }
   });
   document.getElementById('clearWatchBtn')?.addEventListener('click', async () => {
     if (!firebaseOk) return showToast('Firebase unavailable', 'err');
-    if (!confirm('Clear join watch list? Users will no longer be tracked for leaving.')) return;
-    await db.ref('pn/joinWatch').remove();
-    allJoins = []; showToast('Join watch cleared', 'ok'); renderJoinsList();
+    if (!confirm('Clear join watch list?')) return;
+    try { await db.ref('pn/joinWatch').remove(); allJoins = []; showToast('Join watch cleared', 'ok'); renderJoinsList(); }
+    catch (e) { showToast('Failed: ' + e.message, 'err'); }
   });
   document.getElementById('changePasswordBtn')?.addEventListener('click', () => {
     const np = document.getElementById('newAdminPassword').value;
@@ -451,101 +474,260 @@ function attachAllHandlers() {
   console.log('[PMER Admin] All handlers attached ✓');
 }
 
-/* ===== LOAD DATA ===== */
+/* =========================================================
+   LOAD DATA — key fix: read from BOTH global AND nested paths
+   ========================================================= */
 async function loadAllData() {
   if (!firebaseOk) { showToast('⚠️ Firebase unavailable', 'err'); return; }
   showToast('🔄 Syncing…');
-  try {
-    const [uS, tS, wS, dS, fS, jS] = await Promise.all([
-      db.ref('pn/users').once('value'),
-      db.ref('pn/tasks').once('value'),
-      db.ref('pn/withdrawals').once('value'),
-      db.ref('pn/deposits').once('value'),
-      db.ref('pn/flags').once('value'),
-      db.ref('pn/joinWatch').once('value')
-    ]);
+  for (const k of Object.keys(diag)) delete diag[k];
 
-    allUsers = [];
-    uS.forEach(c => { const u = c.val() || {}; u.uid = c.key; allUsers.push(u); });
-    allUsers.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+  // 1. Users (critical)
+  const uRes = await safeRead('pn/users');
+  allUsers = [];
+  if (uRes.ok && uRes.val) {
+    Object.entries(uRes.val).forEach(([uid, u]) => {
+      allUsers.push({ ...(u || {}), uid });
+    });
+  }
+  allUsers.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-    allTasks = [];
-    tS.forEach(c => { const t = c.val() || {}; t.id = c.key; allTasks.push(t); });
-    allTasks.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+  // 2. Tasks
+  const tRes = await safeRead('pn/tasks');
+  allTasks = [];
+  if (tRes.ok && tRes.val) {
+    Object.entries(tRes.val).forEach(([id, t]) => {
+      allTasks.push({ ...(t || {}), id });
+    });
+  }
+  allTasks.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-    allWithdrawals = [];
-    wS.forEach(c => allWithdrawals.push({ key: c.key, ...c.val() }));
-    allWithdrawals.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+  // 3. WITHDRAWALS — read from BOTH global + user-nested, merge
+  allWithdrawals = [];
+  const seenW = new Set();
 
-    allDeposits = [];
-    dS.forEach(c => allDeposits.push({ key: c.key, ...c.val() }));
-    allDeposits.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+  // 3a. Global path pn/withdrawals
+  const wGlobal = await safeRead('pn/withdrawals');
+  if (wGlobal.ok && wGlobal.val) {
+    Object.entries(wGlobal.val).forEach(([key, w]) => {
+      if (!w) return;
+      const sig = signature(w);
+      if (seenW.has(sig)) return;
+      seenW.add(sig);
+      allWithdrawals.push({ ...w, key, _src: 'global' });
+    });
+  }
 
-    flags = [];
-    fS.forEach(c => flags.push({ key: c.key, ...c.val() }));
+  // 3b. Nested path pn/users/{uid}/withdrawals
+  allUsers.forEach(u => {
+    const wds = u.withdrawals;
+    if (!wds || typeof wds !== 'object') return;
+    Object.entries(wds).forEach(([nkey, w]) => {
+      if (!w) return;
+      const rec = { ...w, uid: u.uid, name: w.name || u.name, username: w.username || u.username };
+      const sig = signature(rec);
+      if (seenW.has(sig)) {
+        // Already exists via global — enrich with nested key so we can update both later
+        const existing = allWithdrawals.find(x => signature(x) === sig);
+        if (existing) existing._nestedKey = nkey;
+        return;
+      }
+      seenW.add(sig);
+      allWithdrawals.push({ ...rec, key: 'nested_' + u.uid + '_' + nkey, _src: 'nested', _nestedKey: nkey });
+    });
+  });
 
-    allJoins = [];
-    jS.forEach(c => allJoins.push({ key: c.key, ...c.val() }));
+  allWithdrawals.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  diag['pn/withdrawals'] = wGlobal.ok ? `OK (${Object.keys(wGlobal.val || {}).length} global, ${allWithdrawals.filter(w => w._src === 'nested').length} nested)` : 'FAIL: ' + wGlobal.error;
 
-    renderDashboard();
-    renderUsersList();
-    renderWithdrawalsList();
-    renderDepositsList();
-    renderTasksList();
-    renderJoinsList();
-    updateBadges();
-    showToast(`✅ ${allUsers.length} users · ${allTasks.length} campaigns`, 'ok');
-  } catch(e) {
-    console.error('loadAllData:', e);
-    showToast('Load error: ' + e.message, 'err');
+  // 4. DEPOSITS — same treatment
+  allDeposits = [];
+  const seenD = new Set();
+
+  const dGlobal = await safeRead('pn/deposits');
+  if (dGlobal.ok && dGlobal.val) {
+    Object.entries(dGlobal.val).forEach(([key, d]) => {
+      if (!d) return;
+      const sig = signature(d);
+      if (seenD.has(sig)) return;
+      seenD.add(sig);
+      allDeposits.push({ ...d, key, _src: 'global' });
+    });
+  }
+
+  allUsers.forEach(u => {
+    const deps = u.deposits;
+    if (!deps || typeof deps !== 'object') return;
+    Object.entries(deps).forEach(([nkey, d]) => {
+      if (!d) return;
+      const rec = { ...d, uid: u.uid, name: d.name || u.name, username: d.username || u.username };
+      const sig = signature(rec);
+      if (seenD.has(sig)) {
+        const existing = allDeposits.find(x => signature(x) === sig);
+        if (existing) existing._nestedKey = nkey;
+        return;
+      }
+      seenD.add(sig);
+      allDeposits.push({ ...rec, key: 'nested_' + u.uid + '_' + nkey, _src: 'nested', _nestedKey: nkey });
+    });
+  });
+
+  allDeposits.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  diag['pn/deposits'] = dGlobal.ok ? `OK (${Object.keys(dGlobal.val || {}).length} global, ${allDeposits.filter(d => d._src === 'nested').length} nested)` : 'FAIL: ' + dGlobal.error;
+
+  // 5. Flags + JoinWatch (non-critical)
+  const fRes = await safeRead('pn/flags');
+  flags = [];
+  if (fRes.ok && fRes.val) Object.entries(fRes.val).forEach(([k, v]) => flags.push({ key: k, ...v }));
+  diag['pn/flags'] = fRes.ok ? `OK (${flags.length})` : 'FAIL: ' + fRes.error;
+
+  const jRes = await safeRead('pn/joinWatch');
+  allJoins = [];
+  if (jRes.ok && jRes.val) Object.entries(jRes.val).forEach(([k, v]) => allJoins.push({ key: k, ...v }));
+  diag['pn/joinWatch'] = jRes.ok ? `OK (${allJoins.length})` : 'FAIL: ' + jRes.error;
+
+  // 6. Reviews (pendingAll + pending/{owner})
+  await loadReviews();
+
+  renderDashboard();
+  renderUsersList();
+  renderWithdrawalsList();
+  renderDepositsList();
+  renderTasksList();
+  renderJoinsList();
+  renderDiag();
+  updateBadges();
+
+  const wdN = allWithdrawals.filter(w => w.status === 'pending').length;
+  const dpN = allDeposits.filter(d => d.status === 'pending').length;
+  showToast(`✅ ${allUsers.length} users · ${wdN} payouts · ${dpN} deposits`, 'ok');
+}
+
+/* Signature for de-duplication: uid + amount + ~10s bucket */
+function signature(r) {
+  const uid = r.uid || '';
+  const amt = r.amount || r.rj || 0;
+  const t = Math.floor((r.createdAt || 0) / 10000);
+  return `${uid}|${amt}|${t}`;
+}
+
+async function loadReviews() {
+  allReviews = [];
+  const pAll = await safeRead('pn/pendingAll');
+  diag['pn/pendingAll'] = pAll.ok ? `OK (${Object.keys(pAll.val || {}).length})` : 'FAIL: ' + pAll.error;
+  if (!pAll.ok || !pAll.val) return;
+  const keys = Object.keys(pAll.val);
+  const rows = await Promise.all(keys.map(async key => {
+    const v = pAll.val[key];
+    if (!v || !v.owner) return null;
+    const snap = await safeRead('pn/pending/' + v.owner + '/' + key);
+    if (!snap.ok || !snap.val) return null;
+    return { owner: v.owner, key, ...snap.val() };
+  }));
+  allReviews = rows.filter(Boolean).filter(r => r.status === 'pending');
+}
+
+function renderDiag() {
+  const el = document.getElementById('diagList'); if (!el) return;
+  el.innerHTML = Object.entries(diag).map(([k, v]) => {
+    const bad = String(v).startsWith('FAIL');
+    return `<div><span style="color:${bad ? 'var(--bad)' : 'var(--ok)'}">●</span> <code style="font-size:.68rem">${esc(k)}</code> — ${esc(v)}</div>`;
+  }).join('') || 'No data yet.';
+
+  const bar = document.getElementById('diagBar');
+  if (bar) {
+    const total = Object.keys(diag).length;
+    const ok = Object.values(diag).filter(v => !String(v).startsWith('FAIL')).length;
+    bar.innerHTML = `<span class="dot${ok < total ? ' bad' : ''}"></span> Data sources: ${ok}/${total} OK`;
   }
 }
 
+async function runDiagnostic() {
+  if (!firebaseOk) return showToast('Firebase unavailable', 'err');
+  showToast('🔍 Running diagnostic…');
+  diag['pn/users'] = 'checking…'; diag['pn/tasks'] = 'checking…';
+  const paths = ['pn/users', 'pn/tasks', 'pn/withdrawals', 'pn/deposits', 'pn/flags', 'pn/joinWatch', 'pn/pendingAll'];
+  for (const p of paths) {
+    const r = await safeRead(p);
+    diag[p] = r.ok ? `OK (${r.val ? Object.keys(r.val).length : 0} entries)` : 'FAIL: ' + r.error;
+  }
+  renderDiag();
+  showToast('Diagnostic complete', 'ok');
+}
+
+/* ===== REALTIME ===== */
 let realtimeAttached = false;
 function attachRealtime() {
   if (realtimeAttached || !firebaseOk) return;
   realtimeAttached = true;
 
   db.ref('pn/withdrawals').on('value', s => {
-    allWithdrawals = [];
-    s.forEach(c => allWithdrawals.push({ key: c.key, ...c.val() }));
-    allWithdrawals.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
-    renderWithdrawalsList(); renderDashboard(); updateBadges();
+    const global = [];
+    s.forEach(c => global.push({ key: c.key, ...c.val(), _src: 'global' }));
+    mergeWithdrawals(global);
+  }, err => {
+    console.warn('withdrawals listener failed:', err.message);
+    diag['pn/withdrawals'] = 'LISTEN FAIL: ' + err.message;
+    renderDiag();
   });
+
   db.ref('pn/deposits').on('value', s => {
-    allDeposits = [];
-    s.forEach(c => allDeposits.push({ key: c.key, ...c.val() }));
-    allDeposits.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
-    renderDepositsList(); renderDashboard(); updateBadges();
+    const global = [];
+    s.forEach(c => global.push({ key: c.key, ...c.val(), _src: 'global' }));
+    mergeDeposits(global);
+  }, err => {
+    console.warn('deposits listener failed:', err.message);
+    diag['pn/deposits'] = 'LISTEN FAIL: ' + err.message;
+    renderDiag();
   });
-  db.ref('pn/pendingAll').on('value', s => {
-    const keys = s.val() || {};
-    Promise.all(Object.entries(keys).map(async ([k, v]) => {
-      const snap = await db.ref('pn/pending/' + v.owner + '/' + k).once('value');
-      return snap.exists() ? { owner: v.owner, key: k, ...snap.val() } : null;
-    })).then(rows => {
-      allReviews = rows.filter(Boolean).filter(r => r.status === 'pending');
-      renderReviewsList(); updateBadges();
-    });
-  });
+
+  db.ref('pn/pendingAll').on('value', () => loadReviews().then(() => { renderReviewsList(); updateBadges(); }),
+    err => console.warn('pendingAll:', err.message));
+
   db.ref('pn/joinWatch').on('value', s => {
     allJoins = [];
     s.forEach(c => allJoins.push({ key: c.key, ...c.val() }));
     renderJoinsList();
-  });
+  }, err => console.warn('joinWatch:', err.message));
+
   console.log('[PMER Admin] Realtime attached ✓');
+}
+
+function mergeWithdrawals(globalList) {
+  // keep any nested-only records that don't match a global one
+  const seen = new Set(globalList.map(signature));
+  const nestedOnly = allWithdrawals.filter(w => w._src === 'nested' && !seen.has(signature(w)));
+  allWithdrawals = globalList.concat(nestedOnly)
+    .map(w => {
+      const sig = signature(w);
+      const match = allWithdrawals.find(x => signature(x) === sig);
+      if (match && match._nestedKey) return { ...w, _nestedKey: match._nestedKey };
+      return w;
+    })
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  renderWithdrawalsList(); renderDashboard(); updateBadges();
+}
+function mergeDeposits(globalList) {
+  const seen = new Set(globalList.map(signature));
+  const nestedOnly = allDeposits.filter(d => d._src === 'nested' && !seen.has(signature(d)));
+  allDeposits = globalList.concat(nestedOnly)
+    .map(d => {
+      const sig = signature(d);
+      const match = allDeposits.find(x => signature(x) === sig);
+      if (match && match._nestedKey) return { ...d, _nestedKey: match._nestedKey };
+      return d;
+    })
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  renderDepositsList(); renderDashboard(); updateBadges();
 }
 
 /* ===== DASHBOARD ===== */
 function renderDashboard() {
   let totalJR = 0, totalRJ = 0, totalEarned = 0, totalTasks = 0, totalSpent = 0, totalRefs = 0, totalDebt = 0;
   allUsers.forEach(u => {
-    totalJR += jrBal(u);
-    totalRJ += rjBal(u);
-    totalEarned += u.rjTotal || 0;
-    totalTasks += u.tasksDone || 0;
-    totalSpent += u.spent || 0;
-    totalRefs += Object.keys(u.referrals || {}).length;
+    totalJR += jrBal(u); totalRJ += rjBal(u);
+    totalEarned += u.rjTotal || 0; totalTasks += u.tasksDone || 0;
+    totalSpent += u.spent || 0; totalRefs += Object.keys(u.referrals || {}).length;
     totalDebt += u.debtTotal || 0;
   });
   const pendWd  = allWithdrawals.filter(w => w.status === 'pending').length;
@@ -556,14 +738,14 @@ function renderDashboard() {
   const el = document.getElementById('dashboardStats');
   if (el) el.innerHTML = `
     <div class="stat-card brand"><div class="label"><i class="fas fa-users"></i> Users</div><div class="stat-number">${fmt(allUsers.length)}</div></div>
-    <div class="stat-card"><div class="label"><i class="fas fa-coins" style="color:var(--brand)"></i> Total JR held</div><div class="stat-number">${fmt(totalJR)}</div></div>
-    <div class="stat-card jade"><div class="label"><i class="fas fa-gem" style="color:var(--jade)"></i> Total RJ held</div><div class="stat-number">${fmt(totalRJ)}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-coins" style="color:var(--brand)"></i> Total JR</div><div class="stat-number">${fmt(totalJR)}</div></div>
+    <div class="stat-card jade"><div class="label"><i class="fas fa-gem" style="color:var(--jade)"></i> Total RJ</div><div class="stat-number">${fmt(totalRJ)}</div></div>
     <div class="stat-card"><div class="label"><i class="fas fa-arrow-up" style="color:var(--ok)"></i> RJ earned</div><div class="stat-number">${fmt(totalEarned)}</div></div>
     <div class="stat-card"><div class="label"><i class="fas fa-arrow-down" style="color:var(--bad)"></i> RJ spent</div><div class="stat-number">${fmt(totalSpent)}</div></div>
     <div class="stat-card"><div class="label"><i class="fas fa-clock" style="color:var(--warn)"></i> Pending payouts</div><div class="stat-number">${pendWd}</div></div>
     <div class="stat-card"><div class="label"><i class="fas fa-wallet" style="color:var(--warn)"></i> Pending deposits</div><div class="stat-number">${pendDep}</div></div>
     <div class="stat-card"><div class="label"><i class="fas fa-bullhorn" style="color:var(--brand)"></i> Live campaigns</div><div class="stat-number">${liveT}</div></div>
-    <div class="stat-card"><div class="label"><i class="fas fa-clipboard-check" style="color:var(--brand)"></i> Reviews waiting</div><div class="stat-number">${pendRev}</div></div>
+    <div class="stat-card"><div class="label"><i class="fas fa-clipboard-check" style="color:var(--brand)"></i> Reviews</div><div class="stat-number">${pendRev}</div></div>
     <div class="stat-card"><div class="label"><i class="fas fa-user-shield" style="color:var(--warn)"></i> Join watches</div><div class="stat-number">${allJoins.length}</div></div>
   `;
 
@@ -573,7 +755,7 @@ function renderDashboard() {
       <span><i class="fas fa-check-circle" style="color:var(--ok)"></i> Tasks: <strong>${fmt(totalTasks)}</strong></span>
       <span><i class="fas fa-user-plus" style="color:var(--brand)"></i> Referrals: <strong>${fmt(totalRefs)}</strong></span>
       <span><i class="fas fa-flag" style="color:var(--bad)"></i> Flags: <strong>${fmt(flags.length)}</strong></span>
-      <span><i class="fas fa-exclamation-triangle" style="color:var(--warn)"></i> Total debt: <strong>${fmt(totalDebt)} RJ</strong></span>
+      <span><i class="fas fa-exclamation-triangle" style="color:var(--warn)"></i> Debt: <strong>${fmt(totalDebt)} RJ</strong></span>
     </div>`;
 }
 
@@ -643,6 +825,8 @@ window.viewUser = uid => {
   const refRows = Object.keys(refs).length ? Object.values(refs).slice(0, 10).map(r => `<div class="profile-item"><span>${esc(r.name || 'Friend')}</span><strong>${r.bonus ? '+' + fmt(r.bonus) + ' JR' : 'pending'}</strong></div>`).join('') : '<div class="profile-item"><span>Referrals</span><strong>none</strong></div>';
   const swapRows = swaps.slice(-5).reverse().map(s => `<div class="profile-item"><span>${fmt(s.jr)} JR → ${fmt(s.rj)} RJ</span><strong class="text-muted">recent</strong></div>`).join('');
   const clawRows = clawed.slice(-5).map(c => `<div class="profile-item"><span>${esc(c.title || 'Task')}</span><strong style="color:var(--bad)">-${fmt(c.amt)} RJ</strong></div>`).join('');
+  const wdRows = withdrawals.slice(-5).map(w => `<div class="profile-item"><span>${fmt(w.amount)} JR → ${esc(w.binanceUid || '')}</span><strong>${esc(w.status || 'pending')}</strong></div>`).join('');
+  const depRows = deposits.slice(-5).map(d => `<div class="profile-item"><span>$${d.usd} → ${fmt(d.rj)} RJ</span><strong>${esc(d.status || 'pending')}</strong></div>`).join('');
 
   document.getElementById('profileDetailContent').innerHTML = `
     <div class="profile-item"><span>Name</span><strong>${esc(u.name || '—')}</strong></div>
@@ -660,12 +844,11 @@ window.viewUser = uid => {
     <div class="profile-item"><span>Ref JR earned</span><strong>${fmt(u.refEarned)} JR</strong></div>
     <div class="profile-item"><span>Ref RJ earned</span><strong>${fmt(u.refEarnedRJ)} RJ</strong></div>
     <div class="profile-item"><span>Referred by</span><strong>${u.referredBy ? u.referredBy.slice(0,12)+'…' : '—'}</strong></div>
-    <div class="profile-item"><span>Withdrawals</span><strong>${withdrawals.length}</strong></div>
-    <div class="profile-item"><span>Deposits</span><strong>${deposits.length}</strong></div>
-    <div class="profile-item"><span>Swaps</span><strong>${swaps.length}</strong></div>
     <div class="profile-item"><span>Joined</span><strong>${tsToDate(u.createdAt)}</strong></div>
     <div class="profile-section"><div class="profile-section-title">Submissions</div>${subRows}</div>
     <div class="profile-section"><div class="profile-section-title">Referrals (${Object.keys(refs).length})</div>${refRows}</div>
+    ${wdRows ? `<div class="profile-section"><div class="profile-section-title">Recent withdrawals</div>${wdRows}</div>` : ''}
+    ${depRows ? `<div class="profile-section"><div class="profile-section-title">Recent deposits</div>${depRows}</div>` : ''}
     ${swapRows ? `<div class="profile-section"><div class="profile-section-title">Recent swaps</div>${swapRows}</div>` : ''}
     ${clawRows ? `<div class="profile-section"><div class="profile-section-title">Clawed rewards</div>${clawRows}</div>` : ''}
   `;
@@ -674,15 +857,19 @@ window.viewUser = uid => {
 
 window.addJR = async (uid, amount) => {
   if (!firebaseOk) return showToast('Firebase unavailable', 'err');
-  const u = allUsers.find(x => x.uid === uid); if (!u) return;
-  await db.ref(`pn/users/${uid}`).update({ balance: (u.balance||0) + amount, totalIncome: (u.totalIncome||0) + amount });
-  showToast(`+${fmt(amount)} JR added`, 'ok'); loadAllData();
+  try {
+    const u = allUsers.find(x => x.uid === uid); if (!u) return;
+    await db.ref(`pn/users/${uid}`).update({ balance: (u.balance||0) + amount, totalIncome: (u.totalIncome||0) + amount });
+    showToast(`+${fmt(amount)} JR added`, 'ok'); loadAllData();
+  } catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
 window.addRJ = async (uid, amount) => {
   if (!firebaseOk) return showToast('Firebase unavailable', 'err');
-  const u = allUsers.find(x => x.uid === uid); if (!u) return;
-  await db.ref(`pn/users/${uid}`).update({ rjBalance: (u.rjBalance||0) + amount, rjTotal: (u.rjTotal||0) + amount });
-  showToast(`+${fmt(amount)} RJ added`, 'ok'); loadAllData();
+  try {
+    const u = allUsers.find(x => x.uid === uid); if (!u) return;
+    await db.ref(`pn/users/${uid}`).update({ rjBalance: (u.rjBalance||0) + amount, rjTotal: (u.rjTotal||0) + amount });
+    showToast(`+${fmt(amount)} RJ added`, 'ok'); loadAllData();
+  } catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
 window.setBal = async uid => {
   const u = allUsers.find(x => x.uid === uid);
@@ -692,35 +879,45 @@ window.setBal = async uid => {
   if (rj === null) return;
   const nJ = parseInt(jr, 10), nR = parseInt(rj, 10);
   if (isNaN(nJ) || isNaN(nR) || nJ < 0 || nR < 0) return showToast('Invalid amount', 'err');
-  await db.ref(`pn/users/${uid}`).update({ balance: nJ, rjBalance: nR });
-  showToast(`Set: ${fmt(nJ)} JR, ${fmt(nR)} RJ`, 'ok'); loadAllData();
+  try {
+    await db.ref(`pn/users/${uid}`).update({ balance: nJ, rjBalance: nR });
+    showToast(`Set: ${fmt(nJ)} JR, ${fmt(nR)} RJ`, 'ok'); loadAllData();
+  } catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
 window.resetUser = async uid => {
   if (!confirm('Reset this user? All balances, stats, submissions cleared.')) return;
-  await db.ref(`pn/users/${uid}`).update({
-    balance: 0, totalIncome: 0, tasksDone: 0, spent: 0, refEarned: 0, refEarnedRJ: 0,
-    rjBalance: 0, rjTotal: 0, debtTotal: 0, debts: null, clawed: null,
-    done: null, submitted: null, subAt: null, referrals: null,
-    adToday: null, adNext: null, adProgress: null, today: null, todayRJ: null,
-    swaps: null, withdrawals: null, deposits: null, outbox: null, recv: null
-  });
-  showToast('User reset', 'ok'); loadAllData();
+  try {
+    await db.ref(`pn/users/${uid}`).update({
+      balance: 0, totalIncome: 0, tasksDone: 0, spent: 0, refEarned: 0, refEarnedRJ: 0,
+      rjBalance: 0, rjTotal: 0, debtTotal: 0, debts: null, clawed: null,
+      done: null, submitted: null, subAt: null, referrals: null,
+      adToday: null, adNext: null, adProgress: null, today: null, todayRJ: null,
+      swaps: null, withdrawals: null, deposits: null, outbox: null, recv: null
+    });
+    showToast('User reset', 'ok'); loadAllData();
+  } catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
 
 /* ===== WITHDRAWALS ===== */
 function renderWithdrawalsList() {
   const list = wdFilter === 'pending' ? allWithdrawals.filter(w => w.status === 'pending') : allWithdrawals;
   const c = document.getElementById('withdrawalsContainer'); if (!c) return;
-  if (!list.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><b>No withdrawal requests</b></div>'; return; }
+  if (!list.length) {
+    const total = allWithdrawals.length;
+    c.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><b>No ${wdFilter === 'pending' ? 'pending ' : ''}withdrawals</b>
+      <span style="font-size:.75rem">${total ? total + ' total records found' : 'No records yet. If users sent requests, check the Settings → Diagnostics.'}</span></div>`;
+    return;
+  }
   c.innerHTML = list.map(w => {
-    const sc = w.status === 'pending' ? 'pill-pending' : w.status === 'approved' || w.status === 'paid' ? 'pill-approved' : 'pill-rejected';
+    const sc = w.status === 'pending' ? 'pill-pending' : (w.status === 'approved' || w.status === 'paid') ? 'pill-approved' : 'pill-rejected';
     const amt = w.amount || 0;
     const fee = w.fee || Math.ceil(amt * WD_FEE / 100);
     const net = w.net || (amt - fee);
+    const srcTag = w._src === 'nested' ? '<span class="src-tag nested">from user</span>' : '<span class="src-tag global">global</span>';
     return `
       <div class="wd-card">
         <div class="flex-between">
-          <div style="min-width:0"><strong style="font-size:.88rem">${esc(w.name || 'User')}</strong>
+          <div style="min-width:0"><strong style="font-size:.88rem">${esc(w.name || 'User')}</strong>${srcTag}
             <div class="text-muted">${w.uid ? w.uid.slice(0,12)+'…' : ''}${w.username ? ' · @'+esc(w.username) : ''}</div>
           </div>
           <span class="status-pill ${sc}">${w.status}</span>
@@ -730,47 +927,89 @@ function renderWithdrawalsList() {
         <div class="wd-detail"><i class="fab fa-bitcoin" style="color:var(--brand)"></i> Binance UID: <span class="code-block">${esc(w.binanceUid || w.account || '—')}</span></div>
         <div class="wd-detail"><i class="fas fa-clock"></i> ${tsToTime(w.createdAt)}</div>
         ${w.status === 'pending' ? `<div class="chip-group">
-          <button class="btn-icon btn-success" onclick="approveWD('${w.key}')" type="button"><i class="fas fa-check"></i> Approve (paid)</button>
-          <button class="btn-icon btn-danger" onclick="rejectWD('${w.key}')" type="button"><i class="fas fa-undo"></i> Reject & refund</button>
+          <button class="btn-icon btn-success" onclick="approveWD('${esc(w.key)}')" type="button"><i class="fas fa-check"></i> Approve (paid)</button>
+          <button class="btn-icon btn-danger" onclick="rejectWD('${esc(w.key)}')" type="button"><i class="fas fa-undo"></i> Reject & refund</button>
         </div>` : ''}
       </div>`;
   }).join('');
 }
+
+/* Approve a withdrawal — updates BOTH global key AND nested user record */
 window.approveWD = async key => {
   if (!firebaseOk) return showToast('Firebase unavailable', 'err');
   const w = allWithdrawals.find(x => x.key === key); if (!w) return;
   if (w.status !== 'pending') return showToast('Already handled', 'err');
-  if (!confirm(`Approve payout of ${fmt(w.net || w.amount)} JR (${usd(w.net || w.amount)}) to Binance UID ${w.binanceUid || w.account}?`)) return;
-  await db.ref(`pn/withdrawals/${key}`).update({ status: 'paid', approvedAt: TS });
-  if (w.uid) await db.ref(`pn/users/${w.uid}/withdrawals/${key}`).update({ status: 'paid', approvedAt: TS }).catch(()=>{});
-  showToast('✅ Withdrawal marked as paid', 'ok'); loadAllData();
+  if (!confirm(`Approve payout of ${fmt(w.net || w.amount)} JR (${usd(w.net || w.amount)}) to Binance UID ${w.binanceUid || w.account || '?'}?`)) return;
+  try {
+    // Update global if this record came from / has global key
+    if (w._src === 'global') {
+      await db.ref(`pn/withdrawals/${key}`).update({ status: 'paid', approvedAt: TS }).catch(e => console.warn('global update:', e));
+    }
+    // Update nested record so app shows "paid"
+    if (w.uid) {
+      const nk = w._nestedKey || findNestedKey(w.uid, w);
+      if (nk) await db.ref(`pn/users/${w.uid}/withdrawals/${nk}`).update({ status: 'paid', approvedAt: TS }).catch(e => console.warn('nested update:', e));
+    }
+    showToast('✅ Marked as paid', 'ok'); loadAllData();
+  } catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
+
 window.rejectWD = async key => {
   if (!firebaseOk) return showToast('Firebase unavailable', 'err');
   const w = allWithdrawals.find(x => x.key === key); if (!w) return;
   if (w.status !== 'pending') return showToast('Already handled', 'err');
   if (!confirm(`Reject and refund ${fmt(w.amount)} JR to the user?`)) return;
-  await db.ref(`pn/users/${w.uid}`).transaction(u => {
-    if (!u) return u;
-    u.balance = (u.balance || 0) + (w.amount || 0);
-    return u;
-  });
-  await db.ref(`pn/withdrawals/${key}`).update({ status: 'rejected', rejectedAt: TS });
-  if (w.uid) await db.ref(`pn/users/${w.uid}/withdrawals/${key}`).update({ status: 'rejected', rejectedAt: TS }).catch(()=>{});
-  showToast(`❌ Rejected · ${fmt(w.amount)} JR refunded`, 'ok'); loadAllData();
+  try {
+    // Refund balance
+    if (w.uid) {
+      await db.ref(`pn/users/${w.uid}`).transaction(u => {
+        if (!u) return u;
+        u.balance = (u.balance || 0) + (w.amount || 0);
+        return u;
+      });
+    }
+    // Update both paths
+    if (w._src === 'global') await db.ref(`pn/withdrawals/${key}`).update({ status: 'rejected', rejectedAt: TS }).catch(() => {});
+    if (w.uid) {
+      const nk = w._nestedKey || findNestedKey(w.uid, w);
+      if (nk) await db.ref(`pn/users/${w.uid}/withdrawals/${nk}`).update({ status: 'rejected', rejectedAt: TS }).catch(() => {});
+    }
+    showToast(`❌ Rejected · ${fmt(w.amount)} JR refunded`, 'ok'); loadAllData();
+  } catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
+
+/* Find the matching nested key inside the user's withdrawals by amount+recent timestamp */
+function findNestedKey(uid, w) {
+  const u = allUsers.find(x => x.uid === uid); if (!u) return null;
+  const wds = u.withdrawals || {};
+  const targetAmt = w.amount;
+  const targetT = w.createdAt || 0;
+  let best = null, bestDiff = Infinity;
+  for (const [k, v] of Object.entries(wds)) {
+    if (!v || v.amount !== targetAmt) continue;
+    const diff = Math.abs((v.createdAt || 0) - targetT);
+    if (diff < bestDiff) { bestDiff = diff; best = k; }
+  }
+  return bestDiff < 60000 ? best : null;
+}
 
 /* ===== DEPOSITS ===== */
 function renderDepositsList() {
   const list = depFilter === 'pending' ? allDeposits.filter(d => d.status === 'pending') : allDeposits;
   const c = document.getElementById('depositsContainer'); if (!c) return;
-  if (!list.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><b>No deposit requests</b></div>'; return; }
+  if (!list.length) {
+    const total = allDeposits.length;
+    c.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><b>No ${depFilter === 'pending' ? 'pending ' : ''}deposits</b>
+      <span style="font-size:.75rem">${total ? total + ' total records found' : 'No records yet. If users sent deposits, check the Settings → Diagnostics.'}</span></div>`;
+    return;
+  }
   c.innerHTML = list.map(d => {
     const sc = d.status === 'pending' ? 'pill-pending' : d.status === 'approved' ? 'pill-approved' : 'pill-rejected';
+    const srcTag = d._src === 'nested' ? '<span class="src-tag nested">from user</span>' : '<span class="src-tag global">global</span>';
     return `
       <div class="wd-card">
         <div class="flex-between">
-          <div style="min-width:0"><strong style="font-size:.88rem">${esc(d.name || 'User')}</strong>
+          <div style="min-width:0"><strong style="font-size:.88rem">${esc(d.name || 'User')}</strong>${srcTag}
             <div class="text-muted">${d.uid ? d.uid.slice(0,12)+'…' : ''}${d.username ? ' · @'+esc(d.username) : ''}</div>
           </div>
           <span class="status-pill ${sc}">${d.status}</span>
@@ -779,45 +1018,73 @@ function renderDepositsList() {
         <div class="wd-detail"><i class="fas fa-receipt" style="color:var(--brand)"></i> Order ID: <span class="code-block">${esc(d.orderId || '—')}</span></div>
         <div class="wd-detail"><i class="fas fa-clock"></i> ${tsToTime(d.createdAt)}</div>
         ${d.status === 'pending' ? `<div class="chip-group">
-          <button class="btn-icon btn-success" onclick="approveDep('${d.key}')" type="button"><i class="fas fa-check"></i> Approve & credit RJ</button>
-          <button class="btn-icon btn-danger" onclick="rejectDep('${d.key}')" type="button"><i class="fas fa-times"></i> Reject</button>
+          <button class="btn-icon btn-success" onclick="approveDep('${esc(d.key)}')" type="button"><i class="fas fa-check"></i> Approve & credit RJ</button>
+          <button class="btn-icon btn-danger" onclick="rejectDep('${esc(d.key)}')" type="button"><i class="fas fa-times"></i> Reject</button>
         </div>` : ''}
       </div>`;
   }).join('');
 }
+
 window.approveDep = async key => {
   if (!firebaseOk) return showToast('Firebase unavailable', 'err');
   const d = allDeposits.find(x => x.key === key); if (!d) return;
   if (d.status !== 'pending') return showToast('Already handled', 'err');
   if (!confirm(`Credit ${fmt(d.rj)} RJ to ${d.name || d.uid}?`)) return;
-  await db.ref(`pn/users/${d.uid}`).transaction(u => {
-    if (!u) return u;
-    u.rjBalance = (u.rjBalance || 0) + (d.rj || 0);
-    u.rjTotal = (u.rjTotal || 0) + (d.rj || 0);
-    return u;
-  });
-  await db.ref(`pn/deposits/${key}`).update({ status: 'approved', approvedAt: TS });
-  if (d.uid) await db.ref(`pn/users/${d.uid}/deposits/${key}`).update({ status: 'approved', credited: true, approvedAt: TS }).catch(()=>{});
-  showToast(`✅ Approved · ${fmt(d.rj)} RJ credited`, 'ok'); loadAllData();
+  try {
+    // Credit the user
+    await db.ref(`pn/users/${d.uid}`).transaction(u => {
+      if (!u) return u;
+      u.rjBalance = (u.rjBalance || 0) + (d.rj || 0);
+      u.rjTotal = (u.rjTotal || 0) + (d.rj || 0);
+      return u;
+    });
+    // Update global + nested with credited:true so app auto-crediter skips
+    if (d._src === 'global') await db.ref(`pn/deposits/${key}`).update({ status: 'approved', approvedAt: TS }).catch(() => {});
+    if (d.uid) {
+      const nk = d._nestedKey || findNestedDepKey(d.uid, d);
+      if (nk) await db.ref(`pn/users/${d.uid}/deposits/${nk}`).update({ status: 'approved', credited: true, approvedAt: TS }).catch(() => {});
+    }
+    showToast(`✅ Approved · ${fmt(d.rj)} RJ credited`, 'ok'); loadAllData();
+  } catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
+
 window.rejectDep = async key => {
   if (!firebaseOk) return showToast('Firebase unavailable', 'err');
   const d = allDeposits.find(x => x.key === key); if (!d) return;
   if (d.status !== 'pending') return showToast('Already handled', 'err');
   if (!confirm('Reject this deposit request?')) return;
-  await db.ref(`pn/deposits/${key}`).update({ status: 'rejected', rejectedAt: TS });
-  if (d.uid) await db.ref(`pn/users/${d.uid}/deposits/${key}`).update({ status: 'rejected' }).catch(()=>{});
-  showToast('❌ Deposit rejected', 'ok'); loadAllData();
+  try {
+    if (d._src === 'global') await db.ref(`pn/deposits/${key}`).update({ status: 'rejected', rejectedAt: TS }).catch(() => {});
+    if (d.uid) {
+      const nk = d._nestedKey || findNestedDepKey(d.uid, d);
+      if (nk) await db.ref(`pn/users/${d.uid}/deposits/${nk}`).update({ status: 'rejected', rejectedAt: TS }).catch(() => {});
+    }
+    showToast('❌ Deposit rejected', 'ok'); loadAllData();
+  } catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
+
+function findNestedDepKey(uid, d) {
+  const u = allUsers.find(x => x.uid === uid); if (!u) return null;
+  const deps = u.deposits || {};
+  const targetT = d.createdAt || 0;
+  let best = null, bestDiff = Infinity;
+  for (const [k, v] of Object.entries(deps)) {
+    if (!v) continue;
+    if (v.usd !== d.usd) continue;
+    const diff = Math.abs((v.createdAt || 0) - targetT);
+    if (diff < bestDiff) { bestDiff = diff; best = k; }
+  }
+  return bestDiff < 60000 ? best : null;
+}
 
 /* ===== TASKS ===== */
 const TYPE_META = {
-  join:       { label: 'Join',            icon: 'user-plus', cls: 'tt-join' },
-  reaction:   { label: 'Reaction',        icon: 'heart',     cls: 'tt-reaction' },
-  view:       { label: 'View',            icon: 'eye',       cls: 'tt-view' },
-  conditions: { label: 'With conditions', icon: 'shield-alt',cls: 'tt-conditions' },
-  website:    { label: 'Website',         icon: 'globe',     cls: 'tt-website' },
-  youtube:    { label: 'YouTube',         icon: 'youtube',   cls: 'tt-youtube' }
+  join:       { label: 'Join',            icon: 'user-plus' },
+  reaction:   { label: 'Reaction',        icon: 'heart' },
+  view:       { label: 'View',            icon: 'eye' },
+  conditions: { label: 'With conditions', icon: 'shield-alt' },
+  website:    { label: 'Website',         icon: 'globe' },
+  youtube:    { label: 'YouTube',         icon: 'youtube' }
 };
 function renderTasksList() {
   const list = taskFilter === 'live' ? allTasks.filter(t => t.status === 'live') : allTasks;
@@ -861,29 +1128,31 @@ function renderTasksList() {
 window.openTaskUrl = url => { if (url) window.open(url, '_blank'); };
 window.stopTask = async id => {
   if (!firebaseOk) return showToast('Firebase unavailable', 'err');
-  await db.ref(`pn/tasks/${id}/status`).set('paused');
-  showToast('Campaign paused', 'ok'); loadAllData();
+  try { await db.ref(`pn/tasks/${id}/status`).set('paused'); showToast('Campaign paused', 'ok'); loadAllData(); }
+  catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
 window.resumeTask = async id => {
   if (!firebaseOk) return showToast('Firebase unavailable', 'err');
-  await db.ref(`pn/tasks/${id}/status`).set('live');
-  showToast('Campaign resumed', 'ok'); loadAllData();
+  try { await db.ref(`pn/tasks/${id}/status`).set('live'); showToast('Campaign resumed', 'ok'); loadAllData(); }
+  catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
 window.deleteTask = async id => {
   if (!firebaseOk) return showToast('Firebase unavailable', 'err');
   const t = allTasks.find(x => x.id === id); if (!t) return;
   const refund = (t.remaining || 0) * ((t.perUser || 0) + (t.fee || 0));
   if (!confirm(`Delete "${t.title}"?\n\n${refund > 0 ? `Refund ${fmt(refund)} RJ to owner?` : 'No refund.'}`)) return;
-  if (refund > 0 && t.owner) {
-    await db.ref(`pn/users/${t.owner}`).transaction(u => {
-      if (!u) return u;
-      u.rjBalance = (u.rjBalance || 0) + refund;
-      u.spent = Math.max(0, (u.spent || 0) - refund);
-      return u;
-    });
-  }
-  await db.ref(`pn/tasks/${id}`).remove();
-  showToast(`Deleted${refund > 0 ? ' · ' + fmt(refund) + ' RJ refunded' : ''}`, 'ok'); loadAllData();
+  try {
+    if (refund > 0 && t.owner) {
+      await db.ref(`pn/users/${t.owner}`).transaction(u => {
+        if (!u) return u;
+        u.rjBalance = (u.rjBalance || 0) + refund;
+        u.spent = Math.max(0, (u.spent || 0) - refund);
+        return u;
+      });
+    }
+    await db.ref(`pn/tasks/${id}`).remove();
+    showToast(`Deleted${refund > 0 ? ' · ' + fmt(refund) + ' RJ refunded' : ''}`, 'ok'); loadAllData();
+  } catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
 
 /* ===== REVIEWS ===== */
@@ -913,30 +1182,32 @@ function renderReviewsList() {
   }).join('');
 }
 async function resolveReviewAdmin(owner, key, approve) {
-  const ref = db.ref(`pn/pending/${owner}/${key}`);
-  const tx = await ref.transaction(cur => { if (cur === null) return cur; if (cur.status !== 'pending') return; cur.status = 'resolving'; return cur; });
-  const v = tx.committed ? tx.snapshot.val() : null;
-  if (!v || v.status !== 'resolving') return false;
-  if (approve) {
-    await db.ref(`pn/users/${v.uid}`).transaction(u => {
-      if (!u) return u;
-      u.submitted = u.submitted || {}; u.done = u.done || {};
-      u.done[v.taskId] = true; u.submitted[v.taskId] = 'approved';
-      const d = new Date().toLocaleDateString('en-CA');
-      if (!u.todayRJ || u.todayRJ.d !== d) u.todayRJ = { d, a: 0 };
-      u.todayRJ.a += v.perUser;
-      u.rjBalance = (u.rjBalance || 0) + v.perUser;
-      u.rjTotal = (u.rjTotal || 0) + v.perUser;
-      u.tasksDone = (u.tasksDone || 0) + 1;
-      return u;
-    });
-  } else {
-    await db.ref(`pn/users/${v.uid}`).transaction(u => { if (!u) return u; u.submitted = u.submitted || {}; u.submitted[v.taskId] = 'rejected'; return u; });
-    await db.ref(`pn/tasks/${v.taskId}/remaining`).transaction(r => (r || 0) + 1);
-    await db.ref(`pn/tasks/${v.taskId}/status`).set('live');
-  }
-  await ref.remove(); await db.ref('pn/pendingAll/' + key).remove();
-  return true;
+  try {
+    const ref = db.ref(`pn/pending/${owner}/${key}`);
+    const tx = await ref.transaction(cur => { if (cur === null) return cur; if (cur.status !== 'pending') return; cur.status = 'resolving'; return cur; });
+    const v = tx.committed ? tx.snapshot.val() : null;
+    if (!v || v.status !== 'resolving') return false;
+    if (approve) {
+      await db.ref(`pn/users/${v.uid}`).transaction(u => {
+        if (!u) return u;
+        u.submitted = u.submitted || {}; u.done = u.done || {};
+        u.done[v.taskId] = true; u.submitted[v.taskId] = 'approved';
+        const d = new Date().toLocaleDateString('en-CA');
+        if (!u.todayRJ || u.todayRJ.d !== d) u.todayRJ = { d, a: 0 };
+        u.todayRJ.a += v.perUser;
+        u.rjBalance = (u.rjBalance || 0) + v.perUser;
+        u.rjTotal = (u.rjTotal || 0) + v.perUser;
+        u.tasksDone = (u.tasksDone || 0) + 1;
+        return u;
+      });
+    } else {
+      await db.ref(`pn/users/${v.uid}`).transaction(u => { if (!u) return u; u.submitted = u.submitted || {}; u.submitted[v.taskId] = 'rejected'; return u; });
+      await db.ref(`pn/tasks/${v.taskId}/remaining`).transaction(r => (r || 0) + 1);
+      await db.ref(`pn/tasks/${v.taskId}/status`).set('live');
+    }
+    await ref.remove(); await db.ref('pn/pendingAll/' + key).remove();
+    return true;
+  } catch (e) { console.warn('resolveReviewAdmin:', e); return false; }
 }
 window.approveReview = async (owner, key) => {
   if (!confirm('Approve this submission and pay the user?')) return;
@@ -971,20 +1242,20 @@ function renderJoinsList() {
         <div class="wd-detail"><i class="fas fa-clock"></i> Expires in ${Math.floor(timeLeft/3600000)}h ${Math.floor((timeLeft%3600000)/60000)}m</div>
         <div class="wd-detail"><i class="fas fa-sync"></i> Next auto-check in ${Math.floor(nextIn/60000)}m</div>
         <div class="chip-group">
-          <button class="btn-icon btn-danger" onclick="forceClawback('${w.key}')" type="button"><i class="fas fa-hand-paper"></i> Force clawback</button>
-          <button class="btn-icon" onclick="unwatch('${w.key}')" type="button"><i class="fas fa-times"></i> Remove watch</button>
+          <button class="btn-icon btn-danger" onclick="forceClawback('${esc(w.key)}')" type="button"><i class="fas fa-hand-paper"></i> Force clawback</button>
+          <button class="btn-icon" onclick="unwatch('${esc(w.key)}')" type="button"><i class="fas fa-times"></i> Remove watch</button>
         </div>
       </div>`;
   }).join('');
 }
 window.unwatch = async key => {
   if (!confirm('Remove this join watch? User keeps their reward.')) return;
-  await db.ref('pn/joinWatch/' + key).remove();
-  showToast('Watch removed', 'ok');
+  try { await db.ref('pn/joinWatch/' + key).remove(); showToast('Watch removed', 'ok'); }
+  catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
 window.forceClawback = async key => {
   const w = allJoins.find(x => x.key === key); if (!w) return;
-  if (!confirm(`Claw back ${fmt(w.amt)} RJ from user? They will owe it if balance is short.`)) return;
+  if (!confirm(`Claw back ${fmt(w.amt)} RJ from user?`)) return;
   try {
     await db.ref(`pn/users/${w.uid}`).transaction(u => {
       if (!u) return u;
@@ -996,7 +1267,6 @@ window.forceClawback = async key => {
       if (rest > 0) { u.debts = u.debts || {}; u.debts[key] = { owner: w.owner, left: rest, title: w.title || '' }; u.debtTotal = (u.debtTotal || 0) + rest; }
       return u;
     });
-    // credit owner immediately
     await db.ref(`pn/users/${w.owner}`).transaction(o => {
       if (!o) return o;
       o.rjBalance = (o.rjBalance || 0) + (w.amt || 0);
@@ -1005,29 +1275,31 @@ window.forceClawback = async key => {
     });
     await db.ref('pn/joinWatch/' + key).remove();
     showToast(`✅ Clawed back ${fmt(w.amt)} RJ`, 'ok'); loadAllData();
-  } catch(e) { console.error(e); showToast('Clawback failed', 'err'); }
+  } catch (e) { showToast('Failed: ' + e.message, 'err'); }
 };
 
 /* ===== FULL RESET ===== */
 async function handleFullReset() {
   if (!firebaseOk) return showToast('Firebase unavailable', 'err');
   if (document.getElementById('resetConfirmInput').value.trim() !== 'RESET ALL') return showToast("Type 'RESET ALL' to confirm", 'err');
-  if (!confirm('PERMANENT: reset every user?\nThis cannot be undone.')) return;
+  if (!confirm('PERMANENT: reset every user?')) return;
   showToast('Resetting all users…');
   let count = 0;
   for (const u of allUsers) {
-    await db.ref(`pn/users/${u.uid}`).update({
-      balance: 0, totalIncome: 0, tasksDone: 0, spent: 0, refEarned: 0, refEarnedRJ: 0,
-      rjBalance: 0, rjTotal: 0, debtTotal: 0, debts: null, clawed: null,
-      done: null, submitted: null, subAt: null, referrals: null,
-      adToday: null, adNext: null, adProgress: null, today: null, todayRJ: null,
-      swaps: null, withdrawals: null, deposits: null, outbox: null, recv: null, refBonusPaid: null
-    });
-    count++;
+    try {
+      await db.ref(`pn/users/${u.uid}`).update({
+        balance: 0, totalIncome: 0, tasksDone: 0, spent: 0, refEarned: 0, refEarnedRJ: 0,
+        rjBalance: 0, rjTotal: 0, debtTotal: 0, debts: null, clawed: null,
+        done: null, submitted: null, subAt: null, referrals: null,
+        adToday: null, adNext: null, adProgress: null, today: null, todayRJ: null,
+        swaps: null, withdrawals: null, deposits: null, outbox: null, recv: null, refBonusPaid: null
+      });
+      count++;
+    } catch (e) { console.warn('reset', u.uid, e); }
   }
-  for (const w of allWithdrawals.filter(x => x.status === 'pending')) await db.ref(`pn/withdrawals/${w.key}`).update({ status: 'cancelled' });
-  for (const d of allDeposits.filter(x => x.status === 'pending')) await db.ref(`pn/deposits/${d.key}`).update({ status: 'cancelled' });
-  await db.ref('pn/joinWatch').remove().catch(()=>{});
+  for (const w of allWithdrawals.filter(x => x.status === 'pending')) await db.ref(`pn/withdrawals/${w.key}`).update({ status: 'cancelled' }).catch(() => {});
+  for (const d of allDeposits.filter(x => x.status === 'pending')) await db.ref(`pn/deposits/${d.key}`).update({ status: 'cancelled' }).catch(() => {});
+  await db.ref('pn/joinWatch').remove().catch(() => {});
   document.getElementById('resetConfirmInput').value = '';
   showToast(`✅ Reset ${count} users`, 'ok');
   loadAllData();
